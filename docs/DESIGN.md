@@ -123,8 +123,8 @@ Estes são os controles **padrão**; o jogador pode trocar qualquer um em Config
 1. **Conceito** — fechar as decisões em aberto acima. ✔ concluída
 2. **Base jogável** — dois jogadores pulando e atirando no mesmo cenário, conectados online (host/cliente), com predição e interpolação. Controle precisa ficar gostoso aqui.
    - **2a — Controle local**: um jogador anda, pula, dá dash e atira em 8 direções numa arena de teste. Inclui (a pedido, adiantando parte da etapa 3): personagens desenhados e animados, arena de circo, filtro de filme antigo, efeitos e menu de Configurações. ✔ concluída
-   - **2b — Conexão**: tela inicial com "Hospedar" / "Entrar na partida" (IP) / "Testar sozinho"; porta **24680** (UDP); host = palhaço, cliente = acrobata; cada PC controla o próprio personagem e envia o estado ao outro; tiros aparecem nos dois PCs; aviso de "esperando parceiro" com os IPs e de "parceiro saiu"; online a pausa não congela o jogo. ← *estamos aqui (testar)*
-   - **2c — Rede de verdade**: predição do jogador local, interpolação do remoto, teste via Tailscale.
+   - **2b — Conexão**: tela inicial com "Hospedar" / "Entrar na partida" (IP) / "Testar sozinho"; porta **24680** (UDP); host = palhaço, cliente = acrobata; cada PC controla o próprio personagem e envia o estado ao outro; tiros aparecem nos dois PCs; aviso de "esperando parceiro" com os IPs e de "parceiro saiu"; online a pausa não congela o jogo. ✔ concluída (testada pelo usuário com 2 janelas)
+   - **2c — Rede de verdade**: predição do jogador local, interpolação do remoto, teste via Tailscale. ← *próxima*
 3. **Visual base** — shaders, pós-processamento, "cara" do jogo. (Parte já adiantada na 2a; aqui entra o refinamento.)
 4. **Primeiro chefão** completo (com todas as fases da luta), tela de vitória/derrota e save.
 5. **Primeira área**: mapa de seleção + 2–3 chefões + uma fase de plataforma.
