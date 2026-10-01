@@ -2,6 +2,12 @@
 
 > Documento vivo. Atualizar sempre que uma decisão for tomada.
 
+## Documentos detalhados
+
+- [combat.md](combat.md) — vida, balão (reviver), parry, especial (Aplausos), nota
+- [shop.md](shop.md) — loja, ingressos, Camarim e todos os itens
+- [bosses.md](bosses.md) — chefões da Área 1 e ideias futuras
+
 ## Visão geral
 
 Jogo **2D de plataforma com chefões (boss fights)** para **2 jogadores online em cooperativo**, inspirado em **Cuphead**: fases curtas e intensas, chefões com várias fases de ataque, padrões para aprender, dificuldade justa e vontade de tentar "só mais uma vez".
@@ -57,7 +63,7 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 
 Fases de plataforma "puras" existem, mas são poucas e curtas, entre os chefões (a primeira na etapa 5).
 
-### Loja e equipamento (etapa 5)
+### Loja e equipamento (etapa 5) — detalhes em [shop.md](shop.md)
 
 Ideia do usuário: comprar itens com o que se ganha vencendo chefões, numa loja do circo. Parecido com o Cuphead no espírito, mas **diferente em pontos-chave**.
 
