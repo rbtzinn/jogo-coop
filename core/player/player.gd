@@ -3,6 +3,13 @@ extends CharacterBody2D
 ## Movimento do jogador: corrida, pulo (altura variável, coyote time, buffer) e dash.
 ## Lê os comandos de um PlayerInput, para que a rede possa controlar jogadores remotos depois.
 
+const DUST_SCENE := preload("res://components/fx/dust_puff.tscn")
+
+## Cena do personagem desenhado (palhaço, acrobata...).
+@export var character: PackedScene
+## Para onde o personagem começa olhando (1 = direita, -1 = esquerda).
+@export var facing := 1
+
 @export_group("Corrida")
 @export var run_speed := 520.0
 @export var ground_accel := 7000.0
@@ -25,8 +32,6 @@ extends CharacterBody2D
 @export var dash_duration := 0.17
 @export var dash_cooldown := 0.25
 
-var facing := 1
-
 var _gravity: float
 var _jump_velocity: float
 var _coyote_timer := 0.0
@@ -36,6 +41,8 @@ var _dash_cooldown_timer := 0.0
 var _dash_direction := 1
 var _air_dash_available := true
 
+var rig: CharacterRig
+
 @onready var input: PlayerInput = $PlayerInput
 @onready var gun: PlayerGun = $Gun
 @onready var visual: Node2D = $Visual
@@ -44,6 +51,8 @@ var _air_dash_available := true
 func _ready() -> void:
 	_gravity = 2.0 * jump_height / (time_to_apex * time_to_apex)
 	_jump_velocity = -2.0 * jump_height / time_to_apex
+	rig = character.instantiate()
+	visual.add_child(rig)
 
 
 func _physics_process(delta: float) -> void:
@@ -59,11 +68,17 @@ func _physics_process(delta: float) -> void:
 		_process_run(delta)
 		_try_start_dash()
 
+	var was_on_floor := is_on_floor()
 	move_and_slide()
+	if is_on_floor() and not was_on_floor:
+		rig.play_land()
+		Fx.spawn(DUST_SCENE, global_position)
 
-	if not is_dashing():
-		gun.tick(delta, get_aim_direction(), input.shoot_held)
 	visual.scale.x = facing
+	var aim := get_aim_direction()
+	rig.update_pose(delta, velocity, is_on_floor(), is_dashing(), Vector2(aim.x * facing, aim.y), run_speed)
+	if not is_dashing() and gun.tick(delta, aim, input.shoot_held, rig.get_muzzle_position()):
+		rig.play_fire()
 
 
 func is_dashing() -> bool:
@@ -140,6 +155,7 @@ func _try_start_dash() -> void:
 	_dash_timer = dash_duration
 	_dash_direction = facing
 	velocity = Vector2(_dash_direction * dash_speed, 0.0)
+	Fx.spawn(DUST_SCENE, global_position + Vector2(-facing * 20.0, -30.0))
 
 
 func _process_dash(delta: float) -> void:

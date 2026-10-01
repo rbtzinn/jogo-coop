@@ -1,0 +1,95 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://core/player/characters/character_rig.gd" id="1_rig"]
+[ext_resource type="Script" path="res://core/player/characters/limb.gd" id="2_limb"]
+[ext_resource type="Texture2D" path="res://core/player/characters/shared/glove_fist.svg" id="3_fist"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/acrobat_shoe.svg" id="4_shoe"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/acrobat_torso.svg" id="5_torso"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/acrobat_head.svg" id="6_head"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/acrobat_blink.svg" id="7_blink"]
+[ext_resource type="Texture2D" path="res://core/player/characters/shared/glove_gun.svg" id="8_gun"]
+[ext_resource type="Texture2D" path="res://core/player/characters/shared/muzzle_flash.svg" id="9_flash"]
+
+[node name="AcrobatRig" type="Node2D"]
+scale = Vector2(0.92, 0.92)
+script = ExtResource("1_rig")
+arm_length = 38.0
+ankle_height = 7.0
+stride = 22.0
+step_lift = 14.0
+steps_per_second = 3.0
+bob_height = 4.0
+
+[node name="BackArm" type="Node2D" parent="."]
+self_modulate = Color(0.75, 0.72, 0.7, 1)
+script = ExtResource("2_limb")
+fill_color = Color(0.94, 0.77, 0.61, 1)
+width = 7.0
+
+[node name="BackHand" type="Sprite2D" parent="."]
+modulate = Color(0.82, 0.8, 0.78, 1)
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("3_fist")
+
+[node name="BackLeg" type="Node2D" parent="."]
+self_modulate = Color(0.78, 0.76, 0.74, 1)
+script = ExtResource("2_limb")
+fill_color = Color(0.96, 0.92, 0.85, 1)
+width = 9.0
+
+[node name="BackShoe" type="Sprite2D" parent="."]
+modulate = Color(0.78, 0.76, 0.74, 1)
+texture = ExtResource("4_shoe")
+offset = Vector2(8, 6)
+
+[node name="FrontLeg" type="Node2D" parent="."]
+script = ExtResource("2_limb")
+fill_color = Color(0.96, 0.92, 0.85, 1)
+width = 9.0
+
+[node name="FrontShoe" type="Sprite2D" parent="."]
+texture = ExtResource("4_shoe")
+offset = Vector2(8, 6)
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Head" type="Sprite2D" parent="Body"]
+position = Vector2(2, -126)
+texture = ExtResource("6_head")
+offset = Vector2(2, -49)
+
+[node name="Blink" type="Sprite2D" parent="Body/Head"]
+texture = ExtResource("7_blink")
+offset = Vector2(2, -49)
+
+[node name="Torso" type="Sprite2D" parent="Body"]
+position = Vector2(0, -90)
+texture = ExtResource("5_torso")
+
+[node name="ShoulderBack" type="Marker2D" parent="Body"]
+position = Vector2(-17, -118)
+
+[node name="ShoulderFront" type="Marker2D" parent="Body"]
+position = Vector2(17, -118)
+
+[node name="HipBack" type="Marker2D" parent="Body"]
+position = Vector2(-8, -60)
+
+[node name="HipFront" type="Marker2D" parent="Body"]
+position = Vector2(8, -60)
+
+[node name="FrontArm" type="Node2D" parent="."]
+script = ExtResource("2_limb")
+fill_color = Color(0.94, 0.77, 0.61, 1)
+width = 7.0
+
+[node name="GunHand" type="Sprite2D" parent="."]
+texture = ExtResource("8_gun")
+offset = Vector2(33, -1)
+
+[node name="Muzzle" type="Marker2D" parent="GunHand"]
+position = Vector2(74, -6)
+
+[node name="Flash" type="Sprite2D" parent="GunHand/Muzzle"]
+position = Vector2(12, 0)
+texture = ExtResource("9_flash")

@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://components/fx/one_shot_particles.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://components/fx/spark.svg" id="2_spark"]
+
+[sub_resource type="Gradient" id="Gradient_spark"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.37, 0.89, 1, 1, 0.37, 0.89, 1, 0)
+
+[sub_resource type="Curve" id="Curve_shrink"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="HitSpark" type="CPUParticles2D"]
+amount = 10
+lifetime = 0.25
+explosiveness = 1.0
+texture = ExtResource("2_spark")
+direction = Vector2(-1, 0)
+spread = 70.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 260.0
+initial_velocity_max = 620.0
+damping_min = 600.0
+damping_max = 900.0
+particle_flag_align_y = true
+scale_amount_min = 0.8
+scale_amount_max = 1.5
+scale_amount_curve = SubResource("Curve_shrink")
+color_ramp = SubResource("Gradient_spark")
+script = ExtResource("1_script")

@@ -3,36 +3,25 @@
 [ext_resource type="Script" path="res://core/player/player.gd" id="1_player"]
 [ext_resource type="Script" path="res://core/player/player_input.gd" id="2_input"]
 [ext_resource type="Script" path="res://core/player/player_gun.gd" id="3_gun"]
+[ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="4_clown"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
-size = Vector2(56, 116)
+size = Vector2(54, 132)
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1_player")
+character = ExtResource("4_clown")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -58)
+position = Vector2(0, -66)
 shape = SubResource("RectangleShape2D_body")
 
 [node name="Visual" type="Node2D" parent="."]
 
-[node name="Body" type="Polygon2D" parent="Visual"]
-color = Color(0.85, 0.2, 0.2, 1)
-polygon = PackedVector2Array(-28, -116, 28, -116, 28, 0, -28, 0)
-
-[node name="Eye" type="Polygon2D" parent="Visual"]
-color = Color(0.1, 0.08, 0.06, 1)
-polygon = PackedVector2Array(8, -100, 20, -100, 20, -86, 8, -86)
-
-[node name="Hat" type="Polygon2D" parent="Visual"]
-color = Color(0.1, 0.08, 0.06, 1)
-polygon = PackedVector2Array(-34, -116, 34, -116, 34, -122, 18, -122, 18, -150, -18, -150, -18, -122, -34, -122)
-
 [node name="PlayerInput" type="Node" parent="."]
 script = ExtResource("2_input")
 
-[node name="Gun" type="Node2D" parent="."]
-position = Vector2(0, -64)
+[node name="Gun" type="Node" parent="."]
 script = ExtResource("3_gun")

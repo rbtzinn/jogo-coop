@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="30" viewBox="0 0 72 30">
+  <!-- rastro -->
+  <path d="M2 15 Q14 9 30 10 L30 20 Q14 21 2 15 Z" fill="#5fe3ff" opacity="0.45"/>
+  <!-- corpo brilhante com contorno escuro (lê bem em fundo claro e escuro) -->
+  <path d="M12 15 Q26 4 50 6 Q68 8 68 15 Q68 22 50 24 Q26 26 12 15 Z" fill="#5fe3ff" stroke="#10303a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M24 15 Q34 10 50 10.5 Q62 11.5 62 15 Q62 18.5 50 19.5 Q34 20 24 15 Z" fill="#ffffff"/>
+  <ellipse cx="54" cy="12.5" rx="5" ry="1.8" fill="#ffffff"/>
+</svg>

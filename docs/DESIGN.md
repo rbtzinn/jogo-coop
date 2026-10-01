@@ -33,6 +33,10 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 | Produção | Por partes: um chefão de cada vez |
 | Estilo visual | **Cartoon dos anos 30, recortado (cutout)**. Personagens e chefões montados em peças separadas (cabeça, tronco, membros) e animados por esqueleto (`Skeleton2D`/`Bone2D`) e tweens/`AnimationPlayer` na Godot, sem animação quadro a quadro. Shader de filme antigo por cima (grão, vinheta, leve tremido, cor desbotada). Os ataques precisam continuar bem legíveis sob o filtro |
 | Tema | **Circo assombrado**, estilo anos 30. Os dois jogadores são artistas de circo que enfrentam as atrações de um circo amaldiçoado; cada atração é um chefão (ex.: domador, palhaço, mágico) |
+| Personagens | **Jogador 1: palhaço** baixinho e redondo (roupa arlequim vermelho/creme, nariz vermelho, cartolinha com margarida). **Jogador 2: acrobata** alta e magra (collant azul-petróleo com estrelas douradas, coque). Silhuetas opostas para distinguir na hora no co-op. Os dois atiram com **pistolas de rolha**. Mesma caixa de colisão para os dois (jogabilidade idêntica) |
+| Paleta | Contorno `#1b1410`. Fundo escuro e dessaturado (vermelho `#4f1f1f`, creme `#6f5d47`, noite `#2a1f2e`) para os personagens saturados se destacarem. Tiros do jogador: **branco + ciano `#5fe3ff` com contorno escuro**, legíveis sobre qualquer fundo. Reservado para o futuro: ataques do chefão em laranja/magenta, objetos de parry em rosa `#ff5fa2` |
+| Arte | Peças em **SVG** escritas à mão pelo Claude (nítidas em qualquer resolução), montadas em cena e animadas por código (`CharacterRig`): corrida, pulo, dash, mira, recuo do tiro, aterrissagem, piscar. Braços e pernas "de mangueira" (rubber hose) desenhados por código |
+| Configurações | Menu de pausa (Esc / Start) com **Configurações** salvas em `user://settings.cfg`. **Controles:** toda ação pode ser trocada (2 teclas + 2 botões de controle por ação). **Vídeo:** qualidade gráfica (Baixa/Média/Alta), modo de tela, tamanho da janela, limite de FPS, VSync, mostrar FPS. Qualidade Baixa desliga o filtro de filme e as partículas |
 | Dependência entre jogadores | **Base Cuphead + momentos de dupla.** Cada jogador luta de forma independente, com vida própria, e pode reviver o parceiro; se os dois caírem, a luta acaba. Alguns chefões têm fases ou ataques que exigem coordenação (distrair/atacar, parry duplo com janela de tolerância), mas nem todos |
 | Mecânicas do jogador | Ver seção "Mecânicas do jogador" abaixo |
 | Hardware | Jogador 1 (desenvolve e joga no mesmo PC): **Intel UHD Graphics 630 integrada**, i5-8500T, 16 GB RAM. Jogador 2: placa de vídeo dedicada (modelo a confirmar). O PC mais fraco é a referência |
@@ -65,6 +69,8 @@ Fases de plataforma "puras" existem, mas são poucas e curtas, entre os chefões
 
 No chão, sem travar a mira, apertar para baixo não mira para baixo (reservado para agachar no futuro).
 
+Estes são os controles **padrão**; o jogador pode trocar qualquer um em Configurações > Controles.
+
 ### Contexto de rede dos jogadores
 
 - Jogador 1 em **Suape (Ipojuca-PE)**, jogador 2 em **Olinda-PE** (~50 km, mesma região metropolitana).
@@ -79,7 +85,7 @@ No chão, sem travar a mira, apertar para baixo não mira para baixo (reservado 
 ## Decisões em aberto
 
 1. ~~**Estilo visual**~~ — decidido (ver tabela acima).
-2. ~~**Tema**~~ — decidido: circo assombrado. **Ainda a detalhar** (pode ser depois da etapa 2): quem são exatamente os dois artistas, por que o circo foi amaldiçoado, como as áreas se dividem (ex.: tendas, picadeiros, trem do circo).
+2. ~~**Tema**~~ — decidido: circo assombrado. **Ainda a detalhar** (pode ser depois da etapa 2): nome dos dois artistas, por que o circo foi amaldiçoado, como as áreas se dividem (ex.: tendas, picadeiros, trem do circo).
 3. ~~**Quanto um depende do outro**~~ — decidido (ver tabela acima).
 4. ~~**Mecânicas do jogador**~~ — decidido (ver seção acima).
 5. ~~**Hardware**~~ — decidido (ver tabela acima).
@@ -89,10 +95,10 @@ No chão, sem travar a mira, apertar para baixo não mira para baixo (reservado 
 
 1. **Conceito** — fechar as decisões em aberto acima. ✔ concluída
 2. **Base jogável** — dois jogadores pulando e atirando no mesmo cenário, conectados online (host/cliente), com predição e interpolação. Controle precisa ficar gostoso aqui.
-   - **2a — Controle local**: um jogador anda, pula, dá dash e atira em 8 direções numa arena de teste. ← *estamos aqui*
+   - **2a — Controle local**: um jogador anda, pula, dá dash e atira em 8 direções numa arena de teste. Inclui (a pedido, adiantando parte da etapa 3): personagens desenhados e animados, arena de circo, filtro de filme antigo, efeitos e menu de Configurações. ← *estamos aqui*
    - **2b — Conexão**: tela de "Hospedar" / "Entrar por IP"; dois jogadores na mesma arena.
    - **2c — Rede de verdade**: predição do jogador local, interpolação do remoto, teste via Tailscale.
-3. **Visual base** — shaders, pós-processamento, "cara" do jogo.
+3. **Visual base** — shaders, pós-processamento, "cara" do jogo. (Parte já adiantada na 2a; aqui entra o refinamento.)
 4. **Primeiro chefão** completo (com todas as fases da luta), tela de vitória/derrota e save.
 5. **Primeira área**: mapa de seleção + 2–3 chefões + uma fase de plataforma.
 6. Áreas seguintes, um chefão de cada vez.
