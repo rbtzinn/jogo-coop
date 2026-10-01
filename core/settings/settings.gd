@@ -40,6 +40,8 @@ var window_size_index := 0
 var vsync := true
 var fps_limit_index := 4
 var show_fps := false
+## Teclado: a tecla de "cima" também pula (travando a mira, ela mira para cima).
+var up_jumps := true
 
 ## action -> Array de SLOT_COUNT eventos (ou null).
 var _bindings := {}
@@ -132,7 +134,7 @@ static func _same_input(a: InputEvent, b: InputEvent) -> bool:
 
 # --- Vídeo -----------------------------------------------------------------
 
-func set_video(property: StringName, value: Variant) -> void:
+func set_option(property: StringName, value: Variant) -> void:
 	set(property, value)
 	apply_video()
 	_save()
@@ -165,6 +167,7 @@ func _save() -> void:
 	file.set_value("video", "vsync", vsync)
 	file.set_value("video", "fps_limit_index", fps_limit_index)
 	file.set_value("video", "show_fps", show_fps)
+	file.set_value("controls", "up_jumps", up_jumps)
 	for action in REBINDABLE_ACTIONS:
 		var saved: Array = []
 		for event in _bindings[action]:
@@ -183,6 +186,7 @@ func _load() -> void:
 	vsync = file.get_value("video", "vsync", vsync)
 	fps_limit_index = clampi(file.get_value("video", "fps_limit_index", fps_limit_index), 0, FPS_LIMITS.size() - 1)
 	show_fps = file.get_value("video", "show_fps", show_fps)
+	up_jumps = file.get_value("controls", "up_jumps", up_jumps)
 	for action in REBINDABLE_ACTIONS:
 		var saved: Array = file.get_value("controls", action, [])
 		if saved.size() != SLOT_COUNT:

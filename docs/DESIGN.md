@@ -35,7 +35,7 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 | Tema | **Circo assombrado**, estilo anos 30. Os dois jogadores são artistas de circo que enfrentam as atrações de um circo amaldiçoado; cada atração é um chefão (ex.: domador, palhaço, mágico) |
 | Personagens | **Jogador 1: palhaço** baixinho e redondo (roupa arlequim vermelho/creme, nariz vermelho, cartolinha com margarida). **Jogador 2: acrobata** alta e magra (collant azul-petróleo com estrelas douradas, coque). Silhuetas opostas para distinguir na hora no co-op. Os dois atiram com **pistolas de rolha**. Mesma caixa de colisão para os dois (jogabilidade idêntica) |
 | Paleta | Contorno `#1b1410`. Fundo escuro e dessaturado (vermelho `#4f1f1f`, creme `#6f5d47`, noite `#2a1f2e`) para os personagens saturados se destacarem. Tiros do jogador: **branco + ciano `#5fe3ff` com contorno escuro**, legíveis sobre qualquer fundo. Reservado para o futuro: ataques do chefão em laranja/magenta, objetos de parry em rosa `#ff5fa2` |
-| Arte | Peças em **SVG** escritas à mão pelo Claude (nítidas em qualquer resolução), montadas em cena e animadas por código (`CharacterRig`): corrida, pulo, dash, mira, recuo do tiro, aterrissagem, piscar. Braços e pernas "de mangueira" (rubber hose) desenhados por código |
+| Arte | **Arte atual é provisória (mas caprichada):** o usuário pretende fazer a arte final com outra IA e só mantém a do Claude se gostar. Por isso a arte precisa ser **fácil de trocar**: cada personagem é uma cena com peças separadas (cabeça, piscar, tronco, sapatos, mãos) e pontos de encaixe (ombros, quadris, pescoço, cano da arma); a arte nova só precisa respeitar essas peças e pivôs. Hoje: peças em **SVG** escritas à mão pelo Claude (nítidas em qualquer resolução), montadas em cena e animadas por código (`CharacterRig`): corrida, pulo, dash, mira, recuo do tiro, aterrissagem, piscar. Braços e pernas "de mangueira" (rubber hose) desenhados por código |
 | Configurações | Menu de pausa (Esc / Start) com **Configurações** salvas em `user://settings.cfg`. **Controles:** toda ação pode ser trocada (2 teclas + 2 botões de controle por ação). **Vídeo:** qualidade gráfica (Baixa/Média/Alta), modo de tela, tamanho da janela, limite de FPS, VSync, mostrar FPS. Qualidade Baixa desliga o filtro de filme e as partículas |
 | Dependência entre jogadores | **Base Cuphead + momentos de dupla.** Cada jogador luta de forma independente, com vida própria, e pode reviver o parceiro; se os dois caírem, a luta acaba. Alguns chefões têm fases ou ataques que exigem coordenação (distrair/atacar, parry duplo com janela de tolerância), mas nem todos |
 | Mecânicas do jogador | Ver seção "Mecânicas do jogador" abaixo |
@@ -52,22 +52,43 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 | Dash | Avanço rápido no chão e no ar, para desviar | Etapa 2 |
 | Parry | Pular em objetos rosa no ar para quicar; enche a barra de especial | Etapa 4 (1º chefão) |
 | Golpe especial | Ataque forte que gasta a barra (enche com dano causado e parries) | Etapa 4 (1º chefão) |
-| Armas e amuletos | Tipos de tiro trocáveis e amuletos com efeitos, comprados na loja | Etapa 5 |
+| Equipamento | Pistola, Truque (dash), Adereço e Número de dupla, comprados na loja (ver "Loja e equipamento") | Etapa 5 |
 | Reviver parceiro | Ver "Dependência entre jogadores" | Etapa 4 |
 
 Fases de plataforma "puras" existem, mas são poucas e curtas, entre os chefões (a primeira na etapa 5).
+
+### Loja e equipamento (etapa 5)
+
+Ideia do usuário: comprar itens com o que se ganha vencendo chefões, numa loja do circo. Parecido com o Cuphead no espírito, mas **diferente em pontos-chave**.
+
+Cada jogador equipa **4 espaços**:
+
+| Espaço | O que é | Exemplos |
+|---|---|---|
+| Pistola | Tipo de tiro | Rolha padrão, leque de 3 rolhas, rolha teleguiada, rolha que quica |
+| Truque | **Modifica o dash** (diferencial: no Cuphead o dash não é personalizável) | **Fumaça do Mágico**: some numa nuvem e reaparece à frente, invencível, deixando um boneco de fumaça que distrai o chefão por um instante. **Bala de Canhão**: o dash causa dano. **Pirueta**: dash também na diagonal para cima |
+| Adereço | Passivo | +1 vida, parry automático no 1º objeto rosa, barra de especial enche mais rápido |
+| Número de dupla | Combo que só funciona com o parceiro (diferencial cooperativo) | **Catapulta**: dash em direção ao parceiro arremessa você. **Rolha turbinada**: tiro que atravessa o parceiro sai mais forte |
+
+**Moeda: ingressos, em quantidade limitada (sem farm).** A 1ª vitória contra cada chefão dá ingressos; melhorar a melhor nota naquele chefão (B → A → S) dá bônus; alguns ingressos ficam escondidos nas fases de plataforma. Assim o total é conhecido e a dificuldade pode ser calibrada, e revisitar chefões tem objetivo (nota melhor).
+
+**Carteira individual.** Cada jogador tem seus ingressos (os dois ganham a mesma quantidade por vitória) e pode **doar ingressos ao parceiro**. Itens comprados são de quem comprou. O save do host guarda carteira e itens de cada jogador.
+
+**Lojista: boneco de ventríloquo assombrado**, que fala sozinho (sem ventríloquo nenhum por perto), numa barraca de curiosidades no parque do circo. Tom cômico e sinistro. Nome e falas a definir (ficam em `dialogues/`).
 
 ### Controles
 
 | Ação | Teclado (layout 1) | Teclado (layout 2, estilo Cuphead) | Controle |
 |---|---|---|---|
 | Mover / mirar | WASD | Setas | Analógico esquerdo ou direcional |
-| Pular | Espaço | Z | A |
+| Pular | **Cima** (W) ou Espaço | **Cima** (Seta ↑) ou Z | A |
 | Atirar (segurar) | J | X | X |
 | Dash | K | Shift | B |
-| Travar mira (fica parado e mira em 8 direções) | L | C | RB |
+| Travar mira (fica parado e mira em 8 direções; com ela, Cima mira para cima em vez de pular) | L | C | RB |
 
 No chão, sem travar a mira, apertar para baixo não mira para baixo (reservado para agachar no futuro).
+
+**Cima pula (pedido do usuário, só no teclado).** Sem travar a mira, a tecla de cima pula e não mira; segurando "Travar mira", o boneco para e Cima volta a mirar para cima. Só um aperto novo de Cima pula (soltar a trava segurando Cima não faz pular). No teclado, mirar para cima ou na diagonal para cima exige travar a mira. Pode ser desligado em Configurações > Controles. No controle de videogame o analógico continua mirando normalmente e o pulo é o A.
 
 Estes são os controles **padrão**; o jogador pode trocar qualquer um em Configurações > Controles.
 

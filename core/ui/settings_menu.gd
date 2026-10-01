@@ -98,6 +98,13 @@ func _build_controls_tab() -> Control:
 			grid.add_child(button)
 			_binding_buttons["%s:%d" % [action, slot]] = button
 
+	var up_jumps := CheckButton.new()
+	up_jumps.text = "Tecla \"Cima\" também pula (segure Travar mira para mirar para cima)"
+	up_jumps.add_theme_font_size_override("font_size", 25)
+	up_jumps.button_pressed = Settings.up_jumps
+	up_jumps.toggled.connect(func(on: bool) -> void: Settings.set_option(&"up_jumps", on))
+	tab.add_child(up_jumps)
+
 	_hint = Label.new()
 	_hint.add_theme_font_size_override("font_size", 24)
 	tab.add_child(_hint)
@@ -200,7 +207,7 @@ func _add_option(grid: GridContainer, text: String, items: Array, selected: int,
 	for item in items:
 		option.add_item(item)
 	option.select(selected)
-	option.item_selected.connect(func(index: int) -> void: Settings.set_video(property, index))
+	option.item_selected.connect(func(index: int) -> void: Settings.set_option(property, index))
 	grid.add_child(option)
 
 
@@ -210,5 +217,5 @@ func _add_toggle(grid: GridContainer, text: String, value: bool, property: Strin
 	grid.add_child(label)
 	var toggle := CheckButton.new()
 	toggle.button_pressed = value
-	toggle.toggled.connect(func(on: bool) -> void: Settings.set_video(property, on))
+	toggle.toggled.connect(func(on: bool) -> void: Settings.set_option(property, on))
 	grid.add_child(toggle)
