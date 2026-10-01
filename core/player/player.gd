@@ -9,6 +9,8 @@ const DUST_SCENE := preload("res://components/fx/dust_puff.tscn")
 @export var character: PackedScene
 ## Para onde o personagem começa olhando (1 = direita, -1 = esquerda).
 @export var facing := 1
+## Desligado: este jogador não lê teclado/controle (fica parado ou será controlado pela rede).
+@export var controlled_locally := true
 
 @export_group("Corrida")
 @export var run_speed := 520.0
@@ -51,6 +53,7 @@ var rig: CharacterRig
 func _ready() -> void:
 	_gravity = 2.0 * jump_height / (time_to_apex * time_to_apex)
 	_jump_velocity = -2.0 * jump_height / time_to_apex
+	input.local_control = controlled_locally
 	rig = character.instantiate()
 	visual.add_child(rig)
 

@@ -1,15 +1,15 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://qm3t7xwocuup"]
 
-[ext_resource type="Script" path="res://levels/test_arena/test_arena.gd" id="1_arena"]
-[ext_resource type="Texture2D" path="res://levels/test_arena/art/tent_background.svg" id="2_bg"]
-[ext_resource type="Texture2D" path="res://levels/test_arena/art/spotlight.svg" id="3_spot"]
-[ext_resource type="Script" path="res://levels/test_arena/spotlight.gd" id="4_spot_script"]
-[ext_resource type="Texture2D" path="res://levels/test_arena/art/ring_floor.svg" id="5_floor"]
+[ext_resource type="Script" uid="uid://d1tlqp0tju731" path="res://levels/test_arena/test_arena.gd" id="1_arena"]
+[ext_resource type="Texture2D" uid="uid://dx4op5804yit3" path="res://levels/test_arena/art/tent_background.svg" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://y4xkvrxerul5" path="res://levels/test_arena/art/spotlight.svg" id="3_spot"]
+[ext_resource type="Script" uid="uid://bl0mgw05313u1" path="res://levels/test_arena/spotlight.gd" id="4_spot_script"]
+[ext_resource type="Texture2D" uid="uid://dm77p806b1fjl" path="res://levels/test_arena/art/ring_floor.svg" id="5_floor"]
 [ext_resource type="PackedScene" path="res://levels/test_arena/hanging_platform.tscn" id="6_platform"]
 [ext_resource type="PackedScene" path="res://core/player/player.tscn" id="7_player"]
 [ext_resource type="PackedScene" path="res://core/player/characters/acrobat/acrobat_rig.tscn" id="8_acrobat"]
-[ext_resource type="Script" path="res://core/debug/fps_label.gd" id="9_fps"]
-[ext_resource type="FontFile" path="res://core/ui/fonts/Oswald.ttf" id="10_font"]
+[ext_resource type="Script" uid="uid://b2hil60bub515" path="res://core/debug/fps_label.gd" id="9_fps"]
+[ext_resource type="FontFile" uid="uid://bs5ckqul72imx" path="res://core/ui/fonts/Oswald.ttf" id="10_font"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_add"]
 blend_mode = 1
@@ -20,14 +20,14 @@ size = Vector2(2000, 160)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
 size = Vector2(80, 1400)
 
-[node name="TestArena" type="Node2D"]
+[node name="TestArena" type="Node2D" unique_id=1908040265]
 script = ExtResource("1_arena")
 
-[node name="Background" type="Sprite2D" parent="."]
+[node name="Background" type="Sprite2D" parent="." unique_id=1210931782]
 position = Vector2(960, 540)
 texture = ExtResource("2_bg")
 
-[node name="SpotlightLeft" type="Sprite2D" parent="."]
+[node name="SpotlightLeft" type="Sprite2D" parent="." unique_id=1077614721]
 material = SubResource("CanvasItemMaterial_add")
 position = Vector2(560, -20)
 texture = ExtResource("3_spot")
@@ -36,7 +36,7 @@ script = ExtResource("4_spot_script")
 sway_angle = 0.14
 sway_speed = 0.13
 
-[node name="SpotlightRight" type="Sprite2D" parent="."]
+[node name="SpotlightRight" type="Sprite2D" parent="." unique_id=1927715143]
 material = SubResource("CanvasItemMaterial_add")
 position = Vector2(1360, -20)
 texture = ExtResource("3_spot")
@@ -46,52 +46,50 @@ sway_angle = 0.14
 sway_speed = 0.11
 phase = 2.0
 
-[node name="Floor" type="StaticBody2D" parent="."]
+[node name="Floor" type="StaticBody2D" parent="." unique_id=801533117]
 position = Vector2(960, 1080)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=1527211377]
 shape = SubResource("RectangleShape2D_floor")
 
-[node name="Sprite" type="Sprite2D" parent="Floor"]
+[node name="Sprite" type="Sprite2D" parent="Floor" unique_id=976847252]
 position = Vector2(0, -40)
 texture = ExtResource("5_floor")
 
-[node name="WallLeft" type="StaticBody2D" parent="."]
+[node name="WallLeft" type="StaticBody2D" parent="." unique_id=10412485]
 position = Vector2(-40, 540)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WallLeft"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallLeft" unique_id=630571928]
 shape = SubResource("RectangleShape2D_wall")
 
-[node name="WallRight" type="StaticBody2D" parent="."]
+[node name="WallRight" type="StaticBody2D" parent="." unique_id=415810335]
 position = Vector2(1960, 540)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WallRight"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallRight" unique_id=692542924]
 shape = SubResource("RectangleShape2D_wall")
 
-[node name="PlatformLeft" parent="." instance=ExtResource("6_platform")]
+[node name="PlatformLeft" parent="." unique_id=2046652665 instance=ExtResource("6_platform")]
 position = Vector2(480, 780)
 
-[node name="PlatformRight" parent="." instance=ExtResource("6_platform")]
+[node name="PlatformRight" parent="." unique_id=1031161357 instance=ExtResource("6_platform")]
 position = Vector2(1440, 780)
 
-[node name="PlatformTop" parent="." instance=ExtResource("6_platform")]
+[node name="PlatformTop" parent="." unique_id=2136059330 instance=ExtResource("6_platform")]
 position = Vector2(960, 580)
 
-[node name="Acrobat" parent="." instance=ExtResource("7_player")]
+[node name="Acrobat" parent="." unique_id=996762896 instance=ExtResource("7_player")]
 position = Vector2(1500, 1000)
 character = ExtResource("8_acrobat")
 facing = -1
+controlled_locally = false
 
-[node name="PlayerInput" parent="Acrobat"]
-local_control = false
-
-[node name="Clown" parent="." instance=ExtResource("7_player")]
+[node name="Clown" parent="." unique_id=979221537 instance=ExtResource("7_player")]
 position = Vector2(420, 1000)
 
-[node name="Hud" type="CanvasLayer" parent="."]
+[node name="Hud" type="CanvasLayer" parent="." unique_id=285887772]
 layer = 10
 
-[node name="FpsLabel" type="Label" parent="Hud"]
+[node name="FpsLabel" type="Label" parent="Hud" unique_id=1035185357]
 offset_left = 24.0
 offset_top = 12.0
 offset_right = 300.0
@@ -104,7 +102,7 @@ theme_override_font_sizes/font_size = 28
 text = "FPS: 0"
 script = ExtResource("9_fps")
 
-[node name="HintLabel" type="Label" parent="Hud"]
+[node name="HintLabel" type="Label" parent="Hud" unique_id=597165580]
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
