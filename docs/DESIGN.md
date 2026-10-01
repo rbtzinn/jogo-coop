@@ -53,6 +53,18 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 
 Fases de plataforma "puras" existem, mas são poucas e curtas, entre os chefões (a primeira na etapa 5).
 
+### Controles
+
+| Ação | Teclado (layout 1) | Teclado (layout 2, estilo Cuphead) | Controle |
+|---|---|---|---|
+| Mover / mirar | WASD | Setas | Analógico esquerdo ou direcional |
+| Pular | Espaço | Z | A |
+| Atirar (segurar) | J | X | X |
+| Dash | K | Shift | B |
+| Travar mira (fica parado e mira em 8 direções) | L | C | RB |
+
+No chão, sem travar a mira, apertar para baixo não mira para baixo (reservado para agachar no futuro).
+
 ### Contexto de rede dos jogadores
 
 - Jogador 1 em **Suape (Ipojuca-PE)**, jogador 2 em **Olinda-PE** (~50 km, mesma região metropolitana).
@@ -76,7 +88,10 @@ Fases de plataforma "puras" existem, mas são poucas e curtas, entre os chefões
 ## Roadmap
 
 1. **Conceito** — fechar as decisões em aberto acima. ✔ concluída
-2. **Base jogável** — dois jogadores pulando e atirando no mesmo cenário, conectados online (host/cliente), com predição e interpolação. Controle precisa ficar gostoso aqui. ← *estamos aqui*
+2. **Base jogável** — dois jogadores pulando e atirando no mesmo cenário, conectados online (host/cliente), com predição e interpolação. Controle precisa ficar gostoso aqui.
+   - **2a — Controle local**: um jogador anda, pula, dá dash e atira em 8 direções numa arena de teste. ← *estamos aqui*
+   - **2b — Conexão**: tela de "Hospedar" / "Entrar por IP"; dois jogadores na mesma arena.
+   - **2c — Rede de verdade**: predição do jogador local, interpolação do remoto, teste via Tailscale.
 3. **Visual base** — shaders, pós-processamento, "cara" do jogo.
 4. **Primeiro chefão** completo (com todas as fases da luta), tela de vitória/derrota e save.
 5. **Primeira área**: mapa de seleção + 2–3 chefões + uma fase de plataforma.
