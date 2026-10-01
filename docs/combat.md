@@ -9,7 +9,7 @@
 - Encostar no corpo do chefão também causa dano (exceto durante dash invencível).
 - Detecção de dano favorável a quem joga: a caixa de dano do jogador é **menor que o desenho** (já é assim) e a decisão de "fui atingido" é tomada no PC de quem joga (ver regras de rede no CLAUDE.md).
 
-## Cair e reviver: o Balão
+## Cair e reviver: o Balão (decidido)
 
 Diferente do Cuphead (fantasma), aqui quem cai **vira um balão de circo com a própria cara**, que sobe devagar.
 
@@ -23,7 +23,7 @@ Diferente do Cuphead (fantasma), aqui quem cai **vira um balão de circo com a p
 
 Objetos **rosa** (`#ff5fa2`) podem receber parry. Todo chefão tem alguns ataques rosa.
 
-- **Como fazer [a decidir]:** apertar **pular de novo no ar** encostando no objeto rosa (como no Cuphead).
+- **Como fazer (decidido):** apertar **pular de novo no ar** encostando no objeto rosa (como no Cuphead). Sem botão novo; com "Cima pula", é só apertar Cima de novo no ar.
 - Efeito: o personagem **quica para cima** (pulo extra), o objeto é destruído ou anulado e ele ganha **1 estrela de Aplauso** (ver Especial).
 - Janela generosa: a área de parry do personagem é maior que o desenho.
 - **Parry em dupla (diferencial):** se os dois jogadores derem parry no **mesmo objeto** com até **0,3 s** de diferença, sai um **"Número Perfeito"**: cada um ganha 2 estrelas, a tela dá um flash e a plateia aplaude. Alguns chefões têm objetos rosa grandes feitos para isso.

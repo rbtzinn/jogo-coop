@@ -35,7 +35,7 @@ Itens comprados são equipados no **Camarim**, que abre pelo menu de pausa **ape
 
 Começa com: **Rolha** (pistola) e **Cambalhota** (truque). Adereço e Número de dupla começam vazios.
 
-## Itens da Área 1
+## Itens da Área 1 (aprovados; preços e efeitos serão calibrados nos testes)
 
 ### Pistolas (tiro normal + Tiro EX)
 

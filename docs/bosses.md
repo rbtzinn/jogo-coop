@@ -11,9 +11,9 @@
 - Ataques determinísticos sempre que possível (o host manda "ataque X começou no tempo T").
 - Cada chefão em `bosses/<nome>/`, sem depender de outro chefão.
 
-## Área 1 — O Grande Picadeiro **[a decidir]**
+## Área 1 — O Grande Picadeiro (aprovado)
 
-Ordem sugerida: Domador (fácil) → Irmãos Malabaristas (médio) → Grande Mágico (difícil, fecha a área). Mais uma fase de plataforma: **"Corrida no Trem do Circo"** (correr e atirar em cima dos vagões em movimento).
+Ordem: Domador (fácil) → Irmãos Malabaristas (médio) → Grande Mágico (difícil, fecha a área). **Primeiro a construir (etapa 4): o Domador.** Mais uma fase de plataforma: **"Corrida no Trem do Circo"** (correr e atirar em cima dos vagões em movimento).
 
 ---
 
