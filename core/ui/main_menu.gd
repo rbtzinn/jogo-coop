@@ -133,7 +133,7 @@ func _show_main_buttons() -> void:
 
 
 func _on_host_pressed() -> void:
-	var error := Network.host()
+	var error: Error = Network.host()
 	if error != OK:
 		_status.text = "Não consegui abrir a partida (erro %d). A porta %d pode estar em uso." % [error, Network.DEFAULT_PORT]
 		return
