@@ -42,6 +42,8 @@ var fps_limit_index := 4
 var show_fps := false
 ## Teclado: a tecla de "cima" também pula (travando a mira, ela mira para cima).
 var up_jumps := true
+## Mostrar o ping até o parceiro durante a partida online.
+var show_ping := true
 ## Último IP digitado em "Entrar na partida".
 var last_join_address := "127.0.0.1"
 
@@ -171,6 +173,7 @@ func _save() -> void:
 	file.set_value("video", "show_fps", show_fps)
 	file.set_value("controls", "up_jumps", up_jumps)
 	file.set_value("network", "last_join_address", last_join_address)
+	file.set_value("network", "show_ping", show_ping)
 	for action in REBINDABLE_ACTIONS:
 		var saved: Array = []
 		for event in _bindings[action]:
@@ -191,6 +194,7 @@ func _load() -> void:
 	show_fps = file.get_value("video", "show_fps", show_fps)
 	up_jumps = file.get_value("controls", "up_jumps", up_jumps)
 	last_join_address = file.get_value("network", "last_join_address", last_join_address)
+	show_ping = file.get_value("network", "show_ping", show_ping)
 	for action in REBINDABLE_ACTIONS:
 		var saved: Array = file.get_value("controls", action, [])
 		if saved.size() != SLOT_COUNT:

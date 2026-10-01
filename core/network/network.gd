@@ -12,6 +12,17 @@ signal host_lost
 const DEFAULT_PORT := 24680
 const MAX_CLIENTS := 1
 
+## Simulador de internet ruim (só para testes): [nome, ping em ms, oscilação em ms, perda 0..1].
+## Atrasa o que CHEGA neste PC. Não é salvo: volta para "Desligado" ao abrir o jogo.
+const SIMULATIONS := [
+	["Desligado", 0, 0, 0.0],
+	["Boa (ping 40)", 40, 5, 0.0],
+	["Média (ping 80, oscilando)", 80, 20, 0.02],
+	["Ruim (ping 160, perdendo pacotes)", 160, 50, 0.06],
+]
+
+var simulation_index := 0
+
 ## Mensagem para mostrar no menu ao voltar para ele (ex.: "o host fechou a partida").
 var last_message := ""
 ## Parceiros que já carregaram a fase e podem receber o estado dos jogadores.
@@ -58,6 +69,37 @@ func leave() -> void:
 	if is_online():
 		multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
+
+
+## Entrega uma mensagem recebida, passando antes pelo simulador de internet ruim (se ligado).
+## `can_drop`: mensagens que podem se perder (estado do jogador); tiros nunca se perdem.
+func deliver(callback: Callable, can_drop: bool) -> void:
+	var simulation: Array = SIMULATIONS[simulation_index]
+	if simulation[1] == 0:
+		callback.call()
+		return
+	if can_drop and randf() < simulation[3]:
+		return
+	var delay_ms: float = simulation[1] * 0.5 + randf_range(-simulation[2], simulation[2])
+	get_tree().create_timer(maxf(delay_ms, 0.0) / 1000.0, true, false, true).timeout.connect(callback)
+
+
+## Tempo de ida e volta até o parceiro, em ms (sem contar o simulador). -1 se offline.
+func get_ping_ms() -> int:
+	var peer := multiplayer.multiplayer_peer as ENetMultiplayerPeer
+	if peer == null:
+		return -1
+	var peer_ids := multiplayer.get_peers()
+	if peer_ids.is_empty():
+		return -1
+	var connection := peer.get_peer(peer_ids[0])
+	if connection == null:
+		return -1
+	return int(connection.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME))
+
+
+func simulated_ping_ms() -> int:
+	return SIMULATIONS[simulation_index][1]
 
 
 func mark_ready(peer_id: int) -> void:

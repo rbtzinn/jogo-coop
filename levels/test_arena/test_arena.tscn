@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://core/network/player_spawner.gd" id="7_spawner"]
 [ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="11_clown"]
 [ext_resource type="Script" path="res://core/network/connection_status.gd" id="12_status"]
+[ext_resource type="Script" path="res://core/network/ping_label.gd" id="13_ping"]
 [ext_resource type="PackedScene" path="res://core/player/characters/acrobat/acrobat_rig.tscn" id="8_acrobat"]
 [ext_resource type="Script" uid="uid://b2hil60bub515" path="res://core/debug/fps_label.gd" id="9_fps"]
 [ext_resource type="FontFile" uid="uid://bs5ckqul72imx" path="res://core/ui/fonts/Oswald.ttf" id="10_font"]
@@ -141,3 +142,15 @@ theme_override_fonts/font = ExtResource("10_font")
 theme_override_font_sizes/font_size = 32
 horizontal_alignment = 1
 script = ExtResource("12_status")
+
+[node name="PingLabel" type="Label" parent="Hud"]
+offset_left = 24.0
+offset_top = 52.0
+offset_right = 600.0
+offset_bottom = 92.0
+theme_override_colors/font_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.08, 0.06, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("10_font")
+theme_override_font_sizes/font_size = 28
+script = ExtResource("13_ping")

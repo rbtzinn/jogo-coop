@@ -25,6 +25,7 @@ func _ready() -> void:
 	layout.add_child(tabs)
 	tabs.add_child(_build_controls_tab())
 	tabs.add_child(_build_video_tab())
+	tabs.add_child(_build_network_tab())
 
 	var back := Button.new()
 	back.text = "Voltar"
@@ -192,6 +193,34 @@ func _build_video_tab() -> Control:
 
 	var note := Label.new()
 	note.text = "Qualidade: Baixa desliga o filtro de filme e partículas;\nMédia usa filtro leve; Alta liga tudo."
+	note.add_theme_font_size_override("font_size", 24)
+	note.add_theme_color_override("font_color", UiTheme.CREAM.darkened(0.25))
+	grid.add_child(note)
+	return grid
+
+
+func _build_network_tab() -> Control:
+	var grid := GridContainer.new()
+	grid.name = "Rede"
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 40)
+	grid.add_theme_constant_override("v_separation", 18)
+
+	_add_toggle(grid, "Mostrar ping na partida", Settings.show_ping, &"show_ping")
+
+	var label := Label.new()
+	label.text = "Simular internet ruim (teste)"
+	grid.add_child(label)
+	var option := OptionButton.new()
+	option.custom_minimum_size = Vector2(520, 0)
+	for simulation in Network.SIMULATIONS:
+		option.add_item(simulation[0])
+	option.select(Network.simulation_index)
+	option.item_selected.connect(func(index: int) -> void: Network.simulation_index = index)
+	grid.add_child(option)
+
+	var note := Label.new()
+	note.text = "O simulador atrasa o que chega NESTE jogo, para ver no seu PC\ncomo fica jogando pela internet. Volta para \"Desligado\" ao fechar o jogo."
 	note.add_theme_font_size_override("font_size", 24)
 	note.add_theme_color_override("font_color", UiTheme.CREAM.darkened(0.25))
 	grid.add_child(note)

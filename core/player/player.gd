@@ -59,7 +59,6 @@ func _ready() -> void:
 	input.local_control = controlled_locally
 	rig = character.instantiate()
 	visual.add_child(rig)
-	sync.fire_received.connect(_on_remote_fire)
 
 
 func _physics_process(delta: float) -> void:
@@ -91,12 +90,12 @@ func _physics_process(delta: float) -> void:
 	rig.update_pose(delta, velocity, is_on_floor(), is_dashing(), Vector2(aim.x * facing, aim.y), run_speed)
 	if not is_dashing() and gun.tick(delta, aim, input.shoot_held, rig.get_muzzle_position()):
 		rig.play_fire()
-		sync.send_fire(aim, rig.get_muzzle_position())
+		sync.send_fire(aim)
 	sync.send_state(self, aim)
 
 
 func _follow_remote_state(delta: float) -> void:
-	var state := sync.latest
+	var state := sync.sample_state()
 	if state.is_empty():
 		return
 	global_position = state.position
@@ -112,11 +111,9 @@ func _follow_remote_state(delta: float) -> void:
 	_remote_dashing = state.dashing
 	var aim: Vector2 = state.aim
 	rig.update_pose(delta, velocity, state.on_floor, state.dashing, Vector2(aim.x * facing, aim.y), run_speed)
-
-
-func _on_remote_fire(aim: Vector2, muzzle_position: Vector2) -> void:
-	gun.spawn_projectile(aim, muzzle_position)
-	rig.play_fire()
+	for fire in sync.take_due_fires():
+		gun.spawn_projectile(fire.aim, rig.get_muzzle_position())
+		rig.play_fire()
 
 
 func is_dashing() -> bool:
