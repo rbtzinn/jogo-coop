@@ -1,6 +1,6 @@
 # Loja — A Barraca de Curiosidades
 
-> Proposta detalhada (parte do [DESIGN.md](DESIGN.md)). Itens marcados com **[a decidir]** ainda esperam aprovação do usuário.
+> Parte do [DESIGN.md](DESIGN.md). Aprovado pelo usuário em 01/10/2026; números (dano, tempos, preços) serão calibrados nos testes.
 
 ## O lugar e o lojista
 
