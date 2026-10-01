@@ -53,7 +53,7 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 | Mecânica | Detalhes | Entra em |
 |---|---|---|
 | Andar | Aceleração rápida, sem "patinar" | Etapa 2 |
-| Pulo | Altura variável (segurar = mais alto), coyote time, buffer de pulo | Etapa 2 |
+| Pulo | **Altura fixa** (tocar ou segurar dá o mesmo pulo, pedido do usuário), coyote time, buffer de pulo | Etapa 2 |
 | Tiro | 8 direções; botão para travar posição e só mirar | Etapa 2 |
 | Dash | Avanço rápido no chão e no ar, para desviar | Etapa 2 |
 | Parry | Pular em objetos rosa no ar para quicar; enche a barra de especial | Etapa 4 (1º chefão) |

@@ -13,7 +13,6 @@ const VERTICAL_DEADZONE := 0.5
 var move := Vector2.ZERO
 var jump_pressed := false
 var jump_held := false
-var jump_released := false
 var shoot_held := false
 var dash_pressed := false
 var lock_held := false
@@ -39,7 +38,6 @@ func clear() -> void:
 	move = Vector2.ZERO
 	jump_pressed = false
 	jump_held = false
-	jump_released = false
 	shoot_held = false
 	dash_pressed = false
 	lock_held = false
@@ -73,7 +71,6 @@ func _update_jump() -> void:
 
 	jump_held = Input.is_action_pressed("jump") or _up_is_jumping
 	jump_pressed = jump_held and not _prev_jump_held
-	jump_released = _prev_jump_held and not jump_held
 	_prev_jump_held = jump_held
 
 

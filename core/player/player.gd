@@ -1,6 +1,6 @@
 class_name Player
 extends CharacterBody2D
-## Movimento do jogador: corrida, pulo (altura variável, coyote time, buffer) e dash.
+## Movimento do jogador: corrida, pulo (altura fixa, coyote time, buffer) e dash.
 ## Lê os comandos de um PlayerInput, para que a rede possa controlar jogadores remotos depois.
 
 const DUST_SCENE := preload("res://components/fx/dust_puff.tscn")
@@ -22,8 +22,6 @@ const DUST_SCENE := preload("res://components/fx/dust_puff.tscn")
 @export var time_to_apex := 0.38
 @export var fall_gravity_multiplier := 1.4
 @export var max_fall_speed := 1500.0
-## Ao soltar o pulo subindo, a velocidade vertical é multiplicada por isto.
-@export var jump_cut_multiplier := 0.45
 ## Tempo para ainda poder pular depois de sair da beirada.
 @export var coyote_time := 0.1
 ## Tempo que um pulo apertado antes de tocar o chão fica guardado.
@@ -132,11 +130,6 @@ func _process_jump() -> void:
 		velocity.y = _jump_velocity
 		_jump_buffer_timer = 0.0
 		_coyote_timer = 0.0
-		# Toque rápido (já soltou antes do pulo sair, ex.: pelo buffer): pulo baixo.
-		if not input.jump_held:
-			velocity.y *= jump_cut_multiplier
-	elif input.jump_released and velocity.y < 0.0:
-		velocity.y *= jump_cut_multiplier
 
 
 func _process_run(delta: float) -> void:
