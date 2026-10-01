@@ -14,12 +14,13 @@ func tick(delta: float, aim: Vector2, trigger_held: bool, muzzle_position: Vecto
 	_cooldown = maxf(_cooldown - delta, 0.0)
 	if not trigger_held or _cooldown > 0.0:
 		return false
-	_fire(aim, muzzle_position)
+	spawn_projectile(aim, muzzle_position)
 	_cooldown = fire_interval
 	return true
 
 
-func _fire(aim: Vector2, muzzle_position: Vector2) -> void:
+## Também usado para mostrar os tiros do jogador remoto.
+func spawn_projectile(aim: Vector2, muzzle_position: Vector2) -> void:
 	var projectile: Projectile = PROJECTILE_SCENE.instantiate()
 	projectile.direction = aim
 	get_tree().current_scene.add_child(projectile)

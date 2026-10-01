@@ -43,20 +43,31 @@ var _air_dash_available := true
 
 var rig: CharacterRig
 
+var _remote_on_floor := true
+var _remote_dashing := false
+
 @onready var input: PlayerInput = $PlayerInput
 @onready var gun: PlayerGun = $Gun
 @onready var visual: Node2D = $Visual
+@onready var sync: PlayerSync = $PlayerSync
 
 
 func _ready() -> void:
+	add_to_group(&"players")
 	_gravity = 2.0 * jump_height / (time_to_apex * time_to_apex)
 	_jump_velocity = -2.0 * jump_height / time_to_apex
 	input.local_control = controlled_locally
 	rig = character.instantiate()
 	visual.add_child(rig)
+	sync.fire_received.connect(_on_remote_fire)
 
 
 func _physics_process(delta: float) -> void:
+	# O jogador do outro PC não é simulado aqui: só segue o que chega pela rede.
+	if not is_multiplayer_authority():
+		_follow_remote_state(delta)
+		return
+
 	input.update()
 	_update_timers(delta)
 	_update_facing()
@@ -80,6 +91,32 @@ func _physics_process(delta: float) -> void:
 	rig.update_pose(delta, velocity, is_on_floor(), is_dashing(), Vector2(aim.x * facing, aim.y), run_speed)
 	if not is_dashing() and gun.tick(delta, aim, input.shoot_held, rig.get_muzzle_position()):
 		rig.play_fire()
+		sync.send_fire(aim, rig.get_muzzle_position())
+	sync.send_state(self, aim)
+
+
+func _follow_remote_state(delta: float) -> void:
+	var state := sync.latest
+	if state.is_empty():
+		return
+	global_position = state.position
+	velocity = state.velocity
+	facing = state.facing
+	visual.scale.x = facing
+	if state.on_floor and not _remote_on_floor:
+		rig.play_land()
+		Fx.spawn(DUST_SCENE, global_position)
+	if state.dashing and not _remote_dashing:
+		Fx.spawn(DUST_SCENE, global_position + Vector2(-facing * 20.0, -30.0))
+	_remote_on_floor = state.on_floor
+	_remote_dashing = state.dashing
+	var aim: Vector2 = state.aim
+	rig.update_pose(delta, velocity, state.on_floor, state.dashing, Vector2(aim.x * facing, aim.y), run_speed)
+
+
+func _on_remote_fire(aim: Vector2, muzzle_position: Vector2) -> void:
+	gun.spawn_projectile(aim, muzzle_position)
+	rig.play_fire()
 
 
 func is_dashing() -> bool:

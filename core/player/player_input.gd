@@ -24,7 +24,7 @@ var _up_is_jumping := false
 
 
 func update() -> void:
-	if not local_control:
+	if not local_control or PauseMenu.is_open():
 		clear()
 		return
 	move = Input.get_vector("move_left", "move_right", "move_up", "move_down")

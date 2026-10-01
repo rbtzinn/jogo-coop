@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://core/player/player_input.gd" id="2_input"]
 [ext_resource type="Script" path="res://core/player/player_gun.gd" id="3_gun"]
 [ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="4_clown"]
+[ext_resource type="Script" path="res://core/network/player_sync.gd" id="5_sync"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(54, 132)
@@ -25,3 +26,6 @@ script = ExtResource("2_input")
 
 [node name="Gun" type="Node" parent="."]
 script = ExtResource("3_gun")
+
+[node name="PlayerSync" type="Node" parent="."]
+script = ExtResource("5_sync")

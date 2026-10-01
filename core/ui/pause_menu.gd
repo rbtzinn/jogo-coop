@@ -1,6 +1,9 @@
 extends CanvasLayer
-## Menu de pausa (Esc ou Start): continuar, configurações e sair.
-## Por enquanto pausa o jogo inteiro; no online (etapa 2b) a pausa não vai parar a partida.
+## Menu de pausa (Esc ou Start): continuar, configurações, voltar ao menu e sair.
+## Sozinho, congela o jogo. Online, o jogo continua rodando (não dá para pausar o parceiro);
+## só o seu personagem para de obedecer enquanto o menu está aberto.
+
+const MAIN_MENU := "res://core/ui/main_menu.tscn"
 
 var _root: Control
 var _main_panel: PanelContainer
@@ -34,6 +37,7 @@ func _ready() -> void:
 	layout.add_child(UiTheme.title_label("Pausa", 72))
 	_continue_button = _add_button(layout, "Continuar", close)
 	_add_button(layout, "Configurações", _open_settings)
+	_add_button(layout, "Voltar ao menu", _back_to_menu)
 	_add_button(layout, "Sair do jogo", func() -> void: get_tree().quit())
 
 	_settings_menu = SettingsMenu.new()
@@ -42,10 +46,12 @@ func _ready() -> void:
 	center.add_child(_settings_menu)
 
 	_root.hide()
+	Network.host_lost.connect(_back_to_menu)
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not event.is_action_pressed("pause"):
+	var scene := get_tree().current_scene
+	if not event.is_action_pressed("pause") or scene == null or scene.is_in_group(&"menu_screen"):
 		return
 	if not _root.visible:
 		open()
@@ -58,7 +64,7 @@ func open() -> void:
 	_root.show()
 	_main_panel.show()
 	_settings_menu.hide()
-	get_tree().paused = true
+	get_tree().paused = not Network.is_online()
 	_continue_button.grab_focus()
 
 
@@ -84,3 +90,13 @@ func _add_button(parent: Control, text: String, callback: Callable) -> Button:
 	button.pressed.connect(callback)
 	parent.add_child(button)
 	return button
+
+
+func is_open() -> bool:
+	return _root.visible
+
+
+func _back_to_menu() -> void:
+	close()
+	Network.leave()
+	get_tree().change_scene_to_file(MAIN_MENU)
