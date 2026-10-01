@@ -42,6 +42,8 @@ var _squash := Vector2.ONE
 
 
 func _ready() -> void:
+	# As peças são animadas 60x por segundo; só o corpo inteiro (o Player) desliza entre quadros.
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	blink.hide()
 	muzzle_flash.hide()
 	_blink_timer = randf_range(2.0, 4.5)

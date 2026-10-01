@@ -45,6 +45,7 @@ var rig: CharacterRig
 
 var _remote_on_floor := true
 var _remote_dashing := false
+var _has_remote_state := false
 
 @onready var input: PlayerInput = $PlayerInput
 @onready var gun: PlayerGun = $Gun
@@ -99,6 +100,10 @@ func _follow_remote_state(delta: float) -> void:
 	if state.is_empty():
 		return
 	global_position = state.position
+	if not _has_remote_state:
+		# Primeiro estado: aparece direto no lugar, sem "deslizar" desde o ponto de nascimento.
+		reset_physics_interpolation()
+		_has_remote_state = true
 	velocity = state.velocity
 	facing = state.facing
 	visual.scale.x = facing

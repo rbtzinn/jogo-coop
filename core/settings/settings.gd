@@ -37,7 +37,7 @@ const FPS_LIMITS: Array[int] = [30, 60, 120, 144, 0]
 var quality := Quality.HIGH
 var window_mode := WindowMode.WINDOWED
 var window_size_index := 0
-var vsync := true
+var vsync := false
 var fps_limit_index := 4
 var show_fps := false
 ## Teclado: a tecla de "cima" também pula (travando a mira, ela mira para cima).

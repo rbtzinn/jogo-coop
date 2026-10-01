@@ -12,3 +12,4 @@ static func spawn(scene: PackedScene, at: Vector2, angle := 0.0) -> void:
 	tree.current_scene.add_child(effect)
 	effect.global_position = at
 	effect.rotation = angle
+	effect.reset_physics_interpolation()

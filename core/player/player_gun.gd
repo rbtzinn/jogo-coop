@@ -25,3 +25,4 @@ func spawn_projectile(aim: Vector2, muzzle_position: Vector2) -> void:
 	projectile.direction = aim
 	get_tree().current_scene.add_child(projectile)
 	projectile.global_position = muzzle_position
+	projectile.reset_physics_interpolation()

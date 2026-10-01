@@ -46,7 +46,7 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 | Dependência entre jogadores | **Base Cuphead + momentos de dupla.** Cada jogador luta de forma independente, com vida própria, e pode reviver o parceiro; se os dois caírem, a luta acaba. Alguns chefões têm fases ou ataques que exigem coordenação (distrair/atacar, parry duplo com janela de tolerância), mas nem todos |
 | Mecânicas do jogador | Ver seção "Mecânicas do jogador" abaixo |
 | Hardware | Jogador 1 (desenvolve e joga no mesmo PC): **Intel UHD Graphics 630 integrada**, i5-8500T, 16 GB RAM. Jogador 2: placa de vídeo dedicada (modelo a confirmar). O PC mais fraco é a referência |
-| Renderizador | **Compatibility (OpenGL)** da Godot 4: roda bem em vídeo integrado e cobre tudo que o 2D precisa (shaders, pós-processamento). Meta: **60 FPS estáveis no PC do jogador 1**. Efeitos pesados (muitas partículas, blur grande) devem ter opção de desligar |
+| Renderizador | **Compatibility (OpenGL)** da Godot 4: roda bem em vídeo integrado e cobre tudo que o 2D precisa (shaders, pós-processamento). Meta: **60 FPS estáveis no PC do jogador 1**. Efeitos pesados (muitas partículas, blur grande) devem ter opção de desligar. **FPS ilimitado e VSync desligado por padrão** (pedido do usuário); limite de FPS e VSync ajustáveis em Configurações > Vídeo. Física a 60 Hz com **interpolação de física** ligada, para o movimento ficar liso em qualquer FPS |
 
 ### Mecânicas do jogador
 

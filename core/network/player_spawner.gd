@@ -52,6 +52,7 @@ func _spawn(peer_id: int, slot: int, local: bool) -> Player:
 	if slot < markers.size():
 		player.position = markers[slot].position
 	add_child(player)
+	player.reset_physics_interpolation()
 	return player
 
 
