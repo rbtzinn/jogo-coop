@@ -1,10 +1,12 @@
 #!/bin/sh
 # Roda o teste online (host + cliente sem janela) e mostra o resultado dos dois.
-# Uso (Git Bash, na pasta do projeto): sh tests/run_online.sh
+# Uso (Git Bash, na pasta do projeto): sh tests/run_online.sh [ruim]
+# "ruim" liga o simulador de internet ruim nos dois (ping 160, oscilando, perdendo pacotes).
 GODOT="${GODOT:-/c/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe}"
-"$GODOT" --headless --path . res://tests/test_online.tscn -- host > /tmp/online_host.log 2>&1 &
+NET="$1"
+"$GODOT" --headless --path . res://tests/test_online.tscn -- host $NET > /tmp/online_host.log 2>&1 &
 HOST=$!
-"$GODOT" --headless --path . res://tests/test_online.tscn -- client > /tmp/online_client.log 2>&1
+"$GODOT" --headless --path . res://tests/test_online.tscn -- client $NET > /tmp/online_client.log 2>&1
 CLIENT_CODE=$?
 wait $HOST
 HOST_CODE=$?

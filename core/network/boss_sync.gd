@@ -3,6 +3,8 @@ extends Node
 ## Rede do chefão. O host manda "ataque X começou" (com a semente) e a vida do chefão;
 ## o cliente manda o dano que os tiros dele causaram. Cada PC simula os ataques sozinho.
 ## O pai precisa ter: play_attack(name, seed, skip, args), apply_damage(amount, source), health, defeat().
+## Opcional: `phase` e catch_up(phase), para o cliente que entra no meio da luta pular direto
+## para a fase atual.
 
 ## Intervalo mínimo entre envios da vida do chefão (segundos).
 const HEALTH_SEND_INTERVAL := 0.1
@@ -11,6 +13,10 @@ var _pending_health := -1
 var _health_timer := 0.0
 
 @onready var boss: Node = get_parent()
+
+
+func _ready() -> void:
+	Network.peer_ready.connect(_on_peer_ready)
 
 
 func _physics_process(delta: float) -> void:
@@ -57,6 +63,24 @@ func _receive_damage(amount: int, source: String) -> void:
 @rpc("authority", "call_remote", "unreliable_ordered")
 func _receive_health(value: int) -> void:
 	Network.deliver(boss.health.set_current.bind(value), true)
+
+
+## Host: o parceiro acabou de carregar a fase (ou voltou no meio da luta): manda onde a luta está.
+func _on_peer_ready(peer_id: int) -> void:
+	if not Network.is_host():
+		return
+	_receive_catch_up.rpc_id(peer_id, boss.get("phase") if "phase" in boss else 0, boss.health.current)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _receive_catch_up(phase: int, health_value: int) -> void:
+	Network.deliver(_apply_catch_up.bind(phase, health_value), false)
+
+
+func _apply_catch_up(phase: int, health_value: int) -> void:
+	if boss.has_method(&"catch_up"):
+		boss.catch_up(phase)
+	boss.health.set_current(health_value)
 
 
 @rpc("authority", "call_remote", "reliable")

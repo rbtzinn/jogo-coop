@@ -1,5 +1,6 @@
 #!/bin/sh
 # Roda todos os testes sem janela. Uso (Git Bash, na pasta do projeto): sh tests/run_all.sh
+# Termina com código 0 só se tudo passar.
 GODOT="${GODOT:-/c/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe}"
 export GODOT
 FAILED=0
@@ -14,5 +15,13 @@ for scene in tests/test_*.tscn; do
 	echo "$name: $code falhas"
 	[ $code -ne 0 ] && FAILED=1
 done
-sh tests/run_online.sh | tail -1 || FAILED=1
+for net in "" ruim; do
+	if sh tests/run_online.sh $net > /tmp/online_summary.log 2>&1; then
+		echo "test_online $net: ok"
+	else
+		grep "FAIL\|SCRIPT ERROR" /tmp/online_summary.log
+		echo "test_online $net: FALHOU"
+		FAILED=1
+	fi
+done
 exit $FAILED

@@ -10,10 +10,14 @@ const FIGHT := "res://bosses/tamer/tamer_fight.tscn"
 
 var failures := 0
 var role := ""
+var _arrived := {}
 
 
 func _ready() -> void:
 	role = "host" if "host" in OS.get_cmdline_user_args() else "client"
+	# "ruim": liga o simulador de internet ruim (ping 160, oscilando, perdendo pacotes).
+	if "ruim" in OS.get_cmdline_user_args():
+		Network.simulation_index = Network.SIMULATIONS.size() - 1
 	# Este nó precisa sobreviver à troca de cena: vai para a raiz.
 	_move_to_root.call_deferred()
 
@@ -35,6 +39,33 @@ func wait(seconds: float) -> void:
 	await get_tree().create_timer(seconds).timeout
 
 
+## Ponto de encontro: espera o outro processo chegar no mesmo ponto (repete o aviso até ver o
+## do outro, para funcionar mesmo logo depois de uma reconexão).
+func meet(tag: String) -> void:
+	while not _arrived.has(tag):
+		for peer_id in multiplayer.get_peers():
+			_arrive.rpc_id(peer_id, tag)
+		await wait(0.2)
+	for peer_id in multiplayer.get_peers():
+		_arrive.rpc_id(peer_id, tag)
+	# Dá tempo do último aviso sair antes de o processo seguir (ex.: desconectar).
+	await wait(0.3)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _arrive(tag: String) -> void:
+	_arrived[tag] = true
+
+
+## Espera uma condição ficar verdadeira (até `limit` segundos).
+func until(condition: Callable, limit := 8.0) -> bool:
+	var waited := 0.0
+	while not condition.call() and waited < limit:
+		await wait(0.1)
+		waited += 0.1
+	return condition.call()
+
+
 func press_special() -> void:
 	Input.action_press("special")
 	await get_tree().physics_frame
@@ -43,7 +74,7 @@ func press_special() -> void:
 
 
 func _run() -> void:
-	get_tree().create_timer(60.0).timeout.connect(func() -> void:
+	get_tree().create_timer(110.0).timeout.connect(func() -> void:
 		print("[%s] FAIL timeout" % role)
 		get_tree().quit(99))
 	# Nunca mexe no save de verdade.
@@ -63,6 +94,7 @@ func _run() -> void:
 	var scene := get_tree().current_scene
 	var boss = scene.get_node("TamerBoss")
 	boss._wait = 100000.0
+	boss.pause_between_attacks = Vector2(100000.0, 100000.0)
 	var clown: Player = scene.get_node("PlayerSpawner/Player_1")
 	var acro: Player
 	for player: Player in get_tree().get_nodes_in_group(&"players"):
@@ -125,6 +157,7 @@ func _run() -> void:
 	check(is_equal_approx(me.applause.stars, 1.0), "perfect bonus star (%.2f)" % me.applause.stars)
 
 	# 5) Vitória: o host calcula a nota e manda; o cliente mostra a mesma.
+	await meet("victory")
 	if role == "host":
 		boss.apply_damage(boss.health.current)
 	await wait(3.5)
@@ -138,6 +171,79 @@ func _run() -> void:
 		print("[%s] result: %s" % [role, screen.result])
 		check(not String(screen.result.get("grade", "")).is_empty(), "grade shown")
 	check(SaveGame.is_defeated("tamer") == (role == "host"), "only the host saves")
+
+	# 6) "Tentar de novo": o host recarrega e o cliente vem junto.
+	await meet("reload")
+	if role == "host":
+		Network.reload_level()
+	await wait(0.5)
+	await until(func() -> bool: return get_tree().current_scene != null and not Network.ready_peers.is_empty() and get_tree().get_nodes_in_group(&"players").size() == 2)
+	scene = get_tree().current_scene
+	check(scene != null and scene.scene_file_path == FIGHT, "fight reloaded")
+	check(not Network.ready_peers.is_empty(), "ready again after reload")
+	check(get_tree().get_nodes_in_group(&"players").size() == 2, "two players after reload")
+	check(not (scene.get_node("Fight") as Fight)._ended, "new fight running")
+	boss = scene.get_node("TamerBoss")
+	boss._wait = 100000.0
+	boss.pause_between_attacks = Vector2(100000.0, 100000.0)
+
+	# 7) O cliente cai no meio da luta, o host avança duas fases, o cliente volta e alcança.
+	await meet("leave")
+	if role == "client":
+		Network.leave()
+	if role == "host":
+		check(await until(func() -> bool: return get_tree().get_nodes_in_group(&"players").size() == 1, 3.0), "partner removed on host")
+		check(not (scene.get_node("Fight") as Fight)._ended, "fight goes on alone")
+		boss.apply_damage(boss.health.current - 800)
+		await wait(3.5)
+		boss.apply_damage(boss.health.current - 300)
+		await wait(3.5)
+		boss._wait = 100000.0
+		boss.pause_between_attacks = Vector2(100000.0, 100000.0)
+		check(boss.phase == 2, "host reached phase 3")
+		await meet("back")
+		check(get_tree().get_nodes_in_group(&"players").size() == 2, "partner back on host")
+	else:
+		await wait(7.0)
+		check(Network.join("127.0.0.1:%d" % PORT) == OK, "rejoin started")
+		await Network.joined
+		get_tree().change_scene_to_file(FIGHT)
+		while Network.ready_peers.is_empty():
+			await wait(0.1)
+		await wait(1.0)
+		scene = get_tree().current_scene
+		boss = scene.get_node("TamerBoss")
+		print("[client] after rejoin: phase %d, health %d, on fire %s" % [boss.phase, boss.health.current, boss.lion.on_fire])
+		check(boss.phase == 2 and boss.lion.on_fire, "client caught up to phase 3")
+		check(boss.health.current <= 300, "client caught up boss health")
+		await meet("back")
+
+	# 8) O cliente cai (vira balão) e o host revive com parry no balão.
+	await meet("balloon")
+	scene = get_tree().current_scene
+	var players := get_tree().get_nodes_in_group(&"players")
+	me = null
+	partner = null
+	for player: Player in players:
+		if player.is_multiplayer_authority():
+			me = player
+		else:
+			partner = player
+	if role == "client":
+		me.player_health.health.damage(3)
+		me.sync.send_health(0)
+		await wait(0.3)
+		check(me.player_health.is_downed and me.balloon.visible, "client became a balloon")
+		await wait(2.0)
+		check(not me.player_health.is_downed and me.player_health.health.current == 1, "client revived with 1 HP")
+	else:
+		await wait(1.0)
+		check(partner.player_health.is_downed, "host sees partner downed")
+		partner.sync.request_revive()
+		await wait(1.5)
+		check(not partner.player_health.is_downed and partner.player_health.health.current == 1, "host sees partner revived")
+	await wait(1.0)
+
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.path))
 	await wait(1.0)
 	print("[%s] FAILURES: %d" % [role, failures])

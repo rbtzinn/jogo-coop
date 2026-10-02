@@ -8,6 +8,8 @@ signal join_failed
 signal partner_connected(peer_id: int)
 signal partner_disconnected(peer_id: int)
 signal host_lost
+## Um parceiro carregou a fase e já pode receber mensagens (também quando volta no meio da luta).
+signal peer_ready(peer_id: int)
 
 const DEFAULT_PORT := 24680
 const MAX_CLIENTS := 1
@@ -105,8 +107,22 @@ func leave() -> void:
 		_resolve_id = IP.RESOLVER_INVALID_ID
 	ready_peers.clear()
 	if is_online():
+		_say_goodbye()
 		multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
+
+
+## Avisa o outro PC na hora que estamos saindo (sem isso ele só percebe depois de vários
+## segundos sem resposta).
+func _say_goodbye() -> void:
+	var peer := multiplayer.multiplayer_peer as ENetMultiplayerPeer
+	if peer == null or peer.host == null:
+		return
+	for peer_id in multiplayer.get_peers():
+		var connection := peer.get_peer(peer_id)
+		if connection != null:
+			connection.peer_disconnect_now()
+	peer.host.flush()
 
 
 ## Entrega uma mensagem recebida, passando antes pelo simulador de internet ruim (se ligado).
@@ -158,6 +174,7 @@ func _reload_level(path: String) -> void:
 func mark_ready(peer_id: int) -> void:
 	if peer_id not in ready_peers:
 		ready_peers.append(peer_id)
+		peer_ready.emit(peer_id)
 
 
 ## Endereços deste PC para o parceiro usar. Os do Tailscale começam com "100.".

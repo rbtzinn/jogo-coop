@@ -22,11 +22,11 @@ de uso voltar. Este arquivo é o ponto de partida de cada retomada: **ler antes 
 - Prompt do Codex para parry, balão e especiais: `docs/prompts/codex_parry_balao_especiais.md`.
 - Teste online automático (host + cliente sem janela): `sh tests/run_online.sh`. Todos os testes: `sh tests/run_all.sh`.
 - 4d — Nota e save: `core/combat/fight_grade.gd`, `core/save/save_game.gd` (autoload SaveGame), cartaz com nota. Teste: `tests/test_grade_save.tscn`.
+- 4e — Acabamento online: aviso de saída na hora, parceiro que volta alcança a fase/vida do chefão, teste online com pontos de encontro (estável, também com internet ruim). `sh tests/run_all.sh` roda tudo.
 
 ## Próximos passos
 
-1. 4e — Acabamento online: revisar o que ainda não sincroniza (balão saindo da tela, troca de fase com o cliente atrasado, parceiro que cai a conexão no meio da luta, "Tentar de novo" online) e cobrir com o teste online.
-2. Etapa 5 — Primeira área (mapa de seleção, mais chefões, fase de plataforma).
+1. Etapa 5 — Primeira área (mapa de seleção, mais chefões, fase de plataforma).
 
 ## O que o usuário precisa testar na segunda
 
@@ -37,4 +37,4 @@ de uso voltar. Este arquivo é o ponto de partida de cada retomada: **ler antes 
 3. **Objetos rosa novos**: onda rosa da Chicotada (fase 1), onda rosa da Patada (fase 2), brasas rosa nos Pulos (fase 3). Pular por cima e apertar pulo de novo encostando: estoura e ganha estrela.
 4. **Online com o parceiro**: o mesmo; o Número Perfeito (os dois dando parry no mesmo objeto rosa quase juntos) dá 2 estrelas para cada um.
 5. **Configurações > Controles**: linha nova "Especial", dá para trocar a tecla.
-6. **Nota**: vencer o Domador mostra o cartaz com a nota (C/B/A/S), tempo, vida, parries, estrelas e "+3 ingressos para cada um" (só na 1ª vitória; depois só se melhorar a nota).
+. **Online**: o parceiro sair pelo menu e entrar de novo no meio da luta: ele volta vendo o chefão na fase e com a vida certas.

@@ -129,6 +129,20 @@ func phase_markers() -> Array[float]:
 	return markers
 
 
+## Cliente que entrou (ou voltou) no meio da luta: pula direto para a fase atual, sem a
+## animação de troca (o host continua mandando os ataques da fase certa).
+func catch_up(new_phase: int) -> void:
+	if new_phase <= phase or new_phase >= PHASE_SHARES.size():
+		return
+	phase = new_phase
+	if _current != null:
+		_current.cancel()
+	tamer.whip_pose = 0.0
+	tamer.flee_to(lion.home_position)
+	if phase >= 2:
+		lion.set_on_fire(true)
+
+
 ## Fim da luta. No cliente, chega pela rede.
 func defeat() -> void:
 	if is_defeated:
