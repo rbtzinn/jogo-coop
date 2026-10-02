@@ -13,6 +13,6 @@
 [resource]
 script = ExtResource("1_script")
 frames = Array[Texture2D]([ExtResource("2_frame"), ExtResource("3_frame"), ExtResource("4_frame"), ExtResource("5_frame"), ExtResource("6_frame"), ExtResource("7_frame"), ExtResource("8_frame"), ExtResource("9_frame")])
-frame_scale = 0.7768115942029
-origin = Vector2(-136.913040161133, -278.486968994141)
-shoulders = PackedVector2Array(33.2, -143.9, 21.6, -130.5, 22.1, -141.0, 32.6, -156.1, 35.0, -134.0, 26.2, -124.7, 3.5, -127.6, 34.4, -138.1)
+frame_scale = 0.76845878136201
+origin = Vector2(-104.894622802734, -272.034393310547)
+shoulders = PackedVector2Array(24.2, -166.0, 24.2, -171.2, 24.2, -171.2, 24.8, -162.0, 24.8, -161.4, 24.2, -164.8, 24.2, -167.1, 24.8, -163.7)

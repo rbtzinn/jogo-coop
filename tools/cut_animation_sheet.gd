@@ -31,9 +31,10 @@ const ANIMATIONS := [
 		"columns": 4, "rows": 2, "count": 8,
 		"out_dir": "res://core/player/characters/acrobat/run/",
 		"name": "run",
-		"ground_y": 490, "center_x": 292,
-		"cell_height": 460.0, "rig_height": 268.0,
-		"shoulder_from_nose": Vector2(-58, 80),
+		# Folha arrumada por tools/normalize_sheet.gd (chão em 486, nariz em x = 400).
+		"ground_y": 486, "center_x": 313,
+		"cell_height": 465.0, "rig_height": 268.0,
+		"shoulder_from_nose": Vector2(-45, 55),
 	},
 ]
 

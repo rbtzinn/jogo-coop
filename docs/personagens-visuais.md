@@ -64,3 +64,14 @@ de cada quadro, então a mira em 8 direções e o recuo do tiro funcionam igual.
 Para as próximas folhas, pedir também: **o braço livre sempre atrás do corpo** (na corrida atual
 ele às vezes passa na frente do peito, ao lado da mão com a arma) e **a mesma escala e linha do
 chão** da folha da corrida.
+
+### Folha que não respeitou a grade
+
+Se a IA entregar a folha em outro tamanho ou com os personagens encostando nas bordas / com o
+chão em alturas diferentes (aconteceu com a 2ª corrida da acrobata), `tools/normalize_sheet.gd`
+separa cada personagem pelo contorno (a partir do nariz vermelho), iguala a escala e remonta a
+grade 4 × 2 de 512 px com o chão em y = 486 e o nariz em x = 400:
+
+```
+Godot --headless --script res://tools/normalize_sheet.gd -- <entrada.png> <saída.png> [altura]
+```
