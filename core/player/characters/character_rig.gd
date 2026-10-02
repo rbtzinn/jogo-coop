@@ -15,6 +15,10 @@ extends Node2D
 @export var steps_per_second := 3.4
 @export var bob_height := 5.0
 
+@export_group("Pose")
+## Parado no chão, a mão de trás fica na cintura (como a acrobata da referência).
+@export var hand_on_hip_when_idle := false
+
 var _phase := 0.0
 var _time := 0.0
 var _recoil := 0.0
@@ -116,20 +120,22 @@ func _update_legs(velocity: Vector2, on_floor: bool, dashing: bool, running: boo
 	var shoe_tilt_b := 0.0
 	var shoe_tilt_f := 0.0
 
+	# Poses no ar medidas em "pernas": funcionam para perna curta (palhaço) e longa (acrobata).
+	var leg := maxf(_leg_length(), 24.0)
 	if dashing:
-		foot_f = hip_f + Vector2(-8, 22)
-		foot_b = hip_b + Vector2(-26, 14)
+		foot_f = hip_f + Vector2(-0.3, 0.8) * leg
+		foot_b = hip_b + Vector2(-0.9, 0.5) * leg
 		shoe_tilt_f = 0.5
 		shoe_tilt_b = 0.8
 	elif not on_floor:
 		if velocity.y < 0.0:
-			foot_f = hip_f + Vector2(12, 18)
-			foot_b = hip_b + Vector2(-6, 14)
+			foot_f = hip_f + Vector2(0.45, 0.65) * leg
+			foot_b = hip_b + Vector2(-0.2, 0.5) * leg
 			shoe_tilt_f = -0.3
 			shoe_tilt_b = 0.4
 		else:
-			foot_f = hip_f + Vector2(8, 28)
-			foot_b = hip_b + Vector2(-12, 22)
+			foot_f = hip_f + Vector2(0.3, 0.95) * leg
+			foot_b = hip_b + Vector2(-0.4, 0.8) * leg
 			shoe_tilt_f = 0.25
 			shoe_tilt_b = 0.35
 	elif running:
@@ -148,9 +154,13 @@ func _update_legs(velocity: Vector2, on_floor: bool, dashing: bool, running: boo
 
 ## Quanto mais a perna encolhe, mais o joelho dobra para a frente.
 func _knee_bend(hip: Vector2, foot: Vector2) -> Vector2:
-	var rest_length := hip_front.position.y * -1.0 - ankle_height
+	var rest_length := _leg_length()
 	var squeeze := maxf(0.0, rest_length - hip.distance_to(foot))
 	return Vector2(3.0 + squeeze * 0.9, 0.0)
+
+
+func _leg_length() -> float:
+	return -hip_front.position.y - ankle_height
 
 
 func _update_arms(delta: float, on_floor: bool, dashing: bool, running: bool, aim: Vector2) -> void:
@@ -175,7 +185,11 @@ func _update_arms(delta: float, on_floor: bool, dashing: bool, running: bool, ai
 		hand_b = shoulder_b + Vector2(-sin(_phase) * 14.0 - 2.0, arm_length * 0.85)
 	else:
 		hand_b = shoulder_b + Vector2(-4, arm_length * 0.9)
-	back_arm.set_points(shoulder_b, hand_b, Vector2(-5, 0))
+	var back_bend := Vector2(-5, 0)
+	if hand_on_hip_when_idle and on_floor and not running and not dashing:
+		hand_b = to_local(hip_back.global_position) + Vector2(-6, -10)
+		back_bend = Vector2(-arm_length * 0.55, -4)
+	back_arm.set_points(shoulder_b, hand_b, back_bend)
 	back_hand.position = hand_b
 
 

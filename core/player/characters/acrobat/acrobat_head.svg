@@ -1,43 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="100" height="110" viewBox="0 0 100 110">
   <defs>
-    <clipPath id="face"><circle cx="54" cy="64" r="26"/></clipPath>
+    <clipPath id="face"><circle cx="55" cy="64" r="25"/></clipPath>
   </defs>
   <!-- pescoço -->
-  <rect x="42" y="84" width="13" height="24" rx="4" fill="#d9a77e" stroke="#1b1410" stroke-width="4"/>
+  <rect x="42" y="82" width="12" height="26" rx="4" fill="#e7c3a0" stroke="#1b1410" stroke-width="4"/>
+  <!-- cabelo atrás (chanel) -->
+  <path d="M34 34 C18 42 18 72 30 90 Q38 94 44 88 L46 46 Z" fill="#17131a" stroke="#1b1410" stroke-width="4" stroke-linejoin="round"/>
   <!-- coque -->
-  <circle cx="34" cy="24" r="16" fill="#4a2a1a" stroke="#1b1410" stroke-width="4"/>
-  <path d="M24 18 Q34 10 44 18 M24 28 Q34 22 44 30" fill="none" stroke="#6e4430" stroke-width="3" stroke-linecap="round"/>
-  <!-- cabelo atrás da cabeça -->
-  <path d="M30 76 C18 64 18 40 34 32 C48 24 70 28 80 44 L60 50 Z" fill="#4a2a1a" stroke="#1b1410" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="37" cy="20" r="17" fill="#17131a" stroke="#1b1410" stroke-width="4"/>
+  <path d="M27 14 Q36 7 45 13 M26 24 Q35 19 46 25" fill="none" stroke="#4a4057" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- tiara dourada -->
+  <path d="M42 15 L45 5 L49 12 L53 3 L56 12 L60 6 L61 17 Q51 20 42 15 Z" fill="#e0ad3c" stroke="#1b1410" stroke-width="2.2" stroke-linejoin="round"/>
+  <circle cx="53" cy="13" r="2" fill="#d8352a"/>
+  <circle cx="45" cy="5" r="1.6" fill="#fff3c4"/>
+  <circle cx="53" cy="3" r="1.6" fill="#fff3c4"/>
+  <circle cx="60" cy="6" r="1.6" fill="#fff3c4"/>
   <!-- rosto -->
-  <circle cx="54" cy="64" r="26" fill="#d9a77e"/>
+  <circle cx="55" cy="64" r="25" fill="#e8c4a2"/>
   <g clip-path="url(#face)">
-    <circle cx="59" cy="59" r="25" fill="#f0c49c"/>
+    <circle cx="60" cy="59" r="24" fill="#f6dcc0"/>
   </g>
-  <circle cx="54" cy="64" r="26" fill="none" stroke="#1b1410" stroke-width="4"/>
+  <circle cx="55" cy="64" r="25" fill="none" stroke="#1b1410" stroke-width="4"/>
   <!-- franja -->
-  <path d="M30 60 C28 40 46 30 64 34 C76 36 82 44 82 52 C72 44 60 46 52 52 C46 46 38 50 34 62 Z" fill="#4a2a1a" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
-  <path d="M46 40 Q58 36 70 40" fill="none" stroke="#6e4430" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- orelha e brinco -->
-  <path d="M33 62 C26 60 26 72 33 73" fill="#f0c49c" stroke="#1b1410" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="31" cy="78" r="3.2" fill="#f2c230" stroke="#1b1410" stroke-width="1.8"/>
+  <path d="M31 62 C27 40 46 30 64 34 C77 37 83 45 82 54 C73 45 61 45 54 52 C49 45 40 48 36 63 Z" fill="#17131a" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M46 39 Q58 35 71 40" fill="none" stroke="#4a4057" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- orelha e brinco de estrela -->
+  <path d="M34 62 C27 60 27 72 34 73" fill="#f6dcc0" stroke="#1b1410" stroke-width="3" stroke-linecap="round"/>
+  <path d="M31 75 L32.8 79 L37 79.4 L33.8 82.2 L34.8 86.4 L31 84.2 L27.2 86.4 L28.2 82.2 L25 79.4 L29.2 79 Z" fill="#e0ad3c" stroke="#1b1410" stroke-width="1.8" stroke-linejoin="round"/>
   <!-- bochecha -->
-  <circle cx="57" cy="76" r="5.5" fill="#e8746a" opacity="0.7"/>
-  <!-- sobrancelhas -->
-  <path d="M57 50 Q62 47 67 50 M72 49 Q77 46 81 49" fill="none" stroke="#1b1410" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- olhos -->
-  <ellipse cx="63" cy="62" rx="6.5" ry="9.5" fill="#ffffff" stroke="#1b1410" stroke-width="3"/>
-  <ellipse cx="77" cy="61" rx="5.5" ry="9" fill="#ffffff" stroke="#1b1410" stroke-width="3"/>
-  <ellipse cx="65" cy="63.5" rx="3.6" ry="6.5" fill="#1b1410"/>
-  <ellipse cx="78.6" cy="62.5" rx="3.2" ry="6" fill="#1b1410"/>
-  <path d="M65 63.5 L67.6 58 L68.2 61.5 Z" fill="#ffffff"/>
-  <path d="M78.6 62.5 L80.8 57.5 L81.4 60.5 Z" fill="#ffffff"/>
-  <!-- cílios -->
-  <path d="M68 54 L72 50 M70 57 L74.5 54.5 M81 53 L84.5 49.5 M82 56.5 L86 54.5" stroke="#1b1410" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- nariz -->
-  <path d="M83 66 Q89 70 83 72.5" fill="none" stroke="#1b1410" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="60" cy="76" r="5.5" fill="#ef8a7c" opacity="0.7"/>
+  <!-- sobrancelhas finas -->
+  <path d="M58 49 Q63 45.5 68 48.5 M73 48 Q78 45 82 48" fill="none" stroke="#1b1410" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- olhos com cílios -->
+  <ellipse cx="64" cy="62" rx="7" ry="10" fill="#ffffff" stroke="#1b1410" stroke-width="3"/>
+  <ellipse cx="79" cy="61" rx="6" ry="9.5" fill="#ffffff" stroke="#1b1410" stroke-width="3"/>
+  <ellipse cx="66.6" cy="64" rx="4" ry="7" fill="#1b1410"/>
+  <ellipse cx="81" cy="63" rx="3.6" ry="6.5" fill="#1b1410"/>
+  <path d="M66.6 64 L69.4 58.2 L70 61.8 Z" fill="#ffffff"/>
+  <path d="M81 63 L83.4 57.8 L84 61 Z" fill="#ffffff"/>
+  <path d="M69 53 L73 49 M71 56.5 L75.5 54 M83 52.5 L86.5 49 M84 56 L88 54" stroke="#1b1410" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- narizinho vermelho -->
+  <circle cx="88.5" cy="70" r="2.8" fill="#d8352a" stroke="#1b1410" stroke-width="1.5"/>
   <!-- boca -->
-  <path d="M68 79 Q71 76 74 79 Q77 76 80 79 Q76 86 74 86 Q71 86 68 79 Z" fill="#c8231c" stroke="#1b1410" stroke-width="2.5" stroke-linejoin="round"/>
-  <!-- presilha de estrela no coque -->
-  <path d="M46 14 L48.4 19.2 L54 19.6 L49.7 23.2 L51 28.6 L46 25.6 L41 28.6 L42.3 23.2 L38 19.6 L43.6 19.2 Z" fill="#f2c230" stroke="#1b1410" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M70 79 Q76 84.5 83 79 Q78 88 70 79 Z" fill="#c8231c" stroke="#1b1410" stroke-width="2.4" stroke-linejoin="round"/>
 </svg>

@@ -11,50 +11,54 @@
 [ext_resource type="Texture2D" path="res://core/player/characters/shared/muzzle_flash.svg" id="9_flash"]
 
 [node name="AcrobatRig" type="Node2D"]
-scale = Vector2(0.92, 0.92)
+scale = Vector2(0.9, 0.9)
 script = ExtResource("1_rig")
-arm_length = 38.0
-ankle_height = 7.0
-stride = 22.0
-step_lift = 14.0
-steps_per_second = 3.0
+arm_length = 44.0
+ankle_height = 31.0
+stride = 26.0
+step_lift = 16.0
+steps_per_second = 2.8
 bob_height = 4.0
+hand_on_hip_when_idle = true
 
 [node name="BackArm" type="Node2D" parent="."]
-self_modulate = Color(0.75, 0.72, 0.7, 1)
+self_modulate = Color(0.8, 0.76, 0.74, 1)
 script = ExtResource("2_limb")
-fill_color = Color(0.94, 0.77, 0.61, 1)
-width = 7.0
+fill_color = Color(0.965, 0.863, 0.753, 1)
+width = 8.0
+taper = 0.8
 
 [node name="BackHand" type="Sprite2D" parent="."]
-modulate = Color(0.82, 0.8, 0.78, 1)
+modulate = Color(0.85, 0.82, 0.8, 1)
 scale = Vector2(0.9, 0.9)
 texture = ExtResource("3_fist")
 
 [node name="BackLeg" type="Node2D" parent="."]
-self_modulate = Color(0.78, 0.76, 0.74, 1)
+self_modulate = Color(0.82, 0.8, 0.78, 1)
 script = ExtResource("2_limb")
-fill_color = Color(0.96, 0.92, 0.85, 1)
-width = 9.0
+fill_color = Color(0.96, 0.92, 0.84, 1)
+width = 18.0
+taper = 0.42
 
 [node name="BackShoe" type="Sprite2D" parent="."]
-modulate = Color(0.78, 0.76, 0.74, 1)
+modulate = Color(0.8, 0.78, 0.76, 1)
 texture = ExtResource("4_shoe")
-offset = Vector2(8, 6)
+offset = Vector2(8, 12)
 
 [node name="FrontLeg" type="Node2D" parent="."]
 script = ExtResource("2_limb")
-fill_color = Color(0.96, 0.92, 0.85, 1)
-width = 9.0
+fill_color = Color(0.96, 0.92, 0.84, 1)
+width = 18.0
+taper = 0.42
 
 [node name="FrontShoe" type="Sprite2D" parent="."]
 texture = ExtResource("4_shoe")
-offset = Vector2(8, 6)
+offset = Vector2(8, 12)
 
 [node name="Body" type="Node2D" parent="."]
 
 [node name="Head" type="Sprite2D" parent="Body"]
-position = Vector2(2, -126)
+position = Vector2(2, -150)
 texture = ExtResource("6_head")
 offset = Vector2(2, -49)
 
@@ -63,32 +67,33 @@ texture = ExtResource("7_blink")
 offset = Vector2(2, -49)
 
 [node name="Torso" type="Sprite2D" parent="Body"]
-position = Vector2(0, -90)
+position = Vector2(0, -129)
 texture = ExtResource("5_torso")
 
 [node name="ShoulderBack" type="Marker2D" parent="Body"]
-position = Vector2(-17, -118)
+position = Vector2(-21, -154)
 
 [node name="ShoulderFront" type="Marker2D" parent="Body"]
-position = Vector2(17, -118)
+position = Vector2(21, -154)
 
 [node name="HipBack" type="Marker2D" parent="Body"]
-position = Vector2(-8, -60)
+position = Vector2(-10, -104)
 
 [node name="HipFront" type="Marker2D" parent="Body"]
-position = Vector2(8, -60)
+position = Vector2(10, -104)
 
 [node name="FrontArm" type="Node2D" parent="."]
 script = ExtResource("2_limb")
-fill_color = Color(0.94, 0.77, 0.61, 1)
-width = 7.0
+fill_color = Color(0.965, 0.863, 0.753, 1)
+width = 8.0
+taper = 0.8
 
 [node name="GunHand" type="Sprite2D" parent="."]
 texture = ExtResource("8_gun")
-offset = Vector2(33, -1)
+offset = Vector2(38, -1)
 
 [node name="Muzzle" type="Marker2D" parent="GunHand"]
-position = Vector2(74, -6)
+position = Vector2(85, -3)
 
 [node name="Flash" type="Sprite2D" parent="GunHand/Muzzle"]
 position = Vector2(12, 0)
