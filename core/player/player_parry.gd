@@ -83,6 +83,7 @@ func _succeed(target: Area2D) -> void:
 	_grace = GRACE
 	_spin = SPIN_TIME
 	_player.applause.add_stars(1.0)
+	_player.applause.parries += 1
 	ParryFlash.spawn(_area.global_position)
 	if target is BalloonArea:
 		(target as BalloonArea).player.sync.request_revive()

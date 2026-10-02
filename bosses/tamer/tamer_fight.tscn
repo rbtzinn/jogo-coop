@@ -116,6 +116,8 @@ position = Vector2(560, 1000)
 [node name="Fight" type="Node" parent="."]
 script = ExtResource("11_fight")
 boss_path = NodePath("../TamerBoss")
+boss_id = "tamer"
+target_time = 150.0
 
 [node name="SoloCharacterSwitch" type="Node" parent="."]
 script = ExtResource("99_switch")

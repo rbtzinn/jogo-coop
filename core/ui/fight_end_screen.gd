@@ -2,10 +2,13 @@ extends CanvasLayer
 ## Tela de fim de luta em forma de cartaz de circo (papel creme, borda vermelha, lâmpadas
 ## correndo em volta): vitória ou derrota, com "Tentar de novo" e "Voltar ao menu".
 ## Online, só o host pode recomeçar (o cliente recomeça junto).
+## Na vitória mostra a nota da dupla (FightGrade) e os ingressos ganhos (SaveGame).
 
 const MAIN_MENU := "res://core/ui/main_menu.tscn"
 
 var victory := false
+## Nota e recompensas (Fight._victory_result); vazio na derrota.
+var result := {}
 
 var _panel: PanelContainer
 var _marquee: MarqueeLights
@@ -67,6 +70,8 @@ func _ready() -> void:
 	subtitle.add_theme_color_override("font_color", UiTheme.INK)
 	subtitle.add_theme_font_size_override("font_size", 30)
 	layout.add_child(subtitle)
+	if victory and not result.is_empty():
+		layout.add_child(_build_grade(result))
 
 	var first: Button
 	if not Network.is_online() or Network.is_host():
@@ -104,3 +109,50 @@ func _add_button(parent: Control, text: String, callback: Callable) -> Button:
 func _back_to_menu() -> void:
 	Network.leave()
 	get_tree().change_scene_to_file(MAIN_MENU)
+
+
+## Nota grande carimbada ao lado do placar (tempo, vida, parries, estrelas) e dos ingressos.
+func _build_grade(data: Dictionary) -> Control:
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 48)
+	var grade := Label.new()
+	grade.text = String(data.get("grade", "C"))
+	grade.add_theme_font_override("font", UiTheme.TITLE_FONT)
+	grade.add_theme_font_size_override("font_size", 150)
+	grade.add_theme_color_override("font_color", UiTheme.GOLD if grade.text == "S" else UiTheme.RED)
+	grade.add_theme_color_override("font_outline_color", UiTheme.INK)
+	grade.add_theme_constant_override("outline_size", 14)
+	grade.pivot_offset = Vector2(60, 90)
+	grade.rotation = -0.12
+	row.add_child(grade)
+	# O carimbo bate depois do cartaz abrir.
+	grade.scale = Vector2(2.5, 2.5)
+	grade.modulate.a = 0.0
+	var tween := grade.create_tween()
+	tween.tween_interval(0.5)
+	tween.tween_property(grade, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(grade, "modulate:a", 1.0, 0.15)
+
+	var stats := VBoxContainer.new()
+	stats.add_theme_constant_override("separation", 2)
+	row.add_child(stats)
+	var time: float = data.get("time", 0.0)
+	var lines := [
+		"Tempo: %d:%02d%s" % [int(time) / 60, int(time) % 60, "  (recorde!)" if data.get("best_time", false) and not data.get("first_win", false) else ""],
+		"Vida restante: %d de %d" % [data.get("health", 0), data.get("max_health", 0)],
+		"Parries: %d de %d" % [mini(data.get("parries", 0), FightGrade.MAX_PARRIES), FightGrade.MAX_PARRIES],
+		"Estrelas usadas: %d de %d" % [mini(data.get("stars_used", 0), FightGrade.MAX_STARS), FightGrade.MAX_STARS],
+	]
+	var tickets: int = data.get("tickets", 0)
+	if tickets > 0:
+		lines.append("+%d %s para cada um!" % [tickets, "ingresso" if tickets == 1 else "ingressos"])
+	elif data.get("best_grade", false):
+		lines.append("Nova melhor nota!")
+	for text in lines:
+		var label := Label.new()
+		label.text = text
+		label.add_theme_color_override("font_color", UiTheme.RED_DARK if text.begins_with("+") else UiTheme.INK)
+		label.add_theme_font_size_override("font_size", 28)
+		stats.add_child(label)
+	return row

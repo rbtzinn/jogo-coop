@@ -196,6 +196,8 @@ func _follow_remote_state(delta: float) -> void:
 	parry.tick(delta, false, false)
 	special.remote_tick(delta)
 	applause.stars = state.get("stars", applause.stars)
+	applause.parries = state.get("parries", applause.parries)
+	applause.stars_used = state.get("stars_used", applause.stars_used)
 	if player_health.is_downed and global_position.y < BALLOON_OUT_Y:
 		player_health.mark_out()
 	var aim := special.pose_aim(state.aim)

@@ -3,6 +3,8 @@
 GODOT="${GODOT:-/c/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe}"
 export GODOT
 FAILED=0
+# Atualiza o cache de classes (scripts novos com class_name).
+"$GODOT" --headless --path . --import > /dev/null 2>&1
 for scene in tests/test_*.tscn; do
 	name=$(basename "$scene" .tscn)
 	[ "$name" = "test_online" ] && continue

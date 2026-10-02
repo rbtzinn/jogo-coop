@@ -77,6 +77,17 @@ Ao vencer, aparece um cartaz de circo com a nota de cada luta (da dupla):
 
 Notas: **C, B, A, S**. Melhorar a melhor nota de um chefão dá ingressos de bônus (ver [shop.md](shop.md)).
 
+**Como ficou no jogo (03/10/2026, decidido pelo Claude, revisar; números a calibrar):** 100 pontos no total.
+
+| Critério | Pontos |
+|---|---|
+| Tempo | 40 até o tempo-alvo do chefão (Domador: 2:30), caindo até 0 no dobro do tempo |
+| Vida restante (somando os dois; caído conta 0) | 30, proporcional (6 de 6 = 30) |
+| Parries (dos dois, inclui reviver e Número Perfeito) | 5 cada, até 3 |
+| Estrelas usadas (dos dois) | 2,5 cada, até 6 |
+
+Nota: **S** a partir de 90, **A** a partir de 75, **B** a partir de 55, senão **C**. O cartaz de vitória carimba a nota e mostra tempo, vida, parries, estrelas e os ingressos ganhos. Online, quem calcula é o host e o cliente recebe o mesmo cartaz.
+
 ## Dificuldade
 
 - Os chefões são balanceados **sempre para 2 jogadores** (não existe modo solo por enquanto).

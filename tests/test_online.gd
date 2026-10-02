@@ -43,9 +43,12 @@ func press_special() -> void:
 
 
 func _run() -> void:
-	get_tree().create_timer(40.0).timeout.connect(func() -> void:
+	get_tree().create_timer(60.0).timeout.connect(func() -> void:
 		print("[%s] FAIL timeout" % role)
 		get_tree().quit(99))
+	# Nunca mexe no save de verdade.
+	SaveGame.path = "user://test_save_%s.json" % role
+	SaveGame.reset()
 	if role == "host":
 		check(Network.host(PORT) == OK, "host opened")
 		get_tree().change_scene_to_file(FIGHT)
@@ -121,6 +124,21 @@ func _run() -> void:
 	await wait(1.0)
 	check(is_equal_approx(me.applause.stars, 1.0), "perfect bonus star (%.2f)" % me.applause.stars)
 
+	# 5) Vitória: o host calcula a nota e manda; o cliente mostra a mesma.
+	if role == "host":
+		boss.apply_damage(boss.health.current)
+	await wait(3.5)
+	var fight: Fight = scene.get_node("Fight")
+	var screen: Node
+	for child in fight.get_children():
+		if child.get_script() == Fight.END_SCREEN:
+			screen = child
+	check(screen != null and screen.victory, "victory screen")
+	if screen != null:
+		print("[%s] result: %s" % [role, screen.result])
+		check(not String(screen.result.get("grade", "")).is_empty(), "grade shown")
+	check(SaveGame.is_defeated("tamer") == (role == "host"), "only the host saves")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.path))
 	await wait(1.0)
 	print("[%s] FAILURES: %d" % [role, failures])
 	get_tree().quit(failures)
