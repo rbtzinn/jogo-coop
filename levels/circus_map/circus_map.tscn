@@ -49,6 +49,7 @@ level_id = "tamer"
 position = Vector2(700, 1000)
 script = ExtResource("2_door")
 title = "Os Malabaristas"
+target_scene = "res://bosses/jugglers/jugglers_fight.tscn"
 level_id = "jugglers"
 stripe_color = Color(0.18, 0.36, 0.54, 1)
 

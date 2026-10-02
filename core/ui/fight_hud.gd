@@ -110,6 +110,8 @@ func _draw_boss_marquee() -> void:
 	draw_rect(fill, Color("c8302c"))
 	_draw_candy_stripes(fill)
 	draw_rect(Rect2(fill.position, Vector2(fill.size.x, 6)), Color(1, 1, 1, 0.2))
+	if _boss.has_method("sub_bars"):
+		_draw_sub_bars(panel, _boss.sub_bars())
 	if _boss.has_method("phase_markers"):
 		for marker: float in _boss.phase_markers():
 			var passed := marker in _passed_markers
@@ -117,6 +119,26 @@ func _draw_boss_marquee() -> void:
 			var at := Vector2(bar.position.x + bar.size.x * marker, bar.get_center().y)
 			draw_line(at + Vector2(0, -bar.size.y * 0.5), at + Vector2(0, bar.size.y * 0.5), UiTheme.INK, 4.0)
 			_draw_star(at, 15.0 + pop * 14.0, Color("6b5a40") if passed and pop <= 0.0 else UiTheme.GOLD)
+
+
+## Chefões com várias vidas (ex.: os Irmãos Malabaristas): uma barra pequena para cada um,
+## embaixo do letreiro. Cada item: [nome, vida de 0 a 1, tonto?].
+func _draw_sub_bars(panel: Rect2, bars: Array) -> void:
+	var font := UiTheme.BODY_FONT
+	var width := panel.size.x * 0.5 - 30.0
+	for i in bars.size():
+		var entry: Array = bars[i]
+		var origin := Vector2(panel.position.x + 10.0 + i * (width + 40.0), panel.end.y + 14.0)
+		var label: String = entry[0]
+		if entry[2] and fmod(_time, 0.5) < 0.35:
+			label += "  (tonto!)"
+		draw_string_outline(font, origin + Vector2(0, 22), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, 6, UiTheme.INK)
+		draw_string(font, origin + Vector2(0, 22), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 22,
+				UiTheme.GOLD if entry[2] else UiTheme.CREAM)
+		var bar := Rect2(origin + Vector2(0, 30), Vector2(width, 12))
+		draw_rect(bar.grow(3), UiTheme.INK)
+		draw_rect(bar, UiTheme.NIGHT)
+		draw_rect(Rect2(bar.position, Vector2(bar.size.x * clampf(entry[1], 0.0, 1.0), bar.size.y)), Color("c8302c"))
 
 
 func _draw_candy_stripes(fill: Rect2) -> void:

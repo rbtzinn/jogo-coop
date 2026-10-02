@@ -6,6 +6,7 @@ extends Node
 
 const FIGHTS := [
 	"res://bosses/tamer/tamer_fight.tscn",
+	"res://bosses/jugglers/jugglers_fight.tscn",
 ]
 ## Tempo de jogo em cada fase (segundos).
 const SECONDS_PER_PHASE := 45.0
@@ -51,8 +52,12 @@ func _smoke(path: String) -> void:
 			if boss._current != null:
 				seen[boss._current.name] = true
 		# Próxima fase (ou vitória na última).
-		var target := boss.phase_end_health()
-		boss.apply_damage(boss.health.current - target)
+		# Chefões com várias vidas (sub_bars) levam o dano em cada parte.
+		var parts: Array = [""]
+		if boss.has_method(&"sub_bars"):
+			parts = boss.sub_bars().map(func(entry: Array) -> String: return entry[0])
+		for part: String in parts:
+			boss.apply_damage(boss.health.current - boss.phase_end_health() if part.is_empty() else boss.health.current, "", part)
 		await get_tree().create_timer(0.1).timeout
 	var expected := {}
 	for list: Array in boss.phase_attacks:

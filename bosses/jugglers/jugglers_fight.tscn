@@ -1,0 +1,165 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://components/stage/art/tent_background_painted.png" id="1_bg"]
+[ext_resource type="Texture2D" path="res://components/stage/art/spotlight.svg" id="2_spot"]
+[ext_resource type="Script" path="res://components/stage/spotlight.gd" id="3_spot_script"]
+[ext_resource type="Texture2D" path="res://components/stage/art/ring_floor.svg" id="4_floor"]
+[ext_resource type="PackedScene" path="res://components/stage/hanging_platform.tscn" id="5_platform"]
+[ext_resource type="PackedScene" path="res://bosses/jugglers/jugglers_boss.tscn" id="7_boss"]
+[ext_resource type="Script" path="res://core/network/player_spawner.gd" id="8_spawner"]
+[ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="9_clown"]
+[ext_resource type="PackedScene" path="res://core/player/characters/acrobat/acrobat_rig.tscn" id="10_acrobat"]
+[ext_resource type="Script" path="res://core/combat/fight.gd" id="11_fight"]
+[ext_resource type="Script" path="res://core/ui/fight_hud.gd" id="12_hud"]
+[ext_resource type="Script" path="res://core/debug/fps_label.gd" id="13_fps"]
+[ext_resource type="Script" path="res://core/network/connection_status.gd" id="14_status"]
+[ext_resource type="Script" path="res://core/network/ping_label.gd" id="15_ping"]
+[ext_resource type="FontFile" path="res://core/ui/fonts/Oswald.ttf" id="16_font"]
+[ext_resource type="Script" path="res://core/debug/solo_character_switch.gd" id="99_switch"]
+[ext_resource type="Script" path="res://core/debug/applause_cheat.gd" id="98_cheat"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_add"]
+blend_mode = 1
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(2000, 160)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(80, 1400)
+
+[node name="JugglersFight" type="Node2D"]
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+scale = Vector2(1.14832536, 1.1477152)
+texture = ExtResource("1_bg")
+
+[node name="SpotlightLeft" type="Sprite2D" parent="."]
+material = SubResource("CanvasItemMaterial_add")
+position = Vector2(560, -20)
+texture = ExtResource("2_spot")
+offset = Vector2(0, 500)
+script = ExtResource("3_spot_script")
+sway_angle = 0.14
+sway_speed = 0.13
+
+[node name="SpotlightRight" type="Sprite2D" parent="."]
+material = SubResource("CanvasItemMaterial_add")
+position = Vector2(1500, -20)
+texture = ExtResource("2_spot")
+offset = Vector2(0, 500)
+script = ExtResource("3_spot_script")
+sway_angle = 0.1
+sway_speed = 0.11
+phase = 2.0
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(960, 1080)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Sprite" type="Sprite2D" parent="Floor"]
+position = Vector2(0, -40)
+texture = ExtResource("4_floor")
+
+[node name="WallLeft" type="StaticBody2D" parent="."]
+position = Vector2(-40, 540)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallLeft"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="WallRight" type="StaticBody2D" parent="."]
+position = Vector2(1960, 540)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallRight"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="PlatformLeft" parent="." instance=ExtResource("5_platform")]
+position = Vector2(640, 772)
+
+[node name="PlatformRight" parent="." instance=ExtResource("5_platform")]
+position = Vector2(1280, 772)
+
+[node name="JugglersBoss" parent="." instance=ExtResource("7_boss")]
+
+[node name="PlayerSpawner" type="Node2D" parent="."]
+script = ExtResource("8_spawner")
+characters = Array[PackedScene]([ExtResource("9_clown"), ExtResource("10_acrobat")])
+facings = Array[int]([1, 1])
+
+[node name="SpawnClown" type="Marker2D" parent="PlayerSpawner"]
+position = Vector2(760, 1000)
+
+[node name="SpawnAcrobat" type="Marker2D" parent="PlayerSpawner"]
+position = Vector2(1160, 1000)
+
+[node name="Fight" type="Node" parent="."]
+script = ExtResource("11_fight")
+boss_path = NodePath("../JugglersBoss")
+boss_id = "jugglers"
+intro_text = "Tico e Teco, os Irmãos Malabaristas!"
+target_time = 160.0
+
+[node name="SoloCharacterSwitch" type="Node" parent="."]
+script = ExtResource("99_switch")
+
+[node name="ApplauseCheat" type="Node" parent="."]
+script = ExtResource("98_cheat")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="FightHud" type="Control" parent="Hud"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("12_hud")
+boss_path = NodePath("../../JugglersBoss")
+boss_name = "Os Irmãos Malabaristas"
+
+[node name="FpsLabel" type="Label" parent="Hud"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 300.0
+offset_bottom = 52.0
+theme_override_colors/font_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.08, 0.06, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("16_font")
+theme_override_font_sizes/font_size = 28
+text = "FPS: 0"
+script = ExtResource("13_fps")
+
+[node name="ConnectionStatus" type="Label" parent="Hud"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -800.0
+offset_top = 110.0
+offset_right = 800.0
+offset_bottom = 230.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.98, 0.92, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.08, 0.06, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("16_font")
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+script = ExtResource("14_status")
+
+[node name="PingLabel" type="Label" parent="Hud"]
+offset_left = 24.0
+offset_top = 52.0
+offset_right = 600.0
+offset_bottom = 92.0
+theme_override_colors/font_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.08, 0.06, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("16_font")
+theme_override_font_sizes/font_size = 28
+script = ExtResource("15_ping")

@@ -54,11 +54,12 @@ func _run() -> void:
 	check(shots.is_empty(), "no shooting on the map")
 
 	# Tendas fechadas.
-	var jugglers: MapDoor = map.get_node("DoorJugglers")
+	var train: MapDoor = map.get_node("DoorTrain")
 	var magician: MapDoor = map.get_node("DoorMagician")
-	check(not jugglers.is_open(), "coming soon tent closed")
+	check(not train.is_open(), "coming soon tent closed")
+	check((map.get_node("DoorJugglers") as MapDoor).is_open(), "jugglers tent open")
 	check(not magician.is_open() and magician.missing().size() == 3, "magician locked until 3 wins")
-	jugglers.try_enter()
+	train.try_enter()
 	await frames(5)
 	check(get_tree().current_scene == map, "closed tent does not change scene")
 

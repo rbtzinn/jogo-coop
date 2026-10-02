@@ -1,0 +1,82 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://bosses/jugglers/jugglers_boss.gd" id="1_boss"]
+[ext_resource type="Script" path="res://components/health/health.gd" id="2_health"]
+[ext_resource type="Script" path="res://core/network/boss_sync.gd" id="3_sync"]
+[ext_resource type="PackedScene" path="res://bosses/jugglers/juggler.tscn" id="4_juggler"]
+[ext_resource type="Script" path="res://bosses/jugglers/unicycle.gd" id="5_unicycle"]
+[ext_resource type="Script" path="res://components/hitbox/enemy_hitbox.gd" id="6_hitbox"]
+[ext_resource type="Script" path="res://bosses/jugglers/attacks/juggle_pass.gd" id="10_pass"]
+[ext_resource type="Script" path="res://bosses/jugglers/attacks/swap.gd" id="11_swap"]
+[ext_resource type="Script" path="res://bosses/jugglers/attacks/bounce_balls.gd" id="12_bounce"]
+[ext_resource type="Script" path="res://bosses/jugglers/attacks/intro_totem.gd" id="13_intro_totem"]
+[ext_resource type="Script" path="res://bosses/jugglers/attacks/totem_walk.gd" id="14_totem_walk"]
+[ext_resource type="Script" path="res://bosses/jugglers/attacks/bowling.gd" id="15_bowling"]
+[ext_resource type="Script" path="res://bosses/jugglers/attacks/club_volley.gd" id="16_volley"]
+[ext_resource type="Script" path="res://bosses/jugglers/attacks/intro_unicycle.gd" id="17_intro_unicycle"]
+[ext_resource type="Script" path="res://bosses/jugglers/attacks/unicycle_ride.gd" id="18_ride"]
+[ext_resource type="Script" path="res://bosses/jugglers/attacks/torch_rain.gd" id="19_torches"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wheel"]
+radius = 100.0
+
+[node name="JugglersBoss" type="Node2D"]
+script = ExtResource("1_boss")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+
+[node name="BossSync" type="Node" parent="."]
+script = ExtResource("3_sync")
+
+[node name="Attacks" type="Node2D" parent="."]
+
+[node name="JugglePass" type="Node2D" parent="Attacks"]
+script = ExtResource("10_pass")
+
+[node name="Swap" type="Node2D" parent="Attacks"]
+script = ExtResource("11_swap")
+
+[node name="BounceBalls" type="Node2D" parent="Attacks"]
+script = ExtResource("12_bounce")
+
+[node name="IntroTotem" type="Node2D" parent="Attacks"]
+script = ExtResource("13_intro_totem")
+
+[node name="TotemWalk" type="Node2D" parent="Attacks"]
+script = ExtResource("14_totem_walk")
+
+[node name="Bowling" type="Node2D" parent="Attacks"]
+script = ExtResource("15_bowling")
+
+[node name="ClubVolley" type="Node2D" parent="Attacks"]
+script = ExtResource("16_volley")
+
+[node name="IntroUnicycle" type="Node2D" parent="Attacks"]
+script = ExtResource("17_intro_unicycle")
+
+[node name="UnicycleRide" type="Node2D" parent="Attacks"]
+script = ExtResource("18_ride")
+
+[node name="TorchRain" type="Node2D" parent="Attacks"]
+script = ExtResource("19_torches")
+
+[node name="Unicycle" type="Node2D" parent="."]
+position = Vector2(2150, 1000)
+script = ExtResource("5_unicycle")
+
+[node name="Hitbox" type="Area2D" parent="Unicycle"]
+script = ExtResource("6_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Unicycle/Hitbox"]
+position = Vector2(0, -110)
+shape = SubResource("CircleShape2D_wheel")
+
+[node name="Tico" parent="." instance=ExtResource("4_juggler")]
+position = Vector2(190, 1000)
+stripe_color = Color(0.78, 0.19, 0.17, 1)
+
+[node name="Teco" parent="." instance=ExtResource("4_juggler")]
+position = Vector2(1730, 1000)
+stripe_color = Color(0.18, 0.4, 0.62, 1)
+hair_color = Color(0.36, 0.2, 0.1, 1)

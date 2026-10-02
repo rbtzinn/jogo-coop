@@ -67,6 +67,15 @@ Ordem: Domador (fácil) → Irmãos Malabaristas (médio) → Grande Mágico (di
 - Os irmãos montam num monociclo gigante e atravessam a arena; malabares viram tochas.
 - No fim, os dois tentam um último malabarismo um com o outro… e caem um em cima do outro.
 
+**Como ficou no jogo (03/10/2026, decidido pelo Claude, revisar; números a calibrar):**
+
+- Arena: o picadeiro com **dois pedestais pendurados** no meio (topo na altura 760, alcançável com um pulo). Os irmãos começam um em cada lado; os jogadores, no meio.
+- **Vida:** 1500 no total, 750 para cada irmão; uma barra pequena para cada um embaixo do letreiro. Nas fases 1 e 2, um irmão **não passa do limite da fase**: ao chegar nele fica **tonto** (estrelas na cabeça). Depois de **3 s** tonto, se o outro ainda estiver de pé, o outro joga uma **bola de cura rosa** (voa 1,2 s; um parry estoura e ganha estrela) que devolve 40% da vida da fase. A fase só troca quando **os dois** chegam ao limite. Na fase 3 não há limite: quem chega a zero passa o dano para o irmão.
+- **Fase 1 — Troca-Troca:** *Troca-Troca* (6 arremessos alternados por três faixas: alta, média e rasteira, que quica no chão no meio; uma rasteira nunca vem colada numa média; um objeto rosa por sequência), *Troca de Lugar* (agacham como aviso e trocam de lado: um por cima, alto; o outro rolando na altura do peito: **abaixar** ou dash), *Bolas Quicando* (3 bolas grandes atravessam quicando; às vezes uma rosa).
+- **Fase 2 — Totem:** *Totem Andante* (atravessa a arena enquanto claves caem em lugares marcados por sombra; **o pedestal é seguro**, o totem passa por baixo; às vezes uma clave rosa), *Boliche* (3 bolas rolando no chão: pular; às vezes uma rosa), *Claves em Linha* (4 claves retas: baixas na altura da cabeça, **abaixar**; altas na altura do pulo e dos pedestais, ficar no chão).
+- **Fase 3 — Monociclo Gigante:** *Monociclo* (vai e volta pela arena; só a roda machuca: pular por cima, dash ou ficar no pedestal, que passa no vão entre a roda e o selim), *Chuva de Tochas* (5 tochas caem em lugares marcados e deixam fogo no chão por 0,9 s; sempre sobra lugar; às vezes uma rosa, sem fogo), *Bolas Quicando* (do alto do monociclo).
+- Tempo-alvo da nota: 2:40.
+
 ---
 
 ### 3. O Grande Mágico Zaratan
