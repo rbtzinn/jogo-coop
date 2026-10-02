@@ -44,7 +44,9 @@ func _on_tick(_delta: float) -> void:
 	if t >= JUMP_DOWN.x and t < JUMP_DOWN.y:
 		var u := (t - JUMP_DOWN.x) / (JUMP_DOWN.y - JUMP_DOWN.x)
 		var from := lion.home_position + Vector2(-40, 0)
-		lion.global_position = arc_point(from, floor_spot, 120.0, u)
+		var at := arc_point(from, floor_spot, 120.0, u)
+		lion.tilt_along(arc_point(from, floor_spot, 120.0, minf(u + 0.02, 1.0)) - at)
+		lion.global_position = at
 	elif t >= JUMP_DOWN.y:
 		lion.place(floor_spot)
 		lion.set_facing(-1)

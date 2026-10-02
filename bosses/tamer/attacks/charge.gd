@@ -50,12 +50,12 @@ func _on_tick(_delta: float) -> void:
 	if t < SCRAPE_TIME:
 		# Aviso: corpo balançando, poeira saindo da pata.
 		lion.body.rotation = 0.08 * sin(t * 30.0)
-		lion.body.scale = Vector2(1.05, 0.92)
+		lion.pose_crouch(1.0)
 		if _dust_given < 2 and t > 0.2 + _dust_given * 0.25:
 			_dust_given += 1
 			Fx.spawn(preload("res://components/fx/dust_puff.tscn"), _from + Vector2(-lion.facing * 60.0, 0))
 	elif t < _run_end:
-		lion.body.scale = Vector2.ONE
+		lion.body.rotation = 0.0
 		lion.set_running(true)
 		lion.global_position = _from.move_toward(_to, _speed * (t - SCRAPE_TIME))
 	elif t < _run_end + STOP_TIME:
@@ -63,11 +63,10 @@ func _on_tick(_delta: float) -> void:
 		lion.set_running(false)
 		lion.idle = false
 		lion.global_position = _to
-		lion.body.scale = Vector2(1.1, 0.88)
+		lion.pose_land()
 		if _leap_back:
 			lion.set_facing(-1 if _from.x < _to.x else 1)
 	elif _leap_back and t < _run_end + STOP_TIME + LEAP_TIME:
-		lion.body.scale = Vector2(0.95, 1.06)
 		var u := (t - _run_end - STOP_TIME) / LEAP_TIME
 		var at := arc_point(_to, _from, _leap_height, u)
 		lion.global_position = at

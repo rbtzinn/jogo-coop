@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://jb7c7lct4ws"
-path="res://.godot/imported/lion_body.svg-5568bf59480dfc39a6940515fba9bfdc.ctex"
+uid="uid://cqqyo4oxoupxd"
+path="res://.godot/imported/run_7.png-be29879ae3993205219cdbf2a93a5d55.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bosses/tamer/art/lion_body.svg"
-dest_files=["res://.godot/imported/lion_body.svg-5568bf59480dfc39a6940515fba9bfdc.ctex"]
+source_file="res://bosses/tamer/art/lion/run_7.png"
+dest_files=["res://.godot/imported/run_7.png-be29879ae3993205219cdbf2a93a5d55.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

@@ -10,7 +10,7 @@ const BODY_CENTER := Vector2(0, -85)
 const TOSS_END := 0.35
 const RINGS_LIT := 1.25
 const LEAP_START := 1.35
-const LEAP_TIME := 1.5
+const LEAP_TIME := 1.15
 const RINGS_OUT := 3.1
 const RETURN_START := 3.5
 const RETURN_TIME := 0.6
@@ -78,9 +78,8 @@ func _on_tick(_delta: float) -> void:
 	if t < LEAP_START:
 		# Aviso: Leopoldo se agacha para pegar impulso.
 		var crouch := clampf((t - (LEAP_START - 0.45)) / 0.4, 0.0, 1.0)
-		lion.body.scale = Vector2(1.0 + crouch * 0.08, 1.0 - crouch * 0.14)
+		lion.pose_crouch(crouch)
 	elif t < LEAP_START + LEAP_TIME:
-		lion.body.scale = Vector2(0.95, 1.06)
 		var u := (t - LEAP_START) / LEAP_TIME
 		lion.global_position = _leap_point(u)
 		lion.tilt_along(_leap_point(minf(u + 0.02, 1.0)) - _leap_point(maxf(u - 0.02, 0.0)))
@@ -90,13 +89,12 @@ func _on_tick(_delta: float) -> void:
 		# Volta caindo do alto em cima do pedestal.
 		lion.visible = true
 		lion.rotation = 0.0
-		lion.body.scale = Vector2(0.95, 1.06)
 		var k := (t - RETURN_START) / RETURN_TIME
 		lion.global_position = lion.home_position + Vector2(0, -900.0 * (1.0 - k * k))
 	elif not _landed:
 		_landed = true
 		lion.go_home()
-		lion.body.scale = Vector2(1.15, 0.85)
+		lion.pose_land()
 		Fx.spawn(preload("res://components/fx/dust_puff.tscn"), lion.home_position)
 
 

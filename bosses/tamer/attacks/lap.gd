@@ -38,9 +38,8 @@ func _on_tick(_delta: float) -> void:
 	if t < CROUCH_END:
 		# Aviso: se agacha e balança o rabo.
 		var k := t / CROUCH_END
-		lion.body.scale = Vector2(1.0 + k * 0.08, 1.0 - k * 0.14)
+		lion.pose_crouch(k)
 	elif t < HOP_DOWN_END:
-		lion.body.scale = Vector2.ONE
 		var u := (t - CROUCH_END) / (HOP_DOWN_END - CROUCH_END)
 		lion.global_position = arc_point(lion.home_position, ground_start, 90.0, u)
 	elif t < _run_end:
@@ -53,9 +52,8 @@ func _on_tick(_delta: float) -> void:
 		lion.global_position = wall
 		lion.set_facing(1)
 		var k := (t - _run_end) / TURN_TIME
-		lion.body.scale = Vector2(1.0 + k * 0.08, 1.0 - k * 0.14)
+		lion.pose_crouch(k)
 	elif t < _run_end + TURN_TIME + LEAP_TIME:
-		lion.body.scale = Vector2(0.95, 1.06)
 		var u := (t - _run_end - TURN_TIME) / LEAP_TIME
 		var at := arc_point(wall, lion.home_position, _leap_height, u)
 		lion.global_position = at
@@ -63,7 +61,7 @@ func _on_tick(_delta: float) -> void:
 	elif not _landed:
 		_landed = true
 		lion.go_home()
-		lion.body.scale = Vector2(1.15, 0.85)
+		lion.pose_land()
 		Fx.spawn(preload("res://components/fx/dust_puff.tscn"), lion.home_position)
 
 

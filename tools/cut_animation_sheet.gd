@@ -7,6 +7,7 @@ extends SceneTree
 ## são recortados com o MESMO retângulo (o pulinho desenhado é preservado).
 ## O ombro da frente é achado a partir do nariz vermelho (ponto vermelho mais à direita na
 ## metade de cima da célula) mais um deslocamento medido uma vez por personagem.
+## Sem "shoulder_from_nose" (ex.: o leão), não calcula ombros.
 
 const SOURCES := "res://docs/referencias/pecas/"
 ## Os quadros são reduzidos para este tanto do tamanho da célula (fica ~1,7x o tamanho
@@ -35,6 +36,39 @@ const ANIMATIONS := [
 		"ground_y": 486, "center_x": 313,
 		"cell_height": 465.0, "rig_height": 268.0,
 		"shoulder_from_nose": Vector2(-45, 55),
+	},
+	# Leopoldo: células de 1024 x 512, olhando para a esquerda; parado mede 396 px de altura.
+	{
+		"sheet": "leao/leao_parado.png",
+		"columns": 2, "rows": 2, "count": 4,
+		"out_dir": "res://bosses/tamer/art/lion/",
+		"name": "idle",
+		"ground_y": 486, "center_x": 512,
+		"cell_height": 396.0, "rig_height": 297.0,
+	},
+	{
+		"sheet": "leao/leao_rugido.png",
+		"columns": 2, "rows": 2, "count": 4,
+		"out_dir": "res://bosses/tamer/art/lion/",
+		"name": "roar",
+		"ground_y": 486, "center_x": 512,
+		"cell_height": 396.0, "rig_height": 297.0,
+	},
+	{
+		"sheet": "leao/leao_corrida.png",
+		"columns": 2, "rows": 4, "count": 8,
+		"out_dir": "res://bosses/tamer/art/lion/",
+		"name": "run",
+		"ground_y": 486, "center_x": 512,
+		"cell_height": 396.0, "rig_height": 297.0,
+	},
+	{
+		"sheet": "leao/leao_pulo.png",
+		"columns": 2, "rows": 2, "count": 4,
+		"out_dir": "res://bosses/tamer/art/lion/",
+		"name": "leap",
+		"ground_y": 486, "center_x": 512,
+		"cell_height": 396.0, "rig_height": 297.0,
 	},
 ]
 
@@ -67,10 +101,13 @@ func _cut(a: Dictionary) -> void:
 		var path: String = a.out_dir + "%s_%d.png" % [a.name, i + 1]
 		frame.save_png(path)
 		paths.append(path)
-		var nose := _find_nose(cells[i])
-		var shoulder: Vector2 = Vector2(nose) + a.shoulder_from_nose
-		shoulders.append((shoulder - Vector2(a.center_x, a.ground_y)) * scale)
-		print(path, " nariz ", nose)
+		if a.has("shoulder_from_nose"):
+			var nose := _find_nose(cells[i])
+			var shoulder: Vector2 = Vector2(nose) + a.shoulder_from_nose
+			shoulders.append((shoulder - Vector2(a.center_x, a.ground_y)) * scale)
+			print(path, " nariz ", nose)
+		else:
+			print(path)
 	var origin := (Vector2(union.position) - Vector2(a.center_x, a.ground_y)) * scale
 	_write_resource(a.out_dir + a.name + ".tres", paths, scale / TEXTURE_FACTOR, origin, shoulders)
 
@@ -102,10 +139,11 @@ func _write_resource(path: String, frames: Array[String], scale: float, origin: 
 	text += "frames = Array[Texture2D]([%s])\n" % ", ".join(refs)
 	text += "frame_scale = %s\n" % scale
 	text += "origin = Vector2(%s, %s)\n" % [origin.x, origin.y]
-	var values := PackedStringArray()
-	for s in shoulders:
-		values.append("%.1f, %.1f" % [s.x, s.y])
-	text += "shoulders = PackedVector2Array(%s)\n" % ", ".join(values)
+	if not shoulders.is_empty():
+		var values := PackedStringArray()
+		for s in shoulders:
+			values.append("%.1f, %.1f" % [s.x, s.y])
+		text += "shoulders = PackedVector2Array(%s)\n" % ", ".join(values)
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	file.store_string(text)
 	print(path, " escala ", scale, " origem ", origin)

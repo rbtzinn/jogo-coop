@@ -36,7 +36,8 @@ func _on_tick(_delta: float) -> void:
 	if t < WINDUP:
 		# Aviso: puxa a cabeça para trás e treme.
 		var k := t / WINDUP
-		lion.body.rotation = 0.12 * k + sin(t * 60.0) * 0.015 * k
+		lion.pose_windup(k)
+		lion.body.rotation = sin(t * 60.0) * 0.015 * k
 	elif roaring:
 		lion.body.rotation = -0.06 + sin(t * 45.0) * 0.02
 	else:

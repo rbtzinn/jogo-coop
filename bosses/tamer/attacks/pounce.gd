@@ -48,9 +48,8 @@ func _on_tick(_delta: float) -> void:
 	_shadow.amount = t / LAND_AT
 	if t < CROUCH_END:
 		var k := t / CROUCH_END
-		lion.body.scale = Vector2(1.0 + k * 0.1, 1.0 - k * 0.16)
+		lion.pose_crouch(k)
 	elif t < LAND_AT:
-		lion.body.scale = Vector2(0.92, 1.08)
 		var u := (t - CROUCH_END) / (LAND_AT - CROUCH_END)
 		var at := arc_point(_from, _to, leap_height, u)
 		lion.global_position = at
@@ -68,7 +67,8 @@ func _on_tick(_delta: float) -> void:
 				add_child(wave)
 				_waves.append(wave)
 		var since := t - LAND_AT
-		lion.body.scale = Vector2(1.2, 0.8).lerp(Vector2.ONE, minf(since / HOLD, 1.0))
+		if since < HOLD:
+			lion.pose_land()
 		for i in _waves.size():
 			var wave := _waves[i]
 			if not is_instance_valid(wave):

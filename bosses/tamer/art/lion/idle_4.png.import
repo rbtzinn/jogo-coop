@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://du46ix8bafpo0"
-path="res://.godot/imported/lion_head_roar.svg-786776eebac95851cf3842b2cfd2f710.ctex"
+uid="uid://lmbdox1ocu6a"
+path="res://.godot/imported/idle_4.png-1a0cb9ece595f27c219727bfce2a4d61.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bosses/tamer/art/lion_head_roar.svg"
-dest_files=["res://.godot/imported/lion_head_roar.svg-786776eebac95851cf3842b2cfd2f710.ctex"]
+source_file="res://bosses/tamer/art/lion/idle_4.png"
+dest_files=["res://.godot/imported/idle_4.png-1a0cb9ece595f27c219727bfce2a4d61.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

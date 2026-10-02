@@ -88,7 +88,7 @@ position = Vector2(800, 690)
 position = Vector2(1200, 820)
 
 [node name="LionPedestal" type="StaticBody2D" parent="."]
-position = Vector2(1745, 812)
+position = Vector2(1690, 812)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LionPedestal"]
 position = Vector2(0, 95)

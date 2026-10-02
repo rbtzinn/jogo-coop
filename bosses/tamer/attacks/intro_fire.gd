@@ -73,4 +73,4 @@ func _on_end() -> void:
 
 
 func _mouth() -> Vector2:
-	return lion.head_closed.global_position + Vector2(-40.0 * lion.scale.x, 20)
+	return lion.mouth_position()

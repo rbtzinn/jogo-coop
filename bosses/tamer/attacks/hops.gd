@@ -74,11 +74,10 @@ func _on_tick(_delta: float) -> void:
 	if since < 0.0:
 		# Agachado no pedestal antes do próximo pulo.
 		lion.global_position = from
-		lion.body.scale = Vector2(1.08, 0.88)
+		lion.pose_crouch(1.0)
 		lion.set_facing(-1 if to.x < from.x else 1)
 		return
 	if since < FLIGHT:
-		lion.body.scale = Vector2(0.95, 1.06)
 		var height := HOP_HEIGHT + maxf(0.0, from.y - to.y)
 		var u := since / FLIGHT
 		var at := arc_point(from, to, height, u)
@@ -87,7 +86,7 @@ func _on_tick(_delta: float) -> void:
 	else:
 		lion.global_position = to
 		lion.rotation = 0.0
-		lion.body.scale = Vector2(1.15, 0.85)
+		lion.pose_land()
 		if _landed_count <= hop:
 			_landed_count = hop + 1
 			Fx.spawn(preload("res://components/fx/dust_puff.tscn"), to)

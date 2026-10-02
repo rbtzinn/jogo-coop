@@ -3,6 +3,8 @@ extends Node2D
 ## Argola de fogo segura no ar. O leão pula por dentro dela; quem encostar na borda se queima.
 ## O meio é livre. A argola rosa aceita parry: quem fizer parry nela a estoura.
 ## Desenho em imagens prontas (duas chamas alternando): redesenhar por código pesava no PC fraco.
+## A metade esquerda da argola fica NA FRENTE do leão e a direita atrás, para parecer que
+## ele passa por dentro dela.
 
 const UNLIT := preload("res://bosses/tamer/art/fire_ring_unlit.svg")
 const FIRE := [preload("res://bosses/tamer/art/fire_ring_a.svg"), preload("res://bosses/tamer/art/fire_ring_b.svg")]
@@ -24,12 +26,16 @@ var strength := 0.0:
 
 var _time := 0.0
 var _hitbox: EnemyHitbox
-var _sprite := Sprite2D.new()
+var _back := Sprite2D.new()
+var _front := Sprite2D.new()
 
 
 func _ready() -> void:
 	add_to_group(&"parry_targets")
-	add_child(_sprite)
+	for half in [_back, _front]:
+		half.region_enabled = true
+		add_child(half)
+	_front.z_index = 1
 	_hitbox = EnemyHitbox.new()
 	_hitbox.parryable = pink
 	_hitbox.parry_target = self
@@ -70,12 +76,22 @@ func _refresh() -> void:
 		return
 	_hitbox.active = strength >= 1.0
 	visible = strength > 0.0
+	var texture: Texture2D
+	var tint := Color.WHITE
 	if strength >= 1.0:
 		var frames: Array = PINK if pink else FIRE
-		_sprite.texture = frames[int(_time / FLICKER_TIME) % 2]
-		_sprite.modulate = Color.WHITE
+		texture = frames[int(_time / FLICKER_TIME) % 2]
 	else:
 		# Aviso: só a argola, piscando cada vez mais forte.
-		_sprite.texture = UNLIT
+		texture = UNLIT
 		var blink := 0.6 + 0.4 * absf(sin(_time * 14.0))
-		_sprite.modulate = Color(1, 0.75, 0.7, (0.3 + 0.7 * strength) * blink)
+		tint = Color(1, 0.75, 0.7, (0.3 + 0.7 * strength) * blink)
+	var half_size := Vector2(texture.get_width() * 0.5, texture.get_height())
+	_front.texture = texture
+	_front.region_rect = Rect2(Vector2.ZERO, half_size)
+	_front.position = Vector2(-half_size.x * 0.5, 0)
+	_back.texture = texture
+	_back.region_rect = Rect2(Vector2(half_size.x, 0), half_size)
+	_back.position = Vector2(half_size.x * 0.5, 0)
+	_front.modulate = tint
+	_back.modulate = tint
