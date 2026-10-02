@@ -26,6 +26,15 @@ const ANIMATIONS := [
 		"cell_height": 406.0, "rig_height": 198.0,
 		"shoulder_from_nose": Vector2(-64, 60),
 	},
+	{
+		"sheet": "acrobata_corrida.png",
+		"columns": 4, "rows": 2, "count": 8,
+		"out_dir": "res://core/player/characters/acrobat/run/",
+		"name": "run",
+		"ground_y": 490, "center_x": 292,
+		"cell_height": 460.0, "rig_height": 268.0,
+		"shoulder_from_nose": Vector2(-58, 80),
+	},
 ]
 
 

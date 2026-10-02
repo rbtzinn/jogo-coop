@@ -9,11 +9,13 @@
 [ext_resource type="Texture2D" path="res://core/player/characters/acrobat/acrobat_blink.png" id="7_blink"]
 [ext_resource type="Texture2D" path="res://core/player/characters/shared/glove_gun.png" id="8_gun"]
 [ext_resource type="Texture2D" path="res://core/player/characters/shared/muzzle_flash.svg" id="9_flash"]
+[ext_resource type="Resource" path="res://core/player/characters/acrobat/run/run.tres" id="10_run"]
 
 [node name="AcrobatRig" type="Node2D"]
 scale = Vector2(0.86, 0.86)
 script = ExtResource("1_rig")
 display_name = "Acrobata"
+run_animation = ExtResource("10_run")
 arm_length = 44.0
 ankle_height = 31.0
 stride = 26.0
@@ -40,7 +42,7 @@ texture = ExtResource("3_fist")
 [node name="BackLeg" type="Node2D" parent="."]
 self_modulate = Color(0.82, 0.8, 0.78, 1)
 script = ExtResource("2_limb")
-fill_color = Color(0.96, 0.92, 0.84, 1)
+fill_color = Color(0.95, 0.78, 0.62, 1)
 width = 18.0
 taper = 0.42
 
@@ -52,7 +54,7 @@ offset = Vector2(21, 19)
 
 [node name="FrontLeg" type="Node2D" parent="."]
 script = ExtResource("2_limb")
-fill_color = Color(0.96, 0.92, 0.84, 1)
+fill_color = Color(0.95, 0.78, 0.62, 1)
 width = 18.0
 taper = 0.42
 
