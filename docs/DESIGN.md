@@ -31,7 +31,7 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 | Engine | **Godot 4** (gratuita; 2D excelente; código em texto via GDScript) |
 | Câmera | Lateral 2D; nas lutas de chefe a arena é fixa ou com pouco movimento |
 | Multiplayer | Host/cliente, PC a PC. O host cria o lobby e é a autoridade (chefão, dano, fases da luta) |
-| Conexão (desenvolvimento) | **Tailscale** ou IP direto (sem custo) |
+| Conexão (desenvolvimento) | **Atualizado em 02/10/2026:** o PC do jogador 1 não tem administrador (não instala Tailscale nem libera o Firewall). Por isso **o jogador 2 hospeda usando um túnel gratuito do playit.gg** (UDP, porta local 24680) e o jogador 1 entra digitando "endereço:porta". Tailscale ou IP direto continuam funcionando se um dia os dois tiverem administrador. Consequência: **o save fica no PC do jogador 2** (quem hospeda) |
 | Steam | **Não agora.** Código preparado para adicionar Steam no futuro sem refazer |
 | Save | Arquivo local no PC do host: chefões vencidos, área atual, upgrades/equipamentos de cada jogador |
 | Assets | Gratuitos (Kenney, itch.io, OpenGameArt) como base/placeholder. Higgsfield (conta free, ~10 créditos) só para artes pontuais, ex. capa ou retrato de chefão |

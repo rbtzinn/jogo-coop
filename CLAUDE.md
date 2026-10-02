@@ -36,7 +36,7 @@ docs/          # DESIGN.md
 ## Multiplayer (regras)
 
 - Modelo **host/cliente**, high-level multiplayer da Godot (ENet). O host é autoridade sobre o chefão, as fases da luta e o estado da partida.
-- Conexão por IP (os jogadores usam Tailscale). Manter a camada de rede isolada em `core/network/` para permitir adicionar Steam (GodotSteam) no futuro sem refazer o resto.
+- Conexão por "endereço:porta". O jogador 2 hospeda com um túnel do playit.gg (o PC do jogador 1 não tem administrador, então não roda Tailscale nem libera Firewall); Tailscale/IP direto também funcionam. Manter a camada de rede isolada em `core/network/` para permitir adicionar Steam (GodotSteam) no futuro sem refazer o resto.
 - Movimento, pulo e tiro do jogador local com predição no cliente (resposta instantânea); jogador remoto e projéteis com interpolação.
 - Ataques do chefão preferencialmente determinísticos: o host envia "ataque X começou no tempo T" e cada PC simula, em vez de sincronizar cada projétil.
 - Detecção de dano favorável a quem joga (evitar dano por algo já desviado na tela do cliente).
