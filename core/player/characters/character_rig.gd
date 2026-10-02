@@ -196,7 +196,9 @@ func _update_arms(delta: float, on_floor: bool, dashing: bool, running: bool, ai
 		hand_b = shoulder_b + Vector2(-4, arm_length * 0.9)
 	var back_bend := Vector2(-5, 0)
 	if hand_on_hip_when_idle and on_floor and not running and not dashing:
-		hand_b = to_local(hip_back.global_position) + Vector2(-6, -10)
+		# A cintura de trás da silhueta é o quadril mais à esquerda (o personagem olha para a direita).
+		var rear_hip := hip_back if hip_back.position.x < hip_front.position.x else hip_front
+		hand_b = to_local(rear_hip.global_position) + Vector2(-6, -10)
 		back_bend = Vector2(-arm_length * 0.55, -4)
 	back_arm.set_points(shoulder_b, hand_b, back_bend)
 	back_hand.position = hand_b
