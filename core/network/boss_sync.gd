@@ -2,7 +2,7 @@ class_name BossSync
 extends Node
 ## Rede do chefão. O host manda "ataque X começou" (com a semente) e a vida do chefão;
 ## o cliente manda o dano que os tiros dele causaram. Cada PC simula os ataques sozinho.
-## O pai precisa ter: play_attack(name, seed, skip, args), apply_damage(amount, source), health, defeat().
+## O pai é um BossBrain (play_attack, apply_damage, health, defeat).
 ## Opcional: `phase` e catch_up(phase), para o cliente que entra no meio da luta pular direto
 ## para a fase atual.
 
@@ -36,8 +36,8 @@ func start_attack(attack_name: StringName, seed_value: int, args: Array = []) ->
 
 
 ## Cliente: dano causado pelos tiros deste PC.
-func report_damage(amount: int, source: String) -> void:
-	_receive_damage.rpc_id(1, amount, source)
+func report_damage(amount: int, source: String, part := "") -> void:
+	_receive_damage.rpc_id(1, amount, source, part)
 
 
 func send_health(value: int) -> void:
@@ -56,8 +56,8 @@ func _receive_attack(attack_name: StringName, seed_value: int, args: Array) -> v
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func _receive_damage(amount: int, source: String) -> void:
-	Network.deliver(boss.apply_damage.bind(amount, source), false)
+func _receive_damage(amount: int, source: String, part: String) -> void:
+	Network.deliver(boss.apply_damage.bind(amount, source, part), false)
 
 
 @rpc("authority", "call_remote", "unreliable_ordered")
