@@ -23,6 +23,9 @@ const SIMULATIONS := [
 
 var simulation_index := 0
 
+var _resolve_id := IP.RESOLVER_INVALID_ID
+var _resolve_port := DEFAULT_PORT
+
 ## Mensagem para mostrar no menu ao voltar para ele (ex.: "o host fechou a partida").
 var last_message := ""
 ## Parceiros que já carregaram a fase e podem receber o estado dos jogadores.
@@ -55,9 +58,41 @@ func host(port := DEFAULT_PORT, bind_ip := "*") -> Error:
 	return OK
 
 
-func join(address: String, port := DEFAULT_PORT) -> Error:
+## Começa a entrar numa partida. `address` pode ser só o IP ("100.1.2.3") ou "endereço:porta"
+## (ex.: um túnel do playit.gg, "jogo-abc.at.ply.gg:12345"). Nomes são resolvidos em segundo
+## plano para o jogo não travar; o resultado chega pelos sinais `joined` / `join_failed`.
+func join(address: String) -> Error:
+	var host_name := address
+	var port := DEFAULT_PORT
+	var separator := address.rfind(":")
+	if separator > 0 and address.substr(separator + 1).is_valid_int():
+		host_name = address.substr(0, separator)
+		port = address.substr(separator + 1).to_int()
+	if host_name.is_empty() or port <= 0 or port > 65535:
+		return ERR_INVALID_PARAMETER
+	if host_name.is_valid_ip_address():
+		return _connect_to(host_name, port)
+	_resolve_id = IP.resolve_hostname_queue_item(host_name, IP.TYPE_IPV4)
+	_resolve_port = port
+	return OK if _resolve_id != IP.RESOLVER_INVALID_ID else ERR_CANT_RESOLVE
+
+
+func _process(_delta: float) -> void:
+	if _resolve_id == IP.RESOLVER_INVALID_ID:
+		return
+	var status := IP.get_resolve_item_status(_resolve_id)
+	if status == IP.RESOLVER_STATUS_WAITING:
+		return
+	var resolved := IP.get_resolve_item_address(_resolve_id)
+	IP.erase_resolve_item(_resolve_id)
+	_resolve_id = IP.RESOLVER_INVALID_ID
+	if status != IP.RESOLVER_STATUS_DONE or resolved.is_empty() or _connect_to(resolved, _resolve_port) != OK:
+		join_failed.emit()
+
+
+func _connect_to(ip: String, port: int) -> Error:
 	var peer := ENetMultiplayerPeer.new()
-	var error := peer.create_client(address, port)
+	var error := peer.create_client(ip, port)
 	if error != OK:
 		return error
 	multiplayer.multiplayer_peer = peer
@@ -65,6 +100,9 @@ func join(address: String, port := DEFAULT_PORT) -> Error:
 
 
 func leave() -> void:
+	if _resolve_id != IP.RESOLVER_INVALID_ID:
+		IP.erase_resolve_item(_resolve_id)
+		_resolve_id = IP.RESOLVER_INVALID_ID
 	ready_peers.clear()
 	if is_online():
 		multiplayer.multiplayer_peer.close()

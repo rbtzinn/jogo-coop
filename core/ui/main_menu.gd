@@ -92,14 +92,14 @@ func _build_join_panel(parent: Control) -> void:
 	parent.add_child(_join_panel)
 
 	var label := Label.new()
-	label.text = "IP de quem está hospedando:"
+	label.text = "Endereço de quem está hospedando (IP ou endereço:porta):"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_join_panel.add_child(label)
 
 	_address_edit = LineEdit.new()
-	_address_edit.custom_minimum_size = Vector2(520, 0)
+	_address_edit.custom_minimum_size = Vector2(720, 0)
 	_address_edit.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_address_edit.placeholder_text = "ex.: 100.101.102.103"
+	_address_edit.placeholder_text = "ex.: 100.101.102.103  ou  jogo.at.ply.gg:12345"
 	_address_edit.text = Settings.last_join_address
 	_address_edit.text_submitted.connect(func(_text: String) -> void: _on_connect_pressed())
 	_join_panel.add_child(_address_edit)
@@ -148,12 +148,12 @@ func _on_solo_pressed() -> void:
 func _on_connect_pressed() -> void:
 	var address := _address_edit.text.strip_edges()
 	if address.is_empty():
-		_status.text = "Digite o IP de quem está hospedando."
+		_status.text = "Digite o endereço de quem está hospedando."
 		return
 	Settings.set_option(&"last_join_address", address)
 	Network.leave()
 	if Network.join(address) != OK:
-		_status.text = "Esse IP não parece válido."
+		_status.text = "Esse endereço não parece válido."
 		return
 	_status.text = "Conectando a %s..." % address
 	_join_timer = get_tree().create_timer(JOIN_TIMEOUT)
