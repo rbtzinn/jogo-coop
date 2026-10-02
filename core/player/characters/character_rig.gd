@@ -4,9 +4,14 @@ extends Node2D
 ## mira, recuo do tiro, aterrissagem e piscar.
 ## Cada personagem é uma cena com os mesmos nomes de nós e este script;
 ## as proporções vêm da posição dos marcadores (ombros e quadris).
+## Opcional: animações quadro a quadro (ex.: corrida desenhada) trocam o corpo inteiro
+## enquanto tocam; o braço da arma continua por código, preso ao ombro de cada quadro.
 
 ## Nome mostrado na tela (vida, placar).
 @export var display_name := ""
+
+## Corrida desenhada quadro a quadro (vazio = corrida feita com as peças).
+@export var run_animation: FrameAnimation
 
 @export_group("Proporções")
 @export var arm_length := 32.0
@@ -56,6 +61,13 @@ var _crouch := 0.0
 @onready var gun_hand: Node2D = $GunHand
 @onready var muzzle: Marker2D = $GunHand/Muzzle
 @onready var muzzle_flash: CanvasItem = $GunHand/Muzzle/Flash
+## Peças escondidas enquanto um quadro desenhado está na tela (o braço da arma fica).
+@onready var _body_parts: Array[CanvasItem] = [body, back_arm, back_hand, back_leg, back_shoe, front_leg, front_shoe]
+
+var _frame_sprite := Sprite2D.new()
+## Ombro do quadro desenhado atual (vale só enquanto ele está na tela).
+var _frame_shoulder := Vector2.ZERO
+var _showing_frames := false
 
 
 func _ready() -> void:
@@ -64,6 +76,10 @@ func _ready() -> void:
 	blink.hide()
 	muzzle_flash.hide()
 	_blink_timer = randf_range(2.0, 4.5)
+	_frame_sprite.centered = false
+	_frame_sprite.hide()
+	add_child(_frame_sprite)
+	move_child(_frame_sprite, front_arm.get_index())
 	update_pose(0.0, Vector2.ZERO, true, false, Vector2.RIGHT, 1.0, false)
 
 
@@ -81,6 +97,7 @@ func update_pose(delta: float, velocity: Vector2, on_floor: bool, dashing: bool,
 
 	_update_body(delta, velocity, on_floor, dashing, running, crouching)
 	_update_legs(velocity, on_floor, dashing, running)
+	_update_frames(running)
 	_update_arms(delta, on_floor, dashing, running, aim)
 	_update_face(delta, aim, dashing)
 
@@ -191,7 +208,7 @@ func _update_arms(delta: float, on_floor: bool, dashing: bool, running: bool, ai
 	if _flash_timer <= 0.0:
 		muzzle_flash.hide()
 
-	var shoulder_f := to_local(shoulder_front.global_position)
+	var shoulder_f := _frame_shoulder if _showing_frames else to_local(shoulder_front.global_position)
 	var hand_f := shoulder_f + aim * (arm_length - _recoil)
 	front_arm.set_points(shoulder_f, hand_f, Vector2(0, 5))
 	gun_hand.position = hand_f
@@ -215,6 +232,24 @@ func _update_arms(delta: float, on_floor: bool, dashing: bool, running: bool, ai
 		back_bend = Vector2(-arm_length * 0.55, -4)
 	back_arm.set_points(shoulder_b, hand_b, back_bend)
 	back_hand.position = hand_b
+
+
+## Mostra o quadro desenhado da corrida (se houver) no lugar das peças.
+func _update_frames(running: bool) -> void:
+	var use_frames := running and run_animation != null and run_animation.frame_count() > 0
+	if use_frames != _showing_frames:
+		_showing_frames = use_frames
+		_frame_sprite.visible = use_frames
+		for part in _body_parts:
+			part.visible = not use_frames
+	if not use_frames:
+		return
+	var count := run_animation.frame_count()
+	var index := int(_phase / TAU * count) % count
+	_frame_sprite.texture = run_animation.frames[index]
+	_frame_sprite.scale = Vector2.ONE * run_animation.frame_scale
+	_frame_sprite.position = run_animation.origin
+	_frame_shoulder = run_animation.shoulders[index]
 
 
 func _update_face(delta: float, aim: Vector2, dashing: bool) -> void:

@@ -9,11 +9,13 @@
 [ext_resource type="Texture2D" path="res://core/player/characters/clown/clown_blink.png" id="7_blink"]
 [ext_resource type="Texture2D" path="res://core/player/characters/shared/glove_gun.png" id="8_gun"]
 [ext_resource type="Texture2D" path="res://core/player/characters/shared/muzzle_flash.svg" id="9_flash"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/run/run.tres" id="10_run"]
 
 [node name="ClownRig" type="Node2D"]
 scale = Vector2(0.92, 0.92)
 script = ExtResource("1_rig")
 display_name = "Palhaço"
+run_animation = ExtResource("10_run")
 arm_length = 32.0
 ankle_height = 31.0
 stride = 15.0
