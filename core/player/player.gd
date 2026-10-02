@@ -24,6 +24,8 @@ const PARRY_BOUNCE := 0.9
 @export var facing := 1
 ## Desligado: este jogador não lê teclado/controle (fica parado ou será controlado pela rede).
 @export var controlled_locally := true
+## Desligado: não atira nem solta especial (no mapa, "atirar" serve para entrar nas tendas).
+@export var armed := true
 
 @export_group("Corrida")
 @export var run_speed := 520.0
@@ -130,7 +132,7 @@ func _physics_process(delta: float) -> void:
 			and not is_dashing() and not special.is_performing()
 	if parry.tick(delta, is_on_floor(), parry_pressed):
 		_on_parry_success()
-	special.tick(delta, input.special_pressed, not is_dashing())
+	special.tick(delta, input.special_pressed and armed, not is_dashing())
 	player_health.tick(delta, not is_dashing() and not parry.is_protected() and not special.is_invincible())
 	_update_timers(delta)
 	if not special.is_busy():
@@ -163,7 +165,7 @@ func _physics_process(delta: float) -> void:
 	rig.update_pose(delta, velocity, is_on_floor(), is_dashing(), Vector2(pose_aim.x * facing, pose_aim.y), run_speed,
 			crouching or special.crouch_pose())
 	visual.rotation = TAU * (parry.spin_amount() + special.spin()) * facing
-	var can_shoot := not is_dashing() and not player_health.is_downed and not special.is_busy()
+	var can_shoot := armed and not is_dashing() and not player_health.is_downed and not special.is_busy()
 	if can_shoot and gun.tick(delta, aim, input.shoot_held, rig.get_muzzle_position()):
 		rig.play_fire()
 		sync.send_fire(aim)

@@ -6,6 +6,10 @@ var failures := 0
 
 
 func _ready() -> void:
+	# Trava de segurança: se algo travar (ex.: erro de script), sai com falha.
+	get_tree().create_timer(150.0, true, false, true).timeout.connect(func() -> void:
+		print("FAIL timeout")
+		get_tree().quit(99))
 	_run()
 
 

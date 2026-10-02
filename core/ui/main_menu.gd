@@ -4,8 +4,8 @@ extends Control
 
 const JOIN_TIMEOUT := 8.0
 
-## Fase que abre ao começar (por enquanto, a luta contra o Domador).
-@export_file("*.tscn") var first_level := "res://bosses/tamer/tamer_fight.tscn"
+## Fase que abre ao começar (o mapa do parque do circo).
+@export_file("*.tscn") var first_level := Levels.MAP
 @export var background: Texture2D
 
 var _main_buttons: VBoxContainer
@@ -18,6 +18,8 @@ var _join_timer: SceneTreeTimer
 
 func _ready() -> void:
 	add_to_group(&"menu_screen")
+	# Volta a usar o save deste PC (online como cliente, a cópia era do host).
+	SaveGame.load_game()
 	theme = UiTheme.build()
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_build_background()
@@ -162,7 +164,8 @@ func _on_connect_pressed() -> void:
 
 func _on_joined() -> void:
 	_join_timer = null
-	get_tree().change_scene_to_file(first_level)
+	# O host manda a fase em que ele está (Network._on_peer_connected).
+	_status.text = "Conectado! Entrando na partida..."
 
 
 func _on_join_failed() -> void:

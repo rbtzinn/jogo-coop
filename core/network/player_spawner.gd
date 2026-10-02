@@ -12,6 +12,8 @@ const HOST_PEER_ID := 1
 @export var characters: Array[PackedScene] = []
 ## Para onde cada personagem começa olhando (1 = direita, -1 = esquerda).
 @export var facings: Array[int] = [1, -1]
+## Desligado: os jogadores não atiram (mapa).
+@export var armed := true
 
 
 func _ready() -> void:
@@ -47,6 +49,7 @@ func _spawn(peer_id: int, slot: int, local: bool) -> Player:
 	player.name = _player_name(peer_id)
 	player.character = characters[slot]
 	player.controlled_locally = local
+	player.armed = armed
 	player.facing = facings[slot] if slot < facings.size() else 1
 	if Network.is_online():
 		player.set_multiplayer_authority(peer_id)

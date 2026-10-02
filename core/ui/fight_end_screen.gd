@@ -1,10 +1,10 @@
 extends CanvasLayer
 ## Tela de fim de luta em forma de cartaz de circo (papel creme, borda vermelha, lâmpadas
-## correndo em volta): vitória ou derrota, com "Tentar de novo" e "Voltar ao menu".
+## correndo em volta): vitória ou derrota, com "Tentar de novo", "Voltar ao mapa" e "Voltar ao menu".
 ## Online, só o host pode recomeçar (o cliente recomeça junto).
 ## Na vitória mostra a nota da dupla (FightGrade) e os ingressos ganhos (SaveGame).
 
-const MAIN_MENU := "res://core/ui/main_menu.tscn"
+const MAIN_MENU := Levels.MENU
 
 var victory := false
 ## Nota e recompensas (Fight._victory_result); vazio na derrota.
@@ -76,6 +76,7 @@ func _ready() -> void:
 	var first: Button
 	if not Network.is_online() or Network.is_host():
 		first = _add_button(layout, "Tentar de novo", Network.reload_level)
+		_add_button(layout, "Voltar ao mapa", back_to_map)
 	else:
 		var waiting := Label.new()
 		waiting.text = "Esperando o host recomeçar..."
@@ -104,6 +105,11 @@ func _add_button(parent: Control, text: String, callback: Callable) -> Button:
 	button.pressed.connect(callback)
 	parent.add_child(button)
 	return button
+
+
+## Host (ou sozinho): volta os dois para o mapa do parque.
+func back_to_map() -> void:
+	Network.change_level(Levels.MAP)
 
 
 func _back_to_menu() -> void:

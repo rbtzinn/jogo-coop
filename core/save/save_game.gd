@@ -2,8 +2,9 @@ extends Node
 ## Save do jogo (autoload "SaveGame"), um arquivo JSON no PC de quem hospeda (ou de quem
 ## joga sozinho): chefões vencidos com a melhor nota e o melhor tempo, área atual, e a
 ## carteira de ingressos, os itens e o equipamento de cada jogador.
-## Salva sozinho ao vencer um chefão (e, quando existir o mapa, ao voltar para ele).
-## O cliente online não salva nada: o save é do host.
+## Salva sozinho ao vencer um chefão e ao voltar para o mapa.
+## O cliente online não salva nada: o save é do host, que manda uma cópia para o cliente mostrar
+## (notas no mapa, ingressos).
 
 const VERSION := 1
 ## Ingressos (docs/shop.md), para cada jogador.
@@ -16,13 +17,17 @@ const PLAYER_KEYS := ["clown", "acrobat"]
 ## Os testes trocam o caminho para não mexer no save de verdade.
 var path := "user://save.json"
 var data := {}
+## Cópia que veio do host (cliente online): nunca é gravada no disco.
+var _borrowed := false
 
 
 func _ready() -> void:
 	load_game()
+	Network.peer_ready.connect(_on_peer_ready)
 
 
 func load_game() -> void:
+	_borrowed = false
 	data = _new_game()
 	if not FileAccess.file_exists(path):
 		return
@@ -35,6 +40,8 @@ func load_game() -> void:
 
 
 func save_game() -> void:
+	if _borrowed:
+		return
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
 		push_warning("Não consegui salvar em %s" % path)
@@ -73,11 +80,30 @@ func record_victory(boss_id: String, grade: String, time: float) -> Dictionary:
 		data.players[key].tickets += tickets
 	if is_keeper():
 		save_game()
+		share()
 	return {"tickets": tickets, "first_win": first_win, "best_grade": best_grade, "best_time": best_time}
 
 
 func is_defeated(boss_id: String) -> bool:
 	return data.bosses.get(boss_id, {}).get("defeated", false)
+
+
+## Host: manda a cópia do save para o parceiro.
+func share() -> void:
+	if Network.is_online() and Network.is_host():
+		for peer_id in Network.ready_peers:
+			_receive_data.rpc_id(peer_id, data)
+
+
+func _on_peer_ready(peer_id: int) -> void:
+	if Network.is_host():
+		_receive_data.rpc_id(peer_id, data)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _receive_data(value: Dictionary) -> void:
+	data = value
+	_borrowed = true
 
 
 ## Apaga o progresso (começar do zero).

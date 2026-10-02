@@ -82,14 +82,21 @@ func _run() -> void:
 	SaveGame.reset()
 	if role == "host":
 		check(Network.host(PORT) == OK, "host opened")
-		get_tree().change_scene_to_file(FIGHT)
+		get_tree().change_scene_to_file(Levels.MAP)
 	else:
 		await wait(1.0)
 		check(Network.join("127.0.0.1:%d" % PORT) == OK, "join started")
 		await Network.joined
-		get_tree().change_scene_to_file(FIGHT)
-	while Network.ready_peers.is_empty():
-		await wait(0.1)
+		# O host manda o cliente para a fase em que está (o mapa).
+	await until(func() -> bool: return not Network.ready_peers.is_empty())
+	check(get_tree().current_scene.scene_file_path == Levels.MAP, "both on the map")
+	# 0) O cliente escolhe a tenda do Domador; o host leva os dois para a luta.
+	await meet("map")
+	if role == "client":
+		(get_tree().current_scene.get_node("DoorTamer") as MapDoor).try_enter()
+	await wait(0.5)
+	await until(func() -> bool: return get_tree().current_scene != null and get_tree().current_scene.scene_file_path == FIGHT and not Network.ready_peers.is_empty() and get_tree().get_nodes_in_group(&"players").size() == 2)
+	check(get_tree().current_scene.scene_file_path == FIGHT, "client chose the tent, both in the fight")
 	await wait(1.0)
 	var scene := get_tree().current_scene
 	var boss = scene.get_node("TamerBoss")
@@ -170,7 +177,8 @@ func _run() -> void:
 	if screen != null:
 		print("[%s] result: %s" % [role, screen.result])
 		check(not String(screen.result.get("grade", "")).is_empty(), "grade shown")
-	check(SaveGame.is_defeated("tamer") == (role == "host"), "only the host saves")
+	check(SaveGame.is_defeated("tamer"), "save knows the victory (host saves, client gets a copy)")
+	check(SaveGame._borrowed == (role == "client"), "only the host writes the save")
 
 	# 6) "Tentar de novo": o host recarrega e o cliente vem junto.
 	await meet("reload")
@@ -207,7 +215,7 @@ func _run() -> void:
 		await wait(7.0)
 		check(Network.join("127.0.0.1:%d" % PORT) == OK, "rejoin started")
 		await Network.joined
-		get_tree().change_scene_to_file(FIGHT)
+		# O host manda o cliente para a fase em que está.
 		while Network.ready_peers.is_empty():
 			await wait(0.1)
 		await wait(1.0)

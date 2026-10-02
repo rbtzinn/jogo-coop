@@ -144,7 +144,12 @@ Estes são os controles **padrão**; o jogador pode trocar qualquer um em Config
 - **Regras de arte (pedido do usuário):** nada de desenho parado deslizando pela tela (cada movimento com quadros próprios + "suco" no código) e **expressões faciais diferentes em cada quadro** em todos os pedidos novos (sem refazer os antigos).
 - Ideia aprovada para depois: juba/cauda em camada separada com um shader de vento.
 
-5. **Primeira área**: mapa de seleção + 2–3 chefões + uma fase de plataforma.
+5. **Primeira área**: mapa de seleção + 2–3 chefões + uma fase de plataforma. Dividida em partes (decidido pelo Claude em 03/10/2026, revisar):
+   - **5a — Mapa do parque** (03/10/2026): "O Grande Picadeiro", uma tela lateral com o parque à noite e uma tenda para cada número: Domador, Malabaristas, Trem do Circo, Grande Mágico (fechado até vencer os outros três) e a Barraca de Curiosidades (loja). Os dois andam sem atirar; **Atirar na frente da tenda entra** (a dica mostra a tecla). Tendas de fases que ainda não existem mostram "Em breve". A tenda mostra a melhor nota da dupla. O menu ("Hospedar" e "Testar sozinho") abre o mapa; o cartaz de fim de luta ganhou "Voltar ao mapa"; ao chegar no mapa o host salva. Online, qualquer um dos dois escolhe a tenda e o host leva os dois; quem entra na partida cai direto na fase em que o host está; o host manda uma cópia do save para o cliente ver notas e ingressos. Arte provisória por código; pedido de arte em `docs/prompts/codex_mapa.md`. ✔ concluída (testes automáticos)
+   - **5b — Os Irmãos Malabaristas** (docs/bosses.md).
+   - **5c — Corrida no Trem do Circo** (fase de plataforma).
+   - **5d — O Grande Mágico** (fecha a área).
+   - **5e — Loja e Camarim** (docs/shop.md).
 6. Áreas seguintes, um chefão de cada vez.
 
 ## Banco de ideias

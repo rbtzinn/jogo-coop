@@ -23,10 +23,12 @@ de uso voltar. Este arquivo é o ponto de partida de cada retomada: **ler antes 
 - Teste online automático (host + cliente sem janela): `sh tests/run_online.sh`. Todos os testes: `sh tests/run_all.sh`.
 - 4d — Nota e save: `core/combat/fight_grade.gd`, `core/save/save_game.gd` (autoload SaveGame), cartaz com nota. Teste: `tests/test_grade_save.tscn`.
 - 4e — Acabamento online: aviso de saída na hora, parceiro que volta alcança a fase/vida do chefão, teste online com pontos de encontro (estável, também com internet ruim). `sh tests/run_all.sh` roda tudo.
+- 5a — Mapa do parque (`levels/circus_map/`, tendas em `components/stage/map_door.gd`): menu abre o mapa, entrar nas tendas, "Voltar ao mapa", save ao chegar, online começa pelo mapa. Teste: `tests/test_map.tscn` e o online. Prompt de arte: `docs/prompts/codex_mapa.md`.
 
 ## Próximos passos
 
-1. Etapa 5 — Primeira área (mapa de seleção, mais chefões, fase de plataforma).
+1. 5b — Os Irmãos Malabaristas (docs/bosses.md, seção 2): pasta `bosses/jugglers/`, mesma estrutura do Domador (TamerBoss → JugglersBoss com BossSync, ataques BossAttack determinísticos, Fight, FightHud). Ligar na tenda DoorJugglers do mapa (target_scene). Momento de dupla: cada irmão com vida própria; se só um apanhar, o outro joga bola de cura; precisam cair juntos (até 3 s).
+2. 5c — Trem do Circo, 5d — Mágico, 5e — Loja.
 
 ## O que o usuário precisa testar na segunda
 

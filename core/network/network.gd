@@ -35,7 +35,7 @@ var ready_peers: Array[int] = []
 
 
 func _ready() -> void:
-	multiplayer.peer_connected.connect(func(id: int) -> void: partner_connected.emit(id))
+	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.connected_to_server.connect(func() -> void: joined.emit())
 	multiplayer.connection_failed.connect(_on_connection_failed)
@@ -158,17 +158,31 @@ func simulated_ping_ms() -> int:
 
 ## Recarrega a fase atual nos dois PCs (online, só o host pede; o cliente segue).
 func reload_level() -> void:
-	var path := get_tree().current_scene.scene_file_path
+	change_level(get_tree().current_scene.scene_file_path)
+
+
+## Troca de fase nos dois PCs (online, só o host decide; o cliente segue).
+func change_level(path: String) -> void:
 	ready_peers.clear()
 	if is_online() and is_host():
-		_reload_level.rpc(path)
+		_change_level.rpc(path)
 	get_tree().change_scene_to_file(path)
 
 
 @rpc("authority", "call_remote", "reliable")
-func _reload_level(path: String) -> void:
+func _change_level(path: String) -> void:
 	ready_peers.clear()
 	get_tree().change_scene_to_file(path)
+
+
+## Host: o parceiro acabou de conectar; manda ele para a fase onde o host está.
+func _on_peer_connected(peer_id: int) -> void:
+	partner_connected.emit(peer_id)
+	if not is_host():
+		return
+	var scene := get_tree().current_scene
+	if scene != null and not scene.scene_file_path.is_empty():
+		_change_level.rpc_id(peer_id, scene.scene_file_path)
 
 
 func mark_ready(peer_id: int) -> void:

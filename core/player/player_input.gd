@@ -14,6 +14,8 @@ var move := Vector2.ZERO
 var jump_pressed := false
 var jump_held := false
 var shoot_held := false
+## Apertou atirar agora (no mapa, "atirar" serve para entrar nas tendas).
+var shoot_pressed := false
 var dash_pressed := false
 var lock_held := false
 var special_pressed := false
@@ -30,6 +32,7 @@ func update() -> void:
 		return
 	move = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	shoot_held = Input.is_action_pressed("shoot")
+	shoot_pressed = Input.is_action_just_pressed("shoot")
 	dash_pressed = Input.is_action_just_pressed("dash")
 	lock_held = Input.is_action_pressed("lock_aim")
 	special_pressed = Input.is_action_just_pressed("special")
@@ -41,6 +44,7 @@ func clear() -> void:
 	jump_pressed = false
 	jump_held = false
 	shoot_held = false
+	shoot_pressed = false
 	dash_pressed = false
 	lock_held = false
 	special_pressed = false
