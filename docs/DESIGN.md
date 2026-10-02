@@ -57,6 +57,8 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 | Pulo | **Altura fixa** (tocar ou segurar dá o mesmo pulo, pedido do usuário), coyote time, buffer de pulo | Etapa 2 |
 | Tiro | 8 direções; botão para travar posição e só mirar | Etapa 2 |
 | Dash | Avanço rápido no chão e no ar, para desviar | Etapa 2 |
+| Abaixar | Segurar **Baixo** no chão (sem travar a mira): para de andar, caixa de dano baixa de 132 para 84 (desvia de ataques altos) e atira reto rente ao chão | Etapa 2 |
+| Descer da plataforma | **Abaixado + dash** em cima de uma plataforma: atravessa para baixo (no chão firme o dash é normal). Plataformas ficam na camada de física 5 ("plataformas"); os tiros passam por elas | Etapa 2 |
 | Parry | Pular em objetos rosa no ar para quicar; enche a barra de especial | Etapa 4 (1º chefão) |
 | Golpe especial | Ataque forte que gasta a barra (enche com dano causado e parries) | Etapa 4 (1º chefão) |
 | Equipamento | Pistola, Truque (dash), Adereço e Número de dupla, comprados na loja (ver "Loja e equipamento") | Etapa 5 |
@@ -93,7 +95,7 @@ Cada jogador equipa **4 espaços**:
 | Dash | K | Shift | B |
 | Travar mira (fica parado e mira em 8 direções; com ela, Cima mira para cima em vez de pular) | L | C | RB |
 
-No chão, sem travar a mira, apertar para baixo não mira para baixo (reservado para agachar no futuro).
+No chão, sem travar a mira, **Baixo abaixa** o personagem (não mira para baixo). Abaixado em cima de uma plataforma, **dash desce** dela.
 
 **Cima pula (pedido do usuário, só no teclado).** Sem travar a mira, a tecla de cima pula e não mira; segurando "Travar mira", o boneco para e Cima volta a mirar para cima. Só um aperto novo de Cima pula (soltar a trava segurando Cima não faz pular). No teclado, mirar para cima ou na diagonal para cima exige travar a mira. Pode ser desligado em Configurações > Controles. No controle de videogame o analógico continua mirando normalmente e o pulo é o A.
 

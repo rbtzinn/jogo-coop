@@ -5,6 +5,9 @@ extends Node2D
 ## Cada personagem é uma cena com os mesmos nomes de nós e este script;
 ## as proporções vêm da posição dos marcadores (ombros e quadris).
 
+## Achatamento do corpo abaixado (o corpo encolhe em direção aos pés).
+const CROUCH_SCALE := Vector2(1.12, 0.68)
+
 @export_group("Proporções")
 @export var arm_length := 32.0
 @export var ankle_height := 8.0
@@ -25,6 +28,8 @@ var _recoil := 0.0
 var _flash_timer := 0.0
 var _blink_timer := 3.0
 var _squash := Vector2.ONE
+## 0 = em pé, 1 = abaixado (transição suave).
+var _crouch := 0.0
 
 @onready var body: Node2D = $Body
 @onready var head: Node2D = $Body/Head
@@ -51,13 +56,13 @@ func _ready() -> void:
 	blink.hide()
 	muzzle_flash.hide()
 	_blink_timer = randf_range(2.0, 4.5)
-	update_pose(0.0, Vector2.ZERO, true, false, Vector2.RIGHT, 1.0)
+	update_pose(0.0, Vector2.ZERO, true, false, Vector2.RIGHT, 1.0, false)
 
 
 ## Chamado pelo Player a cada quadro de física. `aim` já vem no espaço do personagem
 ## (x >= 0 = para a frente).
 func update_pose(delta: float, velocity: Vector2, on_floor: bool, dashing: bool,
-		aim: Vector2, run_speed: float) -> void:
+		aim: Vector2, run_speed: float, crouching := false) -> void:
 	_time += delta
 	var speed_ratio := clampf(absf(velocity.x) / run_speed, 0.0, 1.0)
 	var running := on_floor and not dashing and speed_ratio > 0.15
@@ -66,7 +71,7 @@ func update_pose(delta: float, velocity: Vector2, on_floor: bool, dashing: bool,
 	else:
 		_phase = 0.0
 
-	_update_body(delta, velocity, on_floor, dashing, running)
+	_update_body(delta, velocity, on_floor, dashing, running, crouching)
 	_update_legs(velocity, on_floor, dashing, running)
 	_update_arms(delta, on_floor, dashing, running, aim)
 	_update_face(delta, aim, dashing)
@@ -88,7 +93,8 @@ func play_land() -> void:
 	_squash = Vector2(1.2, 0.8)
 
 
-func _update_body(delta: float, velocity: Vector2, on_floor: bool, dashing: bool, running: bool) -> void:
+func _update_body(delta: float, velocity: Vector2, on_floor: bool, dashing: bool, running: bool,
+		crouching: bool) -> void:
 	var offset := Vector2.ZERO
 	var lean := 0.0
 	var stretch := Vector2.ONE
@@ -105,6 +111,9 @@ func _update_body(delta: float, velocity: Vector2, on_floor: bool, dashing: bool
 		stretch = Vector2(1.0 - s, 1.0 + s)
 		lean = clampf(velocity.y / 6000.0, -0.08, 0.08)
 	_squash = _squash.lerp(Vector2.ONE, 1.0 - exp(-delta * 14.0))
+	_crouch = move_toward(_crouch, 1.0 if crouching else 0.0, delta * 12.0)
+	stretch *= Vector2.ONE.lerp(CROUCH_SCALE, _crouch)
+	lean += 0.06 * _crouch
 	body.position = offset
 	body.rotation = lean
 	body.scale = stretch * _squash

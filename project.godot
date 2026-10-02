@@ -105,6 +105,7 @@ lock_aim={
 2d_physics/layer_2="jogadores"
 2d_physics/layer_3="inimigos"
 2d_physics/layer_4="tiros_jogador"
+2d_physics/layer_5="plataformas"
 
 [physics]
 
