@@ -14,12 +14,24 @@
 [ext_resource type="Script" path="res://bosses/tamer/attacks/whip_crack.gd" id="12_whip"]
 [ext_resource type="Script" path="res://bosses/tamer/attacks/fire_rings.gd" id="13_rings"]
 [ext_resource type="Script" path="res://bosses/tamer/attacks/roar.gd" id="14_roar"]
+[ext_resource type="Texture2D" path="res://bosses/tamer/art/fire_mane.svg" id="15_mane"]
+[ext_resource type="Script" path="res://bosses/tamer/attacks/lap.gd" id="16_lap"]
+[ext_resource type="Script" path="res://bosses/tamer/attacks/charge.gd" id="17_charge"]
+[ext_resource type="Script" path="res://bosses/tamer/attacks/pounce.gd" id="18_pounce"]
+[ext_resource type="Script" path="res://bosses/tamer/attacks/chase.gd" id="19_chase"]
+[ext_resource type="Script" path="res://bosses/tamer/attacks/hops.gd" id="20_hops"]
+[ext_resource type="Script" path="res://bosses/tamer/attacks/falling_rings.gd" id="21_falling"]
+[ext_resource type="Script" path="res://bosses/tamer/attacks/intro_out_of_control.gd" id="22_intro2"]
+[ext_resource type="Script" path="res://bosses/tamer/attacks/intro_fire.gd" id="23_intro3"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lion_hurt"]
-size = Vector2(360, 170)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lion_front"]
+size = Vector2(230, 170)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lion_back"]
+size = Vector2(190, 150)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lion_hit"]
-size = Vector2(290, 120)
+size = Vector2(290, 110)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tamer_hurt"]
 size = Vector2(100, 220)
@@ -46,6 +58,10 @@ script = ExtResource("4_lion")
 texture = ExtResource("5_lion_body")
 offset = Vector2(10, -112)
 
+[node name="FireMane" type="Sprite2D" parent="Lion/Body"]
+position = Vector2(-132, -174)
+texture = ExtResource("15_mane")
+
 [node name="Head" type="Sprite2D" parent="Lion/Body"]
 position = Vector2(-150, -168)
 texture = ExtResource("6_lion_head")
@@ -54,18 +70,26 @@ texture = ExtResource("6_lion_head")
 position = Vector2(-150, -168)
 texture = ExtResource("7_lion_roar")
 
-[node name="Hurtbox" type="Area2D" parent="Lion"]
+[node name="HurtboxFront" type="Area2D" parent="Lion"]
 script = ExtResource("8_hurtbox")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Lion/Hurtbox"]
-position = Vector2(-30, -120)
-shape = SubResource("RectangleShape2D_lion_hurt")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Lion/HurtboxFront"]
+position = Vector2(-135, -120)
+shape = SubResource("RectangleShape2D_lion_front")
+
+[node name="HurtboxBack" type="Area2D" parent="Lion"]
+script = ExtResource("8_hurtbox")
+damage_multiplier = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Lion/HurtboxBack"]
+position = Vector2(75, -110)
+shape = SubResource("RectangleShape2D_lion_back")
 
 [node name="Hitbox" type="Area2D" parent="Lion"]
 script = ExtResource("9_hitbox")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Lion/Hitbox"]
-position = Vector2(-20, -100)
+position = Vector2(-20, -95)
 shape = SubResource("RectangleShape2D_lion_hit")
 
 [node name="Tamer" type="Node2D" parent="."]
@@ -108,4 +132,38 @@ lion_path = NodePath("../../Lion")
 
 [node name="Roar" type="Node2D" parent="Attacks"]
 script = ExtResource("14_roar")
+lion_path = NodePath("../../Lion")
+
+[node name="Lap" type="Node2D" parent="Attacks"]
+script = ExtResource("16_lap")
+lion_path = NodePath("../../Lion")
+
+[node name="Charge" type="Node2D" parent="Attacks"]
+script = ExtResource("17_charge")
+lion_path = NodePath("../../Lion")
+
+[node name="Pounce" type="Node2D" parent="Attacks"]
+script = ExtResource("18_pounce")
+lion_path = NodePath("../../Lion")
+
+[node name="Chase" type="Node2D" parent="Attacks"]
+script = ExtResource("19_chase")
+lion_path = NodePath("../../Lion")
+
+[node name="Hops" type="Node2D" parent="Attacks"]
+script = ExtResource("20_hops")
+lion_path = NodePath("../../Lion")
+
+[node name="FallingRings" type="Node2D" parent="Attacks"]
+script = ExtResource("21_falling")
+lion_path = NodePath("../../Lion")
+
+[node name="IntroOutOfControl" type="Node2D" parent="Attacks"]
+script = ExtResource("22_intro2")
+tamer_path = NodePath("../../Tamer")
+lion_path = NodePath("../../Lion")
+
+[node name="IntroFire" type="Node2D" parent="Attacks"]
+script = ExtResource("23_intro3")
+tamer_path = NodePath("../../Tamer")
 lion_path = NodePath("../../Lion")

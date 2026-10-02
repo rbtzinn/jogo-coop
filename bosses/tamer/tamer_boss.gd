@@ -1,15 +1,29 @@
 class_name TamerBoss
 extends Node2D
 ## O Domador e Leopoldo. O host (ou o jogo sozinho) é o "cérebro": escolhe o próximo
-## ataque e manda pelo BossSync; os dois PCs simulam o ataque do mesmo jeito.
-## Por enquanto só a fase 1 ("O Número Ensaiado") existe; acabar com ela vence a luta.
+## ataque (e os dados dele, como onde cair ou quem perseguir) e manda pelo BossSync;
+## os dois PCs simulam o ataque do mesmo jeito.
+## Três fases (docs/bosses.md): "O Número Ensaiado", "Fora de Controle" e "O Leão de Fogo".
 
 signal defeated
+## Uma fase nova começou (0, 1 ou 2), com o nome para o letreiro.
+signal phase_started(phase: int, title: String)
 
-## Parte da vida de cada fase (fase 1, 2, 3), como em docs/bosses.md.
+## Parte da vida de cada fase, como em docs/bosses.md.
 const PHASE_SHARES := [0.4, 0.35, 0.25]
-## Fases já construídas. Quando a última delas acaba, a luta está ganha.
-const IMPLEMENTED_PHASES := 1
+const PHASE_TITLES := ["O Número Ensaiado", "Fora de Controle!", "O Leão de Fogo!"]
+## Ataques de cada fase (nomes dos nós em Attacks).
+const PHASE_ATTACKS := [
+	[&"WhipCrack", &"FireRings", &"Roar", &"Lap"],
+	[&"Charge", &"Pounce", &"Chase"],
+	[&"Hops", &"FallingRings", &"Charge"],
+]
+## Animação de troca para a fase 1 e 2 (índice = fase nova).
+const PHASE_INTROS := [&"", &"IntroOutOfControl", &"IntroFire"]
+## A Patada pode vir duas vezes seguidas (um jogador de cada vez).
+const REPEATABLE := [&"Pounce"]
+## Quanto tempo o "quem bateu mais" lembra (segundos).
+const DAMAGE_MEMORY := 4.0
 
 @export var max_health := 1500
 ## Respiro entre um ataque e outro (mínimo e máximo, segundos).
@@ -22,14 +36,19 @@ var is_defeated := false
 
 var _current: BossAttack
 var _wait := 0.0
-var _last_attack := -1
+var _last_attack := &""
+var _repeats := 0
+var _pounce_turn := 0
 var _brain_rng := RandomNumberGenerator.new()
+## "Saco embaralhado" de ataques da fase: ordem aleatória, mas todos aparecem antes de repetir.
+var _bag: Array[StringName] = []
+## Dano recente de cada jogador (para a Isca).
+var _recent_damage := {}
 
 @onready var health: Health = $Health
 @onready var sync: BossSync = $BossSync
 @onready var tamer: Tamer = $Tamer
 @onready var lion: TamerLion = $Lion
-@onready var attacks: Array[BossAttack] = [$Attacks/WhipCrack, $Attacks/FireRings, $Attacks/Roar]
 
 
 func _ready() -> void:
@@ -38,13 +57,15 @@ func _ready() -> void:
 	health.changed.connect(_on_health_changed)
 	_wait = intro_time
 	_brain_rng.randomize()
-	for attack in attacks:
+	for attack: BossAttack in $Attacks.get_children():
 		attack.finished.connect(_on_attack_finished)
-	for hurtbox: Hurtbox in [$Tamer/Hurtbox, $Lion/Hurtbox]:
+	for hurtbox: Hurtbox in [$Tamer/Hurtbox, $Lion/HurtboxFront, $Lion/HurtboxBack]:
 		hurtbox.hit.connect(_on_hurtbox_hit.bind(hurtbox.get_parent()))
 
 
 func _physics_process(delta: float) -> void:
+	for source in _recent_damage:
+		_recent_damage[source] *= exp(-delta / DAMAGE_MEMORY)
 	if is_defeated or not is_brain():
 		return
 	# Online, só começa quando o parceiro carregou a fase.
@@ -63,20 +84,26 @@ func is_brain() -> bool:
 
 
 ## Chamado nos dois PCs (pelo BossSync) quando um ataque começa.
-func play_attack(index: int, seed_value: int, skip: float) -> void:
+func play_attack(attack_name: StringName, seed_value: int, skip: float, args: Array = []) -> void:
 	if is_defeated:
 		return
 	if _current != null:
 		_current.cancel()
-	_last_attack = index
-	_current = attacks[index]
-	_current.begin(seed_value, skip)
+	var intro_phase := PHASE_INTROS.find(attack_name)
+	if intro_phase > 0 and intro_phase != phase:
+		phase = intro_phase
+		phase_started.emit(phase, PHASE_TITLES[phase])
+	_current = $Attacks.get_node(NodePath(attack_name))
+	_current.begin(seed_value, skip, args)
 
 
 ## Dano que chegou de um tiro (deste PC ou, no host, do parceiro).
-func apply_damage(amount: int) -> void:
-	if not is_defeated:
-		health.damage(amount)
+func apply_damage(amount: int, source := "") -> void:
+	if is_defeated:
+		return
+	if not source.is_empty():
+		_recent_damage[source] = _recent_damage.get(source, 0.0) + amount
+	health.damage(amount)
 
 
 ## Vida que ainda sobra quando a fase atual termina.
@@ -87,13 +114,19 @@ func phase_end_health() -> int:
 	return roundi(max_health * (1.0 - spent))
 
 
-## Quanto falta para vencer (1 = começo, 0 = vencido), contando só as fases já construídas.
+## Vida restante (1 = cheia, 0 = vencido).
 func bar_ratio() -> float:
+	return health.ratio()
+
+
+## Onde cada fase nova começa na barra de vida (de 1 a 0).
+func phase_markers() -> Array[float]:
+	var markers: Array[float] = []
 	var spent := 0.0
-	for i in IMPLEMENTED_PHASES:
+	for i in PHASE_SHARES.size() - 1:
 		spent += PHASE_SHARES[i]
-	var end_health := max_health * (1.0 - spent)
-	return clampf((health.current - end_health) / (max_health - end_health), 0.0, 1.0)
+		markers.append(1.0 - spent)
+	return markers
 
 
 ## Fim da luta. No cliente, chega pela rede.
@@ -106,40 +139,112 @@ func defeat() -> void:
 	for hitbox: EnemyHitbox in [$Tamer/Hitbox, $Lion/Hitbox]:
 		hitbox.active = false
 	tamer.whip_pose = 0.0
-	lion.go_home()
+	tamer.cowering = false
+	# O domador, sem graça, tenta uma reverência para a plateia; o leão deita, cansado.
+	tamer.create_tween().tween_property(tamer, "bow", 1.0, 0.6).set_delay(0.8)
+	lion.lie_down()
 	if is_brain():
 		sync.send_defeat()
 	defeated.emit()
 
 
 func _choose_attack() -> void:
-	var options: Array[int] = []
-	for i in attacks.size():
-		if i != _last_attack:
-			options.append(i)
-	sync.start_attack(options[_brain_rng.randi() % options.size()], _brain_rng.randi())
+	var choice: StringName
+	if _last_attack in REPEATABLE and _repeats == 0 and _brain_rng.randf() < 0.5:
+		choice = _last_attack
+	else:
+		choice = _draw_from_bag()
+	_repeats = _repeats + 1 if choice == _last_attack else 0
+	sync.start_attack(choice, _brain_rng.randi(), _args_for(choice))
+
+
+func _draw_from_bag() -> StringName:
+	var pool: Array = PHASE_ATTACKS[phase]
+	_bag = _bag.filter(func(attack_name: StringName) -> bool: return attack_name in pool)
+	if _bag.is_empty():
+		for attack_name: StringName in pool:
+			_bag.append(attack_name)
+		for i in range(_bag.size() - 1, 0, -1):
+			var j := _brain_rng.randi_range(0, i)
+			var swap := _bag[i]
+			_bag[i] = _bag[j]
+			_bag[j] = swap
+		# Não começa o saco novo com o mesmo ataque que acabou de acontecer.
+		if _bag[0] == _last_attack and _bag.size() > 1:
+			_bag.append(_bag.pop_front())
+	return _bag.pop_front()
+
+
+## Dados que só o host sabe (posição atual do leão, jogadores) e os dois PCs precisam.
+func _args_for(attack_name: StringName) -> Array:
+	var at := lion.global_position
+	match attack_name:
+		&"Charge":
+			return [at.x]
+		&"Pounce":
+			return [at.x, at.y, _pounce_target_x()]
+		&"Chase":
+			return [at.x, _most_dangerous_player()]
+		&"Hops", &"IntroFire":
+			return [at.x, at.y]
+	return []
+
+
+func _alive_players() -> Array[Player]:
+	var alive: Array[Player] = []
+	for player: Player in get_tree().get_nodes_in_group(&"players"):
+		if not player.player_health.is_downed:
+			alive.append(player)
+	return alive
+
+
+## Patada: um jogador de cada vez.
+func _pounce_target_x() -> float:
+	var alive := _alive_players()
+	if alive.is_empty():
+		return lion.global_position.x
+	_pounce_turn += 1
+	return alive[_pounce_turn % alive.size()].global_position.x
+
+
+## Isca: quem bateu mais no leão nos últimos segundos.
+func _most_dangerous_player() -> String:
+	var alive := _alive_players()
+	if alive.is_empty():
+		return ""
+	var best: Player = alive[_brain_rng.randi() % alive.size()]
+	var best_damage := -1.0
+	for player in alive:
+		var amount: float = _recent_damage.get(String(player.name), 0.0)
+		if amount > best_damage + 0.5:
+			best = player
+			best_damage = amount
+	return String(best.name)
 
 
 func _on_attack_finished() -> void:
 	_wait = _brain_rng.randf_range(pause_between_attacks.x, pause_between_attacks.y)
 
 
-func _on_hurtbox_hit(amount: int, part: Node) -> void:
+func _on_hurtbox_hit(amount: int, source: String, part: Node) -> void:
 	part.flash()
 	if is_defeated:
 		return
 	if is_brain():
-		apply_damage(amount)
+		apply_damage(amount, source)
 	else:
-		sync.report_damage(amount)
+		sync.report_damage(amount, source)
 
 
 func _on_health_changed(current: int, _maximum: int) -> void:
 	if not is_brain():
 		return
 	sync.send_health(current)
-	if current <= phase_end_health():
-		if phase + 1 < IMPLEMENTED_PHASES:
-			phase += 1
-		else:
-			defeat()
+	if current <= 0:
+		defeat()
+	elif current <= phase_end_health() and phase + 1 < PHASE_SHARES.size():
+		# Troca de fase: corta o ataque atual e toca a animação da fase nova.
+		var intro: StringName = PHASE_INTROS[phase + 1]
+		sync.start_attack(intro, _brain_rng.randi(), _args_for(intro))
+		_last_attack = intro
+		_wait = 0.3

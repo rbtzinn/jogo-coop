@@ -1,7 +1,8 @@
 class_name Tamer
 extends Node2D
 ## O Domador: baixinho, bigodudo e convencido. Segura o chicote (desenhado por código,
-## uma linha que balança) e o levanta antes de estalar.
+## uma linha que balança) e o levanta antes de estalar. Quando o leão foge do controle
+## (fase 2), ele sobe no pedestal e fica tremendo de medo, sem levar tiro.
 
 const WHIP_COLOR := Color("c08a4e")
 const WHIP_OUTLINE := Color("1b1410")
@@ -11,6 +12,10 @@ const WHIP_SEGMENTS := 14
 
 ## 0 = chicote caído, 1 = erguido acima da cabeça, 2 = estalando no chão.
 var whip_pose := 0.0
+## Encolhido de medo (fases 2 e 3).
+var cowering := false
+## Reverência no fim da luta (0 a 1).
+var bow := 0.0
 
 var _time := 0.0
 var _flash := 0.0
@@ -18,6 +23,8 @@ var _flash := 0.0
 @onready var body: Sprite2D = $Body
 @onready var hand: Marker2D = $Body/Hand
 @onready var whip: Line2D = $Whip
+@onready var hurtbox: Hurtbox = $Hurtbox
+@onready var hitbox: EnemyHitbox = $Hitbox
 var _whip_outline := Line2D.new()
 
 
@@ -41,8 +48,15 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_time += delta
-	body.position.y = sin(_time * 2.2 * TAU * 0.5) * 2.0
-	body.scale = Vector2(1.0, 1.0 + sin(_time * 2.2) * 0.01)
+	if cowering:
+		# Tremendo, encolhido e inclinado para trás, de olho no leão.
+		body.position = Vector2(sin(_time * 70.0) * 3.0, 14.0)
+		body.scale = Vector2(1.12, 0.78)
+		body.rotation = 0.22 + sin(_time * 35.0) * 0.03
+	else:
+		body.position = Vector2(0, sin(_time * 2.2 * TAU * 0.5) * 2.0)
+		body.scale = Vector2(1.0, 1.0 + sin(_time * 2.2) * 0.01)
+		body.rotation = -bow * 0.5
 	_flash = maxf(_flash - delta * 6.0, 0.0)
 	body.modulate = Color(1.0 + _flash, 1.0 + _flash * 0.8, 1.0 + _flash * 0.6)
 	_update_whip()
@@ -50,6 +64,19 @@ func _process(delta: float) -> void:
 
 func flash() -> void:
 	_flash = 0.5
+
+
+## Fases 2 e 3: corre para cima do pedestal e não leva mais tiro nem machuca.
+func flee_to(spot: Vector2) -> void:
+	global_position = spot
+	cowering = true
+	whip_pose = 0.0
+	set_vulnerable(false)
+
+
+func set_vulnerable(value: bool) -> void:
+	hurtbox.monitorable = value
+	hitbox.active = value
 
 
 ## Ponta do chicote (onde nasce a onda da chicotada).

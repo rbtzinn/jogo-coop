@@ -13,6 +13,8 @@ var direction := Vector2.RIGHT
 ## Só o tiro do jogador deste PC causa dano. A cópia do tiro do parceiro é só visual:
 ## o dano dela já foi contado no PC dele.
 var deals_damage := true
+## Quem atirou (nome do jogador), para o chefão saber quem está batendo mais.
+var source := ""
 
 
 func _ready() -> void:
@@ -34,7 +36,7 @@ func _on_area_entered(area: Area2D) -> void:
 	if not area is Hurtbox or is_queued_for_deletion():
 		return
 	if deals_damage:
-		(area as Hurtbox).take_hit(damage)
+		(area as Hurtbox).take_hit(damage, source)
 	_explode()
 
 

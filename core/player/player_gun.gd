@@ -24,6 +24,7 @@ func spawn_projectile(aim: Vector2, muzzle_position: Vector2, deals_damage := tr
 	var projectile: Projectile = PROJECTILE_SCENE.instantiate()
 	projectile.direction = aim
 	projectile.deals_damage = deals_damage
+	projectile.source = String(get_parent().name)
 	get_tree().current_scene.add_child(projectile)
 	projectile.global_position = muzzle_position
 	projectile.reset_physics_interpolation()

@@ -3,7 +3,7 @@ extends Area2D
 ## Parte do inimigo que leva tiro (camada 3, "inimigos"). Os projéteis do jogador avisam
 ## aqui; o dono (o chefão) decide o que fazer com o dano.
 
-signal hit(amount: int)
+signal hit(amount: int, source: String)
 
 const LAYER := 3
 
@@ -18,5 +18,6 @@ func _ready() -> void:
 	monitoring = false
 
 
-func take_hit(amount: int) -> void:
-	hit.emit(roundi(amount * damage_multiplier))
+func take_hit(amount: int, source := "") -> void:
+	if monitorable:
+		hit.emit(roundi(amount * damage_multiplier), source)

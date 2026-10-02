@@ -2,7 +2,7 @@ class_name BossSync
 extends Node
 ## Rede do chefão. O host manda "ataque X começou" (com a semente) e a vida do chefão;
 ## o cliente manda o dano que os tiros dele causaram. Cada PC simula os ataques sozinho.
-## O pai precisa ter: play_attack(index, seed, skip), apply_damage(amount), health, defeat().
+## O pai precisa ter: play_attack(name, seed, skip, args), apply_damage(amount, source), health, defeat().
 
 ## Intervalo mínimo entre envios da vida do chefão (segundos).
 const HEALTH_SEND_INTERVAL := 0.1
@@ -23,15 +23,15 @@ func _physics_process(delta: float) -> void:
 
 
 ## Host: começa o ataque aqui e avisa o parceiro.
-func start_attack(index: int, seed_value: int) -> void:
-	boss.play_attack(index, seed_value, 0.0)
+func start_attack(attack_name: StringName, seed_value: int, args: Array = []) -> void:
+	boss.play_attack(attack_name, seed_value, 0.0, args)
 	for peer_id in Network.ready_peers:
-		_receive_attack.rpc_id(peer_id, index, seed_value)
+		_receive_attack.rpc_id(peer_id, attack_name, seed_value, args)
 
 
 ## Cliente: dano causado pelos tiros deste PC.
-func report_damage(amount: int) -> void:
-	_receive_damage.rpc_id(1, amount)
+func report_damage(amount: int, source: String) -> void:
+	_receive_damage.rpc_id(1, amount, source)
 
 
 func send_health(value: int) -> void:
@@ -45,13 +45,13 @@ func send_defeat() -> void:
 
 
 @rpc("authority", "call_remote", "reliable")
-func _receive_attack(index: int, seed_value: int) -> void:
-	Network.deliver(func() -> void: boss.play_attack(index, seed_value, _one_way_delay()), false)
+func _receive_attack(attack_name: StringName, seed_value: int, args: Array) -> void:
+	Network.deliver(func() -> void: boss.play_attack(attack_name, seed_value, _one_way_delay(), args), false)
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func _receive_damage(amount: int) -> void:
-	Network.deliver(boss.apply_damage.bind(amount), false)
+func _receive_damage(amount: int, source: String) -> void:
+	Network.deliver(boss.apply_damage.bind(amount, source), false)
 
 
 @rpc("authority", "call_remote", "unreliable_ordered")

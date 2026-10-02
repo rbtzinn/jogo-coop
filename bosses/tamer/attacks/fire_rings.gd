@@ -15,8 +15,6 @@ const RINGS_OUT := 3.1
 const RETURN_START := 3.5
 const RETURN_TIME := 0.6
 const END := 4.4
-const EMBER_GRAVITY := 1400.0
-const EMBER_FADE := 0.35
 ## Alturas possíveis do pulo: o baixo ameaça quem está nos pedestais.
 const LEAP_HEIGHTS := [200.0, 280.0]
 
@@ -24,17 +22,18 @@ const LEAP_HEIGHTS := [200.0, 280.0]
 @export var lion_path: NodePath
 ## Onde o pulo termina (fora da tela, à esquerda).
 @export var leap_end := Vector2(-320, 1000)
-## Altura do chão do picadeiro (y global), onde as brasas se apagam.
-@export var floor_y := 1000.0
 
 var _rings: Array[FireRing] = []
 var _landed := false
 var _leap_height := 280.0
-## Brasas: [nó, tempo em que cai, posição inicial, velocidade inicial, já criada].
-var _embers: Array = []
+var _embers := EmberShower.new()
 
 @onready var tamer: Tamer = get_node(tamer_path)
 @onready var lion: TamerLion = get_node(lion_path)
+
+
+func _ready() -> void:
+	add_child(_embers)
 
 
 func _on_begin() -> void:
@@ -42,6 +41,7 @@ func _on_begin() -> void:
 	var pink_index := rng.randi_range(0, RING_XS.size() - 1)
 	_rings.clear()
 	_embers.clear()
+	lion.go_home()
 	for i in RING_XS.size():
 		var ring := FireRing.new()
 		ring.pink = i == pink_index
@@ -53,7 +53,7 @@ func _on_begin() -> void:
 		var bottom := ring.global_position + Vector2(0, ring.radius.y * 0.8)
 		for side in [-1.0, 1.0]:
 			var velocity := Vector2(side * rng.randf_range(60.0, 160.0), rng.randf_range(-220.0, -80.0))
-			_embers.append([null, drop_time, bottom, velocity, false])
+			_embers.add(drop_time, bottom, velocity)
 	_landed = false
 	lion.idle = false
 
@@ -72,7 +72,7 @@ func _on_tick(_delta: float) -> void:
 	for ring in _rings:
 		ring.strength = strength
 
-	_update_embers(t)
+	_embers.update(t)
 
 	if t < LEAP_START:
 		# Aviso: Leopoldo se agacha para pegar impulso.
@@ -82,8 +82,7 @@ func _on_tick(_delta: float) -> void:
 		lion.body.scale = Vector2(0.95, 1.06)
 		var u := (t - LEAP_START) / LEAP_TIME
 		lion.global_position = _leap_point(u)
-		var ahead := _leap_point(minf(u + 0.02, 1.0)) - _leap_point(maxf(u - 0.02, 0.0))
-		lion.rotation = clampf(wrapf(ahead.angle() - PI, -PI, PI), -0.5, 0.5)
+		lion.tilt_along(_leap_point(minf(u + 0.02, 1.0)) - _leap_point(maxf(u - 0.02, 0.0)))
 	elif t < RETURN_START:
 		lion.visible = false
 	elif t < RETURN_START + RETURN_TIME:
@@ -108,49 +107,13 @@ func _on_end() -> void:
 	for ring in _rings:
 		ring.queue_free()
 	_rings.clear()
-	for ember in _embers:
-		if is_instance_valid(ember[0]):
-			ember[0].queue_free()
 	_embers.clear()
 	tamer.whip_pose = 0.0
 	lion.go_home()
 
 
-func _update_embers(t: float) -> void:
-	for ember in _embers:
-		var since: float = t - ember[1]
-		if since < 0.0:
-			continue
-		if not ember[4]:
-			ember[4] = true
-			ember[0] = Ember.new()
-			add_child(ember[0])
-		if not is_instance_valid(ember[0]):
-			continue
-		var node: Ember = ember[0]
-		var start: Vector2 = ember[2]
-		var velocity: Vector2 = ember[3]
-		var land := _landing_time(start.y, velocity.y)
-		var s := minf(since, land)
-		node.global_position = start + velocity * s + Vector2(0, 0.5 * EMBER_GRAVITY * s * s)
-		if since > land:
-			var fade := (since - land) / EMBER_FADE
-			if fade >= 1.0:
-				node.queue_free()
-			else:
-				node.set_fading(fade)
-
-
-## Quanto tempo a brasa leva para chegar ao chão.
-func _landing_time(y0: float, vy: float) -> float:
-	var drop := floor_y - y0
-	return (vy + sqrt(vy * vy + 2.0 * EMBER_GRAVITY * drop)) / EMBER_GRAVITY
-
-
 func _leap_point(u: float) -> Vector2:
-	var start := lion.home_position
-	var straight := start.lerp(leap_end, u)
-	return straight + Vector2(0, -4.0 * _leap_height * u * (1.0 - u))
+	return arc_point(lion.home_position, leap_end, _leap_height, u)
 
 
 func _u_at_x(x: float) -> float:

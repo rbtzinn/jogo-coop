@@ -8,6 +8,8 @@
 - Todo ataque tem um **aviso** antes (pose, som, brilho) — morrer tem que parecer culpa do jogador.
 - Pelo menos **1 ataque rosa** (parry) por fase; os chefões da Área 1 ensinam o parry com calma.
 - **Difícil, mas nunca impossível** (decidido em 02/10/2026, após o 1º teste do Domador): todo ataque tem que ser desviável sem levar dano, com uma janela de reação justa. Ondas com buraco precisam deixar passar com um pulo normal e vir espaçadas o bastante para pular uma e cair antes da próxima (conferido com um teste automático que joga sozinho).
+- **Ordem aleatória sem repetir:** os ataques de cada fase saem de um "saco embaralhado" (todos aparecem antes de algum repetir).
+- **Janelas conferidas por teste automático:** pular a Corrida (~0,3 s de folga), as ondas do Rugido (~0,3 s) e as ondas da Patada.
 - **Sem tempo morto:** o respiro entre ataques é curto (0,35–0,7 s) e todo ataque cobre mais de uma altura do cenário. Ficar parado num canto atirando não pode ser seguro (ex.: as argolas soltam brasas que caem no chão).
 - Pelo menos **1 momento de dupla** por chefão (ver "Dependência entre jogadores" no DESIGN.md).
 - Ataques determinísticos sempre que possível (o host manda "ataque X começou no tempo T").
@@ -27,15 +29,19 @@ Ordem: Domador (fácil) → Irmãos Malabaristas (médio) → Grande Mágico (di
 - **Chicotada:** o domador estala o chicote no chão; uma onda corre pelo picadeiro (pular).
 - **Argolas de fogo:** Leopoldo atravessa a tela pulando por argolas que o domador segura. Algumas argolas são **rosa** (parry para quicar por cima).
 - **Rugido:** Leopoldo ruge; ondas de som em arco (passar entre elas ou dar dash).
+- **Volta no Picadeiro** (pedido do usuário após o teste online de 02/10/2026): Leopoldo desce do pedestal, corre pelo chão até a parede e volta pulando em arco (baixo ou alto) até o domador.
 
 **Fase 2 — "Fora de Controle"** (35%)
-- Leopoldo larga o domador e corre de um lado ao outro (pular por cima ou dar dash através).
-- **Patada:** ele salta e cai no lugar onde um jogador estava (sombra no chão avisa).
-- **Momento de dupla — Isca:** Leopoldo persegue **o jogador que mais causou dano nos últimos segundos**. Um faz de isca correndo enquanto o outro bate pelas costas, onde o leão toma o dobro de dano.
+- O domador foge para cima do pedestal, tremendo (não leva mais tiro).
+- **Corrida:** Leopoldo raspa a pata e corre de um lado ao outro (pular por cima, ficar num pedestal ou dar dash); às vezes volta pulando em arco para o lado de onde saiu.
+- **Patada:** ele salta e cai no lugar onde um jogador estava (sombra no chão avisa); ao cair solta ondas de poeira rente ao chão. Pode vir duas vezes seguidas, uma em cada jogador.
+- **Momento de dupla — Isca:** Leopoldo persegue **o jogador que mais causou dano nos últimos segundos** (um aviso vermelho em cima dele). Um faz de isca correndo enquanto o outro bate pelas costas, onde o leão toma o dobro de dano (vale a luta toda).
 
 **Fase 3 — "O Leão de Fogo"** (25%)
-- Leopoldo engole a tocha do domador e vira um leão de fogo pulando entre os pedestais.
-- Argolas de fogo caem do teto em padrão; a última de cada leva é **rosa**.
+- Leopoldo engole a tocha que o domador joga nele e vira um leão de fogo.
+- **Pulos nos Pedestais:** pula de pedestal em pedestal (sombra avisa onde), espalhando brasas a cada pouso.
+- **Chuva de Argolas:** argolas de fogo caem do teto em duas levas (uma chama pisca no alto antes de cada uma; sempre sobra uma coluna livre); a última de cada leva é **rosa**.
+- **Corrida** mais rápida.
 - Ao vencer: o domador, sem graça, tenta fazer uma reverência para a plateia.
 
 ---

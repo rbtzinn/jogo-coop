@@ -16,6 +16,8 @@ var _ended := false
 
 func _ready() -> void:
 	boss.defeated.connect(_end.bind(true))
+	if boss.has_signal(&"phase_started"):
+		boss.phase_started.connect(func(_phase: int, title: String) -> void: _show_banner(title))
 	_show_banner(intro_text)
 
 
@@ -41,8 +43,8 @@ func _end(victory: bool) -> void:
 	if Network.is_online() and Network.is_host():
 		for peer_id in Network.ready_peers:
 			_receive_end.rpc_id(peer_id, victory)
-	_show_banner("Nocaute!" if victory else "")
-	get_tree().create_timer(1.6 if victory else 1.0).timeout.connect(_show_end_screen.bind(victory))
+	_show_banner("Nocaute!" if victory else "", victory)
+	get_tree().create_timer(2.3 if victory else 1.0).timeout.connect(_show_end_screen.bind(victory))
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -56,23 +58,26 @@ func _show_end_screen(victory: bool) -> void:
 	add_child(screen)
 
 
-## Letreiro grande no meio da tela que aparece e some.
-func _show_banner(text: String) -> void:
+## Faixa de circo no meio da tela que entra quicando e sai voando para cima.
+## `burst`: raios de luz girando atrás (vitória).
+func _show_banner(text: String, burst := false) -> void:
 	if text.is_empty():
 		return
 	var layer := CanvasLayer.new()
 	layer.layer = 15
 	add_child(layer)
-	var label := UiTheme.title_label(text, 110)
-	label.set_anchors_preset(Control.PRESET_FULL_RECT)
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_color_override("font_outline_color", UiTheme.INK)
-	label.add_theme_constant_override("outline_size", 24)
-	label.pivot_offset = Vector2(960, 540)
-	layer.add_child(label)
-	label.scale = Vector2(0.6, 0.6)
-	var tween := label.create_tween()
-	tween.tween_property(label, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_interval(1.1)
-	tween.tween_property(label, "modulate:a", 0.0, 0.4)
+	var banner := CircusBanner.new()
+	banner.text = text
+	banner.burst = burst
+	banner.font_size = 110 if burst else 88
+	banner.size = Vector2(1920, 1080)
+	banner.pivot_offset = Vector2(960, 540)
+	layer.add_child(banner)
+	banner.scale = Vector2(0.3, 0.3)
+	banner.rotation = -0.12
+	var tween := banner.create_tween()
+	tween.tween_property(banner, "scale", Vector2.ONE, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(banner, "rotation", 0.0, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_interval(1.6 if burst else 1.0)
+	tween.tween_property(banner, "position:y", -700.0, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 	tween.tween_callback(layer.queue_free)
