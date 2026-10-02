@@ -11,7 +11,7 @@
 [ext_resource type="Texture2D" path="res://core/player/characters/shared/muzzle_flash.svg" id="9_flash"]
 
 [node name="AcrobatRig" type="Node2D"]
-scale = Vector2(0.9, 0.9)
+scale = Vector2(0.86, 0.86)
 script = ExtResource("1_rig")
 arm_length = 44.0
 ankle_height = 31.0
@@ -59,8 +59,13 @@ offset = Vector2(21, 19)
 
 [node name="Body" type="Node2D" parent="."]
 
+[node name="Torso" type="Sprite2D" parent="Body"]
+position = Vector2(0, -135)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_torso")
+
 [node name="Head" type="Sprite2D" parent="Body"]
-position = Vector2(3, -160)
+position = Vector2(1, -176)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("6_head")
 offset = Vector2(7, -87)
@@ -69,22 +74,17 @@ offset = Vector2(7, -87)
 texture = ExtResource("7_blink")
 offset = Vector2(7, -88)
 
-[node name="Torso" type="Sprite2D" parent="Body"]
-position = Vector2(0, -125)
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("5_torso")
-
 [node name="ShoulderBack" type="Marker2D" parent="Body"]
-position = Vector2(-24, -158)
+position = Vector2(-19, -168)
 
 [node name="ShoulderFront" type="Marker2D" parent="Body"]
-position = Vector2(20, -156)
+position = Vector2(22, -164)
 
 [node name="HipBack" type="Marker2D" parent="Body"]
-position = Vector2(14, -102)
+position = Vector2(13, -102)
 
 [node name="HipFront" type="Marker2D" parent="Body"]
-position = Vector2(-6, -102)
+position = Vector2(-4, -102)
 
 [node name="FrontArm" type="Node2D" parent="."]
 script = ExtResource("2_limb")

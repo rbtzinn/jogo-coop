@@ -18,7 +18,7 @@ const PARTS := [
 	["palhaco_folha.png", Rect2i(1125, 225, 520, 263), "clown/clown_shoe.png", 38.0],
 	["acrobata_folha.png", Rect2i(40, 15, 515, 465), "acrobat/acrobat_head.png", 98.0],
 	["acrobata_folha.png", Rect2i(40, 490, 515, 451), "acrobat/acrobat_blink.png", "acrobat/acrobat_head.png"],
-	["acrobata_tronco.png", Rect2i(), "acrobat/acrobat_torso.png", 92.0],
+	["acrobata_tronco.png", Rect2i(), "acrobat/acrobat_torso.png", 100.0],
 	["acrobata_folha.png", Rect2i(1200, 235, 445, 295), "acrobat/acrobat_shoe.png", 34.0],
 	["palhaco_folha.png", Rect2i(615, 610, 340, 290), "shared/glove_fist.png", 32.0],
 	["luva_pistola.png", Rect2i(), "shared/glove_gun.png", 42.0],

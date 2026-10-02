@@ -12,7 +12,7 @@ As folhas ilustradas originais (fundo transparente) ficam em `docs/referencias/p
 |---|---|
 | `palhaco_folha.png` | cabeça, cabeça piscando, tronco, sapato e luva fechada do palhaço |
 | `acrobata_folha.png` | cabeça, cabeça piscando e sapato da acrobata |
-| `acrobata_tronco.png` | tronco da acrobata (collant com ombros) |
+| `acrobata_tronco.png` | tronco da acrobata (collant com pescoço, sem braços), gerado no mesmo ângulo 3/4 da cabeça |
 | `luva_pistola.png` | luva segurando a pistola de rolha (compartilhada) |
 
 Os prompts usados para gerar as folhas estão em [personagens-prompts.json](personagens-prompts.json).
@@ -35,7 +35,7 @@ Godot --headless --script res://tools/cut_character_parts.gd
 
 Cada rig (`clown_rig.tscn`, `acrobat_rig.tscn`) define onde cada peça encosta:
 
-- **Cabeça**: o ponto do nó é a base do pescoço; o pescoço fica atrás do decote/gola do tronco.
+- **Cabeça**: o ponto do nó é a base do pescoço. No palhaço o pescoço fica atrás da gola (cabeça desenhada antes do tronco); na acrobata o tronco já tem pescoço e a cabeça é desenhada por cima dele.
 - **Ombros e quadris**: marcadores `ShoulderBack/Front` e `HipBack/Front` sobre o desenho do tronco.
 - **Pernas**: a perna da frente (desenhada por cima) fica à esquerda e a de trás à direita. Como o personagem olha para a direita em 3/4, o bico do sapato da frente passa por cima do calcanhar do sapato de trás.
 - **Luva com pistola**: o ponto do nó é o pulso; o marcador `Muzzle` fica na boca do cano.
