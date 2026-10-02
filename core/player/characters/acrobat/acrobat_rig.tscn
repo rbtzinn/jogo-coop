@@ -13,6 +13,7 @@
 [node name="AcrobatRig" type="Node2D"]
 scale = Vector2(0.86, 0.86)
 script = ExtResource("1_rig")
+display_name = "Acrobata"
 arm_length = 44.0
 ankle_height = 31.0
 stride = 26.0

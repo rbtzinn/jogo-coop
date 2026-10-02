@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://bosses/tamer/art/pedestal.svg" id="1_art"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
+size = Vector2(210, 24)
+
+[node name="Pedestal" type="StaticBody2D"]
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 12)
+shape = SubResource("RectangleShape2D_top")
+one_way_collision = true
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, 57)
+texture = ExtResource("1_art")

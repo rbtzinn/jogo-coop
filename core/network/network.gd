@@ -140,6 +140,21 @@ func simulated_ping_ms() -> int:
 	return SIMULATIONS[simulation_index][1]
 
 
+## Recarrega a fase atual nos dois PCs (online, só o host pede; o cliente segue).
+func reload_level() -> void:
+	var path := get_tree().current_scene.scene_file_path
+	ready_peers.clear()
+	if is_online() and is_host():
+		_reload_level.rpc(path)
+	get_tree().change_scene_to_file(path)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _reload_level(path: String) -> void:
+	ready_peers.clear()
+	get_tree().change_scene_to_file(path)
+
+
 func mark_ready(peer_id: int) -> void:
 	if peer_id not in ready_peers:
 		ready_peers.append(peer_id)

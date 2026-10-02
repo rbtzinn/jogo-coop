@@ -19,10 +19,11 @@ func tick(delta: float, aim: Vector2, trigger_held: bool, muzzle_position: Vecto
 	return true
 
 
-## Também usado para mostrar os tiros do jogador remoto.
-func spawn_projectile(aim: Vector2, muzzle_position: Vector2) -> void:
+## Também usado para mostrar os tiros do jogador remoto (aí `deals_damage` = false).
+func spawn_projectile(aim: Vector2, muzzle_position: Vector2, deals_damage := true) -> void:
 	var projectile: Projectile = PROJECTILE_SCENE.instantiate()
 	projectile.direction = aim
+	projectile.deals_damage = deals_damage
 	get_tree().current_scene.add_child(projectile)
 	projectile.global_position = muzzle_position
 	projectile.reset_physics_interpolation()

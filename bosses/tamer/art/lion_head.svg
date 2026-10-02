@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="mane" cx="0.5" cy="0.45" r="0.55">
+      <stop offset="0" stop-color="#c86a30"/><stop offset="0.7" stop-color="#9a4a20"/><stop offset="1" stop-color="#6e2a14"/>
+    </radialGradient>
+    <radialGradient id="face" cx="0.4" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#f7cf80"/><stop offset="1" stop-color="#d6923e"/>
+    </radialGradient>
+  </defs>
+  <!-- juba em tufos -->
+  <g fill="url(#mane)" stroke="#1b1410" stroke-width="5" stroke-linejoin="round">
+    <path d="M100 6 Q122 14 132 8 Q142 26 162 26 Q160 46 180 56 Q170 74 186 92 Q170 106 180 126 Q160 132 160 152 Q140 150 130 168 Q112 156 100 172 Q86 158 70 170 Q60 150 40 154 Q42 134 20 126 Q32 108 14 92 Q30 76 20 56 Q40 48 40 28 Q60 28 68 10 Q84 18 100 6 Z"/>
+  </g>
+  <g stroke="#1b1410" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <!-- orelha -->
+    <path d="M112 42 Q128 28 138 46 Q130 56 118 54 Z" fill="#d6923e"/>
+    <!-- rosto (olhando para a esquerda) -->
+    <path d="M58 70 Q66 40 104 44 Q140 50 140 92 Q138 128 108 140 Q74 146 58 126 Q42 110 46 92 Z" fill="url(#face)"/>
+    <!-- focinho -->
+    <ellipse cx="62" cy="108" rx="28" ry="22" fill="#f6dda4"/>
+  </g>
+  <!-- nariz -->
+  <path d="M40 94 Q52 88 60 96 Q56 106 46 106 Q38 102 40 94 Z" fill="#5a2a1e" stroke="#1b1410" stroke-width="3"/>
+  <ellipse cx="46" cy="96" rx="4" ry="2.5" fill="#ffffff" opacity="0.5"/>
+  <!-- boca fechada, sorriso maroto -->
+  <path d="M48 112 Q58 124 76 118" fill="none" stroke="#1b1410" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M52 108 L52 116" stroke="#1b1410" stroke-width="3" stroke-linecap="round"/>
+  <!-- bigodes -->
+  <g stroke="#1b1410" stroke-width="2" stroke-linecap="round">
+    <path d="M70 104 L94 100"/><path d="M70 110 L96 112"/>
+  </g>
+  <g fill="#1b1410"><circle cx="66" cy="104" r="1.8"/><circle cx="72" cy="100" r="1.8"/><circle cx="74" cy="108" r="1.8"/></g>
+  <!-- olho meio fechado, preguiçoso -->
+  <ellipse cx="80" cy="76" rx="9" ry="10" fill="#ffffff" stroke="#1b1410" stroke-width="3"/>
+  <ellipse cx="76" cy="79" rx="4.5" ry="6" fill="#1b1410"/>
+  <path d="M70 70 Q80 64 90 70 L90 74 Q80 70 70 74 Z" fill="#d6923e" stroke="#1b1410" stroke-width="2.5"/>
+  <path d="M68 62 Q80 54 94 62" fill="none" stroke="#6e2a14" stroke-width="5" stroke-linecap="round"/>
+</svg>

@@ -1,23 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="96" height="50" viewBox="0 0 96 50">
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="50" viewBox="0 0 96 50"><defs><linearGradient id="paint_white" x1="0" y1="0" x2="0.75" y2="1">
+  <stop offset="0" stop-color="#fffdf6"/><stop offset="0.62" stop-color="#faf1de"/><stop offset="1" stop-color="#d6c6a7"/>
+</linearGradient><linearGradient id="paint_gold" x1="0" y1="0" x2="0.7" y2="1">
+  <stop offset="0" stop-color="#fff0ab"/><stop offset="0.42" stop-color="#e7b947"/><stop offset="1" stop-color="#a96b23"/>
+</linearGradient><linearGradient id="paint_wood" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#c18b54"/><stop offset="0.5" stop-color="#93542c"/><stop offset="1" stop-color="#61311c"/></linearGradient>
+<linearGradient id="paint_cork" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3c38b"/><stop offset="1" stop-color="#b17c40"/></linearGradient></defs>
   <!-- cabo de madeira -->
-  <path d="M30 27 L45 25 Q47 37 41 47 Q33 49 28 43 Z" fill="#7a4321" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M30 27 L45 25 Q47 37 41 47 Q33 49 28 43 Z" fill="url(#paint_wood)" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
   <path d="M34 31 Q38 37 35 43" fill="none" stroke="#5a2e15" stroke-width="2" stroke-linecap="round"/>
   <!-- cano de madeira com boca de corneta -->
-  <path d="M30 14 L66 15 Q76 12 92 5 L92 41 Q76 34 66 31 L30 32 Z" fill="#8b4a24" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M30 14 L66 15 Q76 12 92 5 L92 41 Q76 34 66 31 L30 32 Z" fill="url(#paint_wood)" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
   <path d="M33 17.5 L66 18.5 Q76 15.5 89 10" fill="none" stroke="#b06a3e" stroke-width="3" stroke-linecap="round"/>
   <!-- anéis -->
   <rect x="42" y="13" width="6" height="21" rx="2" fill="#3b2b25" stroke="#1b1410" stroke-width="2"/>
-  <path d="M63 14 L69 13 L69 33 L63 32 Z" fill="#c9932f" stroke="#1b1410" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M63 14 L69 13 L69 33 L63 32 Z" fill="url(#paint_gold)" stroke="#1b1410" stroke-width="2" stroke-linejoin="round"/>
   <!-- boca e rolha -->
   <ellipse cx="91" cy="23" rx="4.5" ry="18" fill="#4a2410" stroke="#1b1410" stroke-width="3"/>
-  <ellipse cx="91.5" cy="23" rx="2.6" ry="11" fill="#d2a463" stroke="#1b1410" stroke-width="1.5"/>
+  <ellipse cx="91.5" cy="23" rx="2.6" ry="11" fill="url(#paint_cork)" stroke="#1b1410" stroke-width="1.5"/>
   <!-- cão da arma -->
   <path d="M31 14 L29 7 L35 8 L36 14 Z" fill="#3b2b25" stroke="#1b1410" stroke-width="2" stroke-linejoin="round"/>
   <!-- luva fechada no cabo -->
-  <path d="M14 17 Q20 11 34 15 Q46 19 44 31 Q42 41 30 41 Q17 41 14 33 Z" fill="#fbf6ec" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M14 17 Q20 11 34 15 Q46 19 44 31 Q42 41 30 41 Q17 41 14 33 Z" fill="url(#paint_white)" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
   <path d="M29 27 Q35 27 40 25 M29 33 Q35 34 40 32" fill="none" stroke="#1b1410" stroke-width="2.5" stroke-linecap="round"/>
-  <ellipse cx="38" cy="16" rx="7" ry="4.5" fill="#fbf6ec" stroke="#1b1410" stroke-width="3"/>
+  <ellipse cx="38" cy="16" rx="7" ry="4.5" fill="url(#paint_white)" stroke="#1b1410" stroke-width="3"/>
   <!-- punho -->
-  <path d="M4 14 L16 17 L16 36 L4 39 Q1 26 4 14 Z" fill="#fbf6ec" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M4 14 L16 17 L16 36 L4 39 Q1 26 4 14 Z" fill="url(#paint_white)" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
   <path d="M8 18 L8 35" stroke="#1b1410" stroke-width="2" stroke-linecap="round"/>
+<path d="M51 21 L60 21 M51 26 L58 27 M73 21 L83 18 M75 27 L84 29" fill="none" stroke="#522b1c" stroke-width="1" stroke-linecap="round" opacity="0.65"/>
 </svg>

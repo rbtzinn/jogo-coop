@@ -3,6 +3,7 @@ extends CharacterBody2D
 ## Movimento do jogador: corrida, pulo (altura fixa, coyote time, buffer), dash e abaixar
 ## (abaixado + dash em cima de uma plataforma = descer dela).
 ## Lê os comandos de um PlayerInput, para que a rede possa controlar jogadores remotos depois.
+## Vida, dano e queda ficam no PlayerHealth.
 
 const DUST_SCENE := preload("res://components/fx/dust_puff.tscn")
 ## Camada de física das plataformas que dá para atravessar (ver project.godot).
@@ -35,6 +36,12 @@ const PLATFORM_LAYER := 5
 @export var dash_duration := 0.17
 @export var dash_cooldown := 0.25
 
+@export_group("Dano")
+## Empurrão ao levar dano (para longe do ataque e para cima).
+@export var knockback := Vector2(450.0, -420.0)
+## Tempo sem controlar a corrida depois do empurrão.
+@export var hurt_stun_time := 0.22
+
 @export_group("Abaixar")
 ## Altura da caixa de colisão abaixado (em pé é a altura da cena).
 @export var crouch_height := 84.0
@@ -54,6 +61,7 @@ var _air_dash_available := true
 var _drop_timer := 0.0
 var _on_platform := false
 var _stand_height := 0.0
+var _hurt_timer := 0.0
 
 var rig: CharacterRig
 
@@ -66,6 +74,8 @@ var _has_remote_state := false
 @onready var visual: Node2D = $Visual
 @onready var sync: PlayerSync = $PlayerSync
 @onready var collision: CollisionShape2D = $CollisionShape2D
+@onready var hurt_shape: CollisionShape2D = $Hurtbox/CollisionShape2D
+@onready var player_health: PlayerHealth = $PlayerHealth
 
 
 func _ready() -> void:
@@ -75,18 +85,24 @@ func _ready() -> void:
 	input.local_control = controlled_locally
 	# Cada jogador tem sua própria caixa (ela muda de altura ao abaixar).
 	collision.shape = collision.shape.duplicate()
+	hurt_shape.shape = hurt_shape.shape.duplicate()
 	_stand_height = collision.shape.size.y
+	player_health.hurt.connect(_on_hurt)
+	player_health.downed.connect(_on_downed)
 	rig = character.instantiate()
 	visual.add_child(rig)
 
 
 func _physics_process(delta: float) -> void:
+	player_health.tick(delta, not is_dashing())
 	# O jogador do outro PC não é simulado aqui: só segue o que chega pela rede.
 	if not is_multiplayer_authority():
 		_follow_remote_state(delta)
 		return
 
 	input.update()
+	if player_health.is_downed:
+		input.clear()
 	_update_timers(delta)
 	_update_facing()
 	_update_crouch()
@@ -110,7 +126,8 @@ func _physics_process(delta: float) -> void:
 	visual.scale.x = facing
 	var aim := get_aim_direction()
 	rig.update_pose(delta, velocity, is_on_floor(), is_dashing(), Vector2(aim.x * facing, aim.y), run_speed, crouching)
-	if not is_dashing() and gun.tick(delta, aim, input.shoot_held, rig.get_muzzle_position()):
+	var can_shoot := not is_dashing() and not player_health.is_downed
+	if can_shoot and gun.tick(delta, aim, input.shoot_held, rig.get_muzzle_position()):
 		rig.play_fire()
 		sync.send_fire(aim)
 	sync.send_state(self, aim)
@@ -139,7 +156,7 @@ func _follow_remote_state(delta: float) -> void:
 	rig.update_pose(delta, velocity, state.on_floor, state.dashing, Vector2(aim.x * facing, aim.y), run_speed,
 			state.get("crouching", false))
 	for fire in sync.take_due_fires():
-		gun.spawn_projectile(fire.aim, rig.get_muzzle_position())
+		gun.spawn_projectile(fire.aim, rig.get_muzzle_position(), false)
 		rig.play_fire()
 
 
@@ -173,6 +190,7 @@ func _update_timers(delta: float) -> void:
 		_jump_buffer_timer = maxf(_jump_buffer_timer - delta, 0.0)
 
 	_dash_cooldown_timer = maxf(_dash_cooldown_timer - delta, 0.0)
+	_hurt_timer = maxf(_hurt_timer - delta, 0.0)
 
 	if _drop_timer > 0.0:
 		_drop_timer -= delta
@@ -201,6 +219,10 @@ func _process_jump() -> void:
 
 
 func _process_run(delta: float) -> void:
+	if _hurt_timer > 0.0:
+		# Empurrado: deixa o empurrão agir antes de devolver o controle.
+		velocity.x = move_toward(velocity.x, 0.0, 1200.0 * delta)
+		return
 	var target := 0.0
 	var locked_on_ground := (input.lock_held or crouching) and is_on_floor()
 	if not locked_on_ground:
@@ -244,6 +266,10 @@ func _apply_hitbox() -> void:
 	var shape := collision.shape as RectangleShape2D
 	shape.size.y = height
 	collision.position.y = -height * 0.5
+	# A área que leva dano é um pouco menor que o corpo (dano favorável a quem joga).
+	var hurt := hurt_shape.shape as RectangleShape2D
+	hurt.size.y = height - 14.0
+	hurt_shape.position.y = -height * 0.5
 
 
 ## Abaixado em cima de uma plataforma, o dash vira "descer da plataforma".
@@ -268,3 +294,19 @@ func _is_standing_on_platform() -> bool:
 		if body != null and hit.get_normal().y < -0.5 and body.get_collision_layer_value(PLATFORM_LAYER):
 			return true
 	return false
+
+
+func _on_hurt(from_position: Vector2) -> void:
+	var away := signf(global_position.x - from_position.x)
+	if away == 0.0:
+		away = -facing
+	_dash_timer = 0.0
+	velocity = Vector2(away * knockback.x, knockback.y)
+	_hurt_timer = hurt_stun_time
+
+
+func _on_downed() -> void:
+	rig.modulate = Color(0.55, 0.5, 0.6, 0.55)
+	if crouching:
+		crouching = false
+		_apply_hitbox()

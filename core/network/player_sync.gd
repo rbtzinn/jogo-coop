@@ -31,6 +31,12 @@ func send_fire(aim: Vector2) -> void:
 		_receive_fire.rpc_id(peer_id, time, aim)
 
 
+## Vida nova do jogador local (depois de levar dano). Confiável: nunca pode se perder.
+func send_health(value: int) -> void:
+	for peer_id in Network.ready_peers:
+		_receive_health.rpc_id(peer_id, value)
+
+
 ## Estado do jogador remoto no instante que deve ser mostrado agora ({} se ainda não chegou nada).
 func sample_state() -> Dictionary:
 	if _snapshots.is_empty():
@@ -85,6 +91,12 @@ func _receive_state(time: float, position: Vector2, velocity: Vector2, facing: i
 @rpc("authority", "call_remote", "reliable")
 func _receive_fire(time: float, aim: Vector2) -> void:
 	Network.deliver(_store_fire.bind({"time": time, "aim": aim}), false)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _receive_health(value: int) -> void:
+	var player := get_parent() as Player
+	Network.deliver(player.player_health.apply_remote.bind(value), false)
 
 
 func _store_snapshot(snapshot: Dictionary) -> void:

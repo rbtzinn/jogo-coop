@@ -10,6 +10,8 @@ const HOST_PEER_ID := 1
 
 ## Personagens na ordem: [jogador 1 (host), jogador 2 (cliente)].
 @export var characters: Array[PackedScene] = []
+## Para onde cada personagem começa olhando (1 = direita, -1 = esquerda).
+@export var facings: Array[int] = [1, -1]
 
 
 func _ready() -> void:
@@ -45,7 +47,7 @@ func _spawn(peer_id: int, slot: int, local: bool) -> Player:
 	player.name = _player_name(peer_id)
 	player.character = characters[slot]
 	player.controlled_locally = local
-	player.facing = 1 if slot == 0 else -1
+	player.facing = facings[slot] if slot < facings.size() else 1
 	if Network.is_online():
 		player.set_multiplayer_authority(peer_id)
 	var markers := get_children().filter(func(node: Node) -> bool: return node is Marker2D)

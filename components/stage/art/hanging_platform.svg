@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="44" viewBox="0 0 340 44">
+<defs><linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c0935e"/><stop offset="0.34" stop-color="#9b6a3e"/><stop offset="1" stop-color="#5b3824"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#e1bc73"/><stop offset="1" stop-color="#916025"/></linearGradient></defs>
+<circle cx="24" cy="6" r="5" fill="none" stroke="#c9b48a" stroke-width="3.5"/><circle cx="316" cy="6" r="5" fill="none" stroke="#c9b48a" stroke-width="3.5"/>
+<path d="M10 8 L330 8 L334 12 L331 35 L9 35 L6 12 Z" fill="url(#wood)" stroke="#1b1410" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M11 11 L329 11" stroke="#d5ad79" stroke-width="2"/>
+<path d="M28 17 Q56 13 88 17 T152 17 M187 17 Q213 20 237 16 T312 18 M45 22 Q94 25 134 21 M209 23 Q262 19 309 23" fill="none" stroke="#52321f" stroke-width="1.1" stroke-linecap="round"/>
+<path d="M14 27 L326 27 L325 33 L15 33 Z" fill="#76332c" stroke="#1b1410" stroke-width="1.7"/>
+<path d="M14 28 L326 28" stroke="#c39655" stroke-width="0.8"/>
+<g fill="url(#gold)" stroke="#1b1410" stroke-width="1.4"><circle cx="17" cy="18" r="4"/><circle cx="323" cy="18" r="4"/><path d="M170 25 L172 28 L176 28 L173 30 L174 34 L170 32 L166 34 L167 30 L164 28 L168 28 Z"/></g>
+<path d="M36 31 Q40 28 44 31 M88 31 Q92 28 96 31 M244 31 Q248 28 252 31 M296 31 Q300 28 304 31" fill="none" stroke="#be9757" stroke-width="1.2"/>
+</svg>

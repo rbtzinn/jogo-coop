@@ -5,6 +5,9 @@ extends Node2D
 ## Cada personagem é uma cena com os mesmos nomes de nós e este script;
 ## as proporções vêm da posição dos marcadores (ombros e quadris).
 
+## Nome mostrado na tela (vida, placar).
+@export var display_name := ""
+
 @export_group("Proporções")
 @export var arm_length := 32.0
 @export var ankle_height := 8.0

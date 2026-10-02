@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbrdyqbnquf6e"
-path="res://.godot/imported/hanging_platform.svg-36c2764e8364b1899b1d15e1419381cb.ctex"
+uid="uid://bng86qtd4ktvh"
+path="res://.godot/imported/spotlight.svg-ba0c369a8036ee2adb5506e3a5041b69.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://levels/test_arena/art/hanging_platform.svg"
-dest_files=["res://.godot/imported/hanging_platform.svg-36c2764e8364b1899b1d15e1419381cb.ctex"]
+source_file="res://components/stage/art/spotlight.svg"
+dest_files=["res://.godot/imported/spotlight.svg-ba0c369a8036ee2adb5506e3a5041b69.ctex"]
 
 [params]
 

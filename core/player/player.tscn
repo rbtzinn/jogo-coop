@@ -5,9 +5,14 @@
 [ext_resource type="Script" path="res://core/player/player_gun.gd" id="3_gun"]
 [ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="4_clown"]
 [ext_resource type="Script" path="res://core/network/player_sync.gd" id="5_sync"]
+[ext_resource type="Script" path="res://core/player/player_health.gd" id="6_health"]
+[ext_resource type="Script" path="res://components/health/health.gd" id="7_health_value"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(54, 132)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(40, 118)
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
@@ -29,3 +34,18 @@ script = ExtResource("3_gun")
 
 [node name="PlayerSync" type="Node" parent="."]
 script = ExtResource("5_sync")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 32
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -66)
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="PlayerHealth" type="Node" parent="."]
+script = ExtResource("6_health")
+
+[node name="Health" type="Node" parent="PlayerHealth"]
+script = ExtResource("7_health_value")

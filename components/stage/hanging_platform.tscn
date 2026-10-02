@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://levels/test_arena/hanging_platform.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://levels/test_arena/art/hanging_platform.svg" id="2_art"]
+[ext_resource type="Script" path="res://components/stage/hanging_platform.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://components/stage/art/hanging_platform.svg" id="2_art"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_board"]
 size = Vector2(320, 24)

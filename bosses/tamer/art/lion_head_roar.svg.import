@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dx4op5804yit3"
-path="res://.godot/imported/tent_background.svg-8a3b5be421a77d429eb97ab816b2a42f.ctex"
+uid="uid://du46ix8bafpo0"
+path="res://.godot/imported/lion_head_roar.svg-786776eebac95851cf3842b2cfd2f710.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://levels/test_arena/art/tent_background.svg"
-dest_files=["res://.godot/imported/tent_background.svg-8a3b5be421a77d429eb97ab816b2a42f.ctex"]
+source_file="res://bosses/tamer/art/lion_head_roar.svg"
+dest_files=["res://.godot/imported/lion_head_roar.svg-786776eebac95851cf3842b2cfd2f710.ctex"]
 
 [params]
 

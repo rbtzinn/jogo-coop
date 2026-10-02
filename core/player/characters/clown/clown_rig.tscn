@@ -13,6 +13,7 @@
 [node name="ClownRig" type="Node2D"]
 scale = Vector2(0.92, 0.92)
 script = ExtResource("1_rig")
+display_name = "Palhaço"
 arm_length = 32.0
 ankle_height = 31.0
 stride = 15.0

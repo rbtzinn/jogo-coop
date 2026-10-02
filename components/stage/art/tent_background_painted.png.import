@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://y4xkvrxerul5"
-path="res://.godot/imported/spotlight.svg-90373cb090623760d1b6c2d49f58cfc2.ctex"
+uid="uid://c677rtvbl72u7"
+path="res://.godot/imported/tent_background_painted.png-6065f6475bc335a253d3bc807c6da6cc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://levels/test_arena/art/spotlight.svg"
-dest_files=["res://.godot/imported/spotlight.svg-90373cb090623760d1b6c2d49f58cfc2.ctex"]
+source_file="res://components/stage/art/tent_background_painted.png"
+dest_files=["res://.godot/imported/tent_background_painted.png-6065f6475bc335a253d3bc807c6da6cc.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

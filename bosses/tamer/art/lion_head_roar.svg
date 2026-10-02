@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="mane" cx="0.5" cy="0.45" r="0.55">
+      <stop offset="0" stop-color="#d4753a"/><stop offset="0.7" stop-color="#a3501f"/><stop offset="1" stop-color="#6e2a14"/>
+    </radialGradient>
+    <radialGradient id="face" cx="0.4" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#f7cf80"/><stop offset="1" stop-color="#d6923e"/>
+    </radialGradient>
+  </defs>
+  <!-- juba eriçada -->
+  <g fill="url(#mane)" stroke="#1b1410" stroke-width="5" stroke-linejoin="round">
+    <path d="M100 0 Q120 14 136 2 Q144 24 168 20 Q162 44 188 52 Q172 72 194 92 Q172 106 186 130 Q162 134 164 158 Q140 152 132 176 Q112 160 100 180 Q86 162 66 176 Q58 152 34 158 Q38 134 12 128 Q28 108 6 92 Q28 74 12 52 Q38 46 32 20 Q56 24 64 2 Q82 16 100 0 Z"/>
+  </g>
+  <g stroke="#1b1410" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M114 40 Q132 22 142 44 Q132 54 120 52 Z" fill="#d6923e"/>
+    <path d="M60 66 Q68 38 106 42 Q142 48 142 90 Q140 130 110 142 Q90 148 76 140 Z" fill="url(#face)"/>
+    <!-- boca escancarada -->
+    <path d="M24 84 Q40 70 70 80 L96 100 Q80 140 40 140 Q20 124 24 84 Z" fill="#7a1f24"/>
+  </g>
+  <!-- língua e dentes -->
+  <path d="M34 128 Q52 118 78 124 Q66 138 42 138 Z" fill="#e0646e"/>
+  <g fill="#fff8e6" stroke="#1b1410" stroke-width="2" stroke-linejoin="round">
+    <path d="M30 84 L36 98 L42 82 Z"/><path d="M54 78 L58 92 L64 79 Z"/>
+    <path d="M40 134 L46 122 L52 136 Z"/><path d="M66 132 L70 120 L76 130 Z"/>
+  </g>
+  <!-- nariz franzido -->
+  <path d="M28 70 Q40 62 50 70 Q46 80 36 80 Q26 78 28 70 Z" fill="#5a2a1e" stroke="#1b1410" stroke-width="3"/>
+  <!-- olho bravo -->
+  <ellipse cx="86" cy="70" rx="9" ry="9" fill="#ffffff" stroke="#1b1410" stroke-width="3"/>
+  <circle cx="83" cy="72" r="4.5" fill="#1b1410"/>
+  <path d="M68 56 Q84 62 98 54" fill="none" stroke="#6e2a14" stroke-width="6" stroke-linecap="round"/>
+  <g stroke="#1b1410" stroke-width="2" stroke-linecap="round">
+    <path d="M62 92 L90 86"/><path d="M64 100 L92 102"/>
+  </g>
+</svg>

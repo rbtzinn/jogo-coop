@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dm77p806b1fjl"
-path="res://.godot/imported/ring_floor.svg-79ff43d435f2248f3587fa666bb34db0.ctex"
+uid="uid://c7yrsgh61wd5k"
+path="res://.godot/imported/tent_background.svg-d74c59f8a4599e9addcf0431c997d5ae.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://levels/test_arena/art/ring_floor.svg"
-dest_files=["res://.godot/imported/ring_floor.svg-79ff43d435f2248f3587fa666bb34db0.ctex"]
+source_file="res://components/stage/art/tent_background.svg"
+dest_files=["res://.godot/imported/tent_background.svg-d74c59f8a4599e9addcf0431c997d5ae.ctex"]
 
 [params]
 

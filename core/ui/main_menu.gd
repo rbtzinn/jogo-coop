@@ -4,8 +4,8 @@ extends Control
 
 const JOIN_TIMEOUT := 8.0
 
-## Fase que abre ao começar (por enquanto, a arena de teste).
-@export_file("*.tscn") var first_level := "res://levels/test_arena/test_arena.tscn"
+## Fase que abre ao começar (por enquanto, a luta contra o Domador).
+@export_file("*.tscn") var first_level := "res://bosses/tamer/tamer_fight.tscn"
 @export var background: Texture2D
 
 var _main_buttons: VBoxContainer

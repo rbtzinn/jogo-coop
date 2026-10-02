@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://qm3t7xwocuup"]
 
 [ext_resource type="Script" uid="uid://d1tlqp0tju731" path="res://levels/test_arena/test_arena.gd" id="1_arena"]
-[ext_resource type="Texture2D" uid="uid://dx4op5804yit3" path="res://levels/test_arena/art/tent_background.svg" id="2_bg"]
-[ext_resource type="Texture2D" uid="uid://y4xkvrxerul5" path="res://levels/test_arena/art/spotlight.svg" id="3_spot"]
-[ext_resource type="Script" uid="uid://bl0mgw05313u1" path="res://levels/test_arena/spotlight.gd" id="4_spot_script"]
-[ext_resource type="Texture2D" uid="uid://dm77p806b1fjl" path="res://levels/test_arena/art/ring_floor.svg" id="5_floor"]
-[ext_resource type="PackedScene" path="res://levels/test_arena/hanging_platform.tscn" id="6_platform"]
+[ext_resource type="Texture2D" path="res://components/stage/art/tent_background_painted.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://components/stage/art/spotlight.svg" id="3_spot"]
+[ext_resource type="Script" uid="uid://bl0mgw05313u1" path="res://components/stage/spotlight.gd" id="4_spot_script"]
+[ext_resource type="Texture2D" path="res://components/stage/art/ring_floor.svg" id="5_floor"]
+[ext_resource type="PackedScene" path="res://components/stage/hanging_platform.tscn" id="6_platform"]
 [ext_resource type="Script" path="res://core/network/player_spawner.gd" id="7_spawner"]
 [ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="11_clown"]
 [ext_resource type="Script" path="res://core/network/connection_status.gd" id="12_status"]
@@ -28,6 +28,7 @@ script = ExtResource("1_arena")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=1210931782]
 position = Vector2(960, 540)
+scale = Vector2(1.14832536, 1.1477152)
 texture = ExtResource("2_bg")
 
 [node name="SpotlightLeft" type="Sprite2D" parent="." unique_id=1077614721]
