@@ -13,7 +13,7 @@
 
 Diferente do Cuphead (fantasma), aqui quem cai **vira um balão de circo com a própria cara**, que sobe devagar.
 
-- O balão leva **6 segundos** para sair pelo topo da tela.
+- O balão leva **cerca de 6 segundos** para sair pelo topo da tela (sobe 190 px/s, balançando). Em "Testar sozinho", quando o personagem controlado cai, o controle passa sozinho para o outro.
 - O parceiro revive dando **parry no balão** (ver Parry). O revivido volta com **1 PV**.
 - Se o balão sair da tela, aquele jogador está fora até o fim da luta.
 - **Os dois caírem = derrota.**
@@ -25,7 +25,7 @@ Objetos **rosa** (`#ff5fa2`) podem receber parry. Todo chefão tem alguns ataque
 
 - **Como fazer (decidido):** apertar **pular de novo no ar** encostando no objeto rosa (como no Cuphead). Sem botão novo; com "Cima pula", é só apertar Cima de novo no ar.
 - Efeito: o personagem **quica para cima** (pulo extra), o objeto é destruído ou anulado e ele ganha **1 estrela de Aplauso** (ver Especial).
-- Janela generosa: a área de parry do personagem é maior que o desenho.
+- Janela generosa: a área de parry do personagem é bem maior que o desenho (círculo de 105 px em volta do corpo) e o parry vale por 0,22 s depois de apertar. Uma tentativa por pulo; um parry certo devolve a tentativa.
 - **Parry em dupla (diferencial):** se os dois jogadores derem parry no **mesmo objeto** com até **0,3 s** de diferença, sai um **"Número Perfeito"**: cada um ganha 2 estrelas, a tela dá um flash e a plateia aplaude. Alguns chefões têm objetos rosa grandes feitos para isso.
 - Dar parry no balão do parceiro revive (e também conta como parry).
 

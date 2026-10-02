@@ -3,11 +3,19 @@ extends CharacterBody2D
 ## Movimento do jogador: corrida, pulo (altura fixa, coyote time, buffer), dash e abaixar
 ## (abaixado + dash em cima de uma plataforma = descer dela).
 ## Lê os comandos de um PlayerInput, para que a rede possa controlar jogadores remotos depois.
-## Vida, dano e queda ficam no PlayerHealth.
+## Vida, dano e queda ficam no PlayerHealth; parry no PlayerParry; estrelas no PlayerApplause.
+## Caído, o jogador vira um balão (PlayerBalloon) que sobe até o parceiro reviver com parry.
 
 const DUST_SCENE := preload("res://components/fx/dust_puff.tscn")
 ## Camada de física das plataformas que dá para atravessar (ver project.godot).
 const PLATFORM_LAYER := 5
+## Balão do jogador caído: velocidade de subida (sai da tela em ~6 s), balanço e onde
+## ele é considerado fora da tela.
+const BALLOON_RISE := 190.0
+const BALLOON_SWAY := 40.0
+const BALLOON_OUT_Y := -40.0
+## Quique do parry (fração do pulo normal).
+const PARRY_BOUNCE := 0.9
 
 ## Cena do personagem desenhado (palhaço, acrobata...).
 @export var character: PackedScene
@@ -62,12 +70,15 @@ var _drop_timer := 0.0
 var _on_platform := false
 var _stand_height := 0.0
 var _hurt_timer := 0.0
+var _balloon_origin_x := 0.0
+var _balloon_time := 0.0
 
 var rig: CharacterRig
 
 var _remote_on_floor := true
 var _remote_dashing := false
 var _has_remote_state := false
+var _remote_parrying := false
 
 @onready var input: PlayerInput = $PlayerInput
 @onready var gun: PlayerGun = $Gun
@@ -76,6 +87,9 @@ var _has_remote_state := false
 @onready var collision: CollisionShape2D = $CollisionShape2D
 @onready var hurt_shape: CollisionShape2D = $Hurtbox/CollisionShape2D
 @onready var player_health: PlayerHealth = $PlayerHealth
+@onready var parry: PlayerParry = $PlayerParry
+@onready var applause: PlayerApplause = $PlayerApplause
+@onready var balloon: PlayerBalloon = $Balloon
 
 
 func _ready() -> void:
@@ -89,20 +103,30 @@ func _ready() -> void:
 	_stand_height = collision.shape.size.y
 	player_health.hurt.connect(_on_hurt)
 	player_health.downed.connect(_on_downed)
+	player_health.revived.connect(_on_revived)
+	player_health.out.connect(_on_out)
 	rig = character.instantiate()
 	visual.add_child(rig)
+	balloon.set_face(rig.head as Sprite2D, rig.scale.x)
 
 
 func _physics_process(delta: float) -> void:
-	player_health.tick(delta, not is_dashing())
 	# O jogador do outro PC não é simulado aqui: só segue o que chega pela rede.
 	if not is_multiplayer_authority():
+		player_health.tick(delta, false)
 		_follow_remote_state(delta)
 		return
 
 	input.update()
 	if player_health.is_downed:
 		input.clear()
+		_process_balloon(delta)
+		sync.send_state(self, Vector2(facing, 0))
+		return
+	var parry_pressed := input.jump_pressed and not is_on_floor() and _coyote_timer <= 0.0 			and not is_dashing()
+	if parry.tick(delta, is_on_floor(), parry_pressed):
+		_on_parry_success()
+	player_health.tick(delta, not is_dashing() and not parry.is_protected())
 	_update_timers(delta)
 	_update_facing()
 	_update_crouch()
@@ -126,6 +150,7 @@ func _physics_process(delta: float) -> void:
 	visual.scale.x = facing
 	var aim := get_aim_direction()
 	rig.update_pose(delta, velocity, is_on_floor(), is_dashing(), Vector2(aim.x * facing, aim.y), run_speed, crouching)
+	visual.rotation = TAU * parry.spin_amount() * facing
 	var can_shoot := not is_dashing() and not player_health.is_downed
 	if can_shoot and gun.tick(delta, aim, input.shoot_held, rig.get_muzzle_position()):
 		rig.play_fire()
@@ -152,9 +177,18 @@ func _follow_remote_state(delta: float) -> void:
 		Fx.spawn(DUST_SCENE, global_position + Vector2(-facing * 20.0, -30.0))
 	_remote_on_floor = state.on_floor
 	_remote_dashing = state.dashing
+	var parrying: bool = state.get("parrying", false)
+	if parrying and not _remote_parrying:
+		parry.start_remote_spin()
+	_remote_parrying = parrying
+	parry.tick(delta, false, false)
+	applause.stars = state.get("stars", applause.stars)
+	if player_health.is_downed and global_position.y < BALLOON_OUT_Y:
+		player_health.mark_out()
 	var aim: Vector2 = state.aim
 	rig.update_pose(delta, velocity, state.on_floor, state.dashing, Vector2(aim.x * facing, aim.y), run_speed,
 			state.get("crouching", false))
+	visual.rotation = TAU * parry.spin_amount() * facing
 	for fire in sync.take_due_fires():
 		gun.spawn_projectile(fire.aim, rig.get_muzzle_position(), false)
 		rig.play_fire()
@@ -305,8 +339,50 @@ func _on_hurt(from_position: Vector2) -> void:
 	_hurt_timer = hurt_stun_time
 
 
+func _on_parry_success() -> void:
+	velocity.y = _jump_velocity * PARRY_BOUNCE
+	_dash_timer = 0.0
+	_air_dash_available = true
+	# O aperto virou parry: não guarda como pulo para quando tocar o chão.
+	input.jump_pressed = false
+
+
+## Caído: sobe como balão balançando, até o parceiro reviver ou sair pela tela.
+func _process_balloon(delta: float) -> void:
+	if player_health.is_out:
+		velocity = Vector2.ZERO
+		return
+	_balloon_time += delta
+	var x := clampf(_balloon_origin_x + sin(_balloon_time * 1.6) * BALLOON_SWAY, 80.0, 1840.0)
+	velocity = Vector2((x - global_position.x) / maxf(delta, 0.0001), -BALLOON_RISE)
+	global_position = Vector2(x, global_position.y - BALLOON_RISE * delta)
+	if global_position.y < BALLOON_OUT_Y:
+		player_health.mark_out()
+
+
 func _on_downed() -> void:
-	rig.modulate = Color(0.55, 0.5, 0.6, 0.55)
 	if crouching:
 		crouching = false
 		_apply_hitbox()
+	_dash_timer = 0.0
+	visual.rotation = 0.0
+	visual.hide()
+	balloon.set_active(true)
+	_balloon_origin_x = global_position.x
+	_balloon_time = 0.0
+	velocity = Vector2.ZERO
+	# Sozinho: o controle passa para o outro personagem (ver SoloCharacterSwitch).
+	if not Network.is_online():
+		input.local_control = false
+
+
+func _on_revived() -> void:
+	balloon.set_active(false)
+	visual.show()
+	velocity = Vector2(0.0, -300.0)
+	ParryFlash.spawn(global_position + Vector2(0, -100), 1.4)
+
+
+func _on_out() -> void:
+	balloon.set_active(false)
+	visual.hide()

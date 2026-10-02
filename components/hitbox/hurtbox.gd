@@ -18,6 +18,10 @@ func _ready() -> void:
 	monitoring = false
 
 
-func take_hit(amount: int, source := "") -> void:
-	if monitorable:
-		hit.emit(roundi(amount * damage_multiplier), source)
+## Retorna o dano que valeu (0 se esta parte não leva tiro agora).
+func take_hit(amount: int, source := "") -> int:
+	if not monitorable:
+		return 0
+	var dealt := roundi(amount * damage_multiplier)
+	hit.emit(dealt, source)
+	return dealt

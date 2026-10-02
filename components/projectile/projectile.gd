@@ -15,6 +15,8 @@ var direction := Vector2.RIGHT
 var deals_damage := true
 ## Quem atirou (nome do jogador), para o chefão saber quem está batendo mais.
 var source := ""
+## Jogador que atirou (só no PC dele): ganha estrelas de Aplauso com o dano.
+var shooter: Node
 
 
 func _ready() -> void:
@@ -36,7 +38,9 @@ func _on_area_entered(area: Area2D) -> void:
 	if not area is Hurtbox or is_queued_for_deletion():
 		return
 	if deals_damage:
-		(area as Hurtbox).take_hit(damage, source)
+		var dealt := (area as Hurtbox).take_hit(damage, source)
+		if dealt > 0 and is_instance_valid(shooter):
+			shooter.applause.add_damage(dealt)
 	_explode()
 
 

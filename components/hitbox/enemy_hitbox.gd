@@ -7,8 +7,11 @@ const LAYER := 6
 
 @export var damage := 1
 @export var active := true
-## Objeto rosa: aceita parry (etapa 4b).
+## Objeto rosa: aceita parry (pular de novo no ar encostando nele).
 @export var parryable := false
+
+## Quem é avisado quando levar parry (precisa ter `on_parried()` e `parry_id`). Opcional.
+var parry_target: Node
 
 
 func _ready() -> void:

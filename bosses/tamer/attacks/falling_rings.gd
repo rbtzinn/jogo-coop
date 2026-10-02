@@ -79,6 +79,7 @@ func _on_tick(_delta: float) -> void:
 		if ring[0] == null:
 			var node := FireRing.new()
 			node.pink = ring[3]
+			node.parry_id = "%s:%d:%d" % [name, rng.seed, i]
 			add_child(node)
 			node.strength = 1.0
 			ring[0] = node

@@ -22,7 +22,8 @@ func send_state(player: Player, aim: Vector2) -> void:
 	var time := _now()
 	for peer_id in Network.ready_peers:
 		_receive_state.rpc_id(peer_id, time, player.global_position, player.velocity, player.facing,
-				aim, player.is_on_floor(), player.is_dashing(), player.crouching)
+				aim, player.is_on_floor(), player.is_dashing(), player.crouching,
+				player.parry.is_spinning(), player.applause.stars)
 
 
 func send_fire(aim: Vector2) -> void:
@@ -35,6 +36,21 @@ func send_fire(aim: Vector2) -> void:
 func send_health(value: int) -> void:
 	for peer_id in Network.ready_peers:
 		_receive_health.rpc_id(peer_id, value)
+
+
+## O jogador local fez parry num objeto rosa: o outro PC estoura o mesmo objeto.
+func send_parry(parry_id: String) -> void:
+	for peer_id in Network.ready_peers:
+		_receive_parry.rpc_id(peer_id, parry_id)
+
+
+## O jogador local deu parry no balão DESTE jogador: pede para o PC dono dele reviver.
+func request_revive() -> void:
+	var player := get_parent() as Player
+	if player.is_multiplayer_authority():
+		player.player_health.revive_from_parry()
+	else:
+		_receive_revive_request.rpc_id(player.get_multiplayer_authority())
 
 
 ## Estado do jogador remoto no instante que deve ser mostrado agora ({} se ainda não chegou nada).
@@ -74,7 +90,7 @@ func take_due_fires() -> Array[Dictionary]:
 
 @rpc("authority", "call_remote", "unreliable_ordered")
 func _receive_state(time: float, position: Vector2, velocity: Vector2, facing: int, aim: Vector2,
-		on_floor: bool, dashing: bool, crouching: bool) -> void:
+		on_floor: bool, dashing: bool, crouching: bool, parrying: bool, stars: float) -> void:
 	var snapshot := {
 		"time": time,
 		"position": position,
@@ -84,6 +100,8 @@ func _receive_state(time: float, position: Vector2, velocity: Vector2, facing: i
 		"on_floor": on_floor,
 		"dashing": dashing,
 		"crouching": crouching,
+		"parrying": parrying,
+		"stars": stars,
 	}
 	Network.deliver(_store_snapshot.bind(snapshot), true)
 
@@ -97,6 +115,23 @@ func _receive_fire(time: float, aim: Vector2) -> void:
 func _receive_health(value: int) -> void:
 	var player := get_parent() as Player
 	Network.deliver(player.player_health.apply_remote.bind(value), false)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _receive_parry(parry_id: String) -> void:
+	Network.deliver(_pop_parry_target.bind(parry_id), false)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _receive_revive_request() -> void:
+	var player := get_parent() as Player
+	Network.deliver(player.player_health.revive_from_parry, false)
+
+
+func _pop_parry_target(parry_id: String) -> void:
+	for target in get_tree().get_nodes_in_group(&"parry_targets"):
+		if target.parry_id == parry_id:
+			target.on_parried()
 
 
 func _store_snapshot(snapshot: Dictionary) -> void:

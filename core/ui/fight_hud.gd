@@ -3,11 +3,12 @@ extends Control
 ## Placar da luta em estilo de circo, desenhado por código:
 ## - no topo, o letreiro do chefão com lâmpadas correndo, barra de vida listrada,
 ##   rastro do dano e estrelas marcando onde cada fase começa;
-## - nos cantos de baixo, um "ingresso" para cada jogador com os corações.
+## - nos cantos de baixo, um "ingresso" para cada jogador com os corações e as estrelas
+##   de Aplauso (a estrela que está enchendo cresce aos poucos).
 
 const BAR_PANEL := Vector2(820, 100)
 const BAR_SIZE := Vector2(720, 26)
-const TICKET := Vector2(290, 62)
+const TICKET := Vector2(290, 80)
 const MARGIN := 12.0
 const HEART_RED := Color("d23a3a")
 const HEART_EMPTY := Color(0.55, 0.45, 0.38, 0.55)
@@ -150,20 +151,40 @@ func _draw_ticket(player: Player, origin: Vector2) -> void:
 		y += 10.0
 	var name_text: String = player.rig.display_name if player.rig != null else String(player.name)
 	var font := UiTheme.TITLE_FONT
-	draw_string(font, origin + Vector2(14, 39), name_text, HORIZONTAL_ALIGNMENT_LEFT, 100, 18, TICKET_RED)
+	draw_string(font, origin + Vector2(14, TICKET.y * 0.5 + 7.0), name_text, HORIZONTAL_ALIGNMENT_LEFT, 100, 18, TICKET_RED)
 	var health := player.player_health.health
 	var key := String(player.name)
-	var hearts_origin := origin + Vector2(150, TICKET.y * 0.5)
+	var hearts_origin := origin + Vector2(150, 27)
 	if _last_hearts.has(key) and health.current < _last_hearts[key]:
 		for h in range(health.current, _last_hearts[key]):
 			_heart_pops.append([hearts_origin + Vector2(h * 38, 0), 0.0])
 	_last_hearts[key] = health.current
+	_draw_applause(player.applause.stars, origin + Vector2(140, 60))
+	if player.player_health.is_out:
+		_draw_stamp(origin + Vector2(200, 27), "FORA!")
+		return
 	if player.player_health.is_downed:
-		_draw_stamp(origin + Vector2(200, TICKET.y * 0.5), "CAIU!")
+		_draw_stamp(origin + Vector2(200, 27), "CAIU!")
 		return
 	for h in health.maximum:
 		var beat := 1.0 + (sin(_time * 8.0) * 0.08 if health.current == 1 and h == 0 else 0.0)
 		_draw_heart(hearts_origin + Vector2(h * 38, 0), 13.0 * beat, HEART_RED if h < health.current else HEART_EMPTY)
+
+
+## Cinco estrelas de Aplauso: cheias douradas, a que está enchendo cresce por dentro.
+func _draw_applause(stars: float, at: Vector2) -> void:
+	var full := int(floor(stars + 0.0001))
+	for i in int(PlayerApplause.MAX_STARS):
+		var center := at + Vector2(i * 28, 0)
+		if i < full:
+			var shine := 1.0 + (sin(_time * 6.0 + i) * 0.08 if full >= 5 else 0.0)
+			_draw_star(center, 11.0 * shine, UiTheme.GOLD)
+		else:
+			_draw_star(center, 11.0, Color("d9c9a6"))
+			if i == full:
+				var part := stars - full
+				if part > 0.02:
+					_draw_star(center, 11.0 * part, Color(UiTheme.GOLD, 0.9))
 
 
 static func _ticket_shape(origin: Vector2, ticket_size: Vector2, notch: float) -> PackedVector2Array:

@@ -1,7 +1,7 @@
 class_name FireRing
 extends Node2D
 ## Argola de fogo segura no ar. O leão pula por dentro dela; quem encostar na borda se queima.
-## O meio é livre. A argola rosa aceita parry (etapa 4b).
+## O meio é livre. A argola rosa aceita parry: quem fizer parry nela a estoura.
 ## Desenho em imagens prontas (duas chamas alternando): redesenhar por código pesava no PC fraco.
 
 const UNLIT := preload("res://bosses/tamer/art/fire_ring_unlit.svg")
@@ -11,6 +11,10 @@ const FLICKER_TIME := 0.09
 
 @export var radius := Vector2(70, 112)
 @export var pink := false
+
+## Identifica a argola nos dois PCs (para estourar a mesma quando o parceiro faz parry).
+var parry_id := ""
+var popped := false
 
 ## 0 = invisível, abaixo de 1 = aviso (pisca e não machuca), 1 = acesa.
 var strength := 0.0:
@@ -24,9 +28,11 @@ var _sprite := Sprite2D.new()
 
 
 func _ready() -> void:
+	add_to_group(&"parry_targets")
 	add_child(_sprite)
 	_hitbox = EnemyHitbox.new()
 	_hitbox.parryable = pink
+	_hitbox.parry_target = self
 	_hitbox.active = false
 	add_child(_hitbox)
 	# A borda vira uma corrente de círculos pequenos; o meio fica vazio.
@@ -46,8 +52,21 @@ func _process(delta: float) -> void:
 	_refresh()
 
 
+## Levou parry: estoura e para de machucar.
+func on_parried() -> void:
+	if popped:
+		return
+	popped = true
+	ParryFlash.spawn(global_position, 1.6)
+	_refresh()
+
+
 func _refresh() -> void:
 	if _hitbox == null:
+		return
+	if popped:
+		visible = false
+		_hitbox.active = false
 		return
 	_hitbox.active = strength >= 1.0
 	visible = strength > 0.0

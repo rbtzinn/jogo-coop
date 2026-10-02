@@ -45,6 +45,7 @@ func _on_begin() -> void:
 	for i in RING_XS.size():
 		var ring := FireRing.new()
 		ring.pink = i == pink_index
+		ring.parry_id = "%s:%d:%d" % [name, rng.seed, i]
 		add_child(ring)
 		ring.global_position = _leap_point(_u_at_x(RING_XS[i])) + BODY_CENTER
 		_rings.append(ring)

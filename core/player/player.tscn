@@ -7,9 +7,19 @@
 [ext_resource type="Script" path="res://core/network/player_sync.gd" id="5_sync"]
 [ext_resource type="Script" path="res://core/player/player_health.gd" id="6_health"]
 [ext_resource type="Script" path="res://components/health/health.gd" id="7_health_value"]
+[ext_resource type="Script" path="res://core/player/player_parry.gd" id="8_parry"]
+[ext_resource type="Script" path="res://core/player/player_applause.gd" id="9_applause"]
+[ext_resource type="Script" path="res://core/player/balloon.gd" id="10_balloon"]
+[ext_resource type="Script" path="res://core/player/balloon_area.gd" id="11_balloon_area"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(54, 132)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_parry"]
+radius = 105.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_balloon"]
+radius = 84.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
 size = Vector2(40, 118)
@@ -49,3 +59,28 @@ script = ExtResource("6_health")
 
 [node name="Health" type="Node" parent="PlayerHealth"]
 script = ExtResource("7_health_value")
+
+[node name="ParryArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 96
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParryArea"]
+position = Vector2(0, -85)
+shape = SubResource("CircleShape2D_parry")
+
+[node name="PlayerParry" type="Node" parent="."]
+script = ExtResource("8_parry")
+
+[node name="PlayerApplause" type="Node" parent="."]
+script = ExtResource("9_applause")
+
+[node name="Balloon" type="Node2D" parent="."]
+position = Vector2(0, -110)
+script = ExtResource("10_balloon")
+
+[node name="BalloonArea" type="Area2D" parent="Balloon"]
+script = ExtResource("11_balloon_area")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Balloon/BalloonArea"]
+shape = SubResource("CircleShape2D_balloon")
