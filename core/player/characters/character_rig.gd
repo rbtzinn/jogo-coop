@@ -5,9 +5,6 @@ extends Node2D
 ## Cada personagem é uma cena com os mesmos nomes de nós e este script;
 ## as proporções vêm da posição dos marcadores (ombros e quadris).
 
-## Achatamento do corpo abaixado (o corpo encolhe em direção aos pés).
-const CROUCH_SCALE := Vector2(1.12, 0.68)
-
 @export_group("Proporções")
 @export var arm_length := 32.0
 @export var ankle_height := 8.0
@@ -17,6 +14,14 @@ const CROUCH_SCALE := Vector2(1.12, 0.68)
 @export var step_lift := 12.0
 @export var steps_per_second := 3.4
 @export var bob_height := 5.0
+
+@export_group("Abaixar")
+## Quanto o corpo desce ao abaixar (as pernas dobram; as peças não são achatadas).
+@export var crouch_drop := 20.0
+## Inclinação para a frente ao abaixar (radianos).
+@export var crouch_lean := 0.12
+## Quanto cada pé se afasta do outro ao abaixar.
+@export var crouch_stance := 10.0
 
 @export_group("Pose")
 ## Parado no chão, a mão de trás fica na cintura (como a acrobata da referência).
@@ -112,8 +117,9 @@ func _update_body(delta: float, velocity: Vector2, on_floor: bool, dashing: bool
 		lean = clampf(velocity.y / 6000.0, -0.08, 0.08)
 	_squash = _squash.lerp(Vector2.ONE, 1.0 - exp(-delta * 14.0))
 	_crouch = move_toward(_crouch, 1.0 if crouching else 0.0, delta * 12.0)
-	stretch *= Vector2.ONE.lerp(CROUCH_SCALE, _crouch)
-	lean += 0.06 * _crouch
+	var crouch_eased := ease(_crouch, -2.0)
+	offset.y += crouch_drop * crouch_eased
+	lean += crouch_lean * crouch_eased
 	body.position = offset
 	body.rotation = lean
 	body.scale = stretch * _squash
@@ -124,6 +130,10 @@ func _update_legs(velocity: Vector2, on_floor: bool, dashing: bool, running: boo
 	var hip_f := to_local(hip_front.global_position)
 	var rest_b := Vector2(hip_back.position.x, -ankle_height)
 	var rest_f := Vector2(hip_front.position.x, -ankle_height)
+	# Abaixado: os pés se afastam (cada um para o seu lado) para a pose ficar firme.
+	var spread := crouch_stance * ease(_crouch, -2.0) * signf(hip_back.position.x - hip_front.position.x)
+	rest_b.x += spread
+	rest_f.x -= spread
 	var foot_b := rest_b
 	var foot_f := rest_f
 	var shoe_tilt_b := 0.0

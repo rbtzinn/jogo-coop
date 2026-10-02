@@ -19,6 +19,9 @@ stride = 26.0
 step_lift = 16.0
 steps_per_second = 2.8
 bob_height = 4.0
+crouch_drop = 52.0
+crouch_lean = 0.16
+crouch_stance = 12.0
 hand_on_hip_when_idle = true
 
 [node name="BackArm" type="Node2D" parent="."]

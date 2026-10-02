@@ -19,6 +19,9 @@ stride = 15.0
 step_lift = 10.0
 steps_per_second = 3.8
 bob_height = 5.0
+crouch_drop = 16.0
+crouch_lean = 0.14
+crouch_stance = 12.0
 
 [node name="BackArm" type="Node2D" parent="."]
 self_modulate = Color(0.75, 0.75, 0.75, 1)
