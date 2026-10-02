@@ -4,6 +4,8 @@ extends Node
 ## Deu certo: o personagem quica para cima, gira, fica protegido um instante, ganha
 ## 1 estrela e o objeto estoura. O balão do parceiro caído também aceita parry: revive ele.
 ## Quem decide se o parry acertou é o PC de quem fez (favorável a quem joga).
+## Logo depois de estourar, o objeto ainda aceita o parry do parceiro por um instante:
+## os dois juntos fazem o Número Perfeito (ver DuoActs).
 
 signal parried
 
@@ -67,7 +69,7 @@ func start_remote_spin() -> void:
 func _find_target() -> Area2D:
 	for area in _area.get_overlapping_areas():
 		var hitbox := area as EnemyHitbox
-		if hitbox != null and hitbox.parryable and hitbox.active:
+		if hitbox != null and hitbox.can_parry(String(_player.name)):
 			return hitbox
 		var balloon := area as BalloonArea
 		if balloon != null and balloon.player != _player and balloon.player.player_health.can_be_revived():
@@ -85,8 +87,12 @@ func _succeed(target: Area2D) -> void:
 	if target is BalloonArea:
 		(target as BalloonArea).player.sync.request_revive()
 	else:
-		var owner_node := (target as EnemyHitbox).parry_target
-		if owner_node != null:
-			owner_node.on_parried()
-			_player.sync.send_parry(owner_node.parry_id)
+		var hitbox := target as EnemyHitbox
+		hitbox.register_parry(String(_player.name))
+		var parry_id := hitbox.get_parry_id()
+		if not parry_id.is_empty():
+			_player.sync.send_parry(parry_id)
+			var duo := DuoActs.find(get_tree())
+			if duo != null:
+				duo.report_parry(parry_id, _player, hitbox.global_position)
 	parried.emit()

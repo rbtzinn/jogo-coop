@@ -1,8 +1,10 @@
 class_name PlayerGun
 extends Node
 ## Arma do jogador: controla a cadência e cria os projéteis na direção da mira.
+## Também solta o Tiro EX da pistola (cada pistola tem o seu; a Rolha solta o Rolhão).
 
 const PROJECTILE_SCENE := preload("res://components/projectile/projectile.tscn")
+const EX_SCENE := preload("res://components/projectile/big_cork.tscn")
 
 @export var fire_interval := 0.12
 
@@ -30,3 +32,16 @@ func spawn_projectile(aim: Vector2, muzzle_position: Vector2, deals_damage := tr
 	get_tree().current_scene.add_child(projectile)
 	projectile.global_position = muzzle_position
 	projectile.reset_physics_interpolation()
+
+
+## Tiro EX (gasta 1 estrela; quem cobra é o PlayerSpecial). Remoto: só visual.
+func spawn_ex(aim: Vector2, muzzle_position: Vector2, deals_damage := true) -> void:
+	var projectile: PiercingProjectile = EX_SCENE.instantiate()
+	projectile.direction = aim
+	projectile.deals_damage = deals_damage
+	projectile.source = String(get_parent().name)
+	get_tree().current_scene.add_child(projectile)
+	projectile.global_position = muzzle_position + aim * 30.0
+	projectile.reset_physics_interpolation()
+	# Depois do EX a pistola espera um pouco antes do próximo tiro normal.
+	_cooldown = maxf(_cooldown, 0.3)

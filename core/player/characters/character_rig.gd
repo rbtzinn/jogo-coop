@@ -13,6 +13,9 @@ extends Node2D
 ## Corrida desenhada quadro a quadro (vazio = corrida feita com as peças).
 @export var run_animation: FrameAnimation
 
+## Grande Número deste personagem (cena com um script GrandNumber).
+@export var grand_number: PackedScene
+
 @export_group("Proporções")
 @export var arm_length := 32.0
 @export var ankle_height := 8.0
@@ -106,12 +109,13 @@ func get_muzzle_position() -> Vector2:
 	return muzzle.global_position
 
 
-func play_fire() -> void:
-	_recoil = 7.0
-	_flash_timer = 0.05
+## `kick`: força do coice (o Tiro EX usa mais que 1: braço vai mais para trás e o clarão é maior).
+func play_fire(kick := 1.0) -> void:
+	_recoil = 7.0 * kick
+	_flash_timer = 0.05 * kick
 	muzzle_flash.show()
 	muzzle_flash.rotation = randf() * TAU
-	muzzle_flash.scale = Vector2.ONE * randf_range(0.6, 0.85)
+	muzzle_flash.scale = Vector2.ONE * randf_range(0.6, 0.85) * sqrt(kick)
 
 
 func play_land() -> void:

@@ -2,6 +2,7 @@ extends BossAttack
 ## Pulos nos Pedestais (fase 3): o leão de fogo pula de pedestal em pedestal. Uma sombra
 ## avisa em qual ele vai cair; cada pouso espalha brasas para os dois lados. No fim, desce
 ## para o chão. Quem estiver no pedestal escolhido precisa sair.
+## Em um dos pousos, duas brasas vêm rosa (parry).
 ## args: [x do leão, y do leão].
 
 const CROUCH := 0.35
@@ -48,13 +49,15 @@ func _on_begin() -> void:
 	_stops.append(Vector2(rng.randf_range(floor_range.x, floor_range.y), floor_y))
 	_embers.clear()
 	_embers.floor_y = floor_y
+	_embers.id_prefix = "%s:%d" % [name, rng.seed]
 	# Brasas de cada pouso nos pedestais (iguais nos dois PCs).
+	var pink_landing := rng.randi_range(0, _stops.size() - 2)
 	for k in _stops.size() - 1:
 		var land_time := _hop_start(k) + FLIGHT
 		for side in [-1.0, 1.0]:
 			for n in 2:
 				var velocity := Vector2(side * rng.randf_range(120.0, 300.0), -rng.randf_range(250.0, 420.0))
-				_embers.add(land_time, _stops[k] + Vector2(0, -20), velocity)
+				_embers.add(land_time, _stops[k] + Vector2(0, -20), velocity, k == pink_landing and n == 0)
 	_landed_count = 0
 	_shadow.show()
 

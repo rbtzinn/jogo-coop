@@ -12,7 +12,7 @@ const PATH := "user://settings.cfg"
 ## Ações que o jogador pode trocar de tecla, na ordem em que aparecem no menu.
 const REBINDABLE_ACTIONS: Array[StringName] = [
 	&"move_left", &"move_right", &"move_up", &"move_down",
-	&"jump", &"shoot", &"dash", &"lock_aim",
+	&"jump", &"shoot", &"dash", &"lock_aim", &"special",
 ]
 const ACTION_NAMES := {
 	&"move_left": "Esquerda",
@@ -23,6 +23,7 @@ const ACTION_NAMES := {
 	&"shoot": "Atirar",
 	&"dash": "Dash",
 	&"lock_aim": "Travar mira",
+	&"special": "Especial (Tiro EX / Grande Número)",
 }
 ## Cada ação tem 2 espaços para teclado e 2 para controle.
 const KEYBOARD_SLOTS: Array[int] = [0, 1]

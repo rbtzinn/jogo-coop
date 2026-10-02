@@ -31,7 +31,6 @@ var _front := Sprite2D.new()
 
 
 func _ready() -> void:
-	add_to_group(&"parry_targets")
 	for half in [_back, _front]:
 		half.region_enabled = true
 		add_child(half)

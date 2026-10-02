@@ -1,6 +1,7 @@
 extends BossAttack
 ## Patada (fase 2): Leopoldo salta bem alto e cai onde um jogador estava. Uma sombra no chão
 ## avisa onde ele vai cair. Ao cair, solta duas ondas de poeira rente ao chão (pular).
+## Metade das vezes uma das ondas vem rosa (parry).
 ## args: [x do leão, y do leão, x do alvo].
 
 const CROUCH_END := 0.45
@@ -8,6 +9,7 @@ const LAND_AT := 1.35
 const HOLD := 0.35
 const WAVE_SPEED := 700.0
 const WAVE_RANGE := 420.0
+const PINK_CHANCE := 0.5
 
 @export var lion_path: NodePath
 @export var floor_y := 1000.0
@@ -20,6 +22,7 @@ var _to := Vector2.ZERO
 var _shadow := LandingShadow.new()
 var _waves: Array[WhipWave] = []
 var _landed := false
+var _pink_index := -1
 
 @onready var lion: TamerLion = get_node(lion_path)
 
@@ -41,6 +44,7 @@ func _on_begin() -> void:
 	_shadow.show()
 	_landed = false
 	_waves.clear()
+	_pink_index = rng.randi_range(0, 1) if rng.randf() < PINK_CHANCE else -1
 
 
 func _on_tick(_delta: float) -> void:
@@ -64,6 +68,8 @@ func _on_tick(_delta: float) -> void:
 			for side in [-1.0, 1.0]:
 				var wave := WhipWave.new()
 				wave.scale.x = -side
+				wave.pink = _waves.size() == _pink_index
+				wave.parry_id = "%s:%d:%d" % [name, rng.seed, _waves.size()]
 				add_child(wave)
 				_waves.append(wave)
 		var since := t - LAND_AT

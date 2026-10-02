@@ -16,6 +16,7 @@ func _ready() -> void:
 	collision_mask = 0
 	set_collision_layer_value(LAYER, true)
 	monitoring = false
+	add_to_group(&"hurtboxes")
 
 
 ## Retorna o dano que valeu (0 se esta parte não leva tiro agora).

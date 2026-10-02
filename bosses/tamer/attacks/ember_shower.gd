@@ -2,31 +2,38 @@ class_name EmberShower
 extends Node2D
 ## Conjunto de brasas que caem com gravidade e se apagam no chão. Determinístico: a posição
 ## de cada brasa é calculada pelo tempo do ataque (igual nos dois PCs).
+## Brasas rosa aceitam parry; `id_prefix` identifica cada uma nos dois PCs.
 
 const GRAVITY := 1400.0
 const FADE_TIME := 0.35
 
 ## Altura do chão (y global) onde as brasas se apagam.
 var floor_y := 1000.0
+## Começo do parry_id das brasas rosa (o ataque põe nome e semente).
+var id_prefix := ""
 
-## Cada brasa: [nó, tempo em que solta, posição inicial, velocidade inicial, já criada].
+## Cada brasa: [nó, tempo em que solta, posição inicial, velocidade inicial, já criada, rosa].
 var _embers: Array = []
 
 
-func add(release_time: float, from: Vector2, velocity: Vector2) -> void:
-	_embers.append([null, release_time, from, velocity, false])
+func add(release_time: float, from: Vector2, velocity: Vector2, pink := false) -> void:
+	_embers.append([null, release_time, from, velocity, false, pink])
 
 
 ## Atualiza todas as brasas para o tempo `t` do ataque.
 func update(t: float) -> void:
-	for ember in _embers:
+	for i in _embers.size():
+		var ember: Array = _embers[i]
 		var since: float = t - ember[1]
 		if since < 0.0:
 			continue
 		if not ember[4]:
 			ember[4] = true
-			ember[0] = Ember.new()
-			add_child(ember[0])
+			var created := Ember.new()
+			created.pink = ember[5]
+			created.parry_id = "%s:e%d" % [id_prefix, i]
+			ember[0] = created
+			add_child(created)
 		if not is_instance_valid(ember[0]):
 			continue
 		var node: Ember = ember[0]

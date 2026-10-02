@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://components/fx/one_shot_particles.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://components/fx/soft_circle.svg" id="2_circle"]
+
+[sub_resource type="Gradient" id="Gradient_cream"]
+offsets = PackedFloat32Array(0, 0.7, 1)
+colors = PackedColorArray(1, 0.98, 0.92, 1, 0.96, 0.9, 0.78, 1, 0.96, 0.9, 0.78, 0)
+
+[sub_resource type="Curve" id="Curve_shrink"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.4), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="CreamSplat" type="CPUParticles2D"]
+amount = 14
+lifetime = 0.6
+explosiveness = 1.0
+texture = ExtResource("2_circle")
+direction = Vector2(-1, -0.4)
+spread = 75.0
+gravity = Vector2(0, 1400)
+initial_velocity_min = 220.0
+initial_velocity_max = 620.0
+damping_min = 80.0
+damping_max = 160.0
+scale_amount_min = 0.7
+scale_amount_max = 1.8
+scale_amount_curve = SubResource("Curve_shrink")
+color_ramp = SubResource("Gradient_cream")
+script = ExtResource("1_script")

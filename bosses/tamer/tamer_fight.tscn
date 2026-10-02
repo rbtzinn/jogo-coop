@@ -17,6 +17,7 @@
 [ext_resource type="Script" path="res://core/network/ping_label.gd" id="15_ping"]
 [ext_resource type="FontFile" path="res://core/ui/fonts/Oswald.ttf" id="16_font"]
 [ext_resource type="Script" path="res://core/debug/solo_character_switch.gd" id="99_switch"]
+[ext_resource type="Script" path="res://core/debug/applause_cheat.gd" id="98_cheat"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_add"]
 blend_mode = 1
@@ -118,6 +119,9 @@ boss_path = NodePath("../TamerBoss")
 
 [node name="SoloCharacterSwitch" type="Node" parent="."]
 script = ExtResource("99_switch")
+
+[node name="ApplauseCheat" type="Node" parent="."]
+script = ExtResource("98_cheat")
 
 [node name="Hud" type="CanvasLayer" parent="."]
 layer = 10

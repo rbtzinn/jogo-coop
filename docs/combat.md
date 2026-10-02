@@ -40,6 +40,30 @@ Cada jogador tem uma barra de **5 estrelas de Aplauso**. Ela enche causando dano
 - **Grande Número em Dupla (diferencial):** se os dois soltarem o Grande Número com até **1 s** de diferença, os golpes se combinam num ataque único maior (ex.: a acrobata salta em cima da torta e a chuta no chefão), com dano maior que a soma dos dois.
 - Novo botão **Especial**. Padrão sugerido: teclado **I** (layout 1) e **V** (layout 2, como no Cuphead); controle **Y**. Toque = Tiro EX; com 5 estrelas, toque = Grande Número.
 
+### Como ficou no jogo (03/10/2026, primeira versão; números a calibrar)
+
+Decisões tomadas pelo Claude enquanto o usuário estava fora (revisar):
+
+- **Botão Especial** em Configurações > Controles. O aperto fica guardado 0,2 s (apertado no meio do dash, sai quando o dash acaba). Caído, nada acontece.
+- **Tiro EX "Rolhão"** (pistola Rolha): rolha gigante na direção da mira que atravessa o chefão, "afunda" nele (fica mais lenta enquanto encosta) e acerta até **6 vezes x 5 de dano = 30** (o tiro normal dá 1 por rolha). Recuo de 0,25 s: empurra para trás, sem atirar; **no ar, fica pairando**; o dash corta o recuo. Não é invencível.
+- **Torta na Cara**: o palhaço para (até no ar), ergue a torta (0,38 s) e arremessa na direção da mira; a torta cruza a tela, afunda no chefão e acerta até **10 x 14 = 140**. Invencível por 0,75 s + 0,2 s.
+- **Salto Mortal**: a acrobata agacha (0,12 s) e salta em arco de 760 px para o lado em que olha, 400 px de altura, girando 2 voltas; acerta até **7 x 20 = 140** (mais nas costas do leão, que levam dano dobrado). Invencível o salto inteiro + 0,3 s. Se pousar antes (num pedestal), acaba ali.
+- **O especial não enche a barra** (como no Cuphead): só os tiros normais e os parries dão estrelas.
+- **Número Perfeito**: depois que um jogador estoura o objeto rosa, o parceiro ainda consegue dar parry nele por 0,3 s (o objeto já sumiu, mas a área continua). Cada um ganha 2 estrelas; flash dourado, letreiro "Número Perfeito!". Online: se em qualquer um dos PCs a diferença couber em 0,3 s, conta para os dois (favorável a quem joga).
+- **Grande Número em Dupla** (primeira versão): os dois Grandes Números acontecem normalmente e, por cima, sai a **Torta de Ouro**: uma torta dourada gigante sai do meio da dupla e explode no chefão com **+120 de dano** (total ~400, mais que os 280 da soma). Letreiro "Grande Número em Dupla!". O dano extra é contado só no host. Quando chegar a arte da acrobata chutando a torta (Pedido 3 em docs/prompts/codex_parry_balao_especiais.md), a Torta de Ouro passa a ser chutada por ela, como na prancha `combate_especial.png`.
+- Ainda **sem som** (o jogo não tem áudio); o aplauso da plateia entra quando o áudio entrar.
+- Para testar: **F1** enche as estrelas (só na versão de desenvolvimento).
+
+### Objetos rosa do Domador
+
+| Fase | Ataque | Rosa |
+|---|---|---|
+| 1 | Argolas de fogo | 1 das 3 argolas |
+| 1 | Chicotada | metade das vezes, a última onda |
+| 2 | Patada | metade das vezes, uma das duas ondas de poeira |
+| 3 | Pulos nos Pedestais | 2 brasas de um dos pousos |
+| 3 | Chuva de Argolas | a última argola de cada leva |
+
 ## Nota no fim da luta
 
 Ao vencer, aparece um cartaz de circo com a nota de cada luta (da dupla):

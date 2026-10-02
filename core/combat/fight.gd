@@ -2,6 +2,7 @@ class_name Fight
 extends Node
 ## Uma luta contra chefão: anuncia o começo, percebe vitória (chefão vencido) ou derrota
 ## (todos os jogadores caídos) e mostra a tela de fim. Online, quem decide é o host.
+## Também cria o DuoActs (bônus em dupla).
 
 const END_SCREEN := preload("res://core/ui/fight_end_screen.gd")
 
@@ -15,6 +16,11 @@ var _ended := false
 
 
 func _ready() -> void:
+	# Bônus em dupla (Número Perfeito, Grande Número em Dupla). Nome fixo: as mensagens de rede
+	# acham o nó pelo caminho, igual nos dois PCs.
+	var duo_acts := DuoActs.new()
+	duo_acts.name = "DuoActs"
+	add_child(duo_acts)
 	boss.defeated.connect(_end.bind(true))
 	if boss.has_signal(&"phase_started"):
 		boss.phase_started.connect(func(_phase: int, title: String) -> void: _show_banner(title))

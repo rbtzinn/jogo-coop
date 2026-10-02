@@ -13,7 +13,8 @@ const MAX_SNAPSHOTS := 40
 @export var max_extrapolation := 0.1
 
 var _snapshots: Array[Dictionary] = []
-var _pending_fires: Array[Dictionary] = []
+## Tiros e especiais do remoto, esperando a hora de aparecer ({time, kind, aim}).
+var _pending_actions: Array[Dictionary] = []
 ## Diferença entre o relógio deste PC e o do outro (inclui a menor latência vista).
 var _clock_offset := INF
 
@@ -30,6 +31,13 @@ func send_fire(aim: Vector2) -> void:
 	var time := _now()
 	for peer_id in Network.ready_peers:
 		_receive_fire.rpc_id(peer_id, time, aim)
+
+
+## O jogador local soltou um especial (`kind`: &"ex" ou &"grand"). Confiável, como os tiros.
+func send_special(kind: StringName, aim: Vector2) -> void:
+	var time := _now()
+	for peer_id in Network.ready_peers:
+		_receive_special.rpc_id(peer_id, time, kind, aim)
 
 
 ## Vida nova do jogador local (depois de levar dano). Confiável: nunca pode se perder.
@@ -79,12 +87,13 @@ func sample_state() -> Dictionary:
 	return first
 
 
-## Tiros do remoto que já devem aparecer (no mesmo "passado" em que ele está sendo mostrado).
-func take_due_fires() -> Array[Dictionary]:
+## Tiros e especiais do remoto que já devem aparecer (no mesmo "passado" em que ele está
+## sendo mostrado).
+func take_due_actions() -> Array[Dictionary]:
 	var due: Array[Dictionary] = []
 	var render_time := _render_time()
-	while not _pending_fires.is_empty() and _pending_fires[0].time <= render_time:
-		due.append(_pending_fires.pop_front())
+	while not _pending_actions.is_empty() and _pending_actions[0].time <= render_time:
+		due.append(_pending_actions.pop_front())
 	return due
 
 
@@ -108,7 +117,12 @@ func _receive_state(time: float, position: Vector2, velocity: Vector2, facing: i
 
 @rpc("authority", "call_remote", "reliable")
 func _receive_fire(time: float, aim: Vector2) -> void:
-	Network.deliver(_store_fire.bind({"time": time, "aim": aim}), false)
+	Network.deliver(_store_action.bind({"time": time, "kind": &"fire", "aim": aim}), false)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _receive_special(time: float, kind: StringName, aim: Vector2) -> void:
+	Network.deliver(_store_action.bind({"time": time, "kind": kind, "aim": aim}), false)
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -128,10 +142,19 @@ func _receive_revive_request() -> void:
 	Network.deliver(player.player_health.revive_from_parry, false)
 
 
+## O parceiro deu parry num objeto rosa: estoura o mesmo objeto aqui (se ainda existir) e
+## avisa os bônus em dupla (pode completar um Número Perfeito).
 func _pop_parry_target(parry_id: String) -> void:
-	for target in get_tree().get_nodes_in_group(&"parry_targets"):
-		if target.parry_id == parry_id:
-			target.on_parried()
+	var player := get_parent() as Player
+	var at := player.global_position + Vector2(0, -85)
+	for hitbox: EnemyHitbox in get_tree().get_nodes_in_group(&"parryable"):
+		if hitbox.get_parry_id() == parry_id:
+			hitbox.register_parry(String(player.name))
+			at = hitbox.global_position
+			break
+	var duo := DuoActs.find(get_tree())
+	if duo != null:
+		duo.report_parry(parry_id, player, at)
 
 
 func _store_snapshot(snapshot: Dictionary) -> void:
@@ -144,12 +167,12 @@ func _store_snapshot(snapshot: Dictionary) -> void:
 		_snapshots.pop_front()
 
 
-func _store_fire(fire: Dictionary) -> void:
-	_update_clock_offset(fire.time)
-	var index := _pending_fires.size()
-	while index > 0 and _pending_fires[index - 1].time > fire.time:
+func _store_action(action: Dictionary) -> void:
+	_update_clock_offset(action.time)
+	var index := _pending_actions.size()
+	while index > 0 and _pending_actions[index - 1].time > action.time:
 		index -= 1
-	_pending_fires.insert(index, fire)
+	_pending_actions.insert(index, action)
 
 
 ## Usa a mensagem que chegou mais rápido como referência; sobe devagar se a rede piorar.

@@ -16,6 +16,7 @@ var jump_held := false
 var shoot_held := false
 var dash_pressed := false
 var lock_held := false
+var special_pressed := false
 
 var _prev_jump_held := false
 var _prev_up_key := false
@@ -31,6 +32,7 @@ func update() -> void:
 	shoot_held = Input.is_action_pressed("shoot")
 	dash_pressed = Input.is_action_just_pressed("dash")
 	lock_held = Input.is_action_pressed("lock_aim")
+	special_pressed = Input.is_action_just_pressed("special")
 	_update_jump()
 
 
@@ -41,6 +43,7 @@ func clear() -> void:
 	shoot_held = false
 	dash_pressed = false
 	lock_held = false
+	special_pressed = false
 	_prev_jump_held = false
 	_prev_up_key = false
 	_up_is_jumping = false

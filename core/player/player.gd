@@ -3,7 +3,8 @@ extends CharacterBody2D
 ## Movimento do jogador: corrida, pulo (altura fixa, coyote time, buffer), dash e abaixar
 ## (abaixado + dash em cima de uma plataforma = descer dela).
 ## Lê os comandos de um PlayerInput, para que a rede possa controlar jogadores remotos depois.
-## Vida, dano e queda ficam no PlayerHealth; parry no PlayerParry; estrelas no PlayerApplause.
+## Vida, dano e queda ficam no PlayerHealth; parry no PlayerParry; estrelas no PlayerApplause;
+## Tiro EX e Grande Número no PlayerSpecial.
 ## Caído, o jogador vira um balão (PlayerBalloon) que sobe até o parceiro reviver com parry.
 
 const DUST_SCENE := preload("res://components/fx/dust_puff.tscn")
@@ -89,6 +90,7 @@ var _remote_parrying := false
 @onready var player_health: PlayerHealth = $PlayerHealth
 @onready var parry: PlayerParry = $PlayerParry
 @onready var applause: PlayerApplause = $PlayerApplause
+@onready var special: PlayerSpecial = $PlayerSpecial
 @onready var balloon: PlayerBalloon = $Balloon
 
 
@@ -108,6 +110,7 @@ func _ready() -> void:
 	rig = character.instantiate()
 	visual.add_child(rig)
 	balloon.set_face(rig.head as Sprite2D, rig.scale.x)
+	special.setup(rig.grand_number)
 
 
 func _physics_process(delta: float) -> void:
@@ -123,16 +126,23 @@ func _physics_process(delta: float) -> void:
 		_process_balloon(delta)
 		sync.send_state(self, Vector2(facing, 0))
 		return
-	var parry_pressed := input.jump_pressed and not is_on_floor() and _coyote_timer <= 0.0 			and not is_dashing()
+	var parry_pressed := input.jump_pressed and not is_on_floor() and _coyote_timer <= 0.0 \
+			and not is_dashing() and not special.is_performing()
 	if parry.tick(delta, is_on_floor(), parry_pressed):
 		_on_parry_success()
-	player_health.tick(delta, not is_dashing() and not parry.is_protected())
+	special.tick(delta, input.special_pressed, not is_dashing())
+	player_health.tick(delta, not is_dashing() and not parry.is_protected() and not special.is_invincible())
 	_update_timers(delta)
-	_update_facing()
+	if not special.is_busy():
+		_update_facing()
 	_update_crouch()
 
-	if is_dashing():
+	if special.is_performing():
+		velocity = special.move(delta, velocity)
+	elif is_dashing():
 		_process_dash(delta)
+	elif special.is_recoiling():
+		_process_ex_recoil(delta)
 	else:
 		_process_gravity(delta)
 		_process_jump()
@@ -149,9 +159,11 @@ func _physics_process(delta: float) -> void:
 
 	visual.scale.x = facing
 	var aim := get_aim_direction()
-	rig.update_pose(delta, velocity, is_on_floor(), is_dashing(), Vector2(aim.x * facing, aim.y), run_speed, crouching)
-	visual.rotation = TAU * parry.spin_amount() * facing
-	var can_shoot := not is_dashing() and not player_health.is_downed
+	var pose_aim := special.pose_aim(aim)
+	rig.update_pose(delta, velocity, is_on_floor(), is_dashing(), Vector2(pose_aim.x * facing, pose_aim.y), run_speed,
+			crouching or special.crouch_pose())
+	visual.rotation = TAU * (parry.spin_amount() + special.spin()) * facing
+	var can_shoot := not is_dashing() and not player_health.is_downed and not special.is_busy()
 	if can_shoot and gun.tick(delta, aim, input.shoot_held, rig.get_muzzle_position()):
 		rig.play_fire()
 		sync.send_fire(aim)
@@ -182,16 +194,20 @@ func _follow_remote_state(delta: float) -> void:
 		parry.start_remote_spin()
 	_remote_parrying = parrying
 	parry.tick(delta, false, false)
+	special.remote_tick(delta)
 	applause.stars = state.get("stars", applause.stars)
 	if player_health.is_downed and global_position.y < BALLOON_OUT_Y:
 		player_health.mark_out()
-	var aim: Vector2 = state.aim
+	var aim := special.pose_aim(state.aim)
 	rig.update_pose(delta, velocity, state.on_floor, state.dashing, Vector2(aim.x * facing, aim.y), run_speed,
-			state.get("crouching", false))
-	visual.rotation = TAU * parry.spin_amount() * facing
-	for fire in sync.take_due_fires():
-		gun.spawn_projectile(fire.aim, rig.get_muzzle_position(), false)
-		rig.play_fire()
+			state.get("crouching", false) or special.crouch_pose())
+	visual.rotation = TAU * (parry.spin_amount() + special.spin()) * facing
+	for action in sync.take_due_actions():
+		if action.kind == &"fire":
+			gun.spawn_projectile(action.aim, rig.get_muzzle_position(), false)
+			rig.play_fire()
+		else:
+			special.play_remote(action.kind, action.aim)
 
 
 func is_dashing() -> bool:
@@ -263,6 +279,18 @@ func _process_run(delta: float) -> void:
 		target = input.get_horizontal() * run_speed
 	var accel := ground_accel if is_on_floor() else air_accel
 	velocity.x = move_toward(velocity.x, target, accel * delta)
+
+
+## Recuo do Tiro EX: desliza para trás freando; no ar, fica pairando. O dash corta o recuo.
+func _process_ex_recoil(delta: float) -> void:
+	velocity.x = move_toward(velocity.x, 0.0, 1800.0 * delta)
+	if is_on_floor():
+		_process_gravity(delta)
+	else:
+		velocity.y = 0.0
+	_try_start_dash()
+	if is_dashing():
+		special.cancel_recoil()
 
 
 func _try_start_dash() -> void:
@@ -361,6 +389,7 @@ func _process_balloon(delta: float) -> void:
 
 
 func _on_downed() -> void:
+	special.cancel()
 	if crouching:
 		crouching = false
 		_apply_hitbox()
