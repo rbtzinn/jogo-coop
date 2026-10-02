@@ -2,27 +2,29 @@ class_name FireRing
 extends Node2D
 ## Argola de fogo segura no ar. O leão pula por dentro dela; quem encostar na borda se queima.
 ## O meio é livre. A argola rosa aceita parry (etapa 4b).
+## Desenho em imagens prontas (duas chamas alternando): redesenhar por código pesava no PC fraco.
 
-const INK := Color("1b1410")
-const FIRE := [Color("ffd25a"), Color("ff8a2a"), Color("d8401f")]
-const PINK := [Color("ffd1e6"), Color("ff8cc0"), Color("ff5fa2")]
+const UNLIT := preload("res://bosses/tamer/art/fire_ring_unlit.svg")
+const FIRE := [preload("res://bosses/tamer/art/fire_ring_a.svg"), preload("res://bosses/tamer/art/fire_ring_b.svg")]
+const PINK := [preload("res://bosses/tamer/art/pink_ring_a.svg"), preload("res://bosses/tamer/art/pink_ring_b.svg")]
+const FLICKER_TIME := 0.09
 
 @export var radius := Vector2(70, 112)
 @export var pink := false
 
-## 0 = invisível, 1 = aceso. Abaixo de 1 ainda é aviso e não machuca.
+## 0 = invisível, abaixo de 1 = aviso (pisca e não machuca), 1 = acesa.
 var strength := 0.0:
 	set(value):
 		strength = value
-		if _hitbox != null:
-			_hitbox.active = strength >= 1.0
-		queue_redraw()
+		_refresh()
 
 var _time := 0.0
 var _hitbox: EnemyHitbox
+var _sprite := Sprite2D.new()
 
 
 func _ready() -> void:
+	add_child(_sprite)
 	_hitbox = EnemyHitbox.new()
 	_hitbox.parryable = pink
 	_hitbox.active = false
@@ -32,45 +34,29 @@ func _ready() -> void:
 		var angle := TAU * i / 12.0
 		var shape := CollisionShape2D.new()
 		var circle := CircleShape2D.new()
-		circle.radius = 15.0
+		circle.radius = 14.0
 		shape.shape = circle
 		shape.position = Vector2(cos(angle) * radius.x, sin(angle) * radius.y)
 		_hitbox.add_child(shape)
+	_refresh()
 
 
 func _process(delta: float) -> void:
 	_time += delta
-	queue_redraw()
+	_refresh()
 
 
-func _draw() -> void:
-	if strength <= 0.0:
+func _refresh() -> void:
+	if _hitbox == null:
 		return
-	var colors: Array = PINK if pink else FIRE
-	var alpha := 0.35 + 0.65 * clampf(strength, 0.0, 1.0)
-	if strength < 1.0:
-		alpha *= 0.6 + 0.4 * absf(sin(_time * 14.0))
-	var ring := _ellipse(radius, 32)
-	draw_polyline(ring, Color(INK, alpha), 16.0, true)
-	draw_polyline(ring, Color(Color("8a5a34"), alpha), 9.0, true)
-	if strength < 1.0:
-		return
-	# Chamas dançando em volta da argola.
-	for i in 16:
-		var angle := TAU * i / 16.0 + sin(_time * 3.0) * 0.05
-		var base := Vector2(cos(angle) * radius.x, sin(angle) * radius.y)
-		var out := base.normalized()
-		var height := 22.0 + sin(_time * 18.0 + i * 1.7) * 7.0
-		for layer in 3:
-			var h := height * (1.0 - layer * 0.3)
-			var w := 10.0 * (1.0 - layer * 0.25)
-			var side := Vector2(-out.y, out.x) * w
-			draw_colored_polygon(PackedVector2Array([base - side, base + out * h, base + side]), colors[2 - layer])
-
-
-static func _ellipse(r: Vector2, segments: int) -> PackedVector2Array:
-	var points := PackedVector2Array()
-	for i in segments + 1:
-		var angle := TAU * i / segments
-		points.append(Vector2(cos(angle) * r.x, sin(angle) * r.y))
-	return points
+	_hitbox.active = strength >= 1.0
+	visible = strength > 0.0
+	if strength >= 1.0:
+		var frames: Array = PINK if pink else FIRE
+		_sprite.texture = frames[int(_time / FLICKER_TIME) % 2]
+		_sprite.modulate = Color.WHITE
+	else:
+		# Aviso: só a argola, piscando cada vez mais forte.
+		_sprite.texture = UNLIT
+		var blink := 0.6 + 0.4 * absf(sin(_time * 14.0))
+		_sprite.modulate = Color(1, 0.75, 0.7, (0.3 + 0.7 * strength) * blink)

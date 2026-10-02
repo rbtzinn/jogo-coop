@@ -7,6 +7,8 @@
 - **2 a 4 fases**, cada uma com padrões de ataque legíveis; troca de fase sempre com animação clara.
 - Todo ataque tem um **aviso** antes (pose, som, brilho) — morrer tem que parecer culpa do jogador.
 - Pelo menos **1 ataque rosa** (parry) por fase; os chefões da Área 1 ensinam o parry com calma.
+- **Difícil, mas nunca impossível** (decidido em 02/10/2026, após o 1º teste do Domador): todo ataque tem que ser desviável sem levar dano, com uma janela de reação justa. Ondas com buraco precisam deixar passar com um pulo normal e vir espaçadas o bastante para pular uma e cair antes da próxima (conferido com um teste automático que joga sozinho).
+- **Sem tempo morto:** o respiro entre ataques é curto (0,35–0,7 s) e todo ataque cobre mais de uma altura do cenário. Ficar parado num canto atirando não pode ser seguro (ex.: as argolas soltam brasas que caem no chão).
 - Pelo menos **1 momento de dupla** por chefão (ver "Dependência entre jogadores" no DESIGN.md).
 - Ataques determinísticos sempre que possível (o host manda "ataque X começou no tempo T").
 - Cada chefão em `bosses/<nome>/`, sem depender de outro chefão.

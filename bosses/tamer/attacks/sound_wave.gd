@@ -4,14 +4,14 @@ extends EnemyHitbox
 ## Dá para atravessar pelo buraco ou com o dash.
 
 const INK := Color("1b1410")
-const SEGMENT_RADIUS := 20.0
+const SEGMENT_RADIUS := 16.0
 
 ## Altura coberta pelo arco (y global de cima e de baixo).
 @export var top := 300.0
 @export var bottom := 1000.0
 ## Centro e tamanho do buraco (y global).
 @export var gap_center := 880.0
-@export var gap_size := 260.0
+@export var gap_size := 300.0
 ## Quanto o arco se curva (as pontas ficam atrás do meio).
 @export var bend := 70.0
 
@@ -33,8 +33,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	# Tremida barata (só escala); o desenho é feito uma vez só.
 	_time += delta
-	queue_redraw()
+	scale.x = 1.0 + sin(_time * 30.0) * 0.06
 
 
 func _draw() -> void:
@@ -47,9 +48,8 @@ func _draw() -> void:
 		for i in steps + 1:
 			var y: float = lerpf(piece[0], piece[1], float(i) / steps)
 			points.append(Vector2(_curve_x(y), y - global_position.y))
-		var wobble := sin(_time * 30.0) * 2.0
-		draw_polyline(points, INK, 30.0 + wobble, true)
-		draw_polyline(points, Color("f3d9a0"), 20.0 + wobble, true)
+		draw_polyline(points, INK, 30.0, true)
+		draw_polyline(points, Color("f3d9a0"), 20.0, true)
 		draw_polyline(points, Color("fff6dc"), 8.0, true)
 		# Linhas de "som" atrás do arco.
 		for offset in [26.0, 46.0]:

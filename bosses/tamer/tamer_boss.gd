@@ -13,7 +13,7 @@ const IMPLEMENTED_PHASES := 1
 
 @export var max_health := 1500
 ## Respiro entre um ataque e outro (mínimo e máximo, segundos).
-@export var pause_between_attacks := Vector2(0.9, 1.5)
+@export var pause_between_attacks := Vector2(0.35, 0.7)
 ## Tempo antes do primeiro ataque.
 @export var intro_time := 2.5
 

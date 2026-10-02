@@ -1,12 +1,14 @@
 extends BossAttack
 ## Rugido: Leopoldo se prepara (aviso) e ruge; três ondas de som em arco atravessam a
-## tela para a esquerda. Cada onda tem um buraco (rente ao chão ou no meio): passar
-## por ele ou atravessar com o dash.
+## tela para a esquerda. Cada onda tem um buraco: rente ao chão (ficar no chão) ou no meio
+## (um pulo normal passa, com folga). Também dá para atravessar com o dash.
+## As ondas vêm espaçadas o bastante para pular uma e cair antes da próxima.
 
 const WINDUP := 0.8
-const WAVE_TIMES := [0.8, 1.4, 2.0]
-const WAVE_SPEED := 640.0
-const GAPS := [880.0, 610.0]
+const WAVE_TIMES := [0.8, 1.65, 2.5]
+const WAVE_SPEED := 600.0
+## Centro do buraco: rente ao chão, ou na altura do corpo no topo de um pulo.
+const GAPS := [875.0, 690.0]
 const EXIT_X := -200.0
 
 @export var lion_path: NodePath
