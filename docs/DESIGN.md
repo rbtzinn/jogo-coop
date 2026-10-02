@@ -7,6 +7,7 @@
 - [combat.md](combat.md) — vida, balão (reviver), parry, especial (Aplausos), nota
 - [shop.md](shop.md) — loja, ingressos, Camarim e todos os itens
 - [bosses.md](bosses.md) — chefões da Área 1 e ideias futuras
+- [REFERENCIAS.md](../REFERENCIAS.md) — pranchas visuais dos chefões, loja, itens, combate e personagens (imagens em `docs/referencias/`)
 
 ## Visão geral
 
