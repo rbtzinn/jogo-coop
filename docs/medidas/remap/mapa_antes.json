@@ -1,0 +1,10 @@
+{
+	"draw_calls": 2366.28048780488,
+	"fps": 54.3578596659047,
+	"frames": 164,
+	"mean_frame_ms": 18.3966036585366,
+	"primitives": 894132.975609756,
+	"quality": 2,
+	"resolution": "(1280, 720)",
+	"scene": "res://levels/world/world_area1.tscn"
+}

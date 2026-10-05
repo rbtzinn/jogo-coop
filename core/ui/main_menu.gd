@@ -24,33 +24,42 @@ func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_build_background()
 
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(center)
+	var margin := MarginContainer.new()
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_left", 120)
+	margin.add_theme_constant_override("margin_right", 1050)
+	margin.add_theme_constant_override("margin_top", 112)
+	margin.add_theme_constant_override("margin_bottom", 90)
+	add_child(margin)
 
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 22)
-	center.add_child(layout)
+	margin.add_child(layout)
 
-	layout.add_child(UiTheme.title_label("Respeitável Público", 110, true))
+	var eyebrow := UiTheme.section_label("O GRANDE PICADEIRO", 23)
+	layout.add_child(eyebrow)
+	var title := UiTheme.title_label("Respeitável\nPúblico", 90, true)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	layout.add_child(title)
 	var subtitle := Label.new()
 	subtitle.text = "Um circo assombrado para dois"
-	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	subtitle.add_theme_font_size_override("font_size", 34)
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	subtitle.add_theme_font_size_override("font_size", 28)
 	subtitle.add_theme_color_override("font_color", UiTheme.CREAM)
 	subtitle.add_theme_color_override("font_outline_color", UiTheme.INK)
-	subtitle.add_theme_constant_override("outline_size", 6)
+	subtitle.add_theme_constant_override("outline_size", 2)
 	layout.add_child(subtitle)
 
 	# Os botões ficam num cartaz com lâmpadas (o painel de entrar na partida também).
 	var poster := PosterPanel.new()
-	poster.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	poster.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	poster.marquee = false
 	layout.add_child(poster)
 	var poster_layout := VBoxContainer.new()
 	poster.add_child(poster_layout)
 	_main_buttons = VBoxContainer.new()
-	_main_buttons.add_theme_constant_override("separation", 14)
-	_main_buttons.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_main_buttons.add_theme_constant_override("separation", 10)
+	_main_buttons.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	poster_layout.add_child(_main_buttons)
 	var host_button := _add_button(_main_buttons, "Hospedar partida", _on_host_pressed)
 	_add_button(_main_buttons, "Entrar na partida", _show_join_panel)
@@ -61,8 +70,9 @@ func _ready() -> void:
 	_build_join_panel(poster_layout)
 
 	_status = Label.new()
-	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_status.add_theme_font_size_override("font_size", 28)
+	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_status.add_theme_font_size_override("font_size", 23)
 	_status.add_theme_color_override("font_color", UiTheme.GOLD)
 	_status.add_theme_color_override("font_outline_color", UiTheme.INK)
 	_status.add_theme_constant_override("outline_size", 6)
@@ -92,9 +102,27 @@ func _build_background() -> void:
 	background_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	add_child(background_rect)
 	var dim := ColorRect.new()
-	dim.color = Color(0.06, 0.03, 0.06, 0.55)
+	dim.color = Color(0.035, 0.05, 0.075, 0.12)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(dim)
+	background_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var footer := Label.new()
+	footer.text = "PALHAÇO  &  ACROBATA                 UMA NOITE. DOIS ARTISTAS."
+	footer.position = Vector2(1070, 997)
+	footer.add_theme_font_size_override("font_size", 20)
+	footer.add_theme_color_override("font_color", UiTheme.GOLD)
+	add_child(footer)
+	# Retratos mantêm o desenho e a identidade dos protagonistas, sem simular combate no menu.
+	for entry in [["clown", Vector2(1150, 570), Vector2(260, 400)], ["acrobat", Vector2(1480, 555), Vector2(240, 420)]]:
+		var portrait := TextureRect.new()
+		portrait.texture = load("res://core/player/characters/%s/idle/idle_1.png" % entry[0])
+		portrait.position = entry[1]
+		portrait.size = entry[2]
+		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(portrait)
 
 
 func _build_join_panel(parent: Control) -> void:
@@ -106,11 +134,13 @@ func _build_join_panel(parent: Control) -> void:
 
 	var label := Label.new()
 	label.text = "Endereço de quem está hospedando (IP ou endereço:porta):"
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.custom_minimum_size.x = 590
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_join_panel.add_child(label)
 
 	_address_edit = LineEdit.new()
-	_address_edit.custom_minimum_size = Vector2(720, 0)
+	_address_edit.custom_minimum_size = Vector2(590, 0)
 	_address_edit.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_address_edit.placeholder_text = "ex.: 100.101.102.103  ou  jogo.at.ply.gg:12345"
 	_address_edit.text = Settings.last_join_address
@@ -124,7 +154,7 @@ func _build_join_panel(parent: Control) -> void:
 func _add_button(parent: Control, text: String, callback: Callable) -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(520, 0)
+	button.custom_minimum_size = Vector2(580, 58)
 	button.pressed.connect(callback)
 	parent.add_child(button)
 	return button

@@ -1,0 +1,10 @@
+{
+	"draw_calls": 353.393939393939,
+	"fps": 87.8548247828699,
+	"frames": 264,
+	"mean_frame_ms": 11.3824141414141,
+	"primitives": 16906.8068181818,
+	"quality": 2,
+	"resolution": "(1280, 720)",
+	"scene": "res://bosses/tamer/tamer_fight.tscn"
+}

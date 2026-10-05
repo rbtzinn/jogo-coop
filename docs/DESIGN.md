@@ -117,6 +117,10 @@ Estes são os controles **padrão**; o jogador pode trocar qualquer um em Config
 
 ## Decisões em aberto
 
+### Reformulação visual autorizada em 05/10/2026
+
+Todo o layout será renovado por etapas com Blender, mantendo identidades e lógica do jogo. Publicar cada etapa com commit e push para main. Direção, limites de gameplay e conferência em [REMAP_VISUAL.md](REMAP_VISUAL.md).
+
 1. ~~**Estilo visual**~~ — decidido (ver tabela acima).
 2. ~~**Tema**~~ — decidido: circo assombrado. **Ainda a detalhar** (pode ser depois da etapa 2): nome dos dois artistas, por que o circo foi amaldiçoado, como as áreas se dividem (ex.: tendas, picadeiros, trem do circo).
 3. ~~**Quanto um depende do outro**~~ — decidido (ver tabela acima).

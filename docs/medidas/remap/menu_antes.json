@@ -1,0 +1,10 @@
+{
+	"draw_calls": 206.648456057007,
+	"fps": 140.225717885174,
+	"frames": 421,
+	"mean_frame_ms": 7.13135946159936,
+	"primitives": 14117.5011876485,
+	"quality": 2,
+	"resolution": "(1280, 720)",
+	"scene": "res://core/ui/main_menu.tscn"
+}

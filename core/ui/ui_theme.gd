@@ -7,44 +7,47 @@ class_name UiTheme
 const TITLE_FONT := preload("res://core/ui/fonts/Limelight-Regular.ttf")
 const BODY_FONT := preload("res://core/ui/fonts/Oswald.ttf")
 
-const INK := Color("1b1410")
-const INK_SOFT := Color("6a5238")
-const CREAM := Color("f2e6cc")
+const INK := Color("101923")
+const INK_SOFT := Color("95a7aa")
+const CREAM := Color("e8dac0")
 ## Papel mais escuro: botões e cartões dentro do cartaz.
-const PAPER_SHADE := Color("e4d0a6")
-const GOLD := Color("d9a441")
-const RED := Color("a3282a")
-const RED_DARK := Color("6e1c1b")
-const NIGHT := Color("231a26")
-const NIGHT_LIGHT := Color("3a2c3f")
+const PAPER_SHADE := Color("25424c")
+const GOLD := Color("dfbc7d")
+const RED := Color("792f40")
+const RED_DARK := Color("cfb17c")
+const NIGHT := Color("101d28")
+const NIGHT_LIGHT := Color("20333d")
+static var _cached_theme: Theme
 
 
 static func build() -> Theme:
+	if _cached_theme != null:
+		return _cached_theme
 	var theme := Theme.new()
 	theme.default_font = BODY_FONT
 	theme.default_font_size = 30
 
 	theme.set_stylebox("panel", "PanelContainer", poster_box())
 	theme.set_stylebox("panel", "Panel", poster_box())
-	theme.set_color("font_color", "Label", INK)
+	theme.set_color("font_color", "Label", CREAM)
 
 	# Botões: ingresso de papel; escolhido (foco ou mouse) fica vermelho com borda dourada.
 	for type in ["Button", "OptionButton", "CheckButton", "MenuButton"]:
-		theme.set_stylebox("normal", type, _ticket(PAPER_SHADE, INK, 3))
+		theme.set_stylebox("normal", type, _ticket(PAPER_SHADE, Color("58717a"), 1))
 		theme.set_stylebox("hover", type, _ticket(RED, GOLD, 4))
-		theme.set_stylebox("focus", type, _ticket(RED, GOLD, 4))
+		theme.set_stylebox("focus", type, _box(Color(0, 0, 0, 0), GOLD, 2, 3, false))
 		theme.set_stylebox("hover_pressed", type, _ticket(RED_DARK, GOLD, 4, true))
 		theme.set_stylebox("pressed", type, _ticket(RED_DARK, GOLD, 4, true))
 		var disabled := _ticket(Color(PAPER_SHADE, 0.55), Color(INK_SOFT, 0.5), 3)
 		disabled.shadow_color = Color(0, 0, 0, 0)
 		theme.set_stylebox("disabled", type, disabled)
-		theme.set_color("font_color", type, INK)
+		theme.set_color("font_color", type, CREAM)
 		theme.set_color("font_hover_color", type, CREAM)
 		theme.set_color("font_focus_color", type, CREAM)
 		theme.set_color("font_pressed_color", type, GOLD)
 		theme.set_color("font_hover_pressed_color", type, GOLD)
 		theme.set_color("font_disabled_color", type, Color(INK_SOFT, 0.6))
-		theme.set_color("icon_normal_color", type, INK)
+		theme.set_color("icon_normal_color", type, CREAM)
 		theme.set_color("icon_focus_color", type, CREAM)
 		theme.set_color("icon_hover_color", type, CREAM)
 	# A chave do CheckButton fica num ingresso só quando escolhida (normal: sem caixa).
@@ -56,23 +59,23 @@ static func build() -> Theme:
 	theme.set_stylebox("normal", "CheckButton", plain)
 	theme.set_stylebox("pressed", "CheckButton", plain)
 	theme.set_stylebox("hover_pressed", "CheckButton", _ticket(RED, GOLD, 4))
-	theme.set_color("font_pressed_color", "CheckButton", INK)
+	theme.set_color("font_pressed_color", "CheckButton", CREAM)
 	theme.set_icon("checked", "CheckButton", _switch(true))
 	theme.set_icon("unchecked", "CheckButton", _switch(false))
 
-	var field := _box(Color("fbf3df"), INK, 3, 8)
+	var field := _box(NIGHT, Color("58717a"), 1, 3)
 	field.content_margin_top = 8
 	field.content_margin_bottom = 8
 	theme.set_stylebox("normal", "LineEdit", field)
 	theme.set_stylebox("focus", "LineEdit", _box(Color(0, 0, 0, 0), GOLD, 4, 8, false))
-	theme.set_color("font_color", "LineEdit", INK)
+	theme.set_color("font_color", "LineEdit", CREAM)
 	theme.set_color("font_placeholder_color", "LineEdit", Color(INK_SOFT, 0.75))
 	theme.set_color("caret_color", "LineEdit", RED)
 	theme.set_color("selection_color", "LineEdit", Color(GOLD, 0.5))
 
-	var tab_selected := _box(RED, INK, 3, 10)
-	var tab_unselected := _box(PAPER_SHADE, INK, 3, 10)
-	var tab_hovered := _box(Color("efc9a0"), INK, 3, 10)
+	var tab_selected := _box(RED, GOLD, 1, 3)
+	var tab_unselected := _box(NIGHT, Color("58717a"), 1, 3)
+	var tab_hovered := _box(PAPER_SHADE, GOLD, 1, 3)
 	for box: StyleBoxFlat in [tab_selected, tab_unselected, tab_hovered]:
 		box.corner_radius_bottom_left = 0
 		box.corner_radius_bottom_right = 0
@@ -88,17 +91,17 @@ static func build() -> Theme:
 	theme.set_font("font", "TabContainer", TITLE_FONT)
 	theme.set_font_size("font_size", "TabContainer", 26)
 	theme.set_color("font_selected_color", "TabContainer", CREAM)
-	theme.set_color("font_unselected_color", "TabContainer", INK)
-	theme.set_color("font_hovered_color", "TabContainer", INK)
+	theme.set_color("font_unselected_color", "TabContainer", INK_SOFT)
+	theme.set_color("font_hovered_color", "TabContainer", CREAM)
 
-	var popup := _box(CREAM, INK, 3, 8)
+	var popup := _box(NIGHT, GOLD, 1, 3)
 	popup.content_margin_top = 8
 	popup.content_margin_bottom = 8
 	popup.content_margin_left = 8
 	popup.content_margin_right = 8
 	theme.set_stylebox("panel", "PopupMenu", popup)
 	theme.set_stylebox("hover", "PopupMenu", _box(RED, GOLD, 2, 6))
-	theme.set_color("font_color", "PopupMenu", INK)
+	theme.set_color("font_color", "PopupMenu", CREAM)
 	theme.set_color("font_hover_color", "PopupMenu", CREAM)
 	theme.set_color("font_disabled_color", "PopupMenu", INK_SOFT)
 
@@ -115,7 +118,7 @@ static func build() -> Theme:
 	line.thickness = 2
 	theme.set_stylebox("separator", "HSeparator", line)
 
-	theme.set_color("default_color", "RichTextLabel", INK)
+	theme.set_color("default_color", "RichTextLabel", CREAM)
 	theme.set_font("normal_font", "RichTextLabel", BODY_FONT)
 	var bold := FontVariation.new()
 	bold.base_font = BODY_FONT
@@ -123,25 +126,26 @@ static func build() -> Theme:
 	theme.set_font("bold_font", "RichTextLabel", bold)
 	theme.set_font_size("normal_font_size", "RichTextLabel", 27)
 	theme.set_font_size("bold_font_size", "RichTextLabel", 27)
+	_cached_theme = theme
 	return theme
 
 
 ## O cartaz: papel creme, moldura vermelha grossa, cantos arredondados e sombra.
 static func poster_box() -> StyleBoxFlat:
-	var box := _box(CREAM, RED, 12, 12)
+	var box := _box(Color(NIGHT, 0.98), Color("8f7045"), 2, 4)
 	box.shadow_color = Color(0, 0, 0, 0.55)
-	box.shadow_size = 24
+	box.shadow_size = 16
 	box.shadow_offset = Vector2(0, 10)
-	box.content_margin_left = 60
-	box.content_margin_right = 60
-	box.content_margin_top = 40
-	box.content_margin_bottom = 40
+	box.content_margin_left = 38
+	box.content_margin_right = 38
+	box.content_margin_top = 30
+	box.content_margin_bottom = 30
 	return box
 
 
 ## Cartão dentro do cartaz (papel mais escuro, contorno de tinta): detalhes, colunas, abas.
 static func card_box() -> StyleBoxFlat:
-	var box := _box(Color("ead9b4"), INK, 3, 10)
+	var box := _box(NIGHT_LIGHT, Color("4b6269"), 1, 3)
 	box.content_margin_left = 22
 	box.content_margin_right = 22
 	box.content_margin_top = 16
@@ -157,9 +161,9 @@ static func title_label(text: String, size: int, on_dark := false) -> Label:
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_override("font", TITLE_FONT)
 	label.add_theme_font_size_override("font_size", size)
-	label.add_theme_color_override("font_color", GOLD if on_dark else RED)
-	label.add_theme_color_override("font_outline_color", INK if on_dark else GOLD)
-	label.add_theme_constant_override("outline_size", 10 if on_dark else 6)
+	label.add_theme_color_override("font_color", GOLD)
+	label.add_theme_color_override("font_outline_color", INK)
+	label.add_theme_constant_override("outline_size", 3 if on_dark else 2)
 	return label
 
 
@@ -237,14 +241,14 @@ static func _switch(on: bool) -> ImageTexture:
 ## Ingresso de papel (botões): contorno, cantos arredondados e uma sombra de tinta embaixo, que
 ## some quando apertado (o botão "afunda").
 static func _ticket(background: Color, border: Color, border_width: int, sunk := false) -> StyleBoxFlat:
-	var box := _box(background, border, border_width, 8)
+	var box := _box(background, border, border_width, 3)
 	box.shadow_color = Color(INK, 0.85)
 	box.shadow_size = 1
 	box.shadow_offset = Vector2(0, 1 if sunk else 4)
 	box.content_margin_left = 22
 	box.content_margin_right = 22
-	box.content_margin_top = 7 + (3 if sunk else 0)
-	box.content_margin_bottom = 7 - (3 if sunk else 0)
+	box.content_margin_top = 12 + (2 if sunk else 0)
+	box.content_margin_bottom = 12 - (2 if sunk else 0)
 	return box
 
 

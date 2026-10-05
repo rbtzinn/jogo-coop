@@ -7,8 +7,8 @@ const SHADER := preload("res://shaders/old_film.gdshader")
 ## Valores por qualidade (1 = média, 2 = alta; baixa desliga):
 ## [sépia, grão, tremulação, arranhões, vinheta].
 const PRESETS := {
-	1: [0.12, 0.05, 0.02, 0.0, 0.55],
-	2: [0.15, 0.07, 0.03, 0.5, 0.7],
+	1: [0.035, 0.012, 0.008, 0.0, 0.30],
+	2: [0.055, 0.020, 0.012, 0.12, 0.40],
 }
 
 var _rect: ColorRect
