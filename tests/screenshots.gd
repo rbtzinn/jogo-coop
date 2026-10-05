@@ -114,6 +114,9 @@ func _ready() -> void:
 	if args[0] == "pistolas":
 		_guns_capture()
 		return
+	if args[0] == "monociclo":
+		_unicycle_capture()
+		return
 	if args[0] == "salto_mortal" or args[0] == "salto_mortal2":
 		_somersault_capture(args[0] == "salto_mortal2")
 		return
@@ -870,6 +873,46 @@ func _duo_capture() -> void:
 		grid.save_png(_out.path_join("dupla_%d.png" % side))
 		await seconds(0.5)
 	print("foto: dupla")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.path))
+	get_tree().quit()
+
+
+## Monociclo em peças: a corrida do monociclo (fase 3 dos Malabaristas), 12 recortes de perto, um a cada
+## 6 quadros de física (o encaixe do selim e o giro da roda).
+func _unicycle_capture() -> void:
+	SaveGame.path = "user://test_save_shots.json"
+	SaveGame.reset()
+	var scene: Node = load("res://bosses/jugglers/jugglers_fight.tscn").instantiate()
+	add_child(scene)
+	var boss: BossBrain = (scene.get_node("Fight") as Fight).boss
+	boss._wait = 100000.0
+	boss.pause_between_attacks = Vector2(100000.0, 100000.0)
+	await seconds(1.0)
+	for player: Player in get_tree().get_nodes_in_group(&"players"):
+		player.player_health._invincible_timer = 100000.0
+	for part in ["Tico", "Teco"]:
+		boss.apply_damage(boss.health.current, "", part)
+	await seconds(3.5)
+	for part in ["Tico", "Teco"]:
+		boss.apply_damage(boss.health.current, "", part)
+	await seconds(3.5)
+	boss.sync.start_attack(&"UnicycleRide", 1, boss._args_for(&"UnicycleRide"))
+	var unicycle: Unicycle = boss.unicycle
+	var grid := Image.create(4 * 360, 3 * 480, false, Image.FORMAT_RGBA8)
+	for i in 12:
+		for k in 6:
+			await get_tree().physics_frame
+		await RenderingServer.frame_post_draw
+		var view := get_viewport().get_texture().get_image()
+		var ratio := float(view.get_width()) / get_viewport().get_visible_rect().size.x
+		var screen := get_viewport().get_canvas_transform() * unicycle.global_position * ratio
+		var size := Vector2(360, 480) * ratio
+		var at := (screen + Vector2(-180, -470) * ratio).clamp(Vector2.ZERO, Vector2(view.get_size()) - size)
+		var crop := view.get_region(Rect2i(Vector2i(at), Vector2i(size)))
+		crop.resize(360, 480)
+		grid.blit_rect(crop, Rect2i(0, 0, 360, 480), Vector2i((i % 4) * 360, (i / 4) * 480))
+	grid.save_png(_out.path_join("monociclo.png"))
+	print("foto: monociclo")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.path))
 	get_tree().quit()
 

@@ -66,3 +66,5 @@ arrumada por `tools/normalize_rider_sheet.gd` em `monociclo.png` (células de 51
 nariz, o nariz do de baixo sempre no mesmo ponto), a versão com o Teco embaixo saiu do `tools/recolor_twin.gd troca`
 (`monociclo_teco.png`) e os quadros foram recortados para `bosses/jugglers/art/unicycle/`. Falta o Pedido 2 (o
 monociclo em peças); até lá ele continua desenhado por código.
+
+O Pedido 2 chegou (05/10/2026) e está no jogo: `monociclo_pecas_candidata.png` recortada por `tools/cut_unicycle_parts.gd` em `bosses/jugglers/art/unicycle/wheel.png` e `frame.png`.
