@@ -112,9 +112,19 @@ func _run() -> void:
 	await frames(20)
 	Settings.up_jumps = up_jumps_before
 	check(clown.global_position.z < start.z - expected * 0.8, "W walks forward even with up-jumps on (%.2f m)" % (start.z - clown.global_position.z))
+	# Pelas trilhas pintadas (pixels da pintura do parque): subida dos Malabaristas e estrada do Domador.
+	var route: Array[Vector3] = []
+	for pixel in [Vector2(600, 520), Vector2(718, 440), Vector2(715, 330), Vector2(712, 252), Vector2(650, 245),
+			Vector2(560, 228), Vector2(450, 218)]:
+		route.append(map.pixel_to_world(pixel))
+	route.append(door.front_point())
 	var walked := 0
-	while not door.overlaps_body(clown) and walked < 400:
-		var to := door.front_point() - clown.global_position
+	while not door.overlaps_body(clown) and walked < 900:
+		var target: Vector3 = route[0]
+		if route.size() > 1 and Vector2(target.x - clown.global_position.x, target.z - clown.global_position.z).length() < 0.4:
+			route.pop_front()
+			target = route[0]
+		var to := target - clown.global_position
 		for action in [&"move_left", &"move_right", &"move_up", &"move_down"]:
 			Input.action_release(action)
 		if absf(to.x) > 0.3:

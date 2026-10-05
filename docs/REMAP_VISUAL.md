@@ -44,3 +44,14 @@ Modelado por script (tools/blender/park_kit.py, park_props.py, park_scene.py): t
 Medição (tools/visual_audit, mapa na entrada, 1280×720, qualidade alta, mesmo PC): linha de base 54,4 FPS e 2366 chamadas de desenho (895 mil primitivas); depois 196 FPS (5,1 ms), 287 chamadas, 111 mil primitivas (quase tudo são os bonecos). Imagem 3840×2112 comprimida na VRAM; profundidade 1920×1056 sem perda.
 
 Testes: run_all (lutas, loja, mapa, trem, itens, nota/save, online normal e com rede ruim) sem falhas.
+
+## Etapa 3b: a pintura de referência como mapa, com os desenhos da luta
+Pedido de 05/10/2026: em vez da imagem renderizada no Blender, usar a própria referência (versão limpa, sem personagens nem placas, feita pelo usuário: docs/referencias/remap/mapa_referencia_limpo.jpg, copiada para levels/world/art/park_painted.jpg) e só fazer os personagens andarem por cima, como na imagem. A câmera do mapa ficou parada mostrando o parque inteiro; o chão do mundo casa com o chão pintado (cada pixel da pintura vira um ponto no chão). Onde se anda é desenhado em levels/world/world_area1.gd em pixels da pintura (elipses e trilhas sobre a terra pintada); quem sai dela escorrega pela beira. As portas foram para as entradas pintadas (tapetes do Domador, dos Malabaristas e do Mágico, carroções do Camarim e da Cartomante, escada da estação); o que cada porta faz não mudou. Os corpos de colisão das atrações não bloqueiam mais (quem segura os bonecos é a beira das trilhas).
+
+Personagens: a miniatura 3D foi trocada pelos quadros PNG da luta (parado e corrida), menores (core/world/map_sprite.gd), de frente para a câmera e virando para o lado em que andam. Os quadros parado e corrida ganharam mipmaps para não serrilhar pequenos.
+
+Sem profundidade na pintura: os bonecos ficam sempre na frente do cenário (o arco do portão e os lampiões não os escondem). O Blender do parque (tools/blender/park_*.py) continua no repositório, sem uso.
+
+Medição (tools/visual_audit, 1280×720, qualidade alta): 346 FPS (2,9 ms), 24 chamadas de desenho, 2 mil primitivas (antes 196 FPS e 287 chamadas).
+
+Testes: run_all sem falhas; o teste do mapa anda pelas trilhas pintadas até o Domador.
