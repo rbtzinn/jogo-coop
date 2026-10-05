@@ -40,11 +40,11 @@ func _ready() -> void:
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 18)
 	_main_panel.add_child(layout)
-	layout.add_child(UiTheme.banner("Pausa", 64))
+	layout.add_child(UiTheme.page_header("Intervalo", "O espetáculo continua quando você estiver pronto."))
 	_both_note = Label.new()
 	_both_note.text = "Pausado para os dois."
 	_both_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_both_note.add_theme_color_override("font_color", UiTheme.RED_DARK)
+	_both_note.add_theme_color_override("font_color", UiTheme.GOLD)
 	layout.add_child(_both_note)
 	_continue_button = _add_button(layout, "Continuar", close)
 	_dressing_button = _add_button(layout, "Camarim", _open_dressing_room)

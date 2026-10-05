@@ -6,7 +6,7 @@ extends PanelContainer
 ## escolhido (só nos botões largos das listas de menu).
 
 ## Lâmpadas de letreiro em volta do cartaz.
-@export var marquee := true
+@export var marquee := false
 ## Botões a partir desta largura ganham as estrelas de "escolhido".
 @export var star_min_width := 280.0
 
@@ -23,13 +23,10 @@ func _ready() -> void:
 func _draw() -> void:
 	# Filete de tinta por dentro da moldura e uma estrela em cada canto.
 	var inner := Rect2(Vector2.ZERO, size).grow(-22.0)
-	draw_rect(inner, Color(UiTheme.INK, 0.55), false, 2.0)
+	draw_rect(inner, Color(UiTheme.GOLD, 0.30), false, 1.0)
 	for corner in [inner.position, Vector2(inner.end.x, inner.position.y), inner.end, Vector2(inner.position.x, inner.end.y)]:
-		draw_star(self, corner, 11.0, UiTheme.GOLD)
-
-
-func _process(_delta: float) -> void:
-	queue_redraw()
+		draw_star(self, corner, 7.0, UiTheme.GOLD)
+		draw_arc(corner, 14.0, 0, TAU, 16, Color(UiTheme.GOLD, 0.35), 1.0, true)
 
 
 ## Estrela de 5 pontas com contorno de tinta.
@@ -49,6 +46,7 @@ class _Overlay extends Control:
 	var panel: PosterPanel
 	var lights := true
 	var _time := 0.0
+	var _redraw_clock := 0.0
 
 	func _ready() -> void:
 		top_level = true
@@ -56,11 +54,17 @@ class _Overlay extends Control:
 
 	func _process(delta: float) -> void:
 		_time += delta
+		if not panel.is_visible_in_tree():
+			hide()
+			return
 		var rect := panel.get_global_rect()
 		global_position = rect.position
 		size = rect.size
 		visible = panel.is_visible_in_tree()
-		queue_redraw()
+		_redraw_clock += delta
+		if _redraw_clock >= 0.08:
+			_redraw_clock = 0.0
+			queue_redraw()
 
 	func _draw() -> void:
 		if lights:
@@ -77,7 +81,7 @@ class _Overlay extends Control:
 
 	func _draw_lights() -> void:
 		var rect := Rect2(Vector2.ZERO, size).grow(-6.0)
-		var spacing := 34.0
+		var spacing := 90.0
 		var perimeter := 2.0 * (rect.size.x + rect.size.y)
 		var count := maxi(4, int(perimeter / spacing))
 		var step := perimeter / count

@@ -17,13 +17,13 @@ const ESSENTIAL_ACTIONS: Array[StringName] = [&"jump", &"shoot", &"dash"]
 func _ready() -> void:
 	super()
 	theme = UiTheme.build()
-	custom_minimum_size = Vector2(1560, 960)
+	custom_minimum_size = Vector2(1540, 940)
 
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 10)
 	add_child(layout)
 
-	layout.add_child(UiTheme.banner("Configurações", 52))
+	layout.add_child(UiTheme.page_header("Configurações", "Ajuste os controles, a imagem e a conexão."))
 
 	var tabs := TabContainer.new()
 	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -45,6 +45,8 @@ func _ready() -> void:
 func open() -> void:
 	show()
 	_refresh_bindings()
+	if not _binding_buttons.is_empty():
+		(_binding_buttons.values()[0] as Button).grab_focus()
 
 
 func close() -> void:
@@ -88,7 +90,7 @@ func _build_controls_tab() -> Control:
 		label.text = header
 		label.add_theme_font_override("font", UiTheme.TITLE_FONT)
 		label.add_theme_font_size_override("font_size", 24)
-		label.add_theme_color_override("font_color", UiTheme.RED_DARK)
+		label.add_theme_color_override("font_color", UiTheme.GOLD)
 		grid.add_child(label)
 
 	for action in Settings.REBINDABLE_ACTIONS:

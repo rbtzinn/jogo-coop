@@ -27,7 +27,18 @@ func _run() -> void:
 	if args.size() > 2:
 		match args[2]:
 			"settings": scene._settings_menu.open()
+			"video", "network":
+				scene._settings_menu.open()
+				var tabs: Array = scene._settings_menu.find_children("*", "TabContainer", true, false)
+				(tabs[0] as TabContainer).current_tab = 1 if args[2] == "video" else 2
 			"shop": ShopPanel.open_for("clown", scene)
+			"pause": PauseMenu.open(false)
+			"victory", "defeat":
+				var end: CanvasLayer = load("res://core/ui/fight_end_screen.gd").new()
+				end.victory = args[2] == "victory"
+				end.result = {"grade": "A", "time": 123.0, "health": 4, "max_health": 6,
+					"parries": 3, "stars_used": 6, "tickets": 4, "first_win": true}
+				scene.add_child(end)
 			"dressing":
 				var dressing := DressingRoom.new()
 				var center := CenterContainer.new()

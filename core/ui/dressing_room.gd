@@ -13,11 +13,11 @@ var _first: Control
 func _ready() -> void:
 	super()
 	theme = UiTheme.build()
-	custom_minimum_size = Vector2(1300, 760)
+	custom_minimum_size = Vector2(1320, 930)
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 16)
 	add_child(layout)
-	layout.add_child(UiTheme.banner("Camarim", 56))
+	layout.add_child(UiTheme.page_header("Camarim", "Monte o figurino e os números da próxima apresentação."))
 	_columns = HBoxContainer.new()
 	_columns.add_theme_constant_override("separation", 60)
 	_columns.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -63,6 +63,7 @@ func _rebuild() -> void:
 		var column := VBoxContainer.new()
 		column.add_theme_constant_override("separation", 8)
 		card.add_child(column)
+		column.add_child(UiTheme.portrait(key, 175))
 		var title := UiTheme.title_label("Palhaço" if key == "clown" else "Acrobata", 40)
 		column.add_child(title)
 		var tickets := Label.new()

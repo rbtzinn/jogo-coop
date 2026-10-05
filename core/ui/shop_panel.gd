@@ -44,22 +44,22 @@ func _ready() -> void:
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.add_child(center)
 	var panel := PosterPanel.new()
-	panel.custom_minimum_size = Vector2(1560, 900)
+	panel.custom_minimum_size = Vector2(1560, 940)
 	panel.star_min_width = 100000.0
 	center.add_child(panel)
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 10)
 	panel.add_child(layout)
 
-	layout.add_child(UiTheme.banner("Barraca de Curiosidades", 50))
+	layout.add_child(UiTheme.page_header("Barraca de Curiosidades", "Escolha um número novo para o seu repertório."))
 	var top := HBoxContainer.new()
 	top.add_theme_constant_override("separation", 30)
 	layout.add_child(top)
 	_line = Label.new()
 	_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_line.add_theme_color_override("font_color", UiTheme.RED_DARK)
-	_line.add_theme_font_size_override("font_size", 27)
+	_line.add_theme_color_override("font_color", UiTheme.INK_SOFT)
+	_line.add_theme_font_size_override("font_size", 24)
 	top.add_child(_line)
 	_tickets = UiTheme.title_label("", 30)
 	_tickets.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -70,7 +70,7 @@ func _ready() -> void:
 	body.add_theme_constant_override("separation", 30)
 	layout.add_child(body)
 	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(700, 0)
+	scroll.custom_minimum_size = Vector2(600, 0)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	body.add_child(scroll)
 	_shelf = VBoxContainer.new()
@@ -84,15 +84,28 @@ func _ready() -> void:
 	var info := VBoxContainer.new()
 	info.add_theme_constant_override("separation", 14)
 	card.add_child(info)
-	_name = UiTheme.title_label("", 44)
+	var artist := HBoxContainer.new()
+	artist.add_theme_constant_override("separation", 22)
+	artist.add_child(UiTheme.portrait(key, 140))
+	var artist_text := VBoxContainer.new()
+	artist_text.alignment = BoxContainer.ALIGNMENT_CENTER
+	artist_text.add_child(UiTheme.section_label("PALHAÇO" if key == "clown" else "ACROBATA", 23))
+	var artist_hint := Label.new()
+	artist_hint.text = "Seu repertório começa aqui.\nEquipe os itens no Camarim."
+	artist_hint.add_theme_font_size_override("font_size", 24)
+	artist_text.add_child(artist_hint)
+	artist.add_child(artist_text)
+	info.add_child(artist)
+	_name = UiTheme.title_label("", 38)
 	_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info.add_child(_name)
 	info.add_child(HSeparator.new())
 	_details = RichTextLabel.new()
 	_details.bbcode_enabled = true
 	_details.fit_content = true
 	_details.scroll_active = false
-	_details.custom_minimum_size = Vector2(620, 0)
+	_details.custom_minimum_size = Vector2(630, 0)
 	_details.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	info.add_child(_details)
 	_buy = Button.new()
@@ -147,6 +160,7 @@ func _build_shelf() -> void:
 			var button := Button.new()
 			button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 			button.custom_minimum_size = Vector2(0, 54)
+			button.add_theme_font_size_override("font_size", 24)
 			button.set_meta(&"item", item_id)
 			button.focus_entered.connect(_select.bind(item_id))
 			button.pressed.connect(_select.bind(item_id))
@@ -201,9 +215,9 @@ func _refresh() -> void:
 	_name.text = item.name
 	var text: String = item.description
 	if item.has("ex"):
-		text += "\n\n[b][color=#6e1c1b]Tiro EX:[/color][/b] " + item.ex
+		text += "\n\n[b][color=#dfbc7d]Tiro EX:[/color][/b] " + item.ex
 	if item.has("downside"):
-		text += "\n\n[b][color=#6e1c1b]Troca:[/color][/b] " + item.downside
+		text += "\n\n[b][color=#dfbc7d]Troca:[/color][/b] " + item.downside
 	_details.text = text
 	if Shop.owns(key, _selected):
 		_buy.text = "Já é seu"

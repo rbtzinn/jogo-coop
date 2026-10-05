@@ -24,3 +24,7 @@ Medições com tools/visual_audit.tscn: janela oculta, 1280×720, qualidade alta
 ## Etapa 1 concluída
 Abertura com progresso real, menu assimétrico, cenário Blender e filtro de filme mais discreto. Godot import e abertura sem erros; imagem conferida. Menu: 140,2 -> 342,3 FPS; 206,6 -> 50 chamadas de desenho. Amostras curtas locais, não garantia de FPS em outros computadores.
 
+
+## Etapa 2 concluída
+Configurações, pausa/Intervalo, loja, Camarim e resultados reorganizados com cabeçalhos e retratos. Conteúdo e callbacks de compras, equipamento, recompensas e rede preservados. Teste test_shop: zero falhas. Capturas de configurações/loja/Camarim/resultado/pausa conferidas. Animação decorativa dos painéis atualiza só quando visível e a 12,5 Hz.
+

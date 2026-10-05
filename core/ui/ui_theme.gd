@@ -14,7 +14,7 @@ const CREAM := Color("e8dac0")
 const PAPER_SHADE := Color("25424c")
 const GOLD := Color("dfbc7d")
 const RED := Color("792f40")
-const RED_DARK := Color("cfb17c")
+const RED_DARK := Color("542738")
 const NIGHT := Color("101d28")
 const NIGHT_LIGHT := Color("20333d")
 static var _cached_theme: Theme
@@ -184,8 +184,34 @@ static func section_label(text: String, size := 28) -> Label:
 	label.text = text
 	label.add_theme_font_override("font", TITLE_FONT)
 	label.add_theme_font_size_override("font_size", size)
-	label.add_theme_color_override("font_color", RED_DARK)
+	label.add_theme_color_override("font_color", GOLD)
 	return label
+
+
+## Cabeçalho de seção: título e instrução legíveis, sem faixa competindo com os controles.
+static func page_header(text: String, subtitle: String) -> VBoxContainer:
+	var header := VBoxContainer.new()
+	header.add_theme_constant_override("separation", 6)
+	var title := title_label(text, 48, true)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	header.add_child(title)
+	var hint := Label.new()
+	hint.text = subtitle
+	hint.add_theme_font_size_override("font_size", 23)
+	hint.add_theme_color_override("font_color", INK_SOFT)
+	header.add_child(hint)
+	header.add_child(HSeparator.new())
+	return header
+
+
+static func portrait(kind: String, height := 160.0) -> TextureRect:
+	var image := TextureRect.new()
+	image.texture = load("res://core/player/characters/%s/idle/idle_1.png" % kind)
+	image.custom_minimum_size = Vector2(height * 0.7, height)
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return image
 
 
 ## Fundo escuro atrás de um menu aberto por cima do jogo: escurece e fecha nas bordas (vinheta).
