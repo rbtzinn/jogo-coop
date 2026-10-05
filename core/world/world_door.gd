@@ -183,6 +183,9 @@ func is_open() -> bool:
 ## Ids que ainda faltam vencer para abrir.
 func missing() -> Array[String]:
 	var result: Array[String] = []
+	# Modo de teste: tudo aberto.
+	if SaveGame.test_mode:
+		return result
 	for id in requires:
 		if not SaveGame.is_defeated(id):
 			result.append(id)

@@ -63,7 +63,9 @@ func _ready() -> void:
 	poster_layout.add_child(_main_buttons)
 	var host_button := _add_button(_main_buttons, "Hospedar partida", _on_host_pressed)
 	_add_button(_main_buttons, "Entrar na partida", _show_join_panel)
-	_add_button(_main_buttons, "Testar sozinho", _on_solo_pressed)
+	_add_button(_main_buttons, "Jogar sozinho", _on_solo_pressed)
+	# Modo de teste: save à parte, tudo aberto, ingressos e vida de sobra (SaveGame.start_test_mode).
+	_add_button(_main_buttons, "Testar sozinho", _on_test_pressed)
 	_add_button(_main_buttons, "Configurações", func() -> void: _settings_menu.open())
 	_add_button(_main_buttons, "Sair", func() -> void: get_tree().quit())
 
@@ -176,6 +178,7 @@ func _show_main_buttons() -> void:
 
 
 func _on_host_pressed() -> void:
+	SaveGame.start_normal()
 	var error: Error = Network.host()
 	if error != OK:
 		_status.text = "Não consegui abrir a partida (erro %d). A porta %d pode estar em uso." % [error, Network.DEFAULT_PORT]
@@ -185,6 +188,13 @@ func _on_host_pressed() -> void:
 
 func _on_solo_pressed() -> void:
 	Network.leave()
+	SaveGame.start_normal()
+	get_tree().change_scene_to_file(first_level)
+
+
+func _on_test_pressed() -> void:
+	Network.leave()
+	SaveGame.start_test_mode()
 	get_tree().change_scene_to_file(first_level)
 
 
@@ -195,6 +205,7 @@ func _on_connect_pressed() -> void:
 		return
 	Settings.set_option(&"last_join_address", address)
 	Network.leave()
+	SaveGame.start_normal()
 	if Network.join(address) != OK:
 		_status.text = "Esse endereço não parece válido."
 		return

@@ -188,6 +188,11 @@ func _draw_ticket(player: Player, origin: Vector2) -> void:
 	if player.player_health.is_downed:
 		_draw_stamp(origin + Vector2(200, 27), "CAIU!")
 		return
+	# Vida grande (modo de teste): um coração e o número, em vez de uma fileira sem fim.
+	if health.maximum > 6:
+		_draw_heart(hearts_origin, 13.0, HEART_RED)
+		draw_string(UiTheme.BODY_FONT, hearts_origin + Vector2(22, 9), "x %d" % health.current, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, TICKET_RED)
+		return
 	for h in health.maximum:
 		var beat := 1.0 + (sin(_time * 8.0) * 0.08 if health.current == 1 and h == 0 else 0.0)
 		_draw_heart(hearts_origin + Vector2(h * 38, 0), 13.0 * beat, HEART_RED if h < health.current else HEART_EMPTY)

@@ -1,5 +1,5 @@
 extends Node
-## "Testar sozinho": Tab troca qual personagem você controla. Se o personagem controlado
+## Sozinho ("Jogar sozinho" e "Testar sozinho"): Tab troca qual personagem você controla. Se o personagem controlado
 ## cair, o controle passa sozinho para o outro (para dar parry no balão dele).
 ## Online não faz nada.
 

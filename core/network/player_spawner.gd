@@ -2,7 +2,7 @@ class_name PlayerSpawner
 extends Node
 ## Cria os jogadores da fase.
 ## Online: um jogador por PC (host = palhaço, cliente = acrobata); cada PC controla o seu.
-## Offline ("Testar sozinho"): os dois personagens, controlando um por vez (Tab troca).
+## Offline ("Jogar sozinho" e "Testar sozinho"): os dois personagens, controlando um por vez (Tab troca).
 ## Os pontos de nascimento são os filhos Marker2D (o 1º para o palhaço, o 2º para a acrobata).
 
 const PLAYER_SCENE := preload("res://core/player/player.tscn")
