@@ -13,6 +13,7 @@ script = ExtResource("1_world")
 [node name="DoorDressing" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.6, 0, 1.6)
 script = ExtResource("2_door")
+draw_landmark = false
 title = "Camarim"
 opens_dressing_room = true
 stripe_color = Color(0.42, 0.24, 0.46, 1)
@@ -22,6 +23,7 @@ landmark = "wagon"
 [node name="DoorTamer" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 0, -2.0)
 script = ExtResource("2_door")
+draw_landmark = false
 title = "O Domador"
 landmark = "lion_tent"
 target_scene = "res://bosses/tamer/tamer_fight.tscn"
@@ -31,6 +33,7 @@ radius = 2.3
 [node name="DoorShop" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 0, -0.5)
 script = ExtResource("2_door")
+draw_landmark = false
 title = "Curiosidades"
 opens_shop = true
 stripe_color = Color(0.18, 0.42, 0.35, 1)
@@ -40,6 +43,7 @@ landmark = "stall"
 [node name="DoorJugglers" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -7.0)
 script = ExtResource("2_door")
+draw_landmark = false
 title = "Os Malabaristas"
 target_scene = "res://bosses/jugglers/jugglers_fight.tscn"
 level_id = "jugglers"
@@ -48,6 +52,7 @@ stripe_color = Color(0.18, 0.36, 0.54, 1)
 [node name="DoorTrain" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.6, 0, 1.2)
 script = ExtResource("2_door")
+draw_landmark = false
 title = "Trem do Circo"
 target_scene = "res://levels/train/train_level.tscn"
 level_id = "train"
@@ -58,6 +63,7 @@ landmark = "station"
 [node name="DoorMagician" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.6, 0, -5.4)
 script = ExtResource("2_door")
+draw_landmark = false
 title = "O Grande Mágico"
 target_scene = "res://bosses/magician/magician_fight.tscn"
 level_id = "magician"

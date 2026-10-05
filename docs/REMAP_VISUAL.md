@@ -35,3 +35,12 @@ Pedido do usuário em 05/10/2026: a abertura igual em espírito a docs/referenci
 Vida sem quadros novos (shaders/loading_puppet.gdshader): respiração esticando a partir dos pés, balanço do tronco, os dois braços mexendo em volta do ombro e piscadas com pálpebra desenhada (olho fechado em curva). Lâmpadas da moldura e do letreiro correm em sequência de três; as dos varais oscilam soltas; névoa passa devagar na rua (shaders/loading_stage.gdshader). A barra revela o dourado pelo progresso real do carregamento do menu, sem atraso.
 
 Medição (tools/visual_audit, 1280×720, qualidade alta, mesmo PC): antes 481 FPS, 8 chamadas de desenho; depois 305 FPS (3,3 ms por quadro), 5 chamadas de desenho. O custo extra é o shader em tela cheia; folgado para a UHD 630.
+
+## Etapa 3 concluída: parque pré-renderizado (referência ilustrada)
+Pedido de 05/10/2026: o mapa da Área 1 o mais perto possível de docs/referencias/remap/mapa_referencia.png. Os modelos GLB por atração (trabalho anterior, sem commit) foram trocados por uma imagem do parque inteiro renderizada no Cycles, com luz e sombras assadas (lampiões, varais, entradas das tendas, janelas, luar), e um mapa de profundidade de 16 bits. Na Godot, a câmera do mapa é ortográfica com o mesmo ângulo do Blender; um quadrado preso à câmera desenha a imagem e grava a profundidade (shaders/prerendered_backdrop.gdshader), e quem passa atrás de algo vira silhueta dourada (shaders/prerendered_silhouette.gdshader). Sem luzes dinâmicas no parque: uma luz direcional sem sombra só para os bonecos.
+
+Modelado por script (tools/blender/park_kit.py, park_props.py, park_scene.py): tendas listradas do Domador e dos Malabaristas, tenda azul-noite do Mágico com estrelas, carroções do Camarim e da Cartomante, estação com toldo, trilhos e locomotiva, portão em arco com lâmpadas, praça do elefante, cercas, lampiões, varais e bandeirinhas, árvores, pinheiros, arbustos e flores. Os emblemas (leão, malabares, lua), a placa da cartomante e os cartazes são recortes da própria referência. Portas, colisões, chão, trilhas, entradas e voltas das lutas ficaram iguais.
+
+Medição (tools/visual_audit, mapa na entrada, 1280×720, qualidade alta, mesmo PC): linha de base 54,4 FPS e 2366 chamadas de desenho (895 mil primitivas); depois 196 FPS (5,1 ms), 287 chamadas, 111 mil primitivas (quase tudo são os bonecos). Imagem 3840×2112 comprimida na VRAM; profundidade 1920×1056 sem perda.
+
+Testes: run_all (lutas, loja, mapa, trem, itens, nota/save, online normal e com rede ruim) sem falhas.

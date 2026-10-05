@@ -239,6 +239,24 @@ surpreenda. Decidido (por delegação):
 - **O resto é o mesmo de antes:** lutas 2D, entrada andando, espera pelo parceiro online, volta na frente
   da atração, save, loja e Camarim.
 
+**Revisão de 05/10/2026 (reformulação visual, docs/REMAP_VISUAL.md):** o usuário pediu o mapa o mais
+perto possível de `docs/referencias/remap/mapa_referencia.png`. Decidido pelo Claude:
+- **Cenário pré-renderizado no Blender** (`tools/blender/park_render.py`): o parque inteiro numa imagem
+  só, vista de cima por uma câmera ortográfica com a mesma inclinação do mapa, com luz de lampiões,
+  varais e luar assada. Junto vai a profundidade de cada pixel; na Godot, `PrerenderedBackdrop` desenha
+  a imagem e grava essa profundidade, então os bonecos 3D passam atrás das tendas de verdade.
+- A **câmera do mapa é ortográfica** (15,5 m de altura de vista): os bonecos ficam pequenos, como na
+  referência. Atrás de uma peça do cenário, o boneco aparece como silhueta dourada (antes a peça ficava
+  transparente).
+- Chão, colisões, portas, trilhas, entradas das lutas e lugares de volta são os mesmos de antes; o
+  terreno e as portas só deixaram de desenhar (`WorldTerrain.draw` e `WorldDoor.draw_landmark`).
+- As placas de nome saíram. O aviso da porta é uma plaquinha escura de borda dourada na tela, perto da
+  entrada ("J · Entrar", "Fechado", a nota). No canto, "ÁREA 1 — O GRANDE PICADEIRO" e uma plaquinha
+  por personagem com o rosto, a vida da luta (3, ou 4 com o Coração de Pano) e os ingressos.
+- Nova praça com estátua de elefante no meio do parque, só enfeite.
+- Para mudar o parque: `Godot --headless --path . res://tools/world_layout_export.tscn` (leiaute) e
+  depois o Blender com `park_render.py -- final` (uns 16 minutos).
+
 **Referência visual** (03/10): `docs/referencias/mundo3d_direcao_visual.png`, conceito do Codex usado como
 alvo de linguagem (não captura). Segunda rodada guiada por ela:
 - trilhas de terra com grama, cercas de madeira e árvores de copa;

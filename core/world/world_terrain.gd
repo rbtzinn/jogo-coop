@@ -14,6 +14,8 @@ const GRASS_ALBEDO := preload("res://core/world/art/grass_albedo.png")
 @export var size := Vector2(46, 30)
 @export var cells := Vector2i(92, 60)
 @export var path_width := 2.3
+## Falso: só o chão com colisão, sem desenho (o mapa usa o parque renderizado no Blender).
+@export var draw := true
 
 ## Trilhas: cada uma é uma lista de pontos (x, z) por onde a curva passa.
 var paths: Array[PackedVector2Array] = []
@@ -57,6 +59,8 @@ func build() -> void:
 	for path in paths:
 		_samples.append(sample_path(path, 0.6))
 	_build_ground()
+	if not draw:
+		return
 	for path in paths:
 		_build_edges(sample_path(path, 0.25), paths.find(path))
 	_build_meadow()
@@ -106,7 +110,7 @@ func _build_ground() -> void:
 			var x := -size.x * 0.5 + size.x * i / cells.x
 			var z := -size.y * 0.5 + size.y * j / cells.y
 			row.append(_raw_height(x, z))
-			crow.append(_ground_color(x, z))
+			crow.append(_ground_color(x, z) if draw else Color.WHITE)
 		heights.append(row)
 		colors.append(crow)
 	_grid.resize((cells.x + 1) * (cells.y + 1))
@@ -133,6 +137,8 @@ func _build_ground() -> void:
 	shape.shape = mesh.create_trimesh_shape()
 	body.add_child(shape)
 	add_child(body)
+	if not draw:
+		return
 	var node := MeshInstance3D.new()
 	node.mesh = mesh
 	var material := ShaderMaterial.new()
