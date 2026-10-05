@@ -9,7 +9,7 @@ const WARNING := 0.75
 const STAGGER := 0.16
 const GRAVITY := 2600.0
 const START_Y := -160.0
-const EMBER_TEXTURE := preload("res://bosses/tamer/art/ember.svg")
+const EMBER_TEXTURE := preload("res://bosses/tamer/art/effects/ember_a.png")
 
 @export var lion_path: NodePath
 @export var floor_y := 1000.0

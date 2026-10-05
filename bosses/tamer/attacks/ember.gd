@@ -3,8 +3,10 @@ extends EnemyHitbox
 ## Brasa que cai de uma argola quando o leão passa por ela. Quem está embaixo precisa sair.
 ## A brasa rosa aceita parry (pular nela e apertar pulo de novo).
 
-const TEXTURE := preload("res://bosses/tamer/art/ember.svg")
-const PINK_TEXTURE := preload("res://bosses/tamer/art/ember_pink.svg")
+## Dois desenhos de chama alternando (tools/cut_tamer_effects.gd).
+const FRAMES := [preload("res://bosses/tamer/art/effects/ember_a.png"), preload("res://bosses/tamer/art/effects/ember_b.png")]
+const PINK_FRAMES := [preload("res://bosses/tamer/art/effects/ember_pink_a.png"), preload("res://bosses/tamer/art/effects/ember_pink_b.png")]
+const FLICKER_TIME := 0.09
 
 @export var pink := false
 
@@ -13,6 +15,7 @@ var parry_id := ""
 var popped := false
 
 var _sprite := Sprite2D.new()
+var _time := 0.0
 
 
 func _ready() -> void:
@@ -20,7 +23,7 @@ func _ready() -> void:
 	if pink:
 		parry_target = self
 	super()
-	_sprite.texture = PINK_TEXTURE if pink else TEXTURE
+	_sprite.texture = (PINK_FRAMES if pink else FRAMES)[0]
 	_sprite.offset = Vector2(0, -8)
 	if pink:
 		_sprite.scale = Vector2.ONE * 1.3
@@ -30,6 +33,11 @@ func _ready() -> void:
 	circle.radius = 13.0
 	shape.shape = circle
 	add_child(shape)
+
+
+func _process(delta: float) -> void:
+	_time += delta
+	_sprite.texture = (PINK_FRAMES if pink else FRAMES)[int(_time / FLICKER_TIME) % 2]
 
 
 ## Brasa apagando no chão: some sem machucar.

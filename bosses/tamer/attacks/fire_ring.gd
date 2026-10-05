@@ -2,13 +2,13 @@ class_name FireRing
 extends Node2D
 ## Argola de fogo segura no ar. O leão pula por dentro dela; quem encostar na borda se queima.
 ## O meio é livre. A argola rosa aceita parry: quem fizer parry nela a estoura.
-## Desenho em imagens prontas (duas chamas alternando): redesenhar por código pesava no PC fraco.
+## Desenho em imagens prontas (duas chamas alternando; tools/cut_tamer_effects.gd).
 ## A metade esquerda da argola fica NA FRENTE do leão e a direita atrás, para parecer que
 ## ele passa por dentro dela.
 
-const UNLIT := preload("res://bosses/tamer/art/fire_ring_unlit.svg")
-const FIRE := [preload("res://bosses/tamer/art/fire_ring_a.svg"), preload("res://bosses/tamer/art/fire_ring_b.svg")]
-const PINK := [preload("res://bosses/tamer/art/pink_ring_a.svg"), preload("res://bosses/tamer/art/pink_ring_b.svg")]
+const UNLIT := preload("res://bosses/tamer/art/effects/ring_unlit.png")
+const FIRE := [preload("res://bosses/tamer/art/effects/ring_fire_a.png"), preload("res://bosses/tamer/art/effects/ring_fire_b.png")]
+const PINK := [preload("res://bosses/tamer/art/effects/ring_pink_a.png"), preload("res://bosses/tamer/art/effects/ring_pink_b.png")]
 const FLICKER_TIME := 0.09
 
 @export var radius := Vector2(70, 112)

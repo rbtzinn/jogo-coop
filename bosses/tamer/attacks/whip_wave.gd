@@ -4,11 +4,13 @@ extends EnemyHitbox
 ## A onda rosa aceita parry: pular por cima e apertar pulo de novo encostando nela.
 
 const SIZE := Vector2(96, 86)
-const INK := Color("1b1410")
-const COLORS := {
-	false: [Color("f0c46a"), Color("fff3c4"), Color(0.95, 0.8, 0.5, 0.6)],
-	true: [Color("ff5fa2"), Color("ffd1e6"), Color(1.0, 0.6, 0.8, 0.6)],
-}
+## Quatro desenhos da crista em loop (tools/cut_tamer_effects.gd), na metade do tamanho da folha:
+## a base em y 236 e o meio em x 128 da célula.
+const FRAMES := [preload("res://bosses/tamer/art/effects/whip_1.png"), preload("res://bosses/tamer/art/effects/whip_2.png"), preload("res://bosses/tamer/art/effects/whip_3.png"),
+		preload("res://bosses/tamer/art/effects/whip_4.png")]
+const PINK_FRAMES := [preload("res://bosses/tamer/art/effects/whip_pink_1.png"), preload("res://bosses/tamer/art/effects/whip_pink_2.png"),
+		preload("res://bosses/tamer/art/effects/whip_pink_3.png"), preload("res://bosses/tamer/art/effects/whip_pink_4.png")]
+const FRAME_TIME := 0.07
 
 @export var pink := false
 
@@ -16,6 +18,7 @@ const COLORS := {
 var parry_id := ""
 
 var _time := 0.0
+var _sprite := Sprite2D.new()
 
 
 func _ready() -> void:
@@ -29,12 +32,17 @@ func _ready() -> void:
 	shape.shape = rect
 	shape.position = Vector2(0, -rect.size.y * 0.5)
 	add_child(shape)
+	_sprite.centered = false
+	_sprite.scale = Vector2.ONE * 0.5
+	_sprite.offset = Vector2(-128, -236)
+	_sprite.texture = (PINK_FRAMES if pink else FRAMES)[0]
+	add_child(_sprite)
 
 
 func _process(delta: float) -> void:
-	# Tremida barata (só escala); o desenho é feito uma vez só.
 	_time += delta
 	scale.y = 1.0 + sin(_time * 40.0) * 0.08
+	_sprite.texture = (PINK_FRAMES if pink else FRAMES)[int(_time / FRAME_TIME) % 4]
 
 
 ## Levou parry: estoura e para de machucar.
@@ -42,23 +50,3 @@ func on_parried() -> void:
 	active = false
 	hide()
 	ParryFlash.spawn(global_position + Vector2(0, -SIZE.y * 0.5), 1.4)
-
-
-func _draw() -> void:
-	# Uma "lâmina" de poeira e faíscas em forma de crista, apontando para a esquerda.
-	var colors: Array = COLORS[pink]
-	var crest := PackedVector2Array([
-		Vector2(-SIZE.x * 0.5, 0), Vector2(-SIZE.x * 0.3, -SIZE.y * 0.6),
-		Vector2(-SIZE.x * 0.05, -SIZE.y), Vector2(SIZE.x * 0.2, -SIZE.y * 0.55),
-		Vector2(SIZE.x * 0.5, -SIZE.y * 0.25), Vector2(SIZE.x * 0.55, 0)])
-	draw_colored_polygon(crest, colors[0])
-	var outline := crest.duplicate()
-	outline.append(crest[0])
-	draw_polyline(outline, INK, 4.0)
-	var inner := PackedVector2Array([
-		Vector2(-SIZE.x * 0.25, 0), Vector2(-SIZE.x * 0.05, -SIZE.y * 0.6),
-		Vector2(SIZE.x * 0.15, -SIZE.y * 0.35), Vector2(SIZE.x * 0.3, 0)])
-	draw_colored_polygon(inner, colors[1])
-	for i in 3:
-		var x := SIZE.x * (0.6 + i * 0.25) + i * 12.0
-		draw_line(Vector2(x, -10 - i * 12), Vector2(x + 26, -10 - i * 12), colors[2], 4.0)

@@ -58,3 +58,6 @@ AFTER THE IMAGES ARE READY, SAVE AND PUSH:
 Mostrar o resultado ao Claude (ou só avisar o nome da branch). Ele confere a grade, as âncoras (a base da
 onda da Chicotada, o miolo livre das argolas, a emenda das peças da onda de som), normaliza o que precisar e
 liga no jogo sem mudar números da luta.
+
+## Situação (05/10/2026)
+Chegou pela branch `arte/chatgpt-pedido-d`, nos tamanhos pedidos, e está no jogo (Fase 5, ver docs/DESIGN.md). As pontas da onda de som vieram como uma peça inteira (as duas pontas juntas, nas linhas 2 e 3); o recorte usa o começo e o fim dela.

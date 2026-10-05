@@ -2,7 +2,7 @@ class_name TamerTorch
 extends Node2D
 ## Tocha que o domador joga para o leão na troca para a fase 3.
 
-const FLAME := preload("res://bosses/tamer/art/ember.svg")
+const FLAME := preload("res://bosses/tamer/art/effects/ember_a.png")
 
 var _time := 0.0
 var _flame := Sprite2D.new()
