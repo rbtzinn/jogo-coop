@@ -73,6 +73,21 @@ keep = lab == main
 lab2, sizes2 = components(~keep)
 for k, n in enumerate(sizes2):
     if n < 600: keep[lab2 == k] = True
+# Folga de uns 20 px (do conjunto) para cada lado da terra, com a beira arredondada: andar solto, sem engasgar
+# nos dentes da cor (pedido do usuário em 05/10/2026).
+MARGIN = 10
+def box_half(mask, k):
+    pad = np.pad(mask.astype(np.float32), k)
+    c = np.cumsum(np.cumsum(pad,0),1)
+    c = np.pad(c, ((1,0),(1,0)))
+    s = c[2*k+1:, 2*k+1:] - c[:-2*k-1, 2*k+1:] - c[2*k+1:, :-2*k-1] + c[:-2*k-1, :-2*k-1]
+    return s[:H,:W] / (2*k+1)**2
+for step in range(MARGIN):
+    keep = box_half(keep, 1) > 0.05
+keep = box_half(keep, 3) > 0.5
+lab3, sizes3 = components(~keep)
+for k, n in enumerate(sizes3):
+    if n < 1500: keep[lab3 == k] = True
 np.save(outdir + "/walk_half.npy", keep)
 o = bpy.data.images.new("m", W, H)
 g = keep.astype(np.float32)

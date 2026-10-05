@@ -12,6 +12,8 @@ const CYCLE_LENGTH := 1.9
 const IDLE_FPS := 8.0
 ## Luz da noite por cima do desenho (os quadros são pintados claros, para o dia do picadeiro).
 const NIGHT_TINT := Color(1.0, 0.93, 0.84)
+## Mais que isto num passo da física é teletransporte (volta da luta, parceiro resgatado): não desliza.
+const SNAP := 1.0
 
 var idle: FrameAnimation
 var run: FrameAnimation
@@ -23,6 +25,11 @@ var _sprite := Sprite3D.new()
 var _meters := 0.01
 var _phase := 0.0
 var _idle_time := 0.0
+## Posição do boneco nos dois últimos passos da física: o desenho anda entre elas a cada quadro da tela (a física
+## roda a 60 por segundo e a tela a bem mais; sem isso o personagem andava aos trancos).
+var _prev := Vector3.ZERO
+var _curr := Vector3.ZERO
+var _started := false
 
 
 ## Lê os quadros do rig da luta (a cena do personagem).
@@ -36,6 +43,8 @@ func setup(rig_scene: PackedScene) -> void:
 
 
 func _ready() -> void:
+	# Depois do mapa (que ainda pode empurrar o boneco para dentro da terra) gravar a posição final do passo.
+	process_physics_priority = 100
 	_sprite.centered = true
 	_sprite.shaded = false
 	_sprite.double_sided = true
@@ -70,3 +79,22 @@ func update_pose(delta: float, velocity: Vector3) -> void:
 	_sprite.pixel_size = animation.frame_scale * _meters
 	_sprite.flip_h = facing < 0
 	_sprite.position = Vector3(center.x * facing, -center.y, 0.0) * _meters
+
+
+func _physics_process(_delta: float) -> void:
+	var parent := get_parent() as Node3D
+	if parent == null:
+		return
+	_prev = _curr
+	_curr = parent.global_position
+	if not _started or _prev.distance_to(_curr) > SNAP:
+		_prev = _curr
+	_started = true
+
+
+func _process(_delta: float) -> void:
+	var parent := get_parent() as Node3D
+	if parent == null or not _started:
+		return
+	var drawn := _prev.lerp(_curr, Engine.get_physics_interpolation_fraction())
+	position = drawn - parent.global_position
