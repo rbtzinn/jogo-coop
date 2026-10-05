@@ -96,6 +96,23 @@ const TOTEM_BALL_SCALE := 0.22
 ## dele (ou dar dash); do chão o pulo passa rente. Todas as medidas TOTEM_* acima são do tamanho antigo.
 const TOTEM_GROW := 1.3
 
+## Monociclo desenhado (E8, 05/10/2026): a mesma ideia do totem. Os dois sentados no selim num desenho só, na
+## escala do totem (com TOTEM_GROW); quem desenha é a base, o de cima só tem as áreas. O ponto do nó da base é
+## o selim. Desenhos: 1 a 4 pedalando (um a cada RIDE_STEP px andados, e devagar parado, se equilibrando), 5 e 6
+## o de baixo arremessando (preparo e soltura), 7 e 8 o de cima.
+const RIDE_TICO := preload("res://bosses/jugglers/art/unicycle/tico_base.tres")
+const RIDE_TECO := preload("res://bosses/jugglers/art/unicycle/teco_base.tres")
+const RIDE_STEP := 30.0
+const RIDE_IDLE_FPS := 4.0
+## A soltura aparece este tanto depois de a pose `throw` começar (os ataques criam o objeto 0,2 s depois).
+const RIDE_RELEASE := 0.2
+## Medidos na folha arrumada (espaço da base olhando para a direita, sem o TOTEM_GROW): as cabeças e a mão que
+## arremessa de cada um.
+const RIDE_TOP_HEAD := Vector2(0, -140)
+const RIDE_BASE_HEAD := Vector2(12, -61)
+const RIDE_TOP_HAND := Vector2(67, -142)
+const RIDE_BASE_HAND := Vector2(67, -103)
+
 enum TotemRole { NONE, BASE, TOP }
 ## Começo de cada desenho (tempo desde que a pose `throw` começou) e qual desenho da folha é.
 const THROW_STEPS: Array[float] = [0.0, 0.18, 0.31]
@@ -176,6 +193,8 @@ var carrying := false
 var totem_role := TotemRole.NONE
 ## O outro irmão do totem.
 var totem_partner: Juggler
+## Os papéis de totem valem no monociclo (verdadeiro): a base sentada no selim, com a folha RIDE_*.
+var riding := false
 ## O objeto deste arremesso já saiu da mão (o ataque marca na hora em que cria o objeto; sai da pose `throw`,
 ## volta a falso). No totem desenhado, o de cima fica no preparo (7) até aí e na soltura (8) depois: assim a
 ## clave nasce na luva do desenho que está na tela.
@@ -244,8 +263,12 @@ func _process(delta: float) -> void:
 		var animation := _idle_animation()
 		var frame := idle_frame()
 		if _totem_art():
-			animation = TOTEM_TECO if teco else TOTEM_TICO
-			frame = totem_frame()
+			if riding:
+				animation = RIDE_TECO if teco else RIDE_TICO
+				frame = ride_frame()
+			else:
+				animation = TOTEM_TECO if teco else TOTEM_TICO
+				frame = totem_frame()
 		elif _defeat_art():
 			animation = TECO_DEFEAT if teco else TICO_DEFEAT
 			frame = defeat_frame()
@@ -360,6 +383,10 @@ func set_hurtbox_span(bottom: float, top: float) -> void:
 
 ## Mão que joga (na frente) e a de trás, no espaço do mundo.
 func hand_position() -> Vector2:
+	if riding and _totem_hidden():
+		return totem_partner._ride_point(RIDE_TOP_HAND)
+	if riding and _totem_art():
+		return _ride_point(RIDE_BASE_HAND)
 	if _totem_hidden():
 		var hand: Vector2 = TOTEM_FRONT_HANDS[totem_partner.totem_frame()] * TOTEM_GROW
 		return totem_partner.global_position + Vector2(hand.x * totem_partner.facing, hand.y)
@@ -367,6 +394,10 @@ func hand_position() -> Vector2:
 
 
 func head_position() -> Vector2:
+	if riding and _totem_art():
+		return _ride_point(RIDE_BASE_HEAD)
+	if riding and _totem_hidden():
+		return totem_partner._ride_point(RIDE_TOP_HEAD)
 	if _totem_art():
 		var own: Vector2 = TOTEM_BASE_HEADS[totem_frame()] * TOTEM_GROW
 		return global_position + Vector2(own.x * facing, own.y)
@@ -405,6 +436,22 @@ func totem_frame() -> int:
 	return int(_time * TOTEM_IDLE_FPS) % 2
 
 
+## Desenho do monociclo agora (0 a 7 da folha): o de baixo ou o de cima arremessando (preparo até a soltura e
+## soltura depois), ou pedalando: pela distância andada e devagar no lugar, se equilibrando.
+func ride_frame() -> int:
+	var top := totem_partner
+	if pose == &"throw":
+		return 5 if _throw_time >= RIDE_RELEASE else 4
+	if top != null and top.pose == &"throw":
+		return 7 if top._throw_time >= RIDE_RELEASE else 6
+	return posmod(floori(global_position.x / (RIDE_STEP * TOTEM_GROW) + _time * RIDE_IDLE_FPS), 4)
+
+
+## Ponto medido na folha do monociclo (espaço da base olhando para a direita) no mundo.
+func _ride_point(point: Vector2) -> Vector2:
+	return global_position + Vector2(point.x * facing, point.y) * TOTEM_GROW
+
+
 ## O de cima do totem: as estrelas da tontura na cabeça desenhada e, parado, três bolinhas em arco entre as
 ## duas luvas dele (o desenho tem as mãos para o alto, malabarizando).
 func _draw_totem_top() -> void:
@@ -414,6 +461,9 @@ func _draw_totem_top() -> void:
 		for i in 3:
 			var a := _time * 5.0 + TAU * i / 3.0
 			_draw_star(head + Vector2(cos(a) * 40, -40 + sin(a) * 10), 8.0, Color("ffc93c"))
+		return
+	# No monociclo o desenho já tem as mãos de cada pose (sem bolinhas por código).
+	if riding:
 		return
 	var frame := base.totem_frame()
 	if not juggling or frame > 1:

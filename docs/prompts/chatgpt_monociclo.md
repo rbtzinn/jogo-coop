@@ -59,3 +59,10 @@ RIGHT HALF (a 1024 x 1024 area): the FRAME alone, vertical and centered at x = 1
 
 Same palette as the circus brothers: muted red, cream, brass gold, dark brown ink.
 ```
+
+## Situação (05/10/2026)
+O Pedido 1 foi aprovado e está no jogo: a folha `monociclo_candidata_v2.png` (1774 × 887, fora da grade) foi
+arrumada por `tools/normalize_rider_sheet.gd` em `monociclo.png` (células de 512, escala do totem pelo tamanho do
+nariz, o nariz do de baixo sempre no mesmo ponto), a versão com o Teco embaixo saiu do `tools/recolor_twin.gd troca`
+(`monociclo_teco.png`) e os quadros foram recortados para `bosses/jugglers/art/unicycle/`. Falta o Pedido 2 (o
+monociclo em peças); até lá ele continua desenhado por código.

@@ -41,7 +41,7 @@ func _tick(t: float) -> void:
 				Fx.spawn(preload("res://components/fx/dust_puff.tscn"), juggler.global_position + Vector2(0, -60))
 		var seat := boss.unicycle.seat_position()
 		boss.base().global_position = arc_point(_base_from, seat, 300.0, u)
-		boss.top().global_position = arc_point(_top_from, seat - Vector2(0, JugglersBoss.SHOULDER), 340.0, u)
+		boss.top().global_position = arc_point(_top_from, seat - Vector2(0, JugglersBoss.RIDE_SHOULDER), 340.0, u)
 		for juggler: Juggler in [boss.base(), boss.top()]:
 			juggler.pose = &"spin"
 			juggler.spin = u

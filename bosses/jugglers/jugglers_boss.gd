@@ -24,12 +24,20 @@ const SHOULDER := 150.0
 ## No totem desenhado (E7): o meio do de cima a 110 px dos pés da base, medido no desenho (a cabeça da base
 ## vai até ~115); as áreas seguem o desenho, com o totem crescido em Juggler.TOTEM_GROW (desde 05/10/2026 o de
 ## cima chega a ~273 px do chão e pega quem está na tábua pendurada, de 216 a 240). O monociclo continua com
-## SHOULDER (os dois no boneco de código).
+## RIDE_SHOULDER (desenho próprio, abaixo).
 const TOTEM_SHOULDER := 110.0 * Juggler.TOTEM_GROW
 const TOTEM_BASE_HIT := 110.0 * Juggler.TOTEM_GROW
 const TOTEM_TOP_HIT := 92.0 * Juggler.TOTEM_GROW
 const TOTEM_BASE_HURT := Vector2(0, 115) * Juggler.TOTEM_GROW
 const TOTEM_TOP_HURT := Vector2(0, 102) * Juggler.TOTEM_GROW
+## Monociclo desenhado (E8, 05/10/2026), medido na folha (sem o TOTEM_GROW): o de cima sentado nos ombros a 43 px do
+## selim, o alto do cabelo a 176 e os sapatos 30 abaixo do selim. A base machuca do selim aos ombros; o de cima,
+## dos ombros ao cabelo.
+const RIDE_SHOULDER := 43.0 * Juggler.TOTEM_GROW
+const RIDE_BASE_HIT := 45.0 * Juggler.TOTEM_GROW
+const RIDE_TOP_HIT := 130.0 * Juggler.TOTEM_GROW
+const RIDE_BASE_HURT := Vector2(-28, 45) * Juggler.TOTEM_GROW
+const RIDE_TOP_HURT := Vector2(0, 130) * Juggler.TOTEM_GROW
 const NAMES := ["Tico", "Teco"]
 
 var hp := {"Tico": BROTHER_MAX, "Teco": BROTHER_MAX}
@@ -122,7 +130,7 @@ func place_group(x: float, reset_poses := true) -> void:
 		&"unicycle":
 			unicycle.global_position = Vector2(x, HOME_LEFT.y)
 			base().global_position = unicycle.seat_position()
-			top().global_position = unicycle.seat_position() - Vector2(0, SHOULDER)
+			top().global_position = unicycle.seat_position() - Vector2(0, RIDE_SHOULDER)
 			if reset_poses:
 				base().pose = &"ride"
 				top().pose = &"sit"
@@ -165,16 +173,23 @@ func set_mode(new_mode: StringName) -> void:
 	for juggler: Juggler in [tico, teco]:
 		juggler.totem_role = Juggler.TotemRole.NONE
 		juggler.totem_partner = null
+		juggler.riding = mode == &"unicycle"
 		juggler.set_hurtbox_span(10.0, 180.0)
-	if mode == &"totem":
+	if mode == &"totem" or mode == &"unicycle":
 		base().totem_role = Juggler.TotemRole.BASE
 		top().totem_role = Juggler.TotemRole.TOP
 		base().totem_partner = top()
 		top().totem_partner = base()
+	if mode == &"totem":
 		top().set_hitbox_height(TOTEM_TOP_HIT)
 		base().set_hitbox_height(TOTEM_BASE_HIT)
 		base().set_hurtbox_span(TOTEM_BASE_HURT.x, TOTEM_BASE_HURT.y)
 		top().set_hurtbox_span(TOTEM_TOP_HURT.x, TOTEM_TOP_HURT.y)
+	elif mode == &"unicycle":
+		top().set_hitbox_height(RIDE_TOP_HIT)
+		base().set_hitbox_height(RIDE_BASE_HIT)
+		base().set_hurtbox_span(RIDE_BASE_HURT.x, RIDE_BASE_HURT.y)
+		top().set_hurtbox_span(RIDE_TOP_HURT.x, RIDE_TOP_HURT.y)
 	else:
 		top().set_hitbox_height(150.0)
 		base().set_hitbox_height(150.0)

@@ -1,14 +1,17 @@
 class_name Unicycle
 extends Node2D
-## Monociclo gigante da fase 3 (desenhado por código). O ponto do nó é onde a roda toca o
-## chão. A roda machuca e os irmãos em cima também. A roda passa por baixo da tábua pendurada (216 px), mas
-## desde 05/10/2026 o selim fica baixo o bastante para os irmãos pegarem quem está em cima dela (pedido do
-## usuário: a tábua era um lugar seguro demais). O desvio seguro é o dash; pular a roda do chão fica arriscado.
+## Monociclo gigante da fase 3 (desenhado por código; os irmãos em cima têm desenho próprio). O ponto do nó é
+## onde a roda toca o chão. A roda machuca e os irmãos em cima também. A roda passa por baixo da tábua pendurada
+## (216 px), mas desde 05/10/2026 o selim fica baixo o bastante para os irmãos pegarem quem está em cima dela
+## (pedido do usuário: a tábua era um lugar seguro demais). O desvio seguro é o dash; pular a roda do chão fica
+## arriscado.
 
 const INK := Color("1b1410")
 const WHEEL_RADIUS := 110.0
 ## Altura do selim acima do chão (os irmãos ficam em cima dele).
 const SEAT_HEIGHT := 330.0
+## Altura dos pedais abaixo do selim (monociclo girafa, com corrente até a roda).
+const CRANK_BELOW_SEAT := 45.0
 
 ## Ângulo da roda (gira conforme anda).
 var roll := 0.0
@@ -46,8 +49,14 @@ func _draw() -> void:
 		var a := roll + TAU * i / 8.0
 		draw_line(hub, hub + Vector2.from_angle(a) * (WHEEL_RADIUS - 22), INK, 4.0)
 	draw_circle(hub, 14, INK)
-	# Pedais girando junto.
+	# Monociclo girafa: os pedais ficam lá em cima, perto dos pés de quem pedala (o desenho dos irmãos tem os
+	# sapatos a uns 40 px do selim), e uma corrente leva o giro até a roda.
+	var crank := Vector2(0, -SEAT_HEIGHT + CRANK_BELOW_SEAT)
 	for side in [-1.0, 1.0]:
-		var pedal := hub + Vector2.from_angle(roll * 1.0 + (0.0 if side > 0 else PI)) * 34
-		draw_line(hub, pedal, INK, 6.0)
-		draw_rect(Rect2(pedal - Vector2(12, 4), Vector2(24, 8)), INK)
+		draw_line(crank + Vector2(side * 9, 0), hub + Vector2(side * 9, 0), INK, 3.0)
+	draw_circle(crank, 12, INK)
+	draw_circle(crank, 8, Color("c9a03c"))
+	for side in [-1.0, 1.0]:
+		var pedal := crank + Vector2.from_angle(roll * 2.0 + (0.0 if side > 0 else PI)) * 22
+		draw_line(crank, pedal, INK, 6.0)
+		draw_rect(Rect2(pedal - Vector2(10, 4), Vector2(20, 8)), INK)

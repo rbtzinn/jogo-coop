@@ -481,6 +481,25 @@ const ANIMATIONS := [
 		"ground_y": 486, "center_x": 256,
 		"cell_height": 440.0, "rig_height": 210.0,
 	},
+	# Monociclo (E8, 05/10/2026): os dois sentados no selim, sem o monociclo (o jogo desenha). Folha do ChatGPT
+	# arrumada por tools/normalize_rider_sheet.gd na escala do totem; o ponto do selim (bumbum do de baixo) em
+	# (220, 398) de cada célula. A versão com o Teco embaixo é a mesma com as cores trocadas (recolor_twin troca).
+	{
+		"sheet": "malabaristas/monociclo.png",
+		"columns": 4, "rows": 2, "count": 8,
+		"out_dir": "res://bosses/jugglers/art/unicycle/",
+		"name": "tico_base",
+		"ground_y": 398, "center_x": 220,
+		"cell_height": 440.0, "rig_height": 210.0,
+	},
+	{
+		"sheet": "malabaristas/monociclo_teco.png",
+		"columns": 4, "rows": 2, "count": 8,
+		"out_dir": "res://bosses/jugglers/art/unicycle/",
+		"name": "teco_base",
+		"ground_y": 398, "center_x": 220,
+		"cell_height": 440.0, "rig_height": 210.0,
+	},
 	# Mágico parado (M2): células de 512, olhando para a ESQUERDA, ~465 px da sola ao alto da cartola
 	# (330 no jogo), solas em 486, meio dos pés em x 256 (âncora "pes" do regrid, escala única).
 	{
