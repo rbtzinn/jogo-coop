@@ -46,7 +46,7 @@ A3. docs/referencias/pecas/armas/tiros_ex.png — 2048 x 1024, 4 columns x 2 row
   7 BOLHONA: a big soap bubble (about 300 px) with rainbow sheen and a tiny frowning face reflection.
   8 BOLHONA POP: the big bubble bursting into a ring of droplets and foam.
 
-A4. docs/referencias/pecas/armas/clarões.png — 1024 x 256, 4 cells of 256 x 256: the muzzle flash of each pistol, coming out of the LEFT edge of the cell going to the right (the flash starts at x = 0, y = 128): 1 a cream "pop" puff; 2 a fan of confetti; 3 a puff with a little spring "boing" line; 4 a burst of small bubbles.
+A4. docs/referencias/pecas/armas/claroes.png — 1024 x 256, 4 cells of 256 x 256: the muzzle flash of each pistol, coming out of the LEFT edge of the cell going to the right (the flash starts at x = 0, y = 128): 1 a cream "pop" puff; 2 a fan of confetti; 3 a puff with a little spring "boing" line; 4 a burst of small bubbles.
 ```
 
 ## Pedido B — a fase do Trem do Circo
