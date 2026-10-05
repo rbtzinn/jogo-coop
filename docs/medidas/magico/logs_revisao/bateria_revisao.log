@@ -1,0 +1,21 @@
+      1 FAILURES: 0
+test_boss_smoke: 0 falhas, 0 erros de script
+      1 FAILURES: 0
+test_grade_save: 0 falhas, 0 erros de script
+      1 FAILURES: 0
+test_items: 0 falhas, 0 erros de script
+      1 FAILURES: 0
+test_jugglers: 0 falhas, 0 erros de script
+      1 FAILURES: 0
+test_magician: 0 falhas, 0 erros de script
+      1 FAILURES: 0
+test_map: 0 falhas, 0 erros de script
+      1 FAILURES: 0
+test_shop: 0 falhas, 0 erros de script
+      1 FAILURES: 0
+test_special: 0 falhas, 0 erros de script
+      1 FAILURES: 0
+test_train: 0 falhas, 0 erros de script
+test_online : ok
+test_online ruim: ok
+exit 0

@@ -46,31 +46,62 @@ func _run() -> void:
 	await frames(20)
 	var map := get_tree().current_scene
 	check(map.scene_file_path == Levels.MAP, "map loaded")
-	var clown: Player = map.get_node("PlayerSpawner/Player_1")
-	check(not clown.armed, "players are unarmed on the map")
+	var clown: WorldWalker = map.get_node("PlayerSpawner/Player_1")
+	var acro: WorldWalker = map.get_node("PlayerSpawner/Player_2")
+	check(clown != null and acro != null, "both walkers in the world")
 	await press(&"shoot")
 	await frames(10)
 	var shots := get_tree().current_scene.get_children().filter(func(n: Node) -> bool: return n is Projectile)
 	check(shots.is_empty(), "no shooting on the map")
 
 	# Tendas fechadas.
-	var train: MapDoor = map.get_node("DoorTrain")
-	var magician: MapDoor = map.get_node("DoorMagician")
-	check(not train.is_open(), "coming soon tent closed")
-	check((map.get_node("DoorJugglers") as MapDoor).is_open(), "jugglers tent open")
+	var magician: WorldDoor = map.get_node("DoorMagician")
+	for open_door in ["DoorJugglers", "DoorTrain", "DoorShop", "DoorDressing"]:
+		check((map.get_node(open_door) as WorldDoor).is_open(), "%s open" % open_door)
 	check(not magician.is_open() and magician.missing().size() == 3, "magician locked until 3 wins")
-	train.try_enter()
+	magician.try_enter()
 	await frames(5)
-	check(get_tree().current_scene == map, "closed tent does not change scene")
+	check(get_tree().current_scene == map, "locked tent does not change scene")
 
-	# Andar até o Domador e entrar.
-	var door: MapDoor = map.get_node("DoorTamer")
+	# Andar até o Domador (para a direita e depois para cima, até a frente da tenda) e entrar.
+	var door: WorldDoor = map.get_node("DoorTamer")
+	var start := clown.global_position
 	Input.action_press(&"move_right")
+	await frames(40)
+	Input.action_release(&"move_right")
+	# Em 40 quadros, acelerando até SPEED (ACCEL m/s²): SPEED x t - SPEED² / (2 ACCEL). Exige 80% disso
+	# (sobra para a rampa, o atrito e o desvio da trilha), para valer qualquer velocidade escolhida.
+	var expected := WorldWalker.SPEED * 40.0 / 60.0 - WorldWalker.SPEED * WorldWalker.SPEED / (2.0 * WorldWalker.ACCEL)
+	check(clown.global_position.x > start.x + expected * 0.8, "walked right in the world (%.2f of %.2f m)" % [clown.global_position.x - start.x, expected])
+	check(acro.global_position.distance_to(clown.global_position) < 3.0, "partner follows when playing alone")
+	# Tecla física de cima (W) com "Cima também pula" ligado (o padrão): no mapa ela anda para a frente.
+	var up_jumps_before := Settings.up_jumps
+	Settings.up_jumps = true
+	start = clown.global_position
+	var w_key := InputEventKey.new()
+	w_key.physical_keycode = KEY_W
+	w_key.pressed = true
+	Input.parse_input_event(w_key)
+	await frames(40)
+	w_key = w_key.duplicate()
+	w_key.pressed = false
+	Input.parse_input_event(w_key)
+	await frames(20)
+	Settings.up_jumps = up_jumps_before
+	check(clown.global_position.z < start.z - expected * 0.8, "W walks forward even with up-jumps on (%.2f m)" % (start.z - clown.global_position.z))
 	var walked := 0
-	while not door.overlaps_body(clown) and walked < 300:
+	while not door.overlaps_body(clown) and walked < 400:
+		var to := door.front_point() - clown.global_position
+		for action in [&"move_left", &"move_right", &"move_up", &"move_down"]:
+			Input.action_release(action)
+		if absf(to.x) > 0.3:
+			Input.action_press(&"move_right" if to.x > 0.0 else &"move_left")
+		if absf(to.z) > 0.3:
+			Input.action_press(&"move_down" if to.z > 0.0 else &"move_up")
 		await frames(1)
 		walked += 1
-	Input.action_release(&"move_right")
+	for action in [&"move_left", &"move_right", &"move_up", &"move_down"]:
+		Input.action_release(action)
 	check(door.overlaps_body(clown), "walked to the tamer tent")
 	await frames(5)
 	await press(&"shoot")
@@ -91,6 +122,8 @@ func _run() -> void:
 	await frames(20)
 	map = get_tree().current_scene
 	check(map.scene_file_path == Levels.MAP, "back on the map")
+	var back: WorldWalker = map.get_node("PlayerSpawner/Player_1")
+	check(back.global_position.distance_to(map.get_node("DoorTamer").global_position) < 6.0, "back in front of the tamer tent")
 	check(SaveGame.is_defeated("tamer"), "tamer defeated in save")
 	check(int(SaveGame.data.players.clown.tickets) >= 3, "tickets earned")
 	check(map.get_node("DoorMagician").missing().size() == 2, "one lock less on the magician")

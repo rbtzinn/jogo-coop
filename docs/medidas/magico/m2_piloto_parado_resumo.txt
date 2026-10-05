@@ -1,0 +1,1 @@
+magico: trocas boneco→desenho 14, desenho→boneco 14; pés andando com o desenho 0 quadros; facing com desenho [-1, 1]; caixas (80.0, 300.0) e (56.0, 260.0)

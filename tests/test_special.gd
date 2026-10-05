@@ -102,6 +102,32 @@ func _run() -> void:
 	check(boss.health.current < health_before, "somersault damaged boss")
 	await frames(30)
 
+	# --- Pelo menos 2 s invencível desde o começo do Grande Número (pedido do usuário em 04/10/2026) ---
+	for who: Player in [acro, clown]:
+		for other: Player in [acro, clown]:
+			other.input.local_control = other == who
+		await frames(5)
+		who.applause.stars = 5.0
+		Input.action_press("special")
+		var protected := 0
+		var started := false
+		var hp: int = who.player_health.health.current
+		for i in 240:
+			await get_tree().physics_frame
+			if i == 1:
+				Input.action_release("special")
+			started = started or who.special.is_performing()
+			if not started:
+				continue
+			# Acabou a proteção (ou um golpe do chefão pegou logo depois dela).
+			if (who._can_be_hit() and not who.player_health.is_invincible()) or who.player_health.health.current < hp:
+				break
+			protected += 1
+		check(started and protected >= int(PlayerSpecial.GRAND_MIN_INVINCIBLE * 60) - 1 and protected <= int(PlayerSpecial.GRAND_MIN_INVINCIBLE * 60) + 6,
+				"%s grand number: protected %.2f s" % [who.name, protected / 60.0])
+		check(who.visual.visible, "%s visible again after the protection blink" % who.name)
+		await frames(30)
+
 	# --- Grande Número em Dupla ---
 	var duo: DuoActs = DuoActs.find(get_tree())
 	check(duo != null, "DuoActs exists")

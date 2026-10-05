@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 - Build 31.0.101.2141 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics 630
+
+mundo acrobat 8dir: 480 quadros, vel média 1.04 m/s; pé de apoio: 27 apoios, deslize mediana 0.0041, P95 0.0076, pior 0.0077 m; 3.5 contatos/s; cabeça na tela 106/108/110 px (mín/mediana/máx); rosto para a câmera 48% do tempo
+mundo acrobat curva1: 86 quadros, vel média 1.52 m/s; pé de apoio: 6 apoios, deslize mediana 0.0048, P95 0.0062, pior 0.0062 m; 5.6 contatos/s; cabeça na tela 107/108/108 px (mín/mediana/máx); rosto para a câmera 34% do tempo
+mundo acrobat curva2: 83 quadros, vel média 2.19 m/s; pé de apoio: 8 apoios, deslize mediana 0.0052, P95 0.0055, pior 0.0055 m; 6.5 contatos/s; cabeça na tela 107/108/108 px (mín/mediana/máx); rosto para a câmera 0% do tempo
+mundo acrobat freio: 90 quadros, vel média 0.65 m/s; pé de apoio: 4 apoios, deslize mediana 0.0044, P95 0.0044, pior 0.0044 m; 4.0 contatos/s; cabeça na tela 107/108/110 px (mín/mediana/máx); rosto para a câmera 0% do tempo
+mundo acrobat largada: 36 quadros, vel média 0.26 m/s; pé de apoio: 1 apoios, deslize mediana 0.0039, P95 0.0039, pior 0.0039 m; 3.3 contatos/s; cabeça na tela 107/108/108 px (mín/mediana/máx); rosto para a câmera 100% do tempo
+mundo acrobat reta: 128 quadros, vel média 2.32 m/s; pé de apoio: 13 apoios, deslize mediana 0.0045, P95 0.0047, pior 0.0047 m; 7.5 contatos/s; cabeça na tela 107/107/108 px (mín/mediana/máx); rosto para a câmera 0% do tempo
+mundo acrobat tab: 180 quadros, vel média 1.91 m/s; pé de apoio: 17 apoios, deslize mediana 0.0045, P95 0.0132, pior 0.0132 m; 6.3 contatos/s; cabeça na tela 107/108/110 px (mín/mediana/máx); rosto para a câmera 0% do tempo
+mundo clown 8dir: 480 quadros, vel média 1.68 m/s; pé de apoio: 54 apoios, deslize mediana 0.0046, P95 0.0126, pior 0.0129 m; 7.1 contatos/s; cabeça na tela 132/139/144 px (mín/mediana/máx); rosto para a câmera 39% do tempo
+mundo clown curva1: 86 quadros, vel média 2.19 m/s; pé de apoio: 10 apoios, deslize mediana 0.0094, P95 0.0142, pior 0.0142 m; 8.4 contatos/s; cabeça na tela 139/140/141 px (mín/mediana/máx); rosto para a câmera 0% do tempo
+mundo clown curva2: 83 quadros, vel média 2.37 m/s; pé de apoio: 10 apoios, deslize mediana 0.0042, P95 0.0155, pior 0.0155 m; 8.0 contatos/s; cabeça na tela 137/139/143 px (mín/mediana/máx); rosto para a câmera 0% do tempo
+mundo clown freio: 90 quadros, vel média 0.02 m/s; pé de apoio: 6 apoios, deslize mediana 0.0011, P95 0.0017, pior 0.0017 m; 5.3 contatos/s; cabeça na tela 136/138/140 px (mín/mediana/máx); rosto para a câmera 54% do tempo
+mundo clown largada: 36 quadros, vel média 2.04 m/s; pé de apoio: 6 apoios, deslize mediana 0.0091, P95 0.0178, pior 0.0178 m; 10.0 contatos/s; cabeça na tela 137/139/140 px (mín/mediana/máx); rosto para a câmera 97% do tempo
+mundo clown reta: 128 quadros, vel média 2.40 m/s; pé de apoio: 18 apoios, deslize mediana 0.0050, P95 0.0084, pior 0.0084 m; 8.4 contatos/s; cabeça na tela 141/143/144 px (mín/mediana/máx); rosto para a câmera 0% do tempo
+mundo clown tab: 180 quadros, vel média 0.99 m/s; pé de apoio: 16 apoios, deslize mediana 0.0058, P95 0.0263, pior 0.0263 m; 5.7 contatos/s; cabeça na tela 135/138/139 px (mín/mediana/máx); rosto para a câmera 38% do tempo
+mundo desenho: até 2595 chamadas e 849958 primitivas por quadro

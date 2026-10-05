@@ -37,10 +37,11 @@ Cada jogador tem uma barra de **5 estrelas de Aplauso**. Ela enche causando dano
 - **Grande Número (gasta as 5 estrelas):** golpe máximo, **diferente para cada personagem** (no Cuphead é igual para os dois):
   - **Palhaço — "Torta na Cara":** arremessa uma torta gigante que atravessa a tela causando muito dano, e o palhaço fica invencível durante a animação.
   - **Acrobata — "Salto Mortal":** salta girando por cima do chefão, invencível, causando dano em tudo que atravessa.
+  - **Invencível pelo menos 2 s** desde o começo do Grande Número, nos dois (pedido do usuário em 04/10/2026): o que sobra depois da animação pisca, como depois de levar dano (`PlayerSpecial.GRAND_MIN_INVINCIBLE`).
 - **Grande Número em Dupla (diferencial):** se os dois soltarem o Grande Número com até **1 s** de diferença, os golpes se combinam num ataque único maior (ex.: a acrobata salta em cima da torta e a chuta no chefão), com dano maior que a soma dos dois.
 - Novo botão **Especial**. Padrão sugerido: teclado **I** (layout 1) e **V** (layout 2, como no Cuphead); controle **Y**. Toque = Tiro EX; com 5 estrelas, toque = Grande Número.
 
-### Como ficou no jogo (03/10/2026, primeira versão; números a calibrar)
+### Como ficou no jogo (02/10/2026, primeira versão; números a calibrar)
 
 Decisões tomadas pelo Claude enquanto o usuário estava fora (revisar):
 
@@ -77,7 +78,7 @@ Ao vencer, aparece um cartaz de circo com a nota de cada luta (da dupla):
 
 Notas: **C, B, A, S**. Melhorar a melhor nota de um chefão dá ingressos de bônus (ver [shop.md](shop.md)).
 
-**Como ficou no jogo (03/10/2026, decidido pelo Claude, revisar; números a calibrar):** 100 pontos no total.
+**Como ficou no jogo (02/10/2026, decidido pelo Claude, revisar; números a calibrar):** 100 pontos no total.
 
 | Critério | Pontos |
 |---|---|
@@ -90,6 +91,6 @@ Nota: **S** a partir de 90, **A** a partir de 75, **B** a partir de 55, senão *
 
 ## Dificuldade
 
-- Os chefões são balanceados **sempre para 2 jogadores** (não existe modo solo por enquanto).
+- Os chefões são balanceados **para 2 jogadores**. Com um só atirando, cada tiro no chefão vale por dois (`BossBrain.SOLO_DAMAGE`; decidido com o usuário em 04/10/2026): no "Testar sozinho" sempre, e online enquanto o parceiro está caído (balão) ou saiu da partida. Com os dois de pé, vale 1. Online quem aplica é o host, na hora em que o tiro chega.
 - Duração alvo de uma luta: **2 a 3 minutos** quando bem jogada.
 - Vida do chefão dividida por fase (ex.: 40% / 35% / 25%); a troca de fase é sempre clara (animação + som).

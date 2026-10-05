@@ -1,0 +1,4 @@
+Binary file /tmp/online_host.log matches
+Binary file /tmp/online_client.log matches
+host: 99 falhas, cliente: 99 falhas
+exit 1

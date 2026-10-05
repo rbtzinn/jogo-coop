@@ -1,0 +1,5 @@
+entradas entrada_giro: 3 quadros, meio do corpo (em relação aos pés) máximo 8.7 px; caminho máximo 35.9 px
+entradas giro: 173 quadros, meio do corpo (em relação aos pés) máximo 11.3 px; caminho máximo 41.9 px
+entradas saida_giro_para_sit: 2 quadros, meio do corpo (em relação aos pés) máximo 7.5 px; caminho máximo 0.2 px
+entradas saida_giro_para_ride: 1 quadros, meio do corpo (em relação aos pés) máximo 7.5 px; caminho máximo 0.2 px
+entradas: quadros com a base do totem desenhada (parado) e o outro sentado em cima: 245

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="FrameAnimation" load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://core/player/characters/frame_animation.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_1.png" id="2_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_2.png" id="3_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_3.png" id="4_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_4.png" id="5_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_5.png" id="6_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_6.png" id="7_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_7.png" id="8_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_8.png" id="9_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_9.png" id="10_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_10.png" id="11_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_11.png" id="12_frame"]
+[ext_resource type="Texture2D" path="res://bosses/jugglers/art/tico/idle12_12.png" id="13_frame"]
+
+[resource]
+script = ExtResource("1_script")
+frames = Array[Texture2D]([ExtResource("2_frame"), ExtResource("3_frame"), ExtResource("4_frame"), ExtResource("5_frame"), ExtResource("6_frame"), ExtResource("7_frame"), ExtResource("8_frame"), ExtResource("9_frame"), ExtResource("10_frame"), ExtResource("11_frame"), ExtResource("12_frame"), ExtResource("13_frame")])
+frame_scale = 0.66666666666667
+origin = Vector2(-117.5, -236.5)

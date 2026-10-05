@@ -7,7 +7,6 @@
 [ext_resource type="Script" path="res://components/hitbox/hurtbox.gd" id="8_hurtbox"]
 [ext_resource type="Script" path="res://components/hitbox/enemy_hitbox.gd" id="9_hitbox"]
 [ext_resource type="Script" path="res://bosses/tamer/tamer.gd" id="10_tamer"]
-[ext_resource type="Texture2D" path="res://bosses/tamer/art/tamer.svg" id="11_tamer_art"]
 [ext_resource type="Script" path="res://bosses/tamer/attacks/whip_crack.gd" id="12_whip"]
 [ext_resource type="Script" path="res://bosses/tamer/attacks/fire_rings.gd" id="13_rings"]
 [ext_resource type="Script" path="res://bosses/tamer/attacks/roar.gd" id="14_roar"]
@@ -38,6 +37,7 @@ size = Vector2(70, 180)
 
 [node name="TamerBoss" type="Node2D"]
 script = ExtResource("1_boss")
+max_health = 1200
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("2_health")
@@ -132,9 +132,10 @@ shape = SubResource("RectangleShape2D_lion_hit")
 position = Vector2(1500, 1000)
 script = ExtResource("10_tamer")
 
-[node name="Body" type="Sprite2D" parent="Tamer"]
-texture = ExtResource("11_tamer_art")
-offset = Vector2(0, -130)
+[node name="Body" type="Node2D" parent="Tamer"]
+
+[node name="Frames" type="Sprite2D" parent="Tamer/Body"]
+centered = false
 
 [node name="Hand" type="Marker2D" parent="Tamer/Body"]
 position = Vector2(-54, -124)

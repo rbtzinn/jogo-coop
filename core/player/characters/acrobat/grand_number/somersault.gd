@@ -1,10 +1,15 @@
 extends GrandNumber
 ## Salto Mortal (Grande Número da acrobata): agacha e salta girando em arco para o lado em que
 ## olha (por cima do chefão), acertando tudo que atravessa. Invencível durante o salto.
-## Primeira versão: o corpo gira por código; a arte quadro a quadro (cambalhota desenhada) está
-## pedida em docs/prompts/codex_parry_balao_especiais.md.
+## Com a folha desenhada (`special_animation` do rig, acrobata_salto_mortal.png) a cambalhota é
+## quadro a quadro: agachada, saída, a volta inteira com o chute e o pouso; sem ela, o corpo de
+## peças gira por código.
 
 const HIT_SPARK := preload("res://components/fx/hit_spark.tscn")
+## Desenho: a volta (quadros 2 a 7) termina nesta fração do arco; o chute (7) fica até LAND_FROM,
+## quando entra o pouso (8). Pousando antes num pedestal, o número acaba no chute.
+const TURN_UNTIL := 0.6
+const LAND_FROM := 0.88
 
 @export var crouch_time := 0.12
 @export var leap_time := 0.75
@@ -58,7 +63,7 @@ func pose_aim(_default_aim: Vector2) -> Vector2:
 
 
 func spin() -> float:
-	if elapsed < crouch_time:
+	if _drawn() or elapsed < crouch_time:
 		return 0.0
 	return turns * ease(_leap_progress(), -1.8)
 
@@ -75,3 +80,18 @@ func _on_hit_landed() -> void:
 	var at := _damage.global_position + Vector2(randf_range(-50, 50), randf_range(-50, 50))
 	Fx.spawn(HIT_SPARK, at, randf() * TAU)
 	ParryFlash.spawn_gold(at, 0.5)
+
+
+## Quadros desenhados: 1 agachada; 2 a 7 a volta (mais rápida no meio, como o giro de peças) até
+## TURN_UNTIL; o chute segura até LAND_FROM; 8 o pouso.
+func drawn_frame(count: int) -> int:
+	if elapsed < crouch_time:
+		return 0
+	var u := _leap_progress()
+	if u >= LAND_FROM:
+		return count - 1
+	return 1 + mini(int(ease(minf(u / TURN_UNTIL, 1.0), -1.8) * (count - 2)), count - 3)
+
+
+func _drawn() -> bool:
+	return player != null and player.rig.special_animation != null

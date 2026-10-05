@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FrameAnimation" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://core/player/characters/frame_animation.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/jump/jump_1.png" id="2_frame"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/jump/jump_2.png" id="3_frame"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/jump/jump_3.png" id="4_frame"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/jump/jump_4.png" id="5_frame"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/jump/jump_5.png" id="6_frame"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/jump/jump_6.png" id="7_frame"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/jump/jump_7.png" id="8_frame"]
+[ext_resource type="Texture2D" path="res://core/player/characters/acrobat/jump/jump_8.png" id="9_frame"]
+
+[resource]
+script = ExtResource("1_script")
+frames = Array[Texture2D]([ExtResource("2_frame"), ExtResource("3_frame"), ExtResource("4_frame"), ExtResource("5_frame"), ExtResource("6_frame"), ExtResource("7_frame"), ExtResource("8_frame"), ExtResource("9_frame")])
+frame_scale = 0.76845878136201
+origin = Vector2(-140.051605224609, -274.339782714844)
+shoulders = PackedVector2Array(24.8, -171.8, 22.5, -167.7, 28.2, -166.6, 29.4, -162.0, 28.2, -159.6, 27.7, -159.1, 34.0, -157.9, 29.4, -157.3)

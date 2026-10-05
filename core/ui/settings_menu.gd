@@ -1,5 +1,5 @@
 class_name SettingsMenu
-extends PanelContainer
+extends PosterPanel
 ## Tela de configurações: aba de controles (trocar teclas) e aba de vídeo (qualidade, tela, FPS).
 
 signal closed
@@ -8,17 +8,22 @@ var _waiting_action: StringName = &""
 var _waiting_slot := -1
 var _binding_buttons := {}  # "ação:slot" -> Button
 var _hint: Label
+## Aviso de ação essencial sem tecla (só avisa; nunca troca as teclas do jogador).
+var _missing: Label
+## Ações sem as quais não dá para jogar.
+const ESSENTIAL_ACTIONS: Array[StringName] = [&"jump", &"shoot", &"dash"]
 
 
 func _ready() -> void:
+	super()
 	theme = UiTheme.build()
-	custom_minimum_size = Vector2(1500, 900)
+	custom_minimum_size = Vector2(1560, 960)
 
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 10)
 	add_child(layout)
 
-	layout.add_child(UiTheme.title_label("Configurações", 54))
+	layout.add_child(UiTheme.banner("Configurações", 52))
 
 	var tabs := TabContainer.new()
 	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -29,6 +34,7 @@ func _ready() -> void:
 
 	var back := Button.new()
 	back.text = "Voltar"
+	back.custom_minimum_size = Vector2(320, 0)
 	back.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	back.pressed.connect(close)
 	layout.add_child(back)
@@ -74,25 +80,27 @@ func _build_controls_tab() -> Control:
 	grid.columns = 1 + Settings.SLOT_COUNT
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_theme_constant_override("h_separation", 12)
-	grid.add_theme_constant_override("v_separation", 4)
+	grid.add_theme_constant_override("v_separation", 6)
 	scroll.add_child(grid)
 
 	for header in ["Ação", "Teclado 1", "Teclado 2", "Controle 1", "Controle 2"]:
 		var label := Label.new()
 		label.text = header
-		label.add_theme_color_override("font_color", UiTheme.GOLD)
+		label.add_theme_font_override("font", UiTheme.TITLE_FONT)
+		label.add_theme_font_size_override("font_size", 24)
+		label.add_theme_color_override("font_color", UiTheme.RED_DARK)
 		grid.add_child(label)
 
 	for action in Settings.REBINDABLE_ACTIONS:
 		var name_label := Label.new()
 		name_label.text = Settings.ACTION_NAMES[action]
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		name_label.add_theme_font_size_override("font_size", 26)
+		name_label.add_theme_font_size_override("font_size", 22)
 		grid.add_child(name_label)
 		for slot in Settings.SLOT_COUNT:
 			var button := Button.new()
 			button.custom_minimum_size = Vector2(230, 0)
-			button.add_theme_font_size_override("font_size", 25)
+			button.add_theme_font_size_override("font_size", 20)
 			button.clip_text = true
 			button.pressed.connect(_start_waiting.bind(action, slot))
 			button.gui_input.connect(_on_binding_gui_input.bind(action, slot))
@@ -101,10 +109,18 @@ func _build_controls_tab() -> Control:
 
 	var up_jumps := CheckButton.new()
 	up_jumps.text = "Tecla \"Cima\" também pula (segure Travar mira para mirar para cima)"
-	up_jumps.add_theme_font_size_override("font_size", 25)
+	up_jumps.add_theme_font_size_override("font_size", 23)
 	up_jumps.button_pressed = Settings.up_jumps
-	up_jumps.toggled.connect(func(on: bool) -> void: Settings.set_option(&"up_jumps", on))
+	up_jumps.toggled.connect(func(on: bool) -> void:
+		Settings.set_option(&"up_jumps", on)
+		_refresh_bindings())
 	tab.add_child(up_jumps)
+
+	_missing = Label.new()
+	_missing.add_theme_font_size_override("font_size", 24)
+	_missing.add_theme_color_override("font_color", UiTheme.RED)
+	_missing.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	tab.add_child(_missing)
 
 	_hint = Label.new()
 	_hint.add_theme_font_size_override("font_size", 24)
@@ -131,6 +147,8 @@ func _refresh_bindings() -> void:
 		_hint.text = "Aperte %s para \"%s\". Esc cancela." % [device, Settings.ACTION_NAMES[_waiting_action]]
 	else:
 		_hint.text = "Clique num espaço e aperte a nova tecla. Botão direito do mouse apaga o espaço."
+	_missing.text = _missing_text()
+	_missing.visible = not _missing.text.is_empty()
 
 
 func _start_waiting(action: StringName, slot: int) -> void:
@@ -194,7 +212,7 @@ func _build_video_tab() -> Control:
 	var note := Label.new()
 	note.text = "Qualidade: Baixa desliga o filtro de filme e partículas;\nMédia usa filtro leve; Alta liga tudo."
 	note.add_theme_font_size_override("font_size", 24)
-	note.add_theme_color_override("font_color", UiTheme.CREAM.darkened(0.25))
+	note.add_theme_color_override("font_color", UiTheme.INK_SOFT)
 	grid.add_child(note)
 	return grid
 
@@ -222,7 +240,7 @@ func _build_network_tab() -> Control:
 	var note := Label.new()
 	note.text = "O simulador atrasa o que chega NESTE jogo, para ver no seu PC\ncomo fica jogando pela internet. Volta para \"Desligado\" ao fechar o jogo."
 	note.add_theme_font_size_override("font_size", 24)
-	note.add_theme_color_override("font_color", UiTheme.CREAM.darkened(0.25))
+	note.add_theme_color_override("font_color", UiTheme.INK_SOFT)
 	grid.add_child(note)
 	return grid
 
@@ -248,3 +266,35 @@ func _add_toggle(grid: GridContainer, text: String, value: bool, property: Strin
 	toggle.button_pressed = value
 	toggle.toggled.connect(func(on: bool) -> void: Settings.set_option(property, on))
 	grid.add_child(toggle)
+
+
+## "Atenção: ..." quando pular, atirar ou dash não têm tecla no teclado nem botão no controle
+## (pular conta "Cima" quando a opção "Cima também pula" está ligada). Vazio se está tudo certo.
+func _missing_text() -> String:
+	var keyboard: Array[String] = []
+	var joypad: Array[String] = []
+	for action in ESSENTIAL_ACTIONS:
+		var has_key := false
+		var has_button := false
+		for slot in Settings.SLOT_COUNT:
+			if Settings.get_binding(action, slot) == null:
+				continue
+			if Settings.is_keyboard_slot(slot):
+				has_key = true
+			else:
+				has_button = true
+		if action == &"jump" and Settings.up_jumps:
+			for slot in Settings.KEYBOARD_SLOTS:
+				has_key = has_key or Settings.get_binding(&"move_up", slot) != null
+		if not has_key:
+			keyboard.append(Settings.ACTION_NAMES[action])
+		if not has_button:
+			joypad.append(Settings.ACTION_NAMES[action])
+	var parts: Array[String] = []
+	if not keyboard.is_empty():
+		parts.append("sem tecla no teclado para %s" % ", ".join(keyboard))
+	if not joypad.is_empty():
+		parts.append("sem botão no controle para %s" % ", ".join(joypad))
+	if parts.is_empty():
+		return ""
+	return "Atenção: %s (\"Restaurar padrão\" devolve as teclas)." % "; ".join(parts)

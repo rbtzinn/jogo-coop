@@ -41,7 +41,7 @@ func _start() -> void:
 
 func _tick(t: float) -> void:
 	var u := clampf((t - WALK_START) / WALK_TIME, 0.0, 1.0)
-	boss.place_group(lerpf(_from_x, _to_x, ease(u, -1.4)))
+	boss.place_group(lerpf(_from_x, _to_x, ease(u, -1.4)), false)
 	boss.base().walking = u > 0.0 and u < 1.0
 	var throwing := false
 	for i in _clubs.size():
@@ -55,6 +55,7 @@ func _tick(t: float) -> void:
 			club[3] = true
 			club[0] = make_prop(&"club", i == _pink_index, i)
 			club[0].spin_speed = 3.0
+			boss.top().throw_released = true
 			var shadow := LandingShadow.new()
 			shadow.radius = Vector2(60, 12)
 			add_child(shadow)
@@ -68,8 +69,10 @@ func _tick(t: float) -> void:
 			continue
 		if since < RISE_TIME:
 			# Sobe da mão até sair por cima da tela.
+			# No 1º quadro em que aparece ela fica na mão desenhada; depois sobe.
 			var hand := boss.top().hand_position()
-			prop.global_position = hand.lerp(Vector2(hand.x, -80.0), ease(since / RISE_TIME, 0.5))
+			var rise := maxf(since - 1.0 / 60.0, 0.0)
+			prop.global_position = hand.lerp(Vector2(hand.x, -80.0), ease(rise / RISE_TIME, 0.5))
 		elif since < FALL_TIME:
 			var k := (since - RISE_TIME) / (FALL_TIME - RISE_TIME)
 			prop.global_position = Vector2(club[2], lerpf(-80.0, FLOOR_Y - 24.0, k * k))

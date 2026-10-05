@@ -25,7 +25,7 @@ func send_state(player: Player, aim: Vector2) -> void:
 		_receive_state.rpc_id(peer_id, time, player.global_position, player.velocity, player.facing,
 				aim, player.is_on_floor(), player.is_dashing(), player.crouching,
 				player.parry.is_spinning(), player.applause.stars,
-				player.applause.parries, player.applause.stars_used)
+				player.applause.parries, player.applause.stars_used, player.duo.decoy)
 
 
 func send_fire(aim: Vector2) -> void:
@@ -101,7 +101,7 @@ func take_due_actions() -> Array[Dictionary]:
 @rpc("authority", "call_remote", "unreliable_ordered")
 func _receive_state(time: float, position: Vector2, velocity: Vector2, facing: int, aim: Vector2,
 		on_floor: bool, dashing: bool, crouching: bool, parrying: bool, stars: float, parries: int,
-		stars_used: int) -> void:
+		stars_used: int, decoy: Vector2) -> void:
 	var snapshot := {
 		"time": time,
 		"position": position,
@@ -115,6 +115,7 @@ func _receive_state(time: float, position: Vector2, velocity: Vector2, facing: i
 		"stars": stars,
 		"parries": parries,
 		"stars_used": stars_used,
+		"decoy": decoy,
 	}
 	Network.deliver(_store_snapshot.bind(snapshot), true)
 

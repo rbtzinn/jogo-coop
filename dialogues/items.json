@@ -1,0 +1,112 @@
+{
+	"cork_gun": {
+		"name": "Rolha",
+		"slot": "gun",
+		"price": 0,
+		"description": "Tiro reto e rápido, dano médio, alcance total.",
+		"ex": "Rolhão: rolha gigante que atravessa o chefão acertando várias vezes."
+	},
+	"confetti_fan": {
+		"name": "Leque de Confete",
+		"slot": "gun",
+		"price": 4,
+		"description": "Três confetes em leque, alcance curto. Muito dano de perto.",
+		"ex": "Canhão de Confete: explosão em volta de você."
+	},
+	"juggling_club": {
+		"name": "Clave de Malabares",
+		"slot": "gun",
+		"price": 4,
+		"description": "Clave lenta que vai e volta (pode acertar duas vezes).",
+		"ex": "Chuva de Claves: cinco claves caem em arco à frente."
+	},
+	"soap_bubble": {
+		"name": "Bolha de Sabão",
+		"slot": "gun",
+		"price": 4,
+		"description": "Bolhas teleguiadas, dano baixo. Boa para quem quer focar em desviar.",
+		"ex": "Bolhona: bolha grande que estoura em área ao tocar o chefão."
+	},
+	"tumble": {
+		"name": "Cambalhota",
+		"slot": "trick",
+		"price": 0,
+		"description": "O dash de sempre."
+	},
+	"magic_smoke": {
+		"name": "Fumaça do Mágico",
+		"slot": "trick",
+		"price": 3,
+		"description": "Some numa nuvem e reaparece à frente, invencível, deixando um boneco de fumaça que distrai os ataques teleguiados por 1 s.",
+		"downside": "Distância 25% menor."
+	},
+	"cannonball": {
+		"name": "Bala de Canhão",
+		"slot": "trick",
+		"price": 3,
+		"description": "O dash causa dano no que atravessar.",
+		"downside": "Sem invencibilidade."
+	},
+	"pirouette": {
+		"name": "Pirueta",
+		"slot": "trick",
+		"price": 3,
+		"description": "Dash em 8 direções, inclusive para cima.",
+		"downside": "Só um por pulo; no chão espera recarregar."
+	},
+	"cloth_heart": {
+		"name": "Coração de Pano",
+		"slot": "prop",
+		"price": 6,
+		"description": "+1 de vida.",
+		"downside": "Tiro causa 5% menos dano."
+	},
+	"honk_nose": {
+		"name": "Nariz de Buzina",
+		"slot": "prop",
+		"price": 6,
+		"description": "O primeiro golpe de cada luta é absorvido (e a buzina toca)."
+	},
+	"mime_gloves": {
+		"name": "Luvas de Mímico",
+		"slot": "prop",
+		"price": 3,
+		"description": "Janela de parry 50% maior."
+	},
+	"spring_shoes": {
+		"name": "Sapatos de Mola",
+		"slot": "prop",
+		"price": 3,
+		"description": "Pulo 15% mais alto."
+	},
+	"lucky_clover": {
+		"name": "Trevo da Cartomante",
+		"slot": "prop",
+		"price": 4,
+		"description": "A barra de Aplausos enche 25% mais rápido."
+	},
+	"catapult": {
+		"name": "Catapulta",
+		"slot": "duo",
+		"price": 4,
+		"description": "Dar dash encostando no parceiro arremessa você bem alto, invencível durante a subida."
+	},
+	"turbo_cork": {
+		"name": "Rolha Turbinada",
+		"slot": "duo",
+		"price": 4,
+		"description": "Seus tiros que atravessam o parceiro saem 50% mais fortes."
+	},
+	"human_pyramid": {
+		"name": "Pirâmide Humana",
+		"slot": "duo",
+		"price": 4,
+		"description": "Pular na cabeça do parceiro conta como parry (quica e ganha estrela), no máximo uma vez a cada 5 s."
+	},
+	"safety_net": {
+		"name": "Rede de Segurança",
+		"slot": "duo",
+		"price": 3,
+		"description": "Quando o parceiro cai, o balão dele sobe 50% mais devagar e você revive só encostando."
+	}
+}

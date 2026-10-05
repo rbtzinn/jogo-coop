@@ -1,0 +1,80 @@
+Revisão do marco: online (tests/run_online.sh), 04/10. Seções 10c (parry e dano reais), 10d (saída pelo menu de pausa durante o rastreio), 10e (Três Caixas sem deslize).
+
+== online_normal_2 (C:\Users\roberto.gabriel\AppData\Local\Temp\claude\c--jogo-coop\a3c5555f-0fb1-4b98-a0e2-ac83b517d037\scratchpad\rv\online_normal_2.log)
+[host] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 0 (stars +0.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.017, 0.0, 0.0] s, black card extra step 0.0 px
+[host] OK   the aces the client popped are popped (and harmless) on the host too (["CardFan:100:13", "CardFan:100:23"])
+[host] the partner's player on this PC counts 2 parries (the reward is kept on the partner's own PC)
+[host] OK   partner left mid-flight: next salvos aim at who stayed ([1, 0, 0])
+[host] OK   its black card stopped turning, no turn toward P1 (left at 1.07 s, turns [1.07949018478394, 0.04308223724365, 0.00187158584595, 0.0, 0.0, 0.0, 0.0, 0.0])
+[host] OK   salvo counter kept going (4)
+[host] partner left at 1.07 s of the card fan
+[host] OK   partner back after leaving mid card fan
+[client] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 2 (stars +2.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.021, -0.013, -0.013] s, black card extra step 0.2 px
+[client] OK   client parried a pink ace with the real jump input (2)
+[client] OK   one reward per popped ace on the client (2 parries, 2 popped)
+[client] OK   client learned every salvo target
+[client] OK   target warning reaches the client before the fan ([0.021, -0.013, -0.013] s late)
+[client] left (pause menu) during the card fan (running true, 4 cards on screen); 0.5 s later at res://core/ui/main_menu.tscn, cards left 0
+host: 0 falhas, cliente: 0 falhas
+
+== online_ruim_1 (C:\Users\roberto.gabriel\AppData\Local\Temp\claude\c--jogo-coop\a3c5555f-0fb1-4b98-a0e2-ac83b517d037\scratchpad\rv\online_ruim_1.log)
+[host] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 0 (stars +0.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.017, 0.0, 0.0] s, black card extra step 0.0 px
+[host] OK   the aces the client popped are popped (and harmless) on the host too (["CardFan:100:13", "CardFan:100:23"])
+[host] OK   the host counts the partner parries once, as the partner did (2 here, 2 there)
+[host] OK   partner left mid-flight: next salvos aim at who stayed ([1, 0, 0])
+[host] OK   its black card stopped turning, no turn toward P1 (left at 0.98 s, turns [1.07949018478394, 0.04308223724365, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+[host] OK   salvo counter kept going (4)
+[host] partner left at 0.98 s of the card fan
+[host] OK   partner back after leaving mid card fan
+[client] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 2 (stars +2.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.103, 0.019, 0.053] s, black card extra step 15.5 px
+[client] OK   client parried a pink ace with the real jump input (2)
+[client] OK   one reward per popped ace on the client (2 parries, 2 popped)
+[client] OK   client learned every salvo target
+[client] OK   target warning reaches the client before the fan ([0.103, 0.019, 0.053] s late)
+[client] left (pause menu) during the card fan (running true, 4 cards on screen); 0.5 s later at res://core/ui/main_menu.tscn, cards left 0
+host: 0 falhas, cliente: 0 falhas
+
+== online_normal_3 (C:\Users\roberto.gabriel\AppData\Local\Temp\claude\c--jogo-coop\a3c5555f-0fb1-4b98-a0e2-ac83b517d037\scratchpad\rv\online_normal_3.log)
+[host] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 0 (stars +0.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.017, 0.0, 0.0] s, black card extra step 0.0 px
+[host] OK   the aces the client popped are popped (and harmless) on the host too (["CardFan:100:13", "CardFan:100:23"])
+[host] OK   the host counts the partner parries once, as the partner did (2 here, 2 there)
+[host] OK   partner left mid-flight: next salvos aim at who stayed ([1, 0, 0])
+[host] OK   its black card stopped turning, no turn toward P1 (left at 0.95 s, turns [1.07949018478394, 0.04308223724365, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+[host] OK   salvo counter kept going (4)
+[host] partner left at 0.95 s of the card fan
+[host] OK   partner back after leaving mid card fan
+[host] shell game walk: 0.0 px moved in sight, hidden leak false, unwrap frames 15, right box true
+[host] OK   shell game: no sliding, fully hidden, unwraps at the right box on this PC
+[client] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 2 (stars +2.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.021, 0.004, 0.004] s, black card extra step 0.2 px
+[client] OK   client parried a pink ace with the real jump input (2)
+[client] OK   one reward per popped ace on the client (2 parries, 2 popped)
+[client] OK   client learned every salvo target
+[client] OK   target warning reaches the client before the fan ([0.021, 0.004, 0.004] s late)
+[client] left (pause menu) during the card fan (running true, 4 cards on screen); 0.5 s later at res://core/ui/main_menu.tscn, cards left 0
+[client] shell game walk: 0.0 px moved in sight, hidden leak false, unwrap frames 15, right box true
+[client] OK   shell game: no sliding, fully hidden, unwraps at the right box on this PC
+host: 0 falhas, cliente: 0 falhas
+
+== online_ruim_3 (C:\Users\roberto.gabriel\AppData\Local\Temp\claude\c--jogo-coop\a3c5555f-0fb1-4b98-a0e2-ac83b517d037\scratchpad\rv\online_ruim_3.log)
+[host] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 0 (stars +0.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.017, 0.0, 0.0] s, black card extra step 0.0 px
+[host] OK   the aces the client popped are popped (and harmless) on the host too (["CardFan:100:13", "CardFan:100:23"])
+[host] OK   the host counts the partner parries once, as the partner did (2 here, 2 there)
+[host] OK   partner left mid-flight: next salvos aim at who stayed ([1, 0, 0])
+[host] OK   its black card stopped turning, no turn toward P1 (left at 0.97 s, turns [1.07949018478394, 0.04308223724365, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+[host] OK   salvo counter kept going (4)
+[host] partner left at 0.97 s of the card fan
+[host] OK   partner back after leaving mid card fan
+[host] shell game walk: 0.0 px moved in sight, hidden leak false, unwrap frames 15, right box true
+[host] OK   shell game: no sliding, fully hidden, unwraps at the right box on this PC
+[client] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 2 (stars +2.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.07, 0.07, 0.037] s, black card extra step 10.1 px
+[client] OK   client parried a pink ace with the real jump input (2)
+[client] OK   one reward per popped ace on the client (2 parries, 2 popped)
+[client] OK   client learned every salvo target
+[client] OK   target warning reaches the client before the fan ([0.07, 0.07, 0.037] s late)
+[client] left (pause menu) during the card fan (running true, 4 cards on screen); 0.5 s later at res://core/ui/main_menu.tscn, cards left 0
+[client] shell game walk: 0.0 px moved in sight, hidden leak false, unwrap frames 15, right box true
+[client] OK   shell game: no sliding, fully hidden, unwraps at the right box on this PC
+host: 0 falhas, cliente: 0 falhas
+
+Primeira rodada da 10d usava só Network.leave(): a cena do cliente ficava aberta (o jogo de verdade sai pelo menu de pausa, que também volta ao menu): C:\Users\roberto.gabriel\AppData\Local\Temp\claude\c--jogo-coop\a3c5555f-0fb1-4b98-a0e2-ac83b517d037\scratchpad\rv\online_normal_1.log
+Falha antiga guardada (porta ocupada, código 99): C:\Users\roberto.gabriel\AppData\Local\Temp\claude\c--jogo-coop\a3c5555f-0fb1-4b98-a0e2-ac83b517d037\scratchpad\gp\online_normal_falha_porta_ocupada.log

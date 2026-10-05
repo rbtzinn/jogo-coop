@@ -10,7 +10,8 @@ extends BossBrain
 ##   monociclo gigante (aí o dano vai para quem ainda tiver vida).
 ## O host decide a vida de cada um e manda para o cliente (barras e tontura).
 
-const BROTHER_MAX := 750
+## Metade da vida do chefão (max_health 1200 na cena; era 1500 até 04/10/2026, o usuário achou longa demais).
+const BROTHER_MAX := 600
 ## Tempo tonto até o outro irmão jogar a bola de cura.
 const HEAL_DELAY := 3.0
 const HEAL_FLIGHT := 1.2
@@ -20,6 +21,14 @@ const HOME_LEFT := Vector2(190, 1000)
 const HOME_RIGHT := Vector2(1730, 1000)
 ## Altura dos pés de quem fica nos ombros do irmão.
 const SHOULDER := 150.0
+## No totem desenhado (E7): o meio do de cima a 110 px dos pés da base, medido no desenho (a cabeça da base
+## vai até ~115); as áreas seguem o desenho (210 px no quadro 1; a tábua pendurada começa a 216 do chão). O monociclo
+## continua com SHOULDER (os dois no boneco de código).
+const TOTEM_SHOULDER := 110.0
+const TOTEM_BASE_HIT := 110.0
+const TOTEM_TOP_HIT := 92.0
+const TOTEM_BASE_HURT := Vector2(0, 115)
+const TOTEM_TOP_HURT := Vector2(0, 102)
 const NAMES := ["Tico", "Teco"]
 
 var hp := {"Tico": BROTHER_MAX, "Teco": BROTHER_MAX}
@@ -36,6 +45,8 @@ var _heal_from := Vector2.ZERO
 var _heal_to := ""
 var _heal_time := 0.0
 var _heal_count := 0
+## Tonto no começo do ataque (pelo host, vai nos args): quem está tonto fica parado e não joga nada.
+var _start_dizzy := {"Tico": false, "Teco": false}
 
 @onready var tico: Juggler = $Tico
 @onready var teco: Juggler = $Teco
@@ -96,26 +107,40 @@ func right() -> Juggler:
 	return teco if left() == tico else tico
 
 
-## Arruma os dois para o modo atual, com o "conjunto" (totem ou monociclo) em `x`.
-func place_group(x: float) -> void:
+## Arruma os dois para o modo atual, com o "conjunto" (totem ou monociclo) em `x`. `reset_poses` falso: só move
+## (os ataques que andam com o conjunto a cada quadro; senão o arremesso do de cima voltava a "sentado" no
+## começo de cada quadro).
+func place_group(x: float, reset_poses := true) -> void:
 	match mode:
 		&"totem":
 			base().global_position = Vector2(x, HOME_LEFT.y)
-			top().global_position = Vector2(x, HOME_LEFT.y - SHOULDER)
-			base().pose = &"idle"
-			top().pose = &"sit"
+			top().global_position = Vector2(x, HOME_LEFT.y - TOTEM_SHOULDER)
+			if reset_poses:
+				base().pose = &"idle"
+				top().pose = &"sit"
 		&"unicycle":
 			unicycle.global_position = Vector2(x, HOME_LEFT.y)
 			base().global_position = unicycle.seat_position()
 			top().global_position = unicycle.seat_position() - Vector2(0, SHOULDER)
-			base().pose = &"ride"
-			top().pose = &"sit"
+			if reset_poses:
+				base().pose = &"ride"
+				top().pose = &"sit"
+
+
+## Estava tonto quando o ataque começou (pelo host).
+func started_dizzy(juggler: Juggler) -> bool:
+	return _start_dizzy["Tico" if juggler == tico else "Teco"]
+
+
+## Separados, com um tonto, eles não trocam de lugar (o tonto não pula: fica parado para levar tiro).
+func _can_choose(attack_name: StringName) -> bool:
+	return not (attack_name == &"Swap" and (tico.dizzy or teco.dizzy))
 
 
 ## Dados de onde todos estão (vai junto com cada ataque: os dois PCs começam iguais).
 func _args_for(_attack_name: StringName) -> Array:
 	return [tico.global_position.x, tico.global_position.y, teco.global_position.x, teco.global_position.y,
-			unicycle.global_position.x, base_name]
+			unicycle.global_position.x, base_name, tico.dizzy, teco.dizzy]
 
 
 ## Coloca todo mundo onde o host disse (começo de cada ataque).
@@ -126,15 +151,32 @@ func apply_args(args: Array) -> void:
 	teco.global_position = Vector2(args[2], args[3])
 	unicycle.global_position.x = args[4]
 	base_name = args[5]
+	if args.size() >= 8:
+		_start_dizzy = {"Tico": args[6], "Teco": args[7]}
 
 
 func set_mode(new_mode: StringName) -> void:
 	mode = new_mode
+	for juggler: Juggler in [tico, teco]:
+		juggler.carrying = mode != &"split" and juggler == base()
 	unicycle.visible = mode == &"unicycle"
 	unicycle.hitbox.active = mode == &"unicycle"
-	var top_height := 80.0 if mode == &"totem" else 150.0
-	top().set_hitbox_height(top_height)
-	base().set_hitbox_height(150.0)
+	for juggler: Juggler in [tico, teco]:
+		juggler.totem_role = Juggler.TotemRole.NONE
+		juggler.totem_partner = null
+		juggler.set_hurtbox_span(10.0, 180.0)
+	if mode == &"totem":
+		base().totem_role = Juggler.TotemRole.BASE
+		top().totem_role = Juggler.TotemRole.TOP
+		base().totem_partner = top()
+		top().totem_partner = base()
+		top().set_hitbox_height(TOTEM_TOP_HIT)
+		base().set_hitbox_height(TOTEM_BASE_HIT)
+		base().set_hurtbox_span(TOTEM_BASE_HURT.x, TOTEM_BASE_HURT.y)
+		top().set_hurtbox_span(TOTEM_TOP_HURT.x, TOTEM_TOP_HURT.y)
+	else:
+		top().set_hitbox_height(150.0)
+		base().set_hitbox_height(150.0)
 
 
 ## Vida e tontura de cada irmão, para as barras do placar.
@@ -188,7 +230,14 @@ func _on_defeated() -> void:
 		tico.global_position = Vector2(x - 40, HOME_LEFT.y)
 		teco.global_position = Vector2(x + 30, HOME_LEFT.y - 40)
 		tico.pose = &"down"
-		teco.pose = &"down")
+		teco.pose = &"down"
+		# Desenhado, o Teco cai 0,1 s depois, por cima do Tico, com a cabeça na barriga dele (para o lado dos
+		# pés do Tico): os dois rostos aparecem. Na posição do boneco (70 px para o lado da cabeça) o Teco
+		# tapava o rosto do Tico; virado ao contrário, os pés dele tapavam.
+		tico.defeat_delay = 0.0
+		teco.defeat_delay = 0.1
+		teco.facing = tico.facing
+		teco.global_position = Vector2(x - 40 + 120 * tico.facing, HOME_LEFT.y - 35))
 
 
 # --- Tontura e bola de cura ---
@@ -214,6 +263,10 @@ func _clear_dizzy() -> void:
 func _update_heal(delta: float) -> void:
 	if _heal != null:
 		_heal_time += delta
+		# Quem jogou a cura volta ao parado logo depois de soltar (antes ficava na pose de arremesso).
+		var healer := brother(other_name(_heal_to))
+		if mode == &"split" and _heal_time >= 0.1 and healer.pose == &"throw":
+			healer.pose = &"idle"
 		var u := minf(_heal_time / HEAL_FLIGHT, 1.0)
 		var to := brother(_heal_to).head_position()
 		_heal.global_position = BossAttack.arc_point(_heal_from, to, 260.0, u)
@@ -242,7 +295,8 @@ func _receive_heal(from_name: String, to_name: String, count: int) -> void:
 func _start_heal(from_name: String, to_name: String, count: int) -> void:
 	_cancel_heal()
 	var healer := brother(from_name)
-	healer.pose = &"throw" if mode == &"split" else healer.pose
+	if mode == &"split":
+		healer.throw_now()
 	_heal = JugglerProp.new()
 	_heal.kind = &"heal"
 	_heal.pink = true

@@ -11,6 +11,15 @@
 [ext_resource type="Texture2D" path="res://core/player/characters/shared/muzzle_flash.svg" id="9_flash"]
 [ext_resource type="Resource" path="res://core/player/characters/clown/run/run.tres" id="10_run"]
 [ext_resource type="PackedScene" path="res://core/player/characters/clown/grand_number/pie_throw.tscn" id="11_grand"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/parry/parry.tres" id="12_parry"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/idle/idle.tres" id="13_idle"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/jump/jump.tres" id="14_jump"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/balloon/float.tres" id="15_balloon"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/balloon/turn.tres" id="16_turn"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/dash/dash.tres" id="17_dash"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/crouch/crouch.tres" id="18_crouch"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/hurt/hurt.tres" id="19_hurt"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/special/pie_throw.tres" id="20_special"]
 
 [node name="ClownRig" type="Node2D"]
 scale = Vector2(0.92, 0.92)
@@ -18,11 +27,21 @@ script = ExtResource("1_rig")
 display_name = "Palhaço"
 run_animation = ExtResource("10_run")
 grand_number = ExtResource("11_grand")
+parry_animation = ExtResource("12_parry")
+idle_animation = ExtResource("13_idle")
+jump_animation = ExtResource("14_jump")
+dash_animation = ExtResource("17_dash")
+crouch_animation = ExtResource("18_crouch")
+hurt_animation = ExtResource("19_hurt")
+special_animation = ExtResource("20_special")
+balloon_animation = ExtResource("15_balloon")
+balloon_turn_animation = ExtResource("16_turn")
 arm_length = 32.0
 ankle_height = 31.0
 stride = 15.0
 step_lift = 10.0
-steps_per_second = 3.8
+steps_per_second = 4.4
+run_frame_weights = PackedFloat32Array(0.7, 0.7, 0.7, 1.9, 0.7, 0.7, 0.7, 1.9)
 bob_height = 5.0
 crouch_drop = 16.0
 crouch_lean = 0.14

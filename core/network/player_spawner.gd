@@ -1,5 +1,5 @@
 class_name PlayerSpawner
-extends Node2D
+extends Node
 ## Cria os jogadores da fase.
 ## Online: um jogador por PC (host = palhaço, cliente = acrobata); cada PC controla o seu.
 ## Offline ("Testar sozinho"): os dois personagens, controlando um por vez (Tab troca).
@@ -7,6 +7,8 @@ extends Node2D
 
 const PLAYER_SCENE := preload("res://core/player/player.tscn")
 const HOST_PEER_ID := 1
+## De quanto em quanto tempo o cliente repete "carreguei a fase" até o host responder.
+const ANNOUNCE_EVERY := 0.5
 
 ## Personagens na ordem: [jogador 1 (host), jogador 2 (cliente)].
 @export var characters: Array[PackedScene] = []
@@ -14,6 +16,9 @@ const HOST_PEER_ID := 1
 @export var facings: Array[int] = [1, -1]
 ## Desligado: os jogadores não atiram (mapa).
 @export var armed := true
+## Outra cena de personagem (ex.: o andador do mundo 3D, WorldWalker). Precisa ter `character`,
+## `controlled_locally` e `facing`; nasce no ponto de spawn_points (Node3D) em vez dos Marker2D.
+@export var player_scene: PackedScene
 
 
 func _ready() -> void:
@@ -26,7 +31,22 @@ func _ready() -> void:
 	_spawn(HOST_PEER_ID, 0, my_id == HOST_PEER_ID)
 	if not Network.is_host():
 		_spawn(my_id, 1, true)
-		_client_loaded.rpc_id(HOST_PEER_ID)
+		_announce_loaded()
+
+
+## Cliente: avisa o host até ele responder. Com internet ruim o host pode ainda estar trocando de
+## fase quando o aviso chega (a fase dele ainda não existe e o aviso se perde), então repete.
+func _announce_loaded() -> void:
+	_client_loaded.rpc_id(HOST_PEER_ID)
+	var timer := Timer.new()
+	timer.wait_time = ANNOUNCE_EVERY
+	add_child(timer)
+	timer.timeout.connect(func() -> void:
+		if not Network.is_online() or HOST_PEER_ID in Network.ready_peers:
+			timer.queue_free()
+		else:
+			_client_loaded.rpc_id(HOST_PEER_ID))
+	timer.start()
 
 
 ## Cliente avisa o host que carregou a fase; o host cria o jogador dele e responde.
@@ -44,16 +64,18 @@ func _host_ready() -> void:
 	Network.mark_ready(HOST_PEER_ID)
 
 
-func _spawn(peer_id: int, slot: int, local: bool) -> Player:
-	var player: Player = PLAYER_SCENE.instantiate()
+func _spawn(peer_id: int, slot: int, local: bool) -> Node:
+	var player: Node = (player_scene if player_scene != null else PLAYER_SCENE).instantiate()
 	player.name = _player_name(peer_id)
 	player.character = characters[slot]
 	player.controlled_locally = local
-	player.armed = armed
+	if player is Player:
+		player.armed = armed
+		player.slot = slot
 	player.facing = facings[slot] if slot < facings.size() else 1
 	if Network.is_online():
 		player.set_multiplayer_authority(peer_id)
-	var markers := get_children().filter(func(node: Node) -> bool: return node is Marker2D)
+	var markers := get_children().filter(func(node: Node) -> bool: return node is Marker2D or node is Marker3D)
 	if slot < markers.size():
 		player.position = markers[slot].position
 	add_child(player)

@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/juggler_compare.gd" id="1_compare"]
+
+[node name="JugglerCompare" type="Node2D"]
+script = ExtResource("1_compare")

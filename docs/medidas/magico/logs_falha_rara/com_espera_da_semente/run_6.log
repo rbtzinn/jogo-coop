@@ -1,0 +1,113 @@
+[host] OK   host opened
+[host] OK   both on the map
+[host] OK   two walkers in the world
+[host] OK   client chose the tent, both in the fight
+[host] OK   both players exist
+[host] OK   acrobat spawned with the host save equipment
+[host] OK   EX from host damaged boss (1500 -> 1475)
+[host] OK   EX from client damaged boss (1475 -> 1445)
+[host] OK   duo declared on this PC
+[host] boss after duo: 1445 -> 1045
+[host] OK   duo dealt big damage
+[host] OK   perfect bonus star (1.00)
+[host] OK   victory screen
+[host] result: { "time": 9.30000000000004, "health": 4, "max_health": 6, "parries": 0, "stars_used": 12, "score": 75.0, "grade": "A", "tickets": 4, "first_win": true, "best_grade": true, "best_time": true }
+[host] OK   grade shown
+[host] OK   save knows the victory (host saves, client gets a copy)
+[host] OK   only the host writes the save
+[host] OK   fight reloaded
+[host] OK   ready again after reload
+[host] OK   two players after reload
+[host] OK   new fight running
+[host] OK   partner removed on host
+[host] OK   fight goes on alone
+[host] OK   host reached phase 3
+[host] OK   partner back on host
+[host] OK   host sees partner downed
+[host] OK   host sees partner revived
+[host] OK   both on the train
+[host] OK   enemy shot by the client dies on this PC
+[host] OK   ticket taken by the client is in the save
+[host] OK   train finished on this PC
+[host] OK   train done in the save
+[host] OK   wrong box opened on this PC
+[host] OK   right box hit by the client: bonus damage (15)
+[host] black cards: largest extra step in one frame 0.0 px
+[host] OK   black cards: network correction under 40 px in one frame (0.0 px)
+[host] OK   shell game: same box and swaps on both PCs
+[host] OK   card fan: same targets on both PCs, P1 P2 P1 ([0, 1, 0])
+[host] OK   black cards: same turns and same path on both PCs (0.000 px)
+[host] card fan for real: starting at (300.0, 1000.0), downed false, on floor true, players 2
+[host] card fan for real: seed 100 at 0.00 s
+[host] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 0 (stars +0.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.017, 0.0, 0.0] s, black card extra step 0.0 px
+[host] OK   the aces the client popped are popped (and harmless) on the host too (["CardFan:100:13", "CardFan:100:23"])
+[host] OK   the host counts the partner parries once, as the partner did (2 here, 2 there)
+[host] OK   partner left mid-flight: next salvos aim at who stayed ([1, 0, 0])
+[host] OK   its black card stopped turning, no turn toward P1 (left at 1.03 s, turns [1.07949018478394, 0.04308223724365, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+[host] OK   salvo counter kept going (4)
+[host] partner left at 1.03 s of the card fan
+[host] OK   partner back after leaving mid card fan
+[host] shell game walk: 0.0 px moved in sight, hidden leak false, unwrap frames 15, right box true
+[host] OK   shell game: no sliding, fully hidden, unwraps at the right box on this PC
+[host] OK   purchase in the save on this PC
+[host] OK   partner wallet untouched
+[host] FAILURES: 0
+[client] OK   join started
+[client] OK   both on the map
+[client] OK   two walkers in the world
+[client] OK   alone at the tent: waits for the partner
+[client] OK   client chose the tent, both in the fight
+[client] OK   both players exist
+[client] OK   acrobat spawned with the host save equipment
+[client] OK   client sees host cork (visual only)
+[client] OK   EX from host damaged boss (1500 -> 1475)
+[client] OK   EX from client damaged boss (1475 -> 1445)
+[client] OK   client grand performing
+[client] OK   duo declared on this PC
+[client] boss after duo: 1445 -> 1045
+[client] OK   duo dealt big damage
+[client] OK   perfect bonus star (1.00)
+[client] OK   victory screen
+[client] result: { "time": 9.30000000000004, "health": 4, "max_health": 6, "parries": 0, "stars_used": 12, "score": 75.0, "grade": "A", "tickets": 4, "first_win": true, "best_grade": true, "best_time": true }
+[client] OK   grade shown
+[client] OK   save knows the victory (host saves, client gets a copy)
+[client] OK   only the host writes the save
+[client] OK   fight reloaded
+[client] OK   ready again after reload
+[client] OK   two players after reload
+[client] OK   new fight running
+[client] OK   rejoin started
+[client] after rejoin: phase 2, health 300, on fire true
+[client] OK   client caught up to phase 3
+[client] OK   client caught up boss health
+[client] OK   client became a balloon
+[client] OK   client revived with 1 HP
+[client] OK   both on the train
+[client] OK   enemy shot by the client dies on this PC
+[client] OK   ticket taken by the client is in the save
+[client] OK   train finished on this PC
+[client] OK   train done in the save
+[client] OK   wrong box opened on this PC
+[client] OK   right box hit by the client: bonus damage (15)
+[client] black cards: largest extra step in one frame 0.6 px
+[client] OK   black cards: network correction under 40 px in one frame (0.6 px)
+[client] OK   shell game: same box and swaps on both PCs
+[client] OK   card fan: same targets on both PCs, P1 P2 P1 ([0, 1, 0])
+[client] OK   black cards: same turns and same path on both PCs (0.000 px)
+[client] card fan for real: starting at (480.0, 1000.0), downed false, on floor true, players 2
+[client] card fan for real: seed 100 at 0.13 s
+[client] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 2 (stars +2.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.101, 0.101, 0.034] s, black card extra step 5.4 px
+[client] OK   client parried a pink ace with the real jump input (2)
+[client] OK   one reward per popped ace on the client (2 parries, 2 popped)
+[client] OK   client learned every salvo target
+[client] OK   target warning reaches the client before the fan ([0.101, 0.101, 0.034] s late)
+[client] left (pause menu) during the card fan (running true, 4 cards on screen); 0.5 s later at res://core/ui/main_menu.tscn, cards left 0
+[client] OK   rejoin after leaving mid card fan
+[client] shell game walk: 0.0 px moved in sight, hidden leak false, unwrap frames 15, right box true
+[client] OK   shell game: no sliding, fully hidden, unwraps at the right box on this PC
+[client] OK   client buys for itself, not for the partner
+[client] OK   purchase in the save on this PC
+[client] OK   partner wallet untouched
+[client] FAILURES: 0
+host: 0 falhas, cliente: 0 falhas
+exit 0

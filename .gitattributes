@@ -1,6 +1,5 @@
 # Normaliza finais de linha (Windows/Linux)
 * text=auto eol=lf
-
 # Binários
 *.png binary
 *.jpg binary
@@ -9,3 +8,4 @@
 *.mp3 binary
 *.ttf binary
 *.otf binary
+*.avi filter=lfs diff=lfs merge=lfs -text

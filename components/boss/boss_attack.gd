@@ -12,6 +12,10 @@ var elapsed := 0.0
 var rng := RandomNumberGenerator.new()
 ## Dados extras escolhidos pelo host (ex.: onde cair, quem perseguir).
 var args: Array = []
+## Semente desta rodada do ataque (identifica a rodada nos eventos do host).
+var run_seed := 0
+## Eventos do host que chegaram antes da ordem do ataque (rede com atraso variável): [semente, dados].
+var _early_events: Array = []
 var _running := false
 
 
@@ -19,10 +23,15 @@ var _running := false
 ## (o cliente recebe a ordem com atraso e adianta a simulação).
 func begin(seed_value: int, skip := 0.0, extra_args: Array = []) -> void:
 	rng.seed = seed_value
+	run_seed = seed_value
 	args = extra_args
 	elapsed = 0.0
 	_running = true
 	_on_begin()
+	var early := _early_events.filter(func(event: Array) -> bool: return event[0] == seed_value)
+	_early_events.clear()
+	for event: Array in early:
+		_on_event(event[1])
 	if skip > 0.0:
 		_advance(skip)
 
@@ -45,6 +54,14 @@ func _advance(delta: float) -> void:
 		finished.emit()
 
 
+## Dado decidido pelo host no meio do ataque (cliente). Se a ordem do ataque ainda não chegou, guarda.
+func receive_event(seed_value: int, data: Array) -> void:
+	if _running and seed_value == run_seed:
+		_on_event(data)
+	elif _early_events.size() < 64:
+		_early_events.append([seed_value, data])
+
+
 ## Para o ataque na hora (troca de fase, fim da luta).
 func cancel() -> void:
 	if _running:
@@ -64,6 +81,10 @@ func _on_begin() -> void:
 
 
 func _on_tick(_delta: float) -> void:
+	pass
+
+
+func _on_event(_data: Array) -> void:
 	pass
 
 

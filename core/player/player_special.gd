@@ -16,6 +16,9 @@ const EX_PUSHBACK := 320.0
 const EX_KICK := 2.5
 ## Quanto tempo um aperto fica guardado.
 const BUFFER_TIME := 0.2
+## Grande Número: invencível pelo menos este tempo desde o começo (pedido do usuário em 04/10/2026). O que
+## sobra depois do número pisca, como a proteção depois de levar dano.
+const GRAND_MIN_INVINCIBLE := 2.0
 
 var _buffer := 0.0
 var _recoil := 0.0
@@ -119,13 +122,22 @@ func crouch_pose() -> bool:
 	return is_performing() and _grand.crouch_pose()
 
 
+## Quadro desenhado do Grande Número (-1 = nenhum: fora do número ou sem folha desenhada).
+func drawn_frame(animation: FrameAnimation) -> int:
+	if not is_performing() or animation == null or animation.frame_count() == 0:
+		return -1
+	return _grand.drawn_frame(animation.frame_count())
+
+
 func _advance(delta: float) -> void:
 	_recoil = maxf(_recoil - delta, 0.0)
 	_grace = maxf(_grace - delta, 0.0)
 	if is_performing():
 		_grand.tick(delta)
 		if not is_performing():
-			_grace = _grand.grace
+			_grace = maxf(_grand.grace, GRAND_MIN_INVINCIBLE - _grand.duration)
+			_player.player_health.protect(_grace)
+			_player.rig.play_special_ending()
 
 
 func _report_grand_number() -> void:

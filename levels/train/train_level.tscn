@@ -1,0 +1,128 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://levels/train/train_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://levels/train/train_scenery.gd" id="2_scenery"]
+[ext_resource type="Script" path="res://core/network/player_spawner.gd" id="3_spawner"]
+[ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="4_clown"]
+[ext_resource type="PackedScene" path="res://core/player/characters/acrobat/acrobat_rig.tscn" id="5_acrobat"]
+[ext_resource type="Script" path="res://components/stage/group_camera.gd" id="6_camera"]
+[ext_resource type="Script" path="res://core/combat/run_level.gd" id="7_run"]
+[ext_resource type="Script" path="res://core/debug/solo_character_switch.gd" id="8_switch"]
+[ext_resource type="Script" path="res://core/debug/applause_cheat.gd" id="9_cheat"]
+[ext_resource type="Script" path="res://core/ui/fight_hud.gd" id="10_hud"]
+[ext_resource type="Script" path="res://core/debug/fps_label.gd" id="11_fps"]
+[ext_resource type="Script" path="res://core/network/connection_status.gd" id="12_status"]
+[ext_resource type="Script" path="res://core/network/ping_label.gd" id="13_ping"]
+[ext_resource type="FontFile" path="res://core/ui/fonts/Oswald.ttf" id="14_font"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_end"]
+size = Vector2(220, 320)
+
+[node name="TrainLevel" type="Node2D"]
+script = ExtResource("1_level")
+
+[node name="SceneryLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Scenery" type="Node2D" parent="SceneryLayer"]
+script = ExtResource("2_scenery")
+camera_path = NodePath("../../Camera")
+
+[node name="Checkpoints" type="Node2D" parent="."]
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="EndZone" type="Area2D" parent="."]
+position = Vector2(6580, 700)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EndZone"]
+position = Vector2(0, -160)
+shape = SubResource("RectangleShape2D_end")
+
+[node name="PlayerSpawner" type="Node2D" parent="."]
+script = ExtResource("3_spawner")
+characters = Array[PackedScene]([ExtResource("4_clown"), ExtResource("5_acrobat")])
+facings = Array[int]([1, 1])
+
+[node name="SpawnClown" type="Marker2D" parent="PlayerSpawner"]
+position = Vector2(170, 700)
+
+[node name="SpawnAcrobat" type="Marker2D" parent="PlayerSpawner"]
+position = Vector2(290, 700)
+
+[node name="Camera" type="Camera2D" parent="."]
+position = Vector2(960, 540)
+process_callback = 0
+script = ExtResource("6_camera")
+level_width = 6900.0
+
+[node name="RunLevel" type="Node" parent="."]
+script = ExtResource("7_run")
+level_id = "train"
+fall_y = 880.0
+checkpoints_path = NodePath("../Checkpoints")
+end_zone_path = NodePath("../EndZone")
+
+[node name="SoloCharacterSwitch" type="Node" parent="."]
+script = ExtResource("8_switch")
+
+[node name="ApplauseCheat" type="Node" parent="."]
+script = ExtResource("9_cheat")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="FightHud" type="Control" parent="Hud"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("10_hud")
+
+[node name="FpsLabel" type="Label" parent="Hud"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 300.0
+offset_bottom = 52.0
+theme_override_colors/font_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.08, 0.06, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("14_font")
+theme_override_font_sizes/font_size = 28
+text = "FPS: 0"
+script = ExtResource("11_fps")
+
+[node name="ConnectionStatus" type="Label" parent="Hud"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -800.0
+offset_top = 110.0
+offset_right = 800.0
+offset_bottom = 230.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.98, 0.92, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.08, 0.06, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("14_font")
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+script = ExtResource("12_status")
+
+[node name="PingLabel" type="Label" parent="Hud"]
+offset_left = 24.0
+offset_top = 52.0
+offset_right = 600.0
+offset_bottom = 92.0
+theme_override_colors/font_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.08, 0.06, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("14_font")
+theme_override_font_sizes/font_size = 28
+script = ExtResource("13_ping")

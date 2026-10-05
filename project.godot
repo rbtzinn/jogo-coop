@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 Settings="*res://core/settings/settings.gd"
 Network="*res://core/network/network.gd"
 SaveGame="*res://core/save/save_game.gd"
+Shop="*res://core/shop/shop.gd"
 DevWindows="*res://core/debug/dev_windows.gd"
 FilmOverlay="*res://components/fx/film_overlay.gd"
 PauseMenu="*res://core/ui/pause_menu.gd"
@@ -125,3 +126,4 @@ common/physics_interpolation=true
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+limits/opengl/max_lights_per_object=16

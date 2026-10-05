@@ -14,6 +14,9 @@ extends Area2D
 ## Balanço do desenho no voo (radianos).
 @export var wobble := 0.0
 @export var hit_effect: PackedScene
+## Efeito só do primeiro acerto (opcional; os seguintes usam `hit_effect`), ex.: a torta
+## esborrachando na cara do chefão.
+@export var first_hit_effect: PackedScene
 @export var end_effect: PackedScene
 
 var direction := Vector2.RIGHT
@@ -26,6 +29,7 @@ var _time := 0.0
 var _squash := 0.0
 var _base_scale := Vector2.ONE
 var _ended := false
+var _hit_once := false
 
 @onready var damage_area: DamageArea = $DamageArea
 @onready var sprite: Node2D = $Sprite
@@ -56,8 +60,10 @@ func _physics_process(delta: float) -> void:
 
 func _on_hit_landed() -> void:
 	_squash = 1.0
-	if hit_effect != null:
-		Fx.spawn(hit_effect, global_position + direction * 40.0, direction.angle())
+	var effect := first_hit_effect if first_hit_effect != null and not _hit_once else hit_effect
+	_hit_once = true
+	if effect != null:
+		Fx.spawn(effect, global_position + direction * 40.0, direction.angle())
 
 
 func _end() -> void:

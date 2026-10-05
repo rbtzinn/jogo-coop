@@ -10,6 +10,8 @@ const MAX_STARS := 5.0
 const DAMAGE_PER_STAR := 45.0
 
 var stars := 0.0
+## Multiplicador de tudo que enche a barra (Trevo da Cartomante: 1,25).
+var gain := 1.0
 ## Parries certos nesta luta (inclui reviver o parceiro).
 var parries := 0
 ## Estrelas gastas nesta luta.
@@ -17,7 +19,7 @@ var stars_used := 0
 
 
 func add_stars(amount: float) -> void:
-	stars = clampf(stars + amount, 0.0, MAX_STARS)
+	stars = clampf(stars + amount * gain, 0.0, MAX_STARS)
 
 
 func add_damage(amount: float) -> void:

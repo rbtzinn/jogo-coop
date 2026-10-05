@@ -1,0 +1,122 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://bosses/magician/magician_boss.gd" id="1_boss"]
+[ext_resource type="Script" path="res://components/health/health.gd" id="2_health"]
+[ext_resource type="Script" path="res://core/network/boss_sync.gd" id="3_sync"]
+[ext_resource type="PackedScene" path="res://bosses/magician/magician.tscn" id="4_zaratan"]
+[ext_resource type="Script" path="res://bosses/magician/giant.gd" id="5_giant"]
+[ext_resource type="Script" path="res://bosses/magician/giant_hand.gd" id="6_hand"]
+[ext_resource type="Script" path="res://components/hitbox/hurtbox.gd" id="7_hurtbox"]
+[ext_resource type="Script" path="res://components/hitbox/enemy_hitbox.gd" id="8_hitbox"]
+[ext_resource type="Script" path="res://bosses/magician/magic_box.gd" id="9_box"]
+[ext_resource type="Script" path="res://components/fx/darkness_overlay.gd" id="10_dark"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/card_fan.gd" id="20_fan"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/rabbits.gd" id="21_rabbits"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/teleport.gd" id="22_teleport"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/intro_sawing.gd" id="23_intro_sawing"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/saw_boxes.gd" id="24_saws"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/shell_game.gd" id="25_shell"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/blackout.gd" id="26_blackout"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/intro_giant.gd" id="27_intro_giant"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/grab_hands.gd" id="28_grab"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/hat_pour.gd" id="29_pour"]
+[ext_resource type="Script" path="res://bosses/magician/attacks/giant_cards.gd" id="30_giant_cards"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_head"]
+size = Vector2(280, 360)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hand"]
+size = Vector2(220, 220)
+
+[node name="MagicianBoss" type="Node2D"]
+script = ExtResource("1_boss")
+max_health = 1280
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+
+[node name="BossSync" type="Node" parent="."]
+script = ExtResource("3_sync")
+
+[node name="Attacks" type="Node2D" parent="."]
+
+[node name="CardFan" type="Node2D" parent="Attacks"]
+script = ExtResource("20_fan")
+
+[node name="Rabbits" type="Node2D" parent="Attacks"]
+script = ExtResource("21_rabbits")
+
+[node name="Teleport" type="Node2D" parent="Attacks"]
+script = ExtResource("22_teleport")
+
+[node name="IntroSawing" type="Node2D" parent="Attacks"]
+script = ExtResource("23_intro_sawing")
+
+[node name="SawBoxes" type="Node2D" parent="Attacks"]
+script = ExtResource("24_saws")
+
+[node name="ShellGame" type="Node2D" parent="Attacks"]
+script = ExtResource("25_shell")
+
+[node name="Blackout" type="Node2D" parent="Attacks"]
+script = ExtResource("26_blackout")
+
+[node name="IntroGiant" type="Node2D" parent="Attacks"]
+script = ExtResource("27_intro_giant")
+
+[node name="GrabHands" type="Node2D" parent="Attacks"]
+script = ExtResource("28_grab")
+
+[node name="HatPour" type="Node2D" parent="Attacks"]
+script = ExtResource("29_pour")
+
+[node name="GiantCards" type="Node2D" parent="Attacks"]
+script = ExtResource("30_giant_cards")
+
+[node name="Giant" type="Node2D" parent="."]
+position = Vector2(960, 420)
+script = ExtResource("5_giant")
+
+[node name="Hurtbox" type="Area2D" parent="Giant"]
+script = ExtResource("7_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Giant/Hurtbox"]
+shape = SubResource("RectangleShape2D_head")
+
+[node name="LeftHand" type="Node2D" parent="Giant"]
+position = Vector2(-470, 230)
+script = ExtResource("6_hand")
+side = -1.0
+
+[node name="Hitbox" type="Area2D" parent="Giant/LeftHand"]
+script = ExtResource("8_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Giant/LeftHand/Hitbox"]
+position = Vector2(0, 60)
+shape = SubResource("RectangleShape2D_hand")
+
+[node name="RightHand" type="Node2D" parent="Giant"]
+position = Vector2(470, 230)
+script = ExtResource("6_hand")
+
+[node name="Hitbox" type="Area2D" parent="Giant/RightHand"]
+script = ExtResource("8_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Giant/RightHand/Hitbox"]
+position = Vector2(0, 60)
+shape = SubResource("RectangleShape2D_hand")
+
+[node name="Box0" type="Node2D" parent="."]
+script = ExtResource("9_box")
+
+[node name="Box1" type="Node2D" parent="."]
+script = ExtResource("9_box")
+
+[node name="Box2" type="Node2D" parent="."]
+script = ExtResource("9_box")
+
+[node name="Zaratan" parent="." instance=ExtResource("4_zaratan")]
+position = Vector2(1560, 1000)
+
+[node name="Darkness" type="CanvasLayer" parent="."]
+script = ExtResource("10_dark")

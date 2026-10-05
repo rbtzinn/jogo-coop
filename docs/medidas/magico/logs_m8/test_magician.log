@@ -1,0 +1,37 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+OK   magician hides in a box
+OK   boxes can be shot while guessing
+OK   right box: 50% more damage (15)
+OK   wrong box: no damage
+OK   wrong box opens
+OK   two doves fly out
+OK   magician comes back
+OK   he appears in the right box
+OK   shell game: 195 different plans in 200 seeds
+OK   shell game: no swap undoes the previous one (0), his box moves 2+ times (0 short)
+OK   shell game: no visible sliding (0.0 px), only his box opened ([2])
+OK   shell game: he shows up in front of his box, then fully hidden while shuffling
+OK   shell game: unwraps at the right box over 13 frames
+OK   players have slots 0 and 1
+OK   card fan: 12 cards per attack, 3 black homing cards (never pink), 2 pink aces
+OK   salvos alternate P1, P2 across attacks: [0, 1, 0, 1, 0, 1, 0, 1, 0]
+OK   P2 down: every salvo aims at P1 ([0, 0, 0])
+OK   nobody up: black cards fly straight
+OK   target falls mid-flight: tracking ends, card goes straight ([2.0943951023932, -0.41400665177064, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+OK   black card hurts the standing target
+OK   pink ace popped by parry
+OK   pink ace hurts without a parry (3 -> 2)
+OK   partner leaves: its card goes straight, next salvo aims at who stayed ([1, 0, 0])
+OK   lights out
+OK   lights back on
+OK   giant phase
+OK   small magician gone
+OK   giant face: laughs, gets angry when shot, not again within a second
+OK   hand slams with an active hitbox
+OK   grab: hit only with a closing hand (0 open), no jump between grabs (76 px)
+OK   hands harmless at rest
+OK   magician defeated and saved
+OK   giant face: dizzy once defeated
+OK   golden ticket appears
+FAILURES: 0

@@ -32,29 +32,40 @@ func _ready() -> void:
 	layout.add_theme_constant_override("separation", 22)
 	center.add_child(layout)
 
-	layout.add_child(UiTheme.title_label("Respeitável Público", 110))
+	layout.add_child(UiTheme.title_label("Respeitável Público", 110, true))
 	var subtitle := Label.new()
 	subtitle.text = "Um circo assombrado para dois"
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	subtitle.add_theme_font_size_override("font_size", 34)
+	subtitle.add_theme_color_override("font_color", UiTheme.CREAM)
+	subtitle.add_theme_color_override("font_outline_color", UiTheme.INK)
+	subtitle.add_theme_constant_override("outline_size", 6)
 	layout.add_child(subtitle)
 
+	# Os botões ficam num cartaz com lâmpadas (o painel de entrar na partida também).
+	var poster := PosterPanel.new()
+	poster.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	layout.add_child(poster)
+	var poster_layout := VBoxContainer.new()
+	poster.add_child(poster_layout)
 	_main_buttons = VBoxContainer.new()
 	_main_buttons.add_theme_constant_override("separation", 14)
 	_main_buttons.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	layout.add_child(_main_buttons)
+	poster_layout.add_child(_main_buttons)
 	var host_button := _add_button(_main_buttons, "Hospedar partida", _on_host_pressed)
 	_add_button(_main_buttons, "Entrar na partida", _show_join_panel)
 	_add_button(_main_buttons, "Testar sozinho", _on_solo_pressed)
 	_add_button(_main_buttons, "Configurações", func() -> void: _settings_menu.open())
 	_add_button(_main_buttons, "Sair", func() -> void: get_tree().quit())
 
-	_build_join_panel(layout)
+	_build_join_panel(poster_layout)
 
 	_status = Label.new()
 	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_status.add_theme_font_size_override("font_size", 28)
 	_status.add_theme_color_override("font_color", UiTheme.GOLD)
+	_status.add_theme_color_override("font_outline_color", UiTheme.INK)
+	_status.add_theme_constant_override("outline_size", 6)
 	_status.text = Network.last_message
 	Network.last_message = ""
 	layout.add_child(_status)

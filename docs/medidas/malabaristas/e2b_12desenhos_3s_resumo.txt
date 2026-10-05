@@ -1,0 +1,67 @@
+versão: 12 desenhos
+passo Teco|fronteira: 35 quadros, máximo 13.6 px, P95 13.6 px, mediana 0.0 px
+passo Teco|luva: 179 quadros, máximo 48.1 px, P95 47.1 px, mediana 0.0 px
+passo Teco|mao: 98 quadros, máximo 0.0 px, P95 0.0 px, mediana 0.0 px
+passo Teco|mao_troca: 54 quadros, máximo 33.5 px, P95 33.5 px, mediana 21.1 px
+passo Teco|voo_alto: 260 quadros, máximo 26.6 px, P95 23.6 px, mediana 12.7 px
+passo Teco|voo_baixo: 90 quadros, máximo 17.2 px, P95 17.2 px, mediana 16.0 px
+passo Tico|fronteira: 35 quadros, máximo 13.6 px, P95 13.6 px, mediana 0.0 px
+passo Tico|luva: 179 quadros, máximo 48.1 px, P95 47.1 px, mediana 0.0 px
+passo Tico|mao: 98 quadros, máximo 0.0 px, P95 0.0 px, mediana 0.0 px
+passo Tico|mao_troca: 54 quadros, máximo 33.5 px, P95 33.5 px, mediana 21.1 px
+passo Tico|voo_alto: 260 quadros, máximo 26.6 px, P95 23.6 px, mediana 12.7 px
+passo Tico|voo_baixo: 90 quadros, máximo 17.2 px, P95 17.2 px, mediana 16.0 px
+evento quadro 9 Tico objeto 0: 28.0 px, mao_troca (desenho 3 -> 4, mao_frente -> mao_frente)
+evento quadro 9 Teco objeto 0: 28.0 px, mao_troca (desenho 3 -> 4, mao_frente -> mao_frente)
+evento quadro 16 Tico objeto 1: 33.5 px, mao_troca (desenho 5 -> 6, mao_frente -> mao_frente)
+evento quadro 16 Teco objeto 1: 33.5 px, mao_troca (desenho 5 -> 6, mao_frente -> mao_frente)
+evento quadro 19 Tico objeto 2: 26.6 px, voo_alto (desenho 6 -> 7, voo_alto -> voo_alto)
+evento quadro 19 Teco objeto 2: 26.6 px, voo_alto (desenho 6 -> 7, voo_alto -> voo_alto)
+evento quadro 29 Tico objeto 1: 26.1 px, mao_troca (desenho 9 -> 10, mao_frente -> mao_frente)
+evento quadro 29 Teco objeto 1: 26.1 px, mao_troca (desenho 9 -> 10, mao_frente -> mao_frente)
+evento quadro 36 Tico objeto 2: 32.2 px, mao_troca (desenho 11 -> 12, mao_frente -> mao_frente)
+evento quadro 36 Teco objeto 2: 32.2 px, mao_troca (desenho 11 -> 12, mao_frente -> mao_frente)
+evento quadro 39 Tico objeto 0: 26.3 px, voo_alto (desenho 12 -> 1, voo_alto -> voo_alto)
+evento quadro 39 Teco objeto 0: 26.3 px, voo_alto (desenho 12 -> 1, voo_alto -> voo_alto)
+evento quadro 49 Tico objeto 2: 28.0 px, mao_troca (desenho 3 -> 4, mao_frente -> mao_frente)
+evento quadro 49 Teco objeto 2: 28.0 px, mao_troca (desenho 3 -> 4, mao_frente -> mao_frente)
+evento quadro 56 Tico objeto 0: 33.5 px, mao_troca (desenho 5 -> 6, mao_frente -> mao_frente)
+evento quadro 56 Teco objeto 0: 33.5 px, mao_troca (desenho 5 -> 6, mao_frente -> mao_frente)
+evento quadro 59 Tico objeto 1: 26.6 px, voo_alto (desenho 6 -> 7, voo_alto -> voo_alto)
+evento quadro 59 Teco objeto 1: 26.6 px, voo_alto (desenho 6 -> 7, voo_alto -> voo_alto)
+evento quadro 69 Tico objeto 0: 26.1 px, mao_troca (desenho 9 -> 10, mao_frente -> mao_frente)
+evento quadro 69 Teco objeto 0: 26.1 px, mao_troca (desenho 9 -> 10, mao_frente -> mao_frente)
+evento quadro 76 Tico objeto 1: 32.2 px, mao_troca (desenho 11 -> 12, mao_frente -> mao_frente)
+evento quadro 76 Teco objeto 1: 32.2 px, mao_troca (desenho 11 -> 12, mao_frente -> mao_frente)
+evento quadro 79 Tico objeto 2: 26.3 px, voo_alto (desenho 12 -> 1, voo_alto -> voo_alto)
+evento quadro 79 Teco objeto 2: 26.3 px, voo_alto (desenho 12 -> 1, voo_alto -> voo_alto)
+evento quadro 89 Tico objeto 1: 28.0 px, mao_troca (desenho 3 -> 4, mao_frente -> mao_frente)
+evento quadro 89 Teco objeto 1: 28.0 px, mao_troca (desenho 3 -> 4, mao_frente -> mao_frente)
+evento quadro 96 Tico objeto 2: 33.5 px, mao_troca (desenho 5 -> 6, mao_frente -> mao_frente)
+evento quadro 96 Teco objeto 2: 33.5 px, mao_troca (desenho 5 -> 6, mao_frente -> mao_frente)
+evento quadro 99 Tico objeto 0: 26.6 px, voo_alto (desenho 6 -> 7, voo_alto -> voo_alto)
+evento quadro 99 Teco objeto 0: 26.6 px, voo_alto (desenho 6 -> 7, voo_alto -> voo_alto)
+evento quadro 109 Tico objeto 2: 26.1 px, mao_troca (desenho 9 -> 10, mao_frente -> mao_frente)
+evento quadro 109 Teco objeto 2: 26.1 px, mao_troca (desenho 9 -> 10, mao_frente -> mao_frente)
+evento quadro 116 Tico objeto 0: 32.2 px, mao_troca (desenho 11 -> 12, mao_frente -> mao_frente)
+evento quadro 116 Teco objeto 0: 32.2 px, mao_troca (desenho 11 -> 12, mao_frente -> mao_frente)
+evento quadro 119 Tico objeto 1: 26.3 px, voo_alto (desenho 12 -> 1, voo_alto -> voo_alto)
+evento quadro 119 Teco objeto 1: 26.3 px, voo_alto (desenho 12 -> 1, voo_alto -> voo_alto)
+evento quadro 129 Tico objeto 0: 28.0 px, mao_troca (desenho 3 -> 4, mao_frente -> mao_frente)
+evento quadro 129 Teco objeto 0: 28.0 px, mao_troca (desenho 3 -> 4, mao_frente -> mao_frente)
+evento quadro 136 Tico objeto 1: 33.5 px, mao_troca (desenho 5 -> 6, mao_frente -> mao_frente)
+evento quadro 136 Teco objeto 1: 33.5 px, mao_troca (desenho 5 -> 6, mao_frente -> mao_frente)
+evento quadro 139 Tico objeto 2: 26.6 px, voo_alto (desenho 6 -> 7, voo_alto -> voo_alto)
+evento quadro 139 Teco objeto 2: 26.6 px, voo_alto (desenho 6 -> 7, voo_alto -> voo_alto)
+evento quadro 149 Tico objeto 1: 26.1 px, mao_troca (desenho 9 -> 10, mao_frente -> mao_frente)
+evento quadro 149 Teco objeto 1: 26.1 px, mao_troca (desenho 9 -> 10, mao_frente -> mao_frente)
+evento quadro 156 Tico objeto 2: 32.2 px, mao_troca (desenho 11 -> 12, mao_frente -> mao_frente)
+evento quadro 156 Teco objeto 2: 32.2 px, mao_troca (desenho 11 -> 12, mao_frente -> mao_frente)
+evento quadro 159 Tico objeto 0: 26.3 px, voo_alto (desenho 12 -> 1, voo_alto -> voo_alto)
+evento quadro 159 Teco objeto 0: 26.3 px, voo_alto (desenho 12 -> 1, voo_alto -> voo_alto)
+evento quadro 169 Tico objeto 2: 28.0 px, mao_troca (desenho 3 -> 4, mao_frente -> mao_frente)
+evento quadro 169 Teco objeto 2: 28.0 px, mao_troca (desenho 3 -> 4, mao_frente -> mao_frente)
+evento quadro 176 Tico objeto 0: 33.5 px, mao_troca (desenho 5 -> 6, mao_frente -> mao_frente)
+evento quadro 176 Teco objeto 0: 33.5 px, mao_troca (desenho 5 -> 6, mao_frente -> mao_frente)
+evento quadro 179 Tico objeto 1: 26.6 px, voo_alto (desenho 6 -> 7, voo_alto -> voo_alto)
+evento quadro 179 Teco objeto 1: 26.6 px, voo_alto (desenho 6 -> 7, voo_alto -> voo_alto)

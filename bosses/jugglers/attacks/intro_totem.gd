@@ -28,7 +28,7 @@ func _tick(t: float) -> void:
 		return
 	var u := clampf((t - CROUCH) / FLIGHT, 0.0, 1.0)
 	if u < 1.0:
-		var to := _base.global_position - Vector2(0, JugglersBoss.SHOULDER)
+		var to := _base.global_position - Vector2(0, JugglersBoss.TOTEM_SHOULDER)
 		_top.global_position = arc_point(_from, to, 420.0, u)
 		_top.pose = &"spin"
 		_top.spin = -u * 2.0
@@ -56,3 +56,5 @@ func _land() -> void:
 	boss.set_mode(&"totem")
 	boss.place_group(_base.global_position.x)
 	Fx.spawn(preload("res://components/fx/dust_puff.tscn"), _base.global_position)
+	# Os dois viram o totem desenhado, menor (E7): a nuvem na altura dos ombros esconde a troca de tamanho.
+	Fx.spawn(preload("res://components/fx/dust_puff.tscn"), _base.global_position - Vector2(0, JugglersBoss.TOTEM_SHOULDER))

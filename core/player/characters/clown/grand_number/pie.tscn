@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" path="res://components/projectile/piercing_projectile.gd" id="1_script"]
 [ext_resource type="Script" path="res://components/hitbox/damage_area.gd" id="2_damage"]
-[ext_resource type="Texture2D" path="res://core/player/characters/clown/grand_number/pie.svg" id="3_art"]
+[ext_resource type="Script" path="res://components/fx/frame_loop_sprite.gd" id="3_loop"]
+[ext_resource type="Resource" path="res://core/player/characters/clown/grand_number/pie_fly.tres" id="5_fly"]
+[ext_resource type="PackedScene" path="res://core/player/characters/clown/grand_number/pie_splat.tscn" id="6_pie_splat"]
 [ext_resource type="PackedScene" path="res://core/player/characters/clown/grand_number/cream_splat.tscn" id="4_splat"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
@@ -20,9 +22,10 @@ speed = 1300.0
 lifetime = 3.0
 speed_while_hitting = 0.25
 align_to_direction = false
-wobble = 0.12
+wobble = 0.0
 hit_effect = ExtResource("4_splat")
-end_effect = ExtResource("4_splat")
+end_effect = ExtResource("6_pie_splat")
+first_hit_effect = ExtResource("6_pie_splat")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_body")
@@ -37,5 +40,5 @@ max_hits = 10
 shape = SubResource("CircleShape2D_damage")
 
 [node name="Sprite" type="Sprite2D" parent="."]
-scale = Vector2(0.9, 0.9)
-texture = ExtResource("3_art")
+script = ExtResource("3_loop")
+animation = ExtResource("5_fly")

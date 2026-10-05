@@ -101,26 +101,6 @@ func _show_end_screen(victory: bool, result: Dictionary) -> void:
 	add_child(screen)
 
 
-## Faixa de circo no meio da tela que entra quicando e sai voando para cima.
-## `burst`: raios de luz girando atrás (vitória).
+## Faixa de circo no meio da tela (ver CircusBanner.show_on).
 func _show_banner(text: String, burst := false) -> void:
-	if text.is_empty():
-		return
-	var layer := CanvasLayer.new()
-	layer.layer = 15
-	add_child(layer)
-	var banner := CircusBanner.new()
-	banner.text = text
-	banner.burst = burst
-	banner.font_size = 110 if burst else 88
-	banner.size = Vector2(1920, 1080)
-	banner.pivot_offset = Vector2(960, 540)
-	layer.add_child(banner)
-	banner.scale = Vector2(0.3, 0.3)
-	banner.rotation = -0.12
-	var tween := banner.create_tween()
-	tween.tween_property(banner, "scale", Vector2.ONE, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(banner, "rotation", 0.0, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_interval(1.6 if burst else 1.0)
-	tween.tween_property(banner, "position:y", -700.0, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-	tween.tween_callback(layer.queue_free)
+	CircusBanner.show_on(self, text, burst)

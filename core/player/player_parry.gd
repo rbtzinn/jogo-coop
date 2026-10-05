@@ -15,6 +15,8 @@ const SPIN_TIME := 0.32
 ## Proteção contra dano logo depois de um parry certo.
 const GRACE := 0.35
 
+var window := WINDOW
+
 var _window := 0.0
 var _spin := 0.0
 var _grace := 0.0
@@ -35,7 +37,7 @@ func tick(delta: float, on_floor: bool, pressed: bool) -> bool:
 		_window = 0.0
 	if pressed and _available:
 		_available = false
-		_window = WINDOW
+		_window = window
 		_spin = SPIN_TIME
 	if _window <= 0.0:
 		return false

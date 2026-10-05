@@ -7,6 +7,9 @@ extends JugglerAttack
 
 const THROWS := [0.6, 1.2, 1.8, 2.4]
 const SPEED := 1100.0
+## A clave sai da mão desenhada do de cima e chega na faixa em 0,1 s (E7: com o totem desenhado ela nascia
+## direto na faixa, até 149 px longe da mão).
+const LEAVE_HAND := 0.1
 ## Altura (y) de cada faixa.
 const HEIGHTS := {"B": 880.0, "A": 700.0}
 const PATTERNS := [["B", "A", "B", "B"], ["A", "B", "A", "B"], ["B", "B", "A", "B"]]
@@ -41,10 +44,16 @@ func _tick(t: float) -> void:
 			club[1] = true
 			club[0] = make_prop(&"club", false, i)
 			club[0].spin_speed = 4.0 * _direction
+			boss.top().throw_released = true
+			club.append(boss.top().hand_position())
 		var prop: JugglerProp = club[0] if is_instance_valid(club[0]) else null
 		if not is_instance_valid(prop):
 			continue
-		prop.global_position = Vector2(_start_x + _direction * (50.0 + SPEED * since), HEIGHTS[_pattern[i]])
+		var lane := Vector2(_start_x + _direction * (50.0 + SPEED * since), HEIGHTS[_pattern[i]])
+		# Sai da mão do de cima e entra na faixa em LEAVE_HAND s (depois segue reta na faixa, como sempre).
+		# No 1º quadro em que aparece ela fica na mão.
+		var leave := maxf(since - 1.0 / 60.0, 0.0)
+		prop.global_position = (club[2] as Vector2).lerp(lane, leave / LEAVE_HAND) if leave < LEAVE_HAND else lane
 		if prop.global_position.x < -80.0 or prop.global_position.x > 2000.0:
 			prop.queue_free()
 	boss.top().pose = &"throw" if winding else &"sit"

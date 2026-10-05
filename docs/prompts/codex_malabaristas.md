@@ -19,6 +19,11 @@ Layout, side view, both facing RIGHT: left half Tico full body standing and jugg
 
 ## Pedido 2 — animações (só depois de aprovar o Pedido 1)
 
+**Atualização de 03/10, à noite:** o Pedido 1 foi aprovado tecnicamente (folha normalizada em
+`malabaristas_folha.png`). Este Pedido 2 não vai mais inteiro: cada folha vira um pedido próprio na fila
+(`fila_animacoes_codex.md`, a começar pelo Pedido E2), com medidas, sem objetos nas mãos e sem trilhas. O
+texto abaixo fica como histórico.
+
 ```
 IMPORTANT: Only create image files. Do not modify, move or delete any other file. Do not run any git command.
 

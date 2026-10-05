@@ -14,6 +14,9 @@ signal phase_started(phase: int, title: String)
 
 ## Quanto tempo o "quem bateu mais" lembra (segundos).
 const DAMAGE_MEMORY := 4.0
+## Só um atirando: cada tiro no chefão vale por dois (pedidos do usuário em 04/10/2026). Vale no "Testar
+## sozinho" e online quando o parceiro está caído ou saiu; com os dois de pé, vale 1.
+const SOLO_DAMAGE := 2
 
 @export var max_health := 1500
 ## Respiro entre um ataque e outro (mínimo e máximo, segundos).
@@ -96,6 +99,25 @@ func play_attack(attack_name: StringName, seed_value: int, skip: float, args: Ar
 		phase_started.emit(phase, phase_titles[phase])
 	_current = $Attacks.get_node(NodePath(attack_name))
 	_current.begin(seed_value, skip, args)
+
+
+## Dado que o host decidiu no meio de um ataque (chega pelo BossSync no cliente; no host, o ataque já usou).
+func attack_event(attack_name: StringName, run_seed: int, data: Array) -> void:
+	var attack := $Attacks.get_node_or_null(NodePath(attack_name)) as BossAttack
+	if attack != null:
+		attack.receive_event(run_seed, data)
+
+
+## Quanto vale cada tiro dos jogadores agora: SOLO_DAMAGE com um só atirando, 1 com os dois de pé.
+func damage_scale() -> int:
+	if not Network.is_online() or alive_players().size() <= 1:
+		return SOLO_DAMAGE
+	return 1
+
+
+## Tiro de um jogador no chefão (deste PC ou, no host, do parceiro), já com o `damage_scale`. Só no cérebro.
+func apply_shot(amount: int, source := "", part := "") -> void:
+	apply_damage(amount * damage_scale(), source, part)
 
 
 ## Dano que chegou de um tiro (deste PC ou, no host, do parceiro). Só no cérebro.
@@ -189,6 +211,11 @@ func _on_defeated() -> void:
 	pass
 
 
+## O ataque pode sair agora? (ex.: um malabarista tonto não troca de lugar). Só no cérebro.
+func _can_choose(_attack_name: StringName) -> bool:
+	return true
+
+
 ## Visual de quem pulou direto para a fase atual.
 func _on_catch_up() -> void:
 	pass
@@ -198,10 +225,16 @@ func _on_catch_up() -> void:
 
 func _choose_attack() -> void:
 	var choice: StringName
-	if _last_attack in repeatable and _repeats == 0 and _brain_rng.randf() < 0.5:
+	if _last_attack in repeatable and _repeats == 0 and _brain_rng.randf() < 0.5 and _can_choose(_last_attack):
 		choice = _last_attack
 	else:
 		choice = _draw_from_bag()
+		# Um ataque que não serve agora volta para o fim do saco e sai o próximo.
+		for i in phase_attacks[phase].size():
+			if _can_choose(choice):
+				break
+			_bag.append(choice)
+			choice = _draw_from_bag()
 	_repeats = _repeats + 1 if choice == _last_attack else 0
 	_last_attack = choice
 	sync.start_attack(choice, _brain_rng.randi(), _args_for(choice))
@@ -234,7 +267,7 @@ func _on_hurtbox_hit(amount: int, source: String, flash_target: Node, part: Stri
 	if is_defeated:
 		return
 	if is_brain():
-		apply_damage(amount, source, part)
+		apply_shot(amount, source, part)
 	else:
 		sync.report_damage(amount, source, part)
 

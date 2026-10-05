@@ -19,6 +19,8 @@ const SIZE := Vector2(300, 330)
 ## Só abre depois de vencer estes (ids do save).
 @export var requires: Array[String] = []
 @export var stripe_color := Color("a3282a")
+## Em vez de trocar de fase, abre a loja (Barraca de Curiosidades) para quem entrou.
+@export var opens_shop := false
 
 var _near := false
 var _time := 0.0
@@ -54,12 +56,12 @@ func _physics_process(delta: float) -> void:
 			continue
 		_near = true
 		if player.input.shoot_pressed:
-			try_enter()
+			try_enter(player)
 	queue_redraw()
 
 
 func is_open() -> bool:
-	return not target_scene.is_empty() and missing().is_empty()
+	return (opens_shop or not target_scene.is_empty()) and missing().is_empty()
 
 
 ## Ids que ainda faltam vencer para abrir.
@@ -71,7 +73,12 @@ func missing() -> Array[String]:
 	return result
 
 
-func try_enter() -> void:
+func try_enter(player: Player = null) -> void:
+	if opens_shop and is_open():
+		if get_tree().get_first_node_in_group(&"blocking_ui") == null:
+			var key := Shop.key_for(player) if player != null else Shop.local_keys()[0]
+			ShopPanel.open_for(key, player)
+		return
 	if not is_open():
 		_shake = 0.3
 		_message = "Em breve!" if target_scene.is_empty() else "Vençam os outros números primeiro!"
@@ -137,7 +144,7 @@ func _draw() -> void:
 		var grade: String = SaveGame.data.bosses[level_id].get("best_grade", "")
 		if not grade.is_empty():
 			_draw_stamp(Vector2(w * 0.32, -h * 0.72), grade)
-	if target_scene.is_empty():
+	if target_scene.is_empty() and not opens_shop:
 		_draw_ribbon("EM BREVE")
 	elif not open:
 		_draw_ribbon("FECHADO")

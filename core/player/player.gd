@@ -14,6 +14,8 @@ const PLATFORM_LAYER := 5
 ## ele é considerado fora da tela.
 const BALLOON_RISE := 190.0
 const BALLOON_SWAY := 40.0
+## Velocidade do balanço (o balão desenhado inclina nos extremos com a mesma conta).
+const BALLOON_SWAY_SPEED := 1.6
 const BALLOON_OUT_Y := -40.0
 ## Quique do parry (fração do pulo normal).
 const PARRY_BOUNCE := 0.9
@@ -26,6 +28,9 @@ const PARRY_BOUNCE := 0.9
 @export var controlled_locally := true
 ## Desligado: não atira nem solta especial (no mapa, "atirar" serve para entrar nas tendas).
 @export var armed := true
+## Lugar do jogador na dupla (0 = P1, o host; 1 = P2), fixo durante a luta. Os ataques que alternam
+## de alvo usam isto, não a posição nem o nome.
+var slot := 0
 
 @export_group("Corrida")
 @export var run_speed := 520.0
@@ -67,7 +72,10 @@ var _coyote_timer := 0.0
 var _jump_buffer_timer := 0.0
 var _dash_timer := 0.0
 var _dash_cooldown_timer := 0.0
-var _dash_direction := 1
+## Direção do dash (a Pirueta deixa dar dash em 8 direções).
+var _dash_vector := Vector2.RIGHT
+## Bala de Canhão: área que machuca durante o dash.
+var _dash_damage: DamageArea
 var _air_dash_available := true
 var _drop_timer := 0.0
 var _on_platform := false
@@ -93,11 +101,16 @@ var _remote_parrying := false
 @onready var parry: PlayerParry = $PlayerParry
 @onready var applause: PlayerApplause = $PlayerApplause
 @onready var special: PlayerSpecial = $PlayerSpecial
+@onready var loadout: PlayerLoadout = $PlayerLoadout
+@onready var duo: PlayerDuo = $PlayerDuo
 @onready var balloon: PlayerBalloon = $Balloon
 
 
 func _ready() -> void:
 	add_to_group(&"players")
+	# Equipamento comprado na loja (pode mudar o pulo, a vida, a pistola...).
+	loadout.load_from_save()
+	gun.weapon = loadout.gun
 	_gravity = 2.0 * jump_height / (time_to_apex * time_to_apex)
 	_jump_velocity = -2.0 * jump_height / time_to_apex
 	input.local_control = controlled_locally
@@ -112,7 +125,11 @@ func _ready() -> void:
 	rig = character.instantiate()
 	visual.add_child(rig)
 	balloon.set_face(rig.head as Sprite2D, rig.scale.x)
+	balloon.set_frames(rig.balloon_animation, rig.balloon_turn_animation, BALLOON_SWAY_SPEED)
+	rig.dash_length = _dash_length()
 	special.setup(rig.grand_number)
+	if loadout.trick == "cannonball":
+		_build_dash_damage()
 
 
 func _physics_process(delta: float) -> void:
@@ -133,7 +150,7 @@ func _physics_process(delta: float) -> void:
 	if parry.tick(delta, is_on_floor(), parry_pressed):
 		_on_parry_success()
 	special.tick(delta, input.special_pressed and armed, not is_dashing())
-	player_health.tick(delta, not is_dashing() and not parry.is_protected() and not special.is_invincible())
+	player_health.tick(delta, _can_be_hit())
 	_update_timers(delta)
 	if not special.is_busy():
 		_update_facing()
@@ -152,6 +169,7 @@ func _physics_process(delta: float) -> void:
 		if not _try_drop_through():
 			_try_start_dash()
 
+	duo.tick(delta)
 	var was_on_floor := is_on_floor()
 	move_and_slide()
 	_on_platform = _is_standing_on_platform()
@@ -162,9 +180,10 @@ func _physics_process(delta: float) -> void:
 	visual.scale.x = facing
 	var aim := get_aim_direction()
 	var pose_aim := special.pose_aim(aim)
+	rig.special_frame = special.drawn_frame(rig.special_animation)
 	rig.update_pose(delta, velocity, is_on_floor(), is_dashing(), Vector2(pose_aim.x * facing, pose_aim.y), run_speed,
 			crouching or special.crouch_pose())
-	visual.rotation = TAU * (parry.spin_amount() + special.spin()) * facing
+	_show_parry_spin()
 	var can_shoot := armed and not is_dashing() and not player_health.is_downed and not special.is_busy()
 	if can_shoot and gun.tick(delta, aim, input.shoot_held, rig.get_muzzle_position()):
 		rig.play_fire()
@@ -191,6 +210,13 @@ func _follow_remote_state(delta: float) -> void:
 		Fx.spawn(DUST_SCENE, global_position + Vector2(-facing * 20.0, -30.0))
 	_remote_on_floor = state.on_floor
 	_remote_dashing = state.dashing
+	# Fumaça do Mágico: some durante o dash; o boneco de fumaça também vale aqui (o host mira nele).
+	if loadout.trick == "magic_smoke":
+		visual.visible = not state.dashing and not player_health.is_downed
+	var remote_decoy: Vector2 = state.get("decoy", Vector2.INF)
+	if remote_decoy != Vector2.INF and duo.decoy == Vector2.INF:
+		SmokeDecoy.spawn(remote_decoy, PlayerDuo.DECOY_TIME)
+	duo.decoy = remote_decoy
 	var parrying: bool = state.get("parrying", false)
 	if parrying and not _remote_parrying:
 		parry.start_remote_spin()
@@ -203,9 +229,10 @@ func _follow_remote_state(delta: float) -> void:
 	if player_health.is_downed and global_position.y < BALLOON_OUT_Y:
 		player_health.mark_out()
 	var aim := special.pose_aim(state.aim)
+	rig.special_frame = special.drawn_frame(rig.special_animation)
 	rig.update_pose(delta, velocity, state.on_floor, state.dashing, Vector2(aim.x * facing, aim.y), run_speed,
 			state.get("crouching", false) or special.crouch_pose())
-	visual.rotation = TAU * (parry.spin_amount() + special.spin()) * facing
+	_show_parry_spin()
 	for action in sync.take_due_actions():
 		if action.kind == &"fire":
 			gun.spawn_projectile(action.aim, rig.get_muzzle_position(), false)
@@ -297,26 +324,85 @@ func _process_ex_recoil(delta: float) -> void:
 		special.cancel_recoil()
 
 
+## Dash, mudado pelo Truque equipado (Fumaça do Mágico, Bala de Canhão, Pirueta) e pela
+## Catapulta (dash encostando no parceiro).
 func _try_start_dash() -> void:
 	if not input.dash_pressed or _dash_cooldown_timer > 0.0:
+		return
+	if duo.try_catapult():
+		_dash_cooldown_timer = dash_cooldown
 		return
 	if not is_on_floor():
 		if not _air_dash_available:
 			return
 		_air_dash_available = false
-	_dash_timer = dash_duration
-	_dash_direction = facing
-	velocity = Vector2(_dash_direction * dash_speed, 0.0)
+	_dash_vector = Vector2(facing, 0)
+	if loadout.trick == "pirouette":
+		var wanted := Vector2(input.get_horizontal(), input.get_vertical())
+		if wanted != Vector2.ZERO:
+			_dash_vector = wanted.normalized()
+	_dash_timer = _dash_length()
+	velocity = _dash_vector * dash_speed
 	Fx.spawn(DUST_SCENE, global_position + Vector2(-facing * 20.0, -30.0))
+	match loadout.trick:
+		"magic_smoke":
+			duo.leave_decoy()
+			visual.hide()
+		"cannonball":
+			_dash_damage.hits = 0
+			_dash_damage.set_deferred(&"monitoring", true)
 
 
 func _process_dash(delta: float) -> void:
-	velocity = Vector2(_dash_direction * dash_speed, 0.0)
+	velocity = _dash_vector * dash_speed
 	_dash_timer -= delta
 	if _dash_timer <= 0.0:
 		_dash_timer = 0.0
-		_dash_cooldown_timer = dash_cooldown
-		velocity.x = _dash_direction * run_speed
+		# Pirueta: no chão o dash demora mais para recarregar.
+		_dash_cooldown_timer = dash_cooldown * (2.0 if loadout.trick == "pirouette" and is_on_floor() else 1.0)
+		velocity = Vector2(_dash_vector.x * run_speed, _dash_vector.y * run_speed * 0.6)
+		if loadout.trick == "magic_smoke":
+			visual.show()
+			Fx.spawn(DUST_SCENE, global_position + Vector2(0, -40.0))
+		if _dash_damage != null:
+			_dash_damage.set_deferred(&"monitoring", false)
+
+
+## Pode levar dano agora? O dash atravessa ataques (menos a Bala de Canhão), e há proteção
+## logo depois de um parry, durante o especial e subindo na Catapulta.
+func _can_be_hit() -> bool:
+	var dash_protects := is_dashing() and loadout.trick != "cannonball"
+	return not dash_protects and not parry.is_protected() and not special.is_invincible() and not duo.is_flying()
+
+
+## Bala de Canhão: área de dano em volta do corpo, ligada só durante o dash.
+func _build_dash_damage() -> void:
+	_dash_damage = DamageArea.new()
+	_dash_damage.damage = 8
+	_dash_damage.max_hits = 1
+	_dash_damage.source = String(name)
+	_dash_damage.deals_damage = is_multiplayer_authority()
+	var shape := CollisionShape2D.new()
+	var circle := CircleShape2D.new()
+	circle.radius = 70.0
+	shape.shape = circle
+	shape.position = Vector2(0, -66)
+	_dash_damage.add_child(shape)
+	add_child(_dash_damage)
+	_dash_damage.monitoring = false
+
+
+## Parry: com a cambalhota desenhada, troca os quadros; sem ela, gira o desenho de peças.
+func _show_parry_spin() -> void:
+	var drawn := rig.parry_animation != null
+	rig.set_parry_progress(parry.spin_amount() if drawn and parry.is_spinning() else -1.0)
+	var spin := special.spin() + (0.0 if drawn else parry.spin_amount())
+	visual.rotation = TAU * spin * facing
+
+
+## Onde os ataques que perseguem devem mirar (o boneco de fumaça engana por 1 s).
+func target_position() -> Vector2:
+	return duo.decoy if duo.decoy != Vector2.INF else global_position
 
 
 func _update_crouch() -> void:
@@ -369,6 +455,13 @@ func _on_hurt(from_position: Vector2) -> void:
 	_dash_timer = 0.0
 	velocity = Vector2(away * knockback.x, knockback.y)
 	_hurt_timer = hurt_stun_time
+	show_hurt()
+
+
+## Só desenho: o susto do golpe no personagem (também chamado no PC do parceiro, quando a vida
+## chega pela rede).
+func show_hurt() -> void:
+	rig.play_hurt(hurt_stun_time)
 
 
 func _on_parry_success() -> void:
@@ -385,9 +478,11 @@ func _process_balloon(delta: float) -> void:
 		velocity = Vector2.ZERO
 		return
 	_balloon_time += delta
-	var x := clampf(_balloon_origin_x + sin(_balloon_time * 1.6) * BALLOON_SWAY, 80.0, 1840.0)
-	velocity = Vector2((x - global_position.x) / maxf(delta, 0.0001), -BALLOON_RISE)
-	global_position = Vector2(x, global_position.y - BALLOON_RISE * delta)
+	var x := clampf(_balloon_origin_x + sin(_balloon_time * BALLOON_SWAY_SPEED) * BALLOON_SWAY, 80.0, 1840.0)
+	# Rede de Segurança do parceiro: sobe mais devagar.
+	var rise := BALLOON_RISE * duo.balloon_rise_factor()
+	velocity = Vector2((x - global_position.x) / maxf(delta, 0.0001), -rise)
+	global_position = Vector2(x, global_position.y - rise * delta)
 	if global_position.y < BALLOON_OUT_Y:
 		player_health.mark_out()
 
@@ -410,6 +505,8 @@ func _on_downed() -> void:
 
 
 func _on_revived() -> void:
+	# Só desenho: o estouro desenhado fica no lugar do balão (o resgate já aconteceu).
+	balloon.pop()
 	balloon.set_active(false)
 	visual.show()
 	velocity = Vector2(0.0, -300.0)
@@ -419,3 +516,8 @@ func _on_revived() -> void:
 func _on_out() -> void:
 	balloon.set_active(false)
 	visual.hide()
+
+
+## Duração do dash com o truque equipado (a Fumaça do Mágico encurta).
+func _dash_length() -> float:
+	return dash_duration * (0.75 if loadout.trick == "magic_smoke" else 1.0)

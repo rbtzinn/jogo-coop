@@ -1,0 +1,33 @@
+M6 piloto (antes de reusar o desenho 1 na saída da reverência):
+reverencia IntroSawing (facing -1): rev1×18, rev2×35, varinha1×91, parado×56; maior salto do alto numa troca 137.4 px (rev2→varinha1)
+reverencia Teleport (facing 1): sumir1×3, sumir2×4, sumir3×4, sumir4×43, sumir3×4, sumir2×4, sumir1×3, varinha1×12, varinha3×8, varinha4×35; maior salto do alto numa troca 180.7 px (sumir3→sumir4)
+reverencia IntroSawing (facing -1): rev1×18, rev2×35, varinha1×91, parado×56; maior salto do alto numa troca 137.4 px (rev2→varinha1)
+reverencia ShellGame (facing -1): rev1×18, rev2×9, sumir1×6, sumir2×7, sumir3×7, sumir4×376, rev1×17, rev2×37, parado×183; maior salto do alto numa troca 242.5 px (sumir4→rev1)
+reverencia Teleport (facing -1): sumir1×3, sumir2×4, sumir3×4, sumir4×43, sumir3×4, sumir2×4, sumir1×3, varinha1×12, varinha3×8, varinha4×35; maior salto do alto numa troca 180.7 px (sumir3→sumir4)
+reverencia ShellGame (facing -1): rev1×18, rev2×9, sumir1×6, sumir2×7, sumir3×7, sumir4×376, rev1×17, rev2×37, parado×183; maior salto do alto numa troca 242.5 px (sumir4→rev1)
+reverencia IntroGiant (facing -1): medo3×5, medo4×5, medo3×6, medo4×4, medo3×5, medo4×6, medo3×4, escondido×135; maior salto do alto numa troca 16.1 px (medo3→medo4)
+reverencia: pés andando com ele à vista 95 quadros; trocas para o boneco 0
+
+M6 piloto final, medo olhando para a direita (virado à mão antes da entrada da fase 3):
+reverencia IntroSawing (facing -1): rev1×18, rev2×35, rev1×7, varinha1×84, parado×56; maior salto do alto numa troca 90.8 px (rev1→rev2)
+reverencia Teleport (facing 1): sumir1×3, sumir2×4, sumir3×4, sumir4×43, sumir3×4, sumir2×4, sumir1×3, varinha1×12, varinha3×8, varinha4×35; maior salto do alto numa troca 180.7 px (sumir3→sumir4)
+reverencia IntroSawing (facing -1): rev1×18, rev2×35, rev1×7, varinha1×84, parado×56; maior salto do alto numa troca 90.8 px (rev1→rev2)
+reverencia ShellGame (facing -1): rev1×18, rev2×9, sumir1×6, sumir2×7, sumir3×7, sumir4×376, rev1×17, rev2×37, rev1×7, parado×176; maior salto do alto numa troca 242.5 px (sumir4→rev1)
+reverencia Teleport (facing -1): sumir1×3, sumir2×4, sumir3×4, sumir4×43, sumir3×4, sumir2×4, sumir1×3, varinha1×12, varinha3×8, varinha4×35; maior salto do alto numa troca 180.7 px (sumir3→sumir4)
+reverencia ShellGame (facing -1): rev1×18, rev2×9, sumir1×6, sumir2×7, sumir3×7, sumir4×376, rev1×17, rev2×37, rev1×7, parado×176; maior salto do alto numa troca 242.5 px (sumir4→rev1)
+reverencia IntroGiant (facing 1): medo3×5, medo4×5, medo3×6, medo4×4, medo3×5, medo4×6, medo3×4, escondido×135; maior salto do alto numa troca 16.1 px (medo3→medo4)
+reverencia: pés andando com ele à vista 95 quadros; trocas para o boneco 0
+
+M6 piloto final, derrota ainda pequeno:
+reverencia IntroSawing (facing -1): rev1×18, rev2×35, rev1×7, varinha1×84, parado×56; maior salto do alto numa troca 90.8 px (rev1→rev2)
+reverencia Teleport (facing 1): sumir1×3, sumir2×4, sumir3×4, sumir4×43, sumir3×4, sumir2×4, sumir1×3, varinha1×12, varinha3×8, varinha4×35; maior salto do alto numa troca 180.7 px (sumir3→sumir4)
+reverencia IntroSawing (facing -1): rev1×18, rev2×35, rev1×7, varinha1×84, parado×56; maior salto do alto numa troca 90.8 px (rev1→rev2)
+reverencia ShellGame (facing -1): rev1×18, rev2×9, sumir1×6, sumir2×7, sumir3×7, sumir4×376, rev1×17, rev2×37, rev1×7, parado×176; maior salto do alto numa troca 242.5 px (sumir4→rev1)
+reverencia Teleport (facing -1): sumir1×3, sumir2×4, sumir3×4, sumir4×43, sumir3×4, sumir2×4, sumir1×3, varinha1×12, varinha3×8, varinha4×35; maior salto do alto numa troca 180.7 px (sumir3→sumir4)
+reverencia ShellGame (facing -1): rev1×18, rev2×9, sumir1×6, sumir2×7, sumir3×7, sumir4×376, rev1×17, rev2×37, rev1×7, parado×176; maior salto do alto numa troca 242.5 px (sumir4→rev1)
+reverencia Defeat (facing -1): medo3×5, medo4×5, medo3×6, medo4×4, medo3×5, medo4×6, medo3×4, sumir1×12, sumir2×12, sumir3×12, sumir4×89; maior salto do alto numa troca 16.1 px (medo3→medo4)
+reverencia: pés andando com ele à vista 95 quadros; trocas para o boneco 0
+
+Deslize no Jogo das Três Caixas (reverência à vista / sumindo):
+três caixas 1: x 1554.4 a 669.1 (885.3 px) em reverência; 652.1 a 560.1 (92 px) sumindo
+três caixas 2: x 1584.3 a 672.3 (912 px) em reverência; 654.8 a 560.1 (94.7 px) sumindo

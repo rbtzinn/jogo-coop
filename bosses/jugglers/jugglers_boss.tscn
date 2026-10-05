@@ -22,6 +22,7 @@ radius = 100.0
 
 [node name="JugglersBoss" type="Node2D"]
 script = ExtResource("1_boss")
+max_health = 1200
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("2_health")
@@ -78,5 +79,6 @@ stripe_color = Color(0.78, 0.19, 0.17, 1)
 
 [node name="Teco" parent="." instance=ExtResource("4_juggler")]
 position = Vector2(1730, 1000)
+teco = true
 stripe_color = Color(0.18, 0.4, 0.62, 1)
 hair_color = Color(0.36, 0.2, 0.1, 1)

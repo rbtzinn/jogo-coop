@@ -89,3 +89,28 @@ func _draw_star(at: Vector2, r: float) -> void:
 	draw_colored_polygon(points, UiTheme.GOLD)
 	points.append(points[0])
 	draw_polyline(points, UiTheme.INK, 3.0, true)
+
+
+## Mostra uma faixa no meio da tela que entra quicando e sai voando para cima.
+## `burst`: raios de luz girando atrás (vitória).
+static func show_on(parent: Node, message: String, burst_rays := false) -> void:
+	if message.is_empty():
+		return
+	var layer := CanvasLayer.new()
+	layer.layer = 15
+	parent.add_child(layer)
+	var banner := CircusBanner.new()
+	banner.text = message
+	banner.burst = burst_rays
+	banner.font_size = 110 if burst_rays else 88
+	banner.size = Vector2(1920, 1080)
+	banner.pivot_offset = Vector2(960, 540)
+	layer.add_child(banner)
+	banner.scale = Vector2(0.3, 0.3)
+	banner.rotation = -0.12
+	var tween := banner.create_tween()
+	tween.tween_property(banner, "scale", Vector2.ONE, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(banner, "rotation", 0.0, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_interval(1.6 if burst_rays else 1.0)
+	tween.tween_property(banner, "position:y", -700.0, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	tween.tween_callback(layer.queue_free)

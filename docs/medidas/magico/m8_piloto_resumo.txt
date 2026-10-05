@@ -1,0 +1,18 @@
+M8 (rosto do mágico gigante), 04/10. Piloto -- magico_rosto, luta real, 60 fps: entrada da fase 3, Mãos que Agarram, Cartola Despejando, Cartas Gigantes (com tiros na cabeça a cada 0,2 s) e derrota.
+
+Primeira rodada (o tonto só entrava quando o encolher começava; a medida da cartola lia o shrink um quadro atrasado):
+rosto IntroGiant: 1×111, 2×51, 1×13; bravo 0 vez(es); giro máximo da cartola 0.00 rad; cartola fora do lugar até 0.00 px
+rosto GrabHands: 2×24, 1×47, 2×25, 1×48, 2×24, 1×48, 2×14; bravo 0 vez(es); giro máximo da cartola 0.00 rad; cartola fora do lugar até 0.00 px
+rosto HatPour: 1×35, 2×181, 1×84; bravo 0 vez(es); giro máximo da cartola 0.60 rad; cartola fora do lugar até 0.00 px
+rosto GiantCards: 3×16, 1×44, 3×16, 1×44, 3×16, 1×44, 3×16, 1×44, 3×16, 1×44; bravo 5 vez(es); giro máximo da cartola 0.00 rad; cartola fora do lugar até 0.00 px
+rosto Derrota: 1×81, 4×27, -×42; bravo 0 vez(es); giro máximo da cartola 0.00 rad; cartola fora do lugar até 10.89 px
+
+Final:
+rosto IntroGiant: 1×111, 2×51, 1×13; bravo 0 vez(es); giro máximo da cartola 0.00 rad; cartola fora do lugar até 0.00 px
+rosto GrabHands: 2×24, 1×47, 2×25, 1×48, 2×24, 1×48, 2×14; bravo 0 vez(es); giro máximo da cartola 0.00 rad; cartola fora do lugar até 0.00 px
+rosto HatPour: 1×35, 2×181, 1×84; bravo 0 vez(es); giro máximo da cartola 0.60 rad; cartola fora do lugar até 0.00 px
+rosto GiantCards: 3×16, 1×44, 3×16, 1×44, 3×16, 1×44, 3×16, 1×44, 3×16, 1×44; bravo 5 vez(es); giro máximo da cartola 0.00 rad; cartola fora do lugar até 0.00 px
+rosto Derrota: 4×108, -×42; bravo 0 vez(es); giro máximo da cartola 0.00 rad; cartola fora do lugar até 0.00 px
+
+Identidade (largura nas orelhas, linha dos olhos): 370, 380, 379, 374 px; alturas 570, 577, 573, 575. Escala única 0,921.
+Área de dano da cabeça (280 x 360 no jogo) dentro do desenho, na célula: 73, 74, 76, 77% (os cantos de baixo, ao lado do queixo pontudo, ficam vazios; a sobra favorece quem atira).

@@ -12,6 +12,8 @@
 [ext_resource type="Script" path="res://core/player/balloon.gd" id="10_balloon"]
 [ext_resource type="Script" path="res://core/player/balloon_area.gd" id="11_balloon_area"]
 [ext_resource type="Script" path="res://core/player/player_special.gd" id="12_special"]
+[ext_resource type="Script" path="res://core/player/player_loadout.gd" id="13_loadout"]
+[ext_resource type="Script" path="res://core/player/player_duo.gd" id="14_duo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(54, 132)
@@ -78,6 +80,12 @@ script = ExtResource("9_applause")
 
 [node name="PlayerSpecial" type="Node" parent="."]
 script = ExtResource("12_special")
+
+[node name="PlayerLoadout" type="Node" parent="."]
+script = ExtResource("13_loadout")
+
+[node name="PlayerDuo" type="Node" parent="."]
+script = ExtResource("14_duo")
 
 [node name="Balloon" type="Node2D" parent="."]
 position = Vector2(0, -110)

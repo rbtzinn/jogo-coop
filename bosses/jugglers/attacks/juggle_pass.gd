@@ -49,6 +49,11 @@ func _tick(t: float) -> void:
 		var since: float = t - throw[0]
 		var thrower := l if throw[1] else r
 		var catcher := r if throw[1] else l
+		# Tonto não arremessa: o arremesso dele não sai (fica parado para levar tiro).
+		if throw[3] == null and thrower.dizzy:
+			if since >= 0.0:
+				throw[6] = true
+			continue
 		if since >= -0.25 and since < 0.1:
 			thrower.pose = &"throw"
 		if since < 0.0:

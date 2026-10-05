@@ -1,0 +1,21 @@
+Online (tests/run_online.sh), 04/10, depois do marco:
+[host] OK   shell game: same box and swaps on both PCs
+[host] OK   card fan: same targets on both PCs, P1 P2 P1 ([0, 1, 0])
+[host] OK   black cards: same turns and same path on both PCs (0.000 px)
+[client] OK   shell game: same box and swaps on both PCs
+[client] OK   card fan: same targets on both PCs, P1 P2 P1 ([0, 1, 0])
+[client] OK   black cards: same turns and same path on both PCs (0.000 px)
+host: 0 falhas, cliente: 0 falhas
+rede ruim:
+[host] OK   shell game: same box and swaps on both PCs
+[host] OK   card fan: same targets on both PCs, P1 P2 P1 ([0, 1, 0])
+[host] OK   black cards: same turns and same path on both PCs (0.000 px)
+[client] OK   shell game: same box and swaps on both PCs
+[client] OK   card fan: same targets on both PCs, P1 P2 P1 ([0, 1, 0])
+[client] OK   black cards: same turns and same path on both PCs (0.000 px)
+host: 0 falhas, cliente: 0 falhas
+
+Primeira rodada normal falhou por tempo (99) porque rodou junto com outra rodada na mesma porta: log em scratchpad/gp/online_normal_falha_porta_ocupada.log
+
+Bateria completa depois do marco (sh tests/run_all.sh): 9 testes locais com 0 falhas, online normal ok e ruim ok.
+Correção no cliente (rede ruim, a última rodada da bateria): maior passo extra da preta num quadro 14,6 px no cliente, 0,0 no host.

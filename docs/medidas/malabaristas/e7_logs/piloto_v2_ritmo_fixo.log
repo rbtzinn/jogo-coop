@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 - Build 31.0.101.2141 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics 630
+
+totem IntroTotem (base Tico): idle×30, giro×66, 2×13, 1×20, 2×3; topo do desenho y 789.8, topo da área de dano y 798.0 (fundo da tábua 784.0)
+totem parado (base Tico): 2×16, 1×20, 2×20, 1×4; topo do desenho y 789.8, topo da área de dano y 798.0 (fundo da tábua 784.0)
+totem TotemWalk (base Tico): 1×5, 7×11, 8×8, 2×11, 3×11, 4×6, 5×6, 6×5, 3×4, 4×5, 5×4, 6×4, 3×4, 4×4, 5×3, 6×4, 3×4, 4×3, 5×3, 6×4, 3×3, 4×3, 5×3, 6×4, 3×3, 4×3, 5×4, 6×4, 3×3, 4×4, 5×4, 6×4, 3×4, 4×5, 5×4, 6×5, 3×6, 4×6, 5×10, 6×1, 2×4, 1×14; desenho em cada objeto novo ["8", "4", "3", "5"]; mão→clave ao nascer até 38.6 px; topo do desenho y 786.0, topo da área de dano y 798.0 (fundo da tábua 784.0); jogador na tábua: vida 3 -> 3
+totem ClubVolley (base Tico): 1×5, 2×9, 7×20, 8×4, 1×6, 2×6, 7×20, 8×4, 1×10, 2×3, 7×20, 8×4, 1×12, 7×20, 8×4, 1×17, 2×20, 1×20, 2×20, 1×20, 2×9; desenho em cada objeto novo ["8", "8", "8", "8"]; mão→clave ao nascer até 0.0 px; topo do desenho y 789.8, topo da área de dano y 798.0 (fundo da tábua 784.0)
+totem Bowling (base Tico): 2×10, 1×2, 2×38, 1×15, 2×25, 1×20, 2×31, 1×9, 2×20, 1×20, 2×20, 1×20, 2×20, 1×20, 2×20, 1×5; desenho em cada objeto novo ["2", "2", "2"]; topo do desenho y 789.8, topo da área de dano y 798.0 (fundo da tábua 784.0)
+totem Tonto (base Tico): 1×14, 2×20, 1×20, 2×20, 1×20, 2×20, 1×20, 2×20, 1×20, 2×20, 1×20, 2×20, 1×20, 2×20, 1×20, 2×6; bola de cura→cabeça no último quadro 15.1 px; topo do desenho y 789.8, topo da área de dano y 798.0 (fundo da tábua 784.0)
+totem IntroUnicycle (base Tico): 7×20, 8×51, giro×55, ride×18; topo do desenho y 795.6, topo da área de dano y 798.0 (fundo da tábua 784.0)

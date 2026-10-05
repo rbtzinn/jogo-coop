@@ -7,6 +7,7 @@ extends Node
 const FIGHTS := [
 	"res://bosses/tamer/tamer_fight.tscn",
 	"res://bosses/jugglers/jugglers_fight.tscn",
+	"res://bosses/magician/magician_fight.tscn",
 ]
 ## Tempo de jogo em cada fase (segundos).
 const SECONDS_PER_PHASE := 45.0

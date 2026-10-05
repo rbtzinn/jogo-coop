@@ -13,6 +13,8 @@ var _high: Juggler
 var _low: Juggler
 var _high_from := Vector2.ZERO
 var _low_from := Vector2.ZERO
+## Um ficou tonto ainda agachado: desistem da troca (o tonto não pula).
+var _aborted := false
 
 
 func _start() -> void:
@@ -20,10 +22,18 @@ func _start() -> void:
 	_low = boss.right()
 	_high_from = _high.global_position
 	_low_from = _low.global_position
+	_aborted = false
 
 
 func _tick(t: float) -> void:
+	if _aborted:
+		return
 	if t < CROUCH:
+		if _high.dizzy or _low.dizzy:
+			_aborted = true
+			_high.pose = &"idle"
+			_low.pose = &"idle"
+			return
 		_high.pose = &"crouch"
 		_low.pose = &"crouch"
 		return
@@ -40,11 +50,11 @@ func _tick(t: float) -> void:
 
 
 func _is_done() -> bool:
-	return elapsed >= CROUCH + FLIGHT + 0.3
+	return _aborted or elapsed >= CROUCH + FLIGHT + 0.3
 
 
 func _stop() -> void:
-	if _high != null:
+	if _high != null and not _aborted:
 		_finish_swap()
 
 

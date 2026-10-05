@@ -1,0 +1,13 @@
+arremesso JugglePass quadro 31 Tico: objeto em (247.52, 818.9529), desenho 3, palma em (242.0, 847.0), distância 28.6 px
+arremesso JugglePass quadro 63 Teco: objeto em (1692.0, 850.0), desenho 3, palma em (1678.0, 847.0), distância 14.3 px
+arremesso JugglePass quadro 97 Tico: objeto em (247.52, 818.9529), desenho 3, palma em (242.0, 847.0), distância 28.6 px
+arremesso JugglePass quadro 130 Teco: objeto em (1672.48, 837.3707), desenho 3, palma em (1678.0, 847.0), distância 11.1 px
+arremesso JugglePass quadro 163 Tico: objeto em (247.52, 818.9529), desenho 3, palma em (242.0, 847.0), distância 28.6 px
+arremesso JugglePass quadro 196 Teco: objeto em (1672.48, 849.2604), desenho 3, palma em (1678.0, 847.0), distância 6.0 px
+arremesso BounceBalls quadro 336 Teco: objeto em (1692.0, 850.0), desenho 3, palma em (1678.0, 847.0), distância 14.3 px
+arremesso BounceBalls quadro 378 Teco: objeto em (1692.0, 850.0), desenho 3, palma em (1678.0, 847.0), distância 14.3 px
+arremesso BounceBalls quadro 421 Teco: objeto em (1683.333, 850.2902), desenho 3, palma em (1678.0, 847.0), distância 6.3 px
+nariz parado: 935 quadros, máximo 21.2 px, P95 14.5 px, mediana 0.0 px
+nariz entrada: 9 quadros, máximo 47.0 px, P95 47.0 px, mediana 42.4 px
+nariz arremesso: 245 quadros, máximo 46.6 px, P95 15.5 px, mediana 0.0 px
+nariz saida: 9 quadros, máximo 16.5 px, P95 16.5 px, mediana 6.1 px

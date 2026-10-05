@@ -13,8 +13,34 @@ extends Node2D
 ## Corrida desenhada quadro a quadro (vazio = corrida feita com as peças).
 @export var run_animation: FrameAnimation
 
+## Parry desenhado quadro a quadro (vazio = o desenho de peças girando). Sem pistola: enquanto
+## toca, o braço da arma some.
+@export var parry_animation: FrameAnimation
+## Parado desenhado (respirando, olhos abertos); o braço da arma continua por código.
+@export var idle_animation: FrameAnimation
+## Pulo desenhado (8 quadros no ar): 1-3 subindo, 4-5 no alto, 6-8 caindo. O quadro sai da
+## velocidade vertical, não do tempo, então pulo curto, pulo alto e queda da beirada funcionam.
+@export var jump_animation: FrameAnimation
+## Dash desenhado (4 quadros: arranque, 2 de velocidade, freada), escolhidos pelo andamento do
+## dash; gira na direção do dash em volta do `pivot` da animação.
+@export var dash_animation: FrameAnimation
+## Abaixado desenhado (4 quadros: descendo, 2 abaixado em loop, levantando). Sem ombros na
+## animação: a pistola sai do ombro das peças, como antes, para o tiro abaixado não mudar de altura.
+@export var crouch_animation: FrameAnimation
+## Dano desenhado (4 quadros no ar: golpe, jogado para trás, susto, recompondo), tocado uma vez
+## pela duração do atordoamento (`play_hurt`).
+@export var hurt_animation: FrameAnimation
+## Balão desenhado (quem cai): 1-6 flutuando em loop, 7 e 8 inclinado nos extremos do
+## balanço. Origem no meio do oval. Vazio = balão desenhado por código com a cabeça.
+@export var balloon_animation: FrameAnimation
+## Virando balão (1-4, ao cair) e estouro do resgate (5-8), mesma origem do balão.
+@export var balloon_turn_animation: FrameAnimation
+
 ## Grande Número deste personagem (cena com um script GrandNumber).
 @export var grand_number: PackedScene
+## Grande Número desenhado (opcional): o número escolhe o quadro (`GrandNumber.drawn_frame`), e o
+## braço da pistola some enquanto ele toca.
+@export var special_animation: FrameAnimation
 
 @export_group("Proporções")
 @export var arm_length := 32.0
@@ -24,6 +50,9 @@ extends Node2D
 @export var stride := 16.0
 @export var step_lift := 12.0
 @export var steps_per_second := 3.4
+## Duração relativa de cada quadro da corrida desenhada (vazio = todos iguais). Medida pelo pé
+## de apoio: cada pose fica o tempo em que o pé desenhado recua junto com o chão.
+@export var run_frame_weights: PackedFloat32Array = []
 @export var bob_height := 5.0
 
 @export_group("Abaixar")
@@ -70,7 +99,40 @@ var _crouch := 0.0
 var _frame_sprite := Sprite2D.new()
 ## Ombro do quadro desenhado atual (vale só enquanto ele está na tela).
 var _frame_shoulder := Vector2.ZERO
+## O quadro atual traz o ombro (senão vale o ombro das peças, que seguem posicionadas escondidas).
+var _frame_has_shoulder := false
 var _showing_frames := false
+## Progresso do parry (0 a 1) ou -1 fora dele (o Player avisa a cada quadro).
+var _parry_progress := -1.0
+## Quadros por segundo do parado desenhado (o ciclo de 8 dura 1 s).
+const IDLE_FPS := 8.0
+## Velocidade vertical (px/s) onde o pulo desenhado troca de quadro: abaixo do 1º valor é o
+## quadro 1, entre o 1º e o 2º é o quadro 2, e assim por diante (negativo = subindo).
+const JUMP_FRAME_SPEEDS: Array[float] = [-950.0, -550.0, -200.0, 0.0, 200.0, 550.0, 950.0]
+## Onde (fração do dash) o dash desenhado passa para o quadro 2, 3 e 4.
+const DASH_FRAME_STEPS: Array[float] = [0.2, 0.5, 0.8]
+## Quadros por segundo do loop abaixado (quadros 2 e 3).
+const CROUCH_FPS := 3.0
+## O abaixado desenhado só entra depois deste tanto do abaixar (suavizado): antes disso fica o
+## desenho em pé, com o braço da pistola descendo pelo tronco. O ombro (e o tiro) segue as peças
+## o tempo todo; assim o braço não cruza o rosto do quadro de meio caminho.
+const CROUCH_FRAME_FROM := 0.6
+## Quadro do Grande Número desenhado (-1 = fora dele); o Player avisa a cada quadro.
+var special_frame := -1
+var _hiding_gun := false
+## Duração do dash deste personagem (o Player ajusta com o truque equipado) e quanto já passou.
+var dash_length := 0.17
+var _dash_elapsed := 0.0
+## Dano: quanto falta e quanto dura o quadro a quadro do golpe (0 = fora dele).
+var _hurt_left := 0.0
+var _hurt_length := 0.22
+## Quando o parado desenhado começou (para ele sempre entrar pelo quadro 1).
+var _idle_since := 0.0
+## Pose final do Grande Número: quanto tempo ainda pode começar (esperando o pouso) e quanto falta.
+const ENDING_WAIT := 0.6
+const ENDING_TIME := 0.35
+var _ending_wait := 0.0
+var _ending_left := 0.0
 
 
 func _ready() -> void:
@@ -91,6 +153,10 @@ func _ready() -> void:
 func update_pose(delta: float, velocity: Vector2, on_floor: bool, dashing: bool,
 		aim: Vector2, run_speed: float, crouching := false) -> void:
 	_time += delta
+	_dash_elapsed = _dash_elapsed + delta if dashing else 0.0
+	_hurt_left = maxf(_hurt_left - delta, 0.0)
+	_ending_wait = maxf(_ending_wait - delta, 0.0)
+	_ending_left = maxf(_ending_left - delta, 0.0)
 	var speed_ratio := clampf(absf(velocity.x) / run_speed, 0.0, 1.0)
 	var running := on_floor and not dashing and speed_ratio > 0.15
 	if running:
@@ -100,7 +166,9 @@ func update_pose(delta: float, velocity: Vector2, on_floor: bool, dashing: bool,
 
 	_update_body(delta, velocity, on_floor, dashing, running, crouching)
 	_update_legs(velocity, on_floor, dashing, running)
-	_update_frames(running)
+	_update_frames(velocity, running, on_floor and not dashing and not running and not crouching,
+			not on_floor and not dashing, dashing,
+			on_floor and not dashing and (crouching or _crouch > 0.0), crouching)
 	_update_arms(delta, on_floor, dashing, running, aim)
 	_update_face(delta, aim, dashing)
 
@@ -111,11 +179,32 @@ func get_muzzle_position() -> Vector2:
 
 ## `kick`: força do coice (o Tiro EX usa mais que 1: braço vai mais para trás e o clarão é maior).
 func play_fire(kick := 1.0) -> void:
+	_ending_wait = 0.0
+	_ending_left = 0.0
 	_recoil = 7.0 * kick
 	_flash_timer = 0.05 * kick
 	muzzle_flash.show()
 	muzzle_flash.rotation = randf() * TAU
 	muzzle_flash.scale = Vector2.ONE * randf_range(0.6, 0.85) * sqrt(kick)
+
+
+## O personagem levou um golpe: toca o dano desenhado durante `duration` segundos (só desenho).
+func play_hurt(duration: float) -> void:
+	_hurt_length = maxf(duration, 0.01)
+	_hurt_left = _hurt_length
+
+
+## Fim do Grande Número desenhado: no primeiro momento parado no chão logo depois, mostra o último
+## quadro do número (a pose final, ex.: o "ta-dá" do Salto Mortal) por um instante. Só desenho: andar,
+## pular ou atirar corta na hora.
+func play_special_ending() -> void:
+	if special_animation != null:
+		_ending_wait = ENDING_WAIT
+
+
+## O Player avisa em que ponto do parry está (0 a 1), ou -1 quando não está em parry.
+func set_parry_progress(progress: float) -> void:
+	_parry_progress = progress
 
 
 func play_land() -> void:
@@ -212,7 +301,8 @@ func _update_arms(delta: float, on_floor: bool, dashing: bool, running: bool, ai
 	if _flash_timer <= 0.0:
 		muzzle_flash.hide()
 
-	var shoulder_f := _frame_shoulder if _showing_frames else to_local(shoulder_front.global_position)
+	var shoulder_f := _frame_shoulder if _showing_frames and _frame_has_shoulder \
+			else to_local(shoulder_front.global_position)
 	var hand_f := shoulder_f + aim * (arm_length - _recoil)
 	front_arm.set_points(shoulder_f, hand_f, Vector2(0, 5))
 	gun_hand.position = hand_f
@@ -238,22 +328,109 @@ func _update_arms(delta: float, on_floor: bool, dashing: bool, running: bool, ai
 	back_hand.position = hand_b
 
 
-## Mostra o quadro desenhado da corrida (se houver) no lugar das peças.
-func _update_frames(running: bool) -> void:
-	var use_frames := running and run_animation != null and run_animation.frame_count() > 0
+## Mostra o quadro desenhado (parry > Grande Número > dano > dash > abaixado > pulo > corrida >
+## parado, se houver) no lugar das peças.
+func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool, dashing: bool,
+		crouch_shown: bool, crouching: bool) -> void:
+	var parrying := _parry_progress >= 0.0 and parry_animation != null and parry_animation.frame_count() > 0
+	var special_drawn := special_frame >= 0 and special_animation != null
+	var hurt_drawn := _hurt_left > 0.0 and hurt_animation != null and hurt_animation.frame_count() >= 4
+	var dash_drawn := dashing and dash_animation != null and dash_animation.frame_count() > 0
+	var has_crouch := crouch_animation != null and crouch_animation.frame_count() >= 4
+	var crouch_drawn := crouch_shown and has_crouch and ease(_crouch, -2.0) >= CROUCH_FRAME_FROM
+	var jump_drawn := airborne and jump_animation != null and jump_animation.frame_count() > 0
+	var run_drawn := running and run_animation != null and run_animation.frame_count() > 0
+	# Começo do abaixar e fim do levantar: o desenho em pé.
+	var crouch_start := crouch_shown and has_crouch and not crouch_drawn
+	var idle_drawn := (idle or crouch_start) and idle_animation != null and idle_animation.frame_count() > 0
+	# O parado recomeça do quadro 1 quando o personagem para (senão entra num quadro qualquer).
+	if not idle_drawn:
+		_idle_since = _time
+	if idle and _ending_wait > 0.0:
+		_ending_wait = 0.0
+		_ending_left = ENDING_TIME
+	if not idle:
+		_ending_left = 0.0
+	var ending_drawn := idle and _ending_left > 0.0 and special_animation != null
+	if ending_drawn:
+		_idle_since = _time
+	var use_frames := parrying or special_drawn or hurt_drawn or dash_drawn or crouch_drawn or jump_drawn or run_drawn or idle_drawn
 	if use_frames != _showing_frames:
 		_showing_frames = use_frames
 		_frame_sprite.visible = use_frames
 		for part in _body_parts:
 			part.visible = not use_frames
+	# Parry e Grande Número desenhados são sem pistola: o braço da arma some enquanto tocam.
+	var hide_gun := parrying or special_drawn or ending_drawn
+	if hide_gun != _hiding_gun:
+		_hiding_gun = hide_gun
+		front_arm.visible = not hide_gun
+		gun_hand.visible = not hide_gun
 	if not use_frames:
 		return
-	var count := run_animation.frame_count()
-	var index := int(_phase / TAU * count) % count
-	_frame_sprite.texture = run_animation.frames[index]
-	_frame_sprite.scale = Vector2.ONE * run_animation.frame_scale
-	_frame_sprite.position = run_animation.origin
-	_frame_shoulder = run_animation.shoulders[index]
+	var animation: FrameAnimation = idle_animation
+	if parrying:
+		animation = parry_animation
+	elif special_drawn:
+		animation = special_animation
+	elif hurt_drawn:
+		animation = hurt_animation
+	elif dash_drawn:
+		animation = dash_animation
+	elif crouch_drawn:
+		animation = crouch_animation
+	elif jump_drawn:
+		animation = jump_animation
+	elif run_drawn:
+		animation = run_animation
+	elif ending_drawn:
+		animation = special_animation
+	var count := animation.frame_count()
+	var index: int
+	if parrying:
+		index = mini(int(_parry_progress * count), count - 1)
+	elif special_drawn:
+		index = mini(special_frame, count - 1)
+	elif hurt_drawn:
+		index = mini(int((1.0 - _hurt_left / _hurt_length) * count), count - 1)
+	elif dash_drawn:
+		index = 0
+		for step in DASH_FRAME_STEPS:
+			if _dash_elapsed / maxf(dash_length, 0.01) >= step:
+				index += 1
+		index = mini(index, count - 1)
+	elif crouch_drawn:
+		# Descendo (1), abaixado em loop (2 e 3), levantando (4).
+		if crouching:
+			index = 0 if _crouch < 1.0 else 1 + int(_time * CROUCH_FPS) % 2
+		else:
+			index = 3
+	elif jump_drawn:
+		index = 0
+		for speed in JUMP_FRAME_SPEEDS:
+			if velocity.y >= speed:
+				index += 1
+		index = mini(index * count / (JUMP_FRAME_SPEEDS.size() + 1), count - 1)
+	elif run_drawn:
+		index = animation.index_at(_phase / TAU, run_frame_weights)
+	elif ending_drawn:
+		index = count - 1
+	else:
+		index = int((_time - _idle_since) * IDLE_FPS) % count
+	_frame_sprite.texture = animation.frames[index]
+	_frame_sprite.scale = Vector2.ONE * animation.frame_scale
+	# Dash para cima ou na diagonal (Pirueta): o desenho gira na direção do dash, em volta do
+	# meio do tronco. Dash reto fica sem giro, e a freada (último quadro) também: ela é o
+	# endireitar antes de voltar ao pulo.
+	var angle := 0.0
+	if dash_drawn and index < count - 1 and velocity.length() > 1.0:
+		angle = atan2(velocity.y, absf(velocity.x))
+	var pivot := animation.pivot
+	_frame_sprite.rotation = angle
+	_frame_sprite.position = pivot + (animation.origin_of(index) - pivot).rotated(angle)
+	_frame_has_shoulder = index < animation.shoulders.size()
+	if _frame_has_shoulder:
+		_frame_shoulder = pivot + (animation.shoulders[index] - pivot).rotated(angle)
 
 
 func _update_face(delta: float, aim: Vector2, dashing: bool) -> void:

@@ -30,6 +30,13 @@ func _ready() -> void:
 	connect_hurtbox($Lion/HurtboxBack, lion)
 
 
+func _physics_process(delta: float) -> void:
+	super(delta)
+	# Nas fases 2 e 3 o domador estala o chicote de medo no pedestal (fora das trocas de fase).
+	var intro := _current != null and _current.is_running() and _current.name in phase_intros
+	tamer.fear_lashes = phase >= 1 and not is_defeated and not intro
+
+
 ## Dados que só o host sabe (posição atual do leão, jogadores) e os dois PCs precisam.
 func _args_for(attack_name: StringName) -> Array:
 	var at := lion.global_position
@@ -54,6 +61,7 @@ func _on_catch_up() -> void:
 
 
 func _on_defeated() -> void:
+	tamer.fear_lashes = false
 	for hitbox: EnemyHitbox in [$Tamer/Hitbox, $Lion/Hitbox]:
 		hitbox.active = false
 	tamer.whip_pose = 0.0
@@ -69,4 +77,4 @@ func _pounce_target_x() -> float:
 	if alive.is_empty():
 		return lion.global_position.x
 	_pounce_turn += 1
-	return alive[_pounce_turn % alive.size()].global_position.x
+	return alive[_pounce_turn % alive.size()].target_position().x

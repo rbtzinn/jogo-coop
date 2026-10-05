@@ -1,0 +1,12 @@
+derrota: fase 2, derrotado true
+derrota: tela de fim no quadro 138 (2.30 s)
+0: Tico ride false 0 1670.0 620.0 -1 false
+0: Teco sit false 0 1670.0 470.0 -1 false
+23: Tico down true 1 1580.0 1000.0 -1 false
+23: Teco down true 1 1460.0 965.0 -1 false
+30: Tico down true 2 1580.0 1000.0 -1 false
+36: Tico down true 3 1580.0 1000.0 -1 false
+36: Teco down true 2 1460.0 965.0 -1 false
+41: Tico down true 4 1580.0 1000.0 -1 false
+42: Teco down true 3 1460.0 965.0 -1 false
+48: Teco down true 4 1460.0 965.0 -1 false

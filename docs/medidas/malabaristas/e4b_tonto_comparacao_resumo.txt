@@ -1,0 +1,33 @@
+## sem suavizar (baseline)
+tonto Tico: tonto por 4.18 s até a cura pousar; bola em (211.8473, 796.3117), meio da cabeça desenhada em (191.0, 810.0) (desenho 2): 24.9 px; do ponto fixo antigo: 10.0 px
+tonto Tico: passo da bola no último 0,2 s, máximo 40.3 px
+tonto Tico nariz parado: 196 quadros, máximo 21.2 px, P95 18.6 px
+tonto Tico nariz entrada: 1 quadros, máximo 28.5 px, P95 28.5 px
+tonto Tico nariz tonto: 251 quadros, máximo 36.1 px, P95 35.1 px
+tonto Tico nariz saida: 1 quadros, máximo 16.6 px, P95 16.6 px
+tonto Teco: tonto por 4.17 s até a cura pousar; bola em (1708.153, 796.3117), meio da cabeça desenhada em (1729.0, 810.0) (desenho 2): 24.9 px; do ponto fixo antigo: 10.0 px
+tonto Teco: passo da bola no último 0,2 s, máximo 40.3 px
+tonto Teco nariz parado: 197 quadros, máximo 21.2 px, P95 14.5 px
+tonto Teco nariz entrada: 1 quadros, máximo 12.9 px, P95 12.9 px
+tonto Teco nariz tonto: 250 quadros, máximo 36.1 px, P95 35.1 px
+tonto Teco nariz saida: 1 quadros, máximo 14.9 px, P95 14.9 px
+## correção inteira (medida e descartada)
+tonto Tico: inclinação máxima 9.7°, a ponta do sapato (95 px dos pés) sobe até 16.0 px
+tonto Tico nariz tonto: 251 quadros, máximo 23.8 px, P95 21.2 px
+tonto Teco: inclinação máxima 10.2°, a ponta do sapato (95 px dos pés) sobe até 16.8 px
+tonto Teco nariz tonto: 250 quadros, máximo 23.8 px, P95 21.2 px
+## metade (no jogo)
+tonto Tico: tonto por 4.18 s até a cura pousar; bola em (208.4266, 796.325), meio da cabeça desenhada em (189.0018, 810.0) (desenho 2): 23.8 px; do ponto fixo antigo: 10.0 px
+tonto Tico: inclinação máxima 4.8°, a ponta do sapato (95 px dos pés) sobe até 8.0 px
+tonto Tico: passo da bola no último 0,2 s, máximo 34.6 px
+tonto Tico nariz parado: 196 quadros, máximo 21.2 px, P95 18.6 px
+tonto Tico nariz entrada: 1 quadros, máximo 28.5 px, P95 28.5 px
+tonto Tico nariz tonto: 251 quadros, máximo 29.1 px, P95 26.2 px
+tonto Tico nariz saida: 1 quadros, máximo 15.7 px, P95 15.7 px
+tonto Teco: tonto por 4.17 s até a cura pousar; bola em (1713.579, 796.3618), meio da cabeça desenhada em (1732.822, 810.0183) (desenho 2): 23.6 px; do ponto fixo antigo: 10.4 px
+tonto Teco: inclinação máxima 5.1°, a ponta do sapato (95 px dos pés) sobe até 8.4 px
+tonto Teco: passo da bola no último 0,2 s, máximo 34.6 px
+tonto Teco nariz parado: 197 quadros, máximo 21.2 px, P95 14.5 px
+tonto Teco nariz entrada: 1 quadros, máximo 12.9 px, P95 12.9 px
+tonto Teco nariz tonto: 250 quadros, máximo 29.1 px, P95 26.2 px
+tonto Teco nariz saida: 1 quadros, máximo 15.2 px, P95 15.2 px

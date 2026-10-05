@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://core/world/world_walker.gd" id="1_walker"]
+
+[node name="WorldWalker" type="CharacterBody3D"]
+script = ExtResource("1_walker")

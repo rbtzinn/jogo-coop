@@ -1,0 +1,29 @@
+M7 (mãos gigantes), 04/10. Piloto -- magico_maos, luta real, 60 fps: entrada da fase 3, Mãos que Agarram duas vezes, Cartas Gigantes.
+
+Antes de corrigir as agarradas (grab_hands.gd original):
+maos IntroGiant, esquerda: 1×175; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 0%, mínimo 0% (0 quadros de golpe); espelho certo true
+maos IntroGiant, direita: 1×175; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 0%, mínimo 0% (0 quadros de golpe); espelho certo true
+maos GrabHands, esquerda: 1×64, 2×3, 3×3, 4×20, 1×46, 2×3, 3×3, 4×28, 3×10, 2×9, 1×41; golpe fora dos desenhos 3-4: 3 quadros; área de dano acima do chão no desenho: média 76%, mínimo 59% (52 quadros de golpe); espelho certo true
+maos GrabHands, direita: 1×100, 2×3, 3×3, 4×20, 1×46, 2×3, 3×3, 4×28, 3×10, 2×9, 1×5; golpe fora dos desenhos 3-4: 3 quadros; área de dano acima do chão no desenho: média 76%, mínimo 58% (52 quadros de golpe); espelho certo true
+maos GrabHands, esquerda: 1×64, 2×3, 3×3, 4×20, 1×46, 2×3, 3×3, 4×28, 3×10, 2×9, 1×41; golpe fora dos desenhos 3-4: 3 quadros; área de dano acima do chão no desenho: média 76%, mínimo 59% (52 quadros de golpe); espelho certo true
+maos GrabHands, direita: 1×100, 2×3, 3×3, 4×20, 1×46, 2×3, 3×3, 4×28, 3×10, 2×9, 1×5; golpe fora dos desenhos 3-4: 3 quadros; área de dano acima do chão no desenho: média 76%, mínimo 58% (52 quadros de golpe); espelho certo true
+maos GiantCards, esquerda: 1×12, 4×23, 1×73, 4×24, 1×268; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 0%, mínimo 0% (0 quadros de golpe); espelho certo true
+maos GiantCards, direita: 1×59, 4×24, 1×73, 4×24, 1×220; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 0%, mínimo 0% (0 quadros de golpe); espelho certo true
+maior passo da mão esquerda num quadro: 298,5 px (do chão para perto do descanso, já aberta)
+
+Depois:
+maos IntroGiant, esquerda: 1×175; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 0%, mínimo 0% (0 quadros de golpe); espelho certo true
+maos IntroGiant, direita: 1×175; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 0%, mínimo 0% (0 quadros de golpe); espelho certo true
+maos GrabHands, esquerda: 1×64, 2×3, 3×3, 4×23, 3×6, 2×5, 1×32, 2×3, 3×3, 4×28, 3×10, 2×9, 1×41; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 77%, mínimo 62% (49 quadros de golpe); espelho certo true
+maos GrabHands, direita: 1×100, 2×3, 3×3, 4×23, 3×6, 2×5, 1×32, 2×3, 3×3, 4×28, 3×10, 2×9, 1×5; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 77%, mínimo 62% (49 quadros de golpe); espelho certo true
+maos GrabHands, esquerda: 1×64, 2×3, 3×3, 4×23, 3×6, 2×5, 1×32, 2×3, 3×3, 4×28, 3×10, 2×9, 1×41; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 77%, mínimo 62% (49 quadros de golpe); espelho certo true
+maos GrabHands, direita: 1×100, 2×3, 3×3, 4×23, 3×6, 2×5, 1×32, 2×3, 3×3, 4×28, 3×10, 2×9, 1×5; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 77%, mínimo 62% (49 quadros de golpe); espelho certo true
+maos GiantCards, esquerda: 1×12, 4×23, 1×73, 4×24, 1×268; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 0%, mínimo 0% (0 quadros de golpe); espelho certo true
+maos GiantCards, direita: 1×59, 4×24, 1×73, 4×24, 1×220; golpe fora dos desenhos 3-4: 0 quadros; área de dano acima do chão no desenho: média 0%, mínimo 0% (0 quadros de golpe); espelho certo true
+maior passo da mão esquerda num quadro: 75,6 px (a descida do golpe)
+
+Teste local com o grab_hands.gd antigo: FAIL grab: hit only with a closing hand (6 open), no jump between grabs (402 px). Com o novo: 0 abertos, 76 px.
+
+Área de dano (220 x 220 no jogo) acima do chão que cai no desenho, na célula: quadro 1 73%, 2 79%, 3 81%, 4 82%.
+
+Identidade: largura da manga 278, 279, 282, 297 px; área do botão dourado 798, 729, 799, 988 px (M1 aprovada: aberta 217, fechada 257).

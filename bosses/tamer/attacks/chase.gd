@@ -59,7 +59,9 @@ func _on_tick(delta: float) -> void:
 	if t >= _next_decision:
 		_next_decision = t + DECIDE_EVERY
 		if is_instance_valid(_target):
-			var dx := _target.global_position.x - lion.global_position.x
+			# Persegue a isca de fumaça, se houver (Fumaça do Mágico).
+			var aim: Vector2 = _target.target_position() if _target is Player else _target.global_position
+			var dx := aim.x - lion.global_position.x
 			if absf(dx) > 40.0:
 				_direction = -1 if dx < 0.0 else 1
 				lion.set_facing(_direction)

@@ -1,0 +1,11 @@
+salto orientação para trás: 0 vezes
+salto Tico0: 8 orientações diferentes durante o giro
+salto Teco0: 8 orientações diferentes durante o giro
+salto Tico1: 8 orientações diferentes durante o giro
+salto Teco1: 8 orientações diferentes durante o giro
+salto meio de massa agachado: 136 quadros, máximo 0.0 px, P95 0.0 px
+salto meio de massa entrada_giro: 4 quadros, máximo 8.7 px, P95 8.7 px
+salto meio de massa giro: 240 quadros, máximo 60.1 px, P95 52.0 px
+salto meio de massa aterrissagem: 40 quadros, máximo 8.3 px, P95 8.3 px
+salto meio de massa parado: 176 quadros, máximo 7.2 px, P95 4.6 px
+giro: troca de desenho (relativo aos pés) máx 11,3 px; caminho do ataque máx 54,9 px por quadro

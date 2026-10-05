@@ -1,0 +1,73 @@
+Piloto comparativo das cartas pretas (Leque de Cartas), 04/10. Luta real, --fixed-fps 60, 6 ataques por rodada (sementes 100 a 105), bots.
+Conjuntos: A = 480 px/s, 90°/s, atraso 0,2 s, 8 trechos de 0,1 s; B = 560 px/s, 120°/s, 0,2 s, 8 trechos; C = 640 px/s, 180°/s, 0,15 s, 10 trechos.
+Estratégias: parado; anda (vai e volta entre x 250 e 1000); pula/dash/dash_tras/dash_volta reagem só à preta a menos de ~0,3 s (dash atravessa ataques).
+A rodada B parado+pula (4 ataques) com o bot pulando em QUALQUER carta (antes do ajuste): preta 6/6 no parado, 3/6 no que pula; 7 contatos de retas no que pula.
+
+== A_anda_dash
+perseguidoras A: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras A: alvo anda, 7 de 9 pretas acertaram (78%)
+perseguidoras A: alvo dash, 0 de 9 pretas acertaram (0%)
+perseguidoras A: contatos das retas P1 (anda) 5, P2 (dash) 2
+== A_dash_tras
+perseguidoras A: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras A: alvo dash_tras, 11 de 18 pretas acertaram (61%)
+perseguidoras A: contatos das retas P1 (dash_tras) 11, P2 (dash_tras) 11
+== A_dash_volta
+perseguidoras A: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras A: alvo dash_volta, 6 de 18 pretas acertaram (33%)
+perseguidoras A: contatos das retas P1 (dash_volta) 3, P2 (dash_volta) 5
+== A_parado_pula
+perseguidoras A: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras A: alvo parado, 9 de 9 pretas acertaram (100%)
+perseguidoras A: alvo pula, 0 de 9 pretas acertaram (0%)
+perseguidoras A: contatos das retas P1 (parado) 0, P2 (pula) 13
+== B_anda_dash
+perseguidoras B: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras B: alvo anda, 8 de 9 pretas acertaram (89%)
+perseguidoras B: alvo dash, 0 de 9 pretas acertaram (0%)
+perseguidoras B: contatos das retas P1 (anda) 5, P2 (dash) 3
+== B_dash_tras
+perseguidoras B: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras B: alvo dash_tras, 17 de 18 pretas acertaram (94%)
+perseguidoras B: contatos das retas P1 (dash_tras) 12, P2 (dash_tras) 11
+== B_dash_volta
+perseguidoras B: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras B: alvo dash_volta, 5 de 18 pretas acertaram (28%)
+perseguidoras B: contatos das retas P1 (dash_volta) 0, P2 (dash_volta) 0
+== B_parado_pula
+perseguidoras B: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras B: alvo parado, 9 de 9 pretas acertaram (100%)
+perseguidoras B: alvo pula, 0 de 9 pretas acertaram (0%)
+perseguidoras B: contatos das retas P1 (parado) 0, P2 (pula) 11
+== B_pp
+perseguidoras B: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras B: alvo parado, 6 de 6 pretas acertaram (100%)
+perseguidoras B: alvo pula, 3 de 6 pretas acertaram (50%)
+perseguidoras B: contatos das retas P1 (parado) 0, P2 (pula) 7
+== C_anda_dash
+perseguidoras C: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras C: alvo anda, 9 de 9 pretas acertaram (100%)
+perseguidoras C: alvo dash, 0 de 9 pretas acertaram (0%)
+perseguidoras C: contatos das retas P1 (anda) 5, P2 (dash) 3
+== C_dash_tras
+perseguidoras C: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras C: alvo dash_tras, 18 de 18 pretas acertaram (100%)
+perseguidoras C: contatos das retas P1 (dash_tras) 12, P2 (dash_tras) 12
+== C_dash_volta
+perseguidoras C: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras C: alvo dash_volta, 6 de 18 pretas acertaram (33%)
+perseguidoras C: contatos das retas P1 (dash_volta) 2, P2 (dash_volta) 3
+== C_parado_pula
+perseguidoras C: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras C: alvo parado, 9 de 9 pretas acertaram (100%)
+perseguidoras C: alvo pula, 0 de 9 pretas acertaram (0%)
+perseguidoras C: contatos das retas P1 (parado) 0, P2 (pula) 16
+
+== B_parry (depois de restringir as rosas às direções alcançáveis, -10° e 2°; bot de parry nos dois)
+perseguidoras B: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras B: alvo parry, 12 de 18 pretas acertaram (67%)
+perseguidoras B: rosas passando pelos jogadores, altura acima do chão (y 1000): [156, 149, 156, 149, 363, 363, 363, 156, 149, 363, -54, -100, 363, 156, 149, 363, 363]
+perseguidoras B: parries P1 9, P2 0
+perseguidoras B: contatos das retas P1 (parry) 6, P2 (parry) 7
+
+== Foto de leitura: piloto_gameplay_aviso_P1.png (quadro 100 do primeiro ataque: placa P1 sobre o palhaço antes do 3º leque; pretas com P1 e P2 escritos)

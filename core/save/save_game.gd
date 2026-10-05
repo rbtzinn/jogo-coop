@@ -6,6 +6,9 @@ extends Node
 ## O cliente online não salva nada: o save é do host, que manda uma cópia para o cliente mostrar
 ## (notas no mapa, ingressos).
 
+## O save mudou (compra, doação, equipamento ou cópia nova vinda do host).
+signal changed
+
 const VERSION := 1
 ## Ingressos (docs/shop.md), para cada jogador.
 const TICKETS_FIRST_WIN := 3
@@ -24,6 +27,9 @@ var _borrowed := false
 func _ready() -> void:
 	load_game()
 	Network.peer_ready.connect(_on_peer_ready)
+	# O host manda a cópia assim que o parceiro conecta, antes da ordem de carregar a fase:
+	# assim os jogadores dele já nascem com o equipamento certo.
+	Network.partner_connected.connect(_on_peer_ready)
 
 
 func load_game() -> void:
@@ -84,6 +90,38 @@ func record_victory(boss_id: String, grade: String, time: float) -> Dictionary:
 	return {"tickets": tickets, "first_win": first_win, "best_grade": best_grade, "best_time": best_time}
 
 
+## Fase de plataforma concluída (conta como "vencida" para os cadeados do mapa) e salva.
+## Retorna {"first_win"}.
+func record_level(level_id: String) -> Dictionary:
+	var first_win := not is_defeated(level_id)
+	var level: Dictionary = data.bosses.get(level_id, {"defeated": false, "best_grade": "", "best_time": 0.0})
+	level.defeated = true
+	data.bosses[level_id] = level
+	if is_keeper():
+		save_game()
+		share()
+	return {"first_win": first_win}
+
+
+## Ingresso escondido achado numa fase. Na primeira vez, +1 para cada jogador. Retorna se era novo.
+func record_ticket(ticket_id: String) -> bool:
+	var found: Array = data.get("found_tickets", [])
+	if ticket_id in found:
+		return false
+	found.append(ticket_id)
+	data.found_tickets = found
+	for key in PLAYER_KEYS:
+		data.players[key].tickets += 1
+	if is_keeper():
+		save_game()
+		share()
+	return true
+
+
+func has_ticket(ticket_id: String) -> bool:
+	return ticket_id in data.get("found_tickets", [])
+
+
 func is_defeated(boss_id: String) -> bool:
 	return data.bosses.get(boss_id, {}).get("defeated", false)
 
@@ -104,6 +142,7 @@ func _on_peer_ready(peer_id: int) -> void:
 func _receive_data(value: Dictionary) -> void:
 	data = value
 	_borrowed = true
+	changed.emit()
 
 
 ## Apaga o progresso (começar do zero).
@@ -121,7 +160,7 @@ static func _new_game() -> Dictionary:
 			"items": ["cork_gun", "tumble"],
 			"equipped": {"gun": "cork_gun", "trick": "tumble", "prop": "", "duo": ""},
 		}
-	return {"version": VERSION, "area": 1, "bosses": {}, "players": players}
+	return {"version": VERSION, "area": 1, "bosses": {}, "found_tickets": [], "players": players}
 
 
 ## Copia o que veio do arquivo por cima do jogo novo (campos novos ganham o valor padrão).

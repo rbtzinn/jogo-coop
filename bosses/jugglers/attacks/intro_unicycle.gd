@@ -10,6 +10,7 @@ var _target_x := 0.0
 var _base_from := Vector2.ZERO
 var _top_from := Vector2.ZERO
 var _landed := false
+var _jumped := false
 
 
 func _start() -> void:
@@ -20,6 +21,7 @@ func _start() -> void:
 	_base_from = boss.base().global_position
 	_top_from = boss.top().global_position
 	_landed = false
+	_jumped = false
 
 
 func _tick(t: float) -> void:
@@ -27,9 +29,16 @@ func _tick(t: float) -> void:
 		boss.unicycle.global_position.x = lerpf(START_X, _target_x, ease(t / ROLL_IN, -2.0))
 		boss.base().pose = &"idle"
 		boss.top().pose = &"throw"
+		# No totem desenhado: o braço esticado (soltura) apontando o monociclo que chega.
+		boss.top().throw_released = true
 		return
 	var u := clampf((t - ROLL_IN) / JUMP, 0.0, 1.0)
 	if u < 1.0:
+		if not _jumped:
+			# Saindo do totem desenhado (menor) para o salto no tamanho normal (E7): a nuvem esconde a troca.
+			_jumped = true
+			for juggler: Juggler in [boss.base(), boss.top()]:
+				Fx.spawn(preload("res://components/fx/dust_puff.tscn"), juggler.global_position + Vector2(0, -60))
 		var seat := boss.unicycle.seat_position()
 		boss.base().global_position = arc_point(_base_from, seat, 300.0, u)
 		boss.top().global_position = arc_point(_top_from, seat - Vector2(0, JugglersBoss.SHOULDER), 340.0, u)

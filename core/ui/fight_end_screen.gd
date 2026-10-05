@@ -70,7 +70,9 @@ func _ready() -> void:
 	subtitle.add_theme_color_override("font_color", UiTheme.INK)
 	subtitle.add_theme_font_size_override("font_size", 30)
 	layout.add_child(subtitle)
-	if victory and not result.is_empty():
+	if victory and result.get("level", false):
+		layout.add_child(_build_level_summary(result))
+	elif victory and not result.is_empty():
 		layout.add_child(_build_grade(result))
 
 	var first: Button
@@ -162,3 +164,25 @@ func _build_grade(data: Dictionary) -> Control:
 		label.add_theme_font_size_override("font_size", 28)
 		stats.add_child(label)
 	return row
+
+
+## Fase de plataforma (sem nota): tempo e ingressos escondidos achados.
+func _build_level_summary(data: Dictionary) -> Control:
+	var stats := VBoxContainer.new()
+	stats.alignment = BoxContainer.ALIGNMENT_CENTER
+	var time: float = data.get("time", 0.0)
+	var lines := [
+		"Tempo: %d:%02d" % [int(time) / 60, int(time) % 60],
+		"Ingressos escondidos: %d de %d" % [data.get("tickets_found", 0), data.get("tickets_total", 0)],
+	]
+	var tickets: int = data.get("tickets", 0)
+	if tickets > 0:
+		lines.append("+%d %s para cada um!" % [tickets, "ingresso" if tickets == 1 else "ingressos"])
+	for text in lines:
+		var label := Label.new()
+		label.text = text
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.add_theme_color_override("font_color", UiTheme.RED_DARK if text.begins_with("+") else UiTheme.INK)
+		label.add_theme_font_size_override("font_size", 30)
+		stats.add_child(label)
+	return stats

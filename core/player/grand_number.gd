@@ -67,6 +67,11 @@ func crouch_pose() -> bool:
 	return false
 
 
+## Qual quadro da folha desenhada do número mostrar agora (padrão: pelo tempo, de ponta a ponta).
+func drawn_frame(count: int) -> int:
+	return mini(int(elapsed / maxf(duration, 0.01) * count), count - 1)
+
+
 func _on_begin() -> void:
 	pass
 

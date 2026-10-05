@@ -1,0 +1,25 @@
+Revisão do marco: Três Caixas sem deslize (04/10). Piloto -- magico_caixas, luta real, 60 fps, 4 rodadas seguidas (sementes 11 a 14).
+
+caixas 0: começa em x 1560 olhando -1, entra na caixa 1; tampas abertas antes do embaralhar [1]; andou à vista 0.0 px; maior salto do alto 180.7 px (sumir3→sumir4); reapareceu na caixa certa true
+caixas 0: rev1×12, sumir1×3, sumir2×3, sumir3×3, sumir4×3, invisivel×1, sumir4×2, sumir3×3, sumir2×17, sumir3×3, sumir4×3, invisivel×371, sumir4×3, sumir3×4, sumir2×4, sumir1×4, rev1×17, rev2×21, rev1×1
+caixas 1: começa em x 960 olhando 1, entra na caixa 2; tampas abertas antes do embaralhar [2]; andou à vista 0.0 px; maior salto do alto 180.7 px (sumir3→sumir4); reapareceu na caixa certa true
+caixas 1: rev1×12, sumir1×3, sumir2×3, sumir3×3, sumir4×3, invisivel×1, sumir4×2, sumir3×3, sumir2×17, sumir3×3, sumir4×3, invisivel×371, sumir4×3, sumir3×4, sumir2×4, sumir1×4, rev1×17, rev2×21, rev1×1
+caixas 2: começa em x 560 olhando 1, entra na caixa 0; tampas abertas antes do embaralhar [0]; andou à vista 0.0 px; maior salto do alto 180.7 px (sumir3→sumir4); reapareceu na caixa certa true
+caixas 2: rev1×12, sumir1×3, sumir2×3, sumir3×3, sumir4×3, invisivel×1, sumir4×2, sumir3×3, sumir2×17, sumir3×3, sumir4×3, invisivel×371, sumir4×3, sumir3×4, sumir2×4, sumir1×4, rev1×17, rev2×21, rev1×1
+caixas 3: começa em x 1360 olhando -1, entra na caixa 2; tampas abertas antes do embaralhar [2]; andou à vista 0.0 px; maior salto do alto 180.7 px (sumir3→sumir4); reapareceu na caixa certa true
+caixas 3: rev1×12, sumir1×3, sumir2×3, sumir3×3, sumir4×3, invisivel×1, sumir4×2, sumir3×3, sumir2×17, sumir3×3, sumir4×3, invisivel×371, sumir4×3, sumir3×4, sumir2×4, sumir1×4, rev1×17, rev2×21, rev1×1
+
+Saltos do alto do desenho por troca na revelação (rodada 0; as outras iguais):
+  invisivel→sumir4 0 px
+  rev1→rev2 90.9 px
+  rev2→rev1 90.9 px
+  sumir1→rev1 5.4 px
+  sumir2→sumir1 4.7 px
+  sumir3→sumir2 62.5 px
+  sumir4→sumir3 180.7 px
+
+Linha de base (piloto da M6, antes): 885 a 912 px de deslize em reverência + ~93 px sumindo; salto de 242,5 px ao reaparecer (sumir4→rev1); vanish ~0,96 durante o embaralhar (cartola quase transparente no lugar de entrada).
+
+Versões intermediárias (falhas guardadas, caminhos absolutos):
+  v1 (sumia no lugar sem aparecer na caixa; enganava quando ele começava na frente de outra caixa): C:\Users\roberto.gabriel\AppData\Local\Temp\claude\c--jogo-coop\a3c5555f-0fb1-4b98-a0e2-ac83b517d037\scratchpad\rv\caixas_v1_some_no_lugar
+  v2 (o quadro da chegada contava 400-600 px à vista; o vanish ficava <1 no embaralhar): C:\Users\roberto.gabriel\AppData\Local\Temp\claude\c--jogo-coop\a3c5555f-0fb1-4b98-a0e2-ac83b517d037\scratchpad\rv\caixas_v2_quadro_da_chegada

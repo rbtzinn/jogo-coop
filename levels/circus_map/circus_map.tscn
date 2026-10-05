@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://core/network/ping_label.gd" id="8_ping"]
 [ext_resource type="FontFile" path="res://core/ui/fonts/Oswald.ttf" id="9_font"]
 [ext_resource type="FontFile" path="res://core/ui/fonts/Limelight-Regular.ttf" id="10_title"]
+[ext_resource type="Script" path="res://components/stage/control_sign.gd" id="11_sign"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(2000, 160)
@@ -57,6 +58,7 @@ stripe_color = Color(0.18, 0.36, 0.54, 1)
 position = Vector2(1070, 1000)
 script = ExtResource("2_door")
 title = "Trem do Circo"
+target_scene = "res://levels/train/train_level.tscn"
 level_id = "train"
 stripe_color = Color(0.25, 0.48, 0.29, 1)
 
@@ -64,6 +66,7 @@ stripe_color = Color(0.25, 0.48, 0.29, 1)
 position = Vector2(1440, 1000)
 script = ExtResource("2_door")
 title = "O Grande Mágico"
+target_scene = "res://bosses/magician/magician_fight.tscn"
 level_id = "magician"
 requires = Array[String](["tamer", "jugglers", "train"])
 stripe_color = Color(0.35, 0.23, 0.48, 1)
@@ -72,7 +75,12 @@ stripe_color = Color(0.35, 0.23, 0.48, 1)
 position = Vector2(1770, 1000)
 script = ExtResource("2_door")
 title = "Curiosidades"
+opens_shop = true
 stripe_color = Color(0.69, 0.48, 0.13, 1)
+
+[node name="ControlSign" type="Node2D" parent="."]
+position = Vector2(30, 410)
+script = ExtResource("11_sign")
 
 [node name="PlayerSpawner" type="Node2D" parent="."]
 script = ExtResource("3_spawner")

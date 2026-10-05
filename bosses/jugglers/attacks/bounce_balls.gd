@@ -22,6 +22,9 @@ var _balls: Array = []
 func _start() -> void:
 	if boss.mode == &"split":
 		_thrower = boss.left() if rng.randf() < 0.5 else boss.right()
+		# Quem está tonto não joga: joga o outro.
+		if boss.started_dizzy(_thrower):
+			_thrower = boss.right() if _thrower == boss.left() else boss.left()
 	else:
 		_thrower = boss.top()
 	_direction = 1.0 if _thrower.global_position.x < 960.0 else -1.0
@@ -36,11 +39,16 @@ func _tick(t: float) -> void:
 	var throwing := false
 	for i in THROWS.size():
 		var since: float = t - THROWS[i]
+		var ball: Array = _balls[i]
+		# Ficou tonto no meio: as bolas que faltavam não saem.
+		if ball[0] == null and _thrower.dizzy:
+			if since >= 0.0:
+				ball[1] = true
+			continue
 		if since >= -0.25 and since < 0.1:
 			throwing = true
 		if since < 0.0:
 			continue
-		var ball: Array = _balls[i]
 		if not ball[1]:
 			ball[1] = true
 			ball[0] = make_prop(&"ball", i == _pink_index, i)

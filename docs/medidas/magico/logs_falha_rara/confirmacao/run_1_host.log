@@ -1,0 +1,840 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[host] OK   host opened
+[host] OK   both on the map
+[host] OK   two walkers in the world
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+ERROR: Not supported by this display server.
+   at: keyboard_get_keycode_from_physical (servers/display/display_server.cpp:1224)
+   GDScript backtrace (most recent call first):
+       [0] display_name (res://core/settings/input_serializer.gd:67)
+       [1] _shoot_key_name (res://core/world/world_door.gd:258)
+       [2] _update_status (res://core/world/world_door.gd:249)
+       [3] _physics_process (res://core/world/world_door.gd:158)
+[host] OK   client chose the tent, both in the fight
+[host] OK   both players exist
+[host] OK   acrobat spawned with the host save equipment
+[host] OK   EX from host damaged boss (1500 -> 1475)
+[host] OK   EX from client damaged boss (1475 -> 1445)
+[host] OK   duo declared on this PC
+[host] boss after duo: 1445 -> 1045
+[host] OK   duo dealt big damage
+[host] OK   perfect bonus star (1.00)
+[host] OK   victory screen
+[host] result: { "time": 9.33333333333338, "health": 4, "max_health": 6, "parries": 0, "stars_used": 12, "score": 75.0, "grade": "A", "tickets": 4, "first_win": true, "best_grade": true, "best_time": true }
+[host] OK   grade shown
+[host] OK   save knows the victory (host saves, client gets a copy)
+[host] OK   only the host writes the save
+[host] OK   fight reloaded
+[host] OK   ready again after reload
+[host] OK   two players after reload
+[host] OK   new fight running
+[host] OK   partner removed on host
+[host] OK   fight goes on alone
+[host] OK   host reached phase 3
+[host] OK   partner back on host
+[host] OK   host sees partner downed
+[host] OK   host sees partner revived
+[host] OK   both on the train
+[host] OK   enemy shot by the client dies on this PC
+[host] OK   ticket taken by the client is in the save
+[host] OK   train finished on this PC
+[host] OK   train done in the save
+[host] OK   wrong box opened on this PC
+[host] OK   right box hit by the client: bonus damage (15)
+[host] black cards: largest extra step in one frame 0.0 px
+[host] OK   black cards: network correction under 40 px in one frame (0.0 px)
+[host] OK   shell game: same box and swaps on both PCs
+[host] OK   card fan: same targets on both PCs, P1 P2 P1 ([0, 1, 0])
+[host] OK   black cards: same turns and same path on both PCs (0.000 px)
+[host] card fan for real: starting at (300.0, 1000.0), downed false, on floor true, players 2
+[host] card fan for real: seed 100 at 0.00 s
+[host] card fan for real: contacts on me { "preta": 2, "reta": 0, "rosa": 0 }, HP 10 -> 9, parries 0 (stars +0.0), popped here ["CardFan:100:13", "CardFan:100:23"], target known late by [0.017, 0.0, 0.0] s, black card extra step 0.0 px
+[host] OK   the aces the client popped are popped (and harmless) on the host too (["CardFan:100:13", "CardFan:100:23"])
+[host] OK   the host counts the partner parries once, as the partner did (2 here, 2 there)
+[host] OK   partner left mid-flight: next salvos aim at who stayed ([1, 0, 0])
+[host] OK   its black card stopped turning, no turn toward P1 (left at 0.93 s, turns [1.07949018478394, 0.04308223724365, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+[host] OK   salvo counter kept going (4)
+[host] partner left at 0.93 s of the card fan
+[host] OK   partner back after leaving mid card fan
+[host] shell game walk: 0.0 px moved in sight, hidden leak false, unwrap frames 15, right box true
+[host] OK   shell game: no sliding, fully hidden, unwraps at the right box on this PC
+[host] OK   purchase in the save on this PC
+[host] OK   partner wallet untouched
+[host] FAILURES: 0

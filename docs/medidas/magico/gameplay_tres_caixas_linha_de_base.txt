@@ -1,0 +1,4 @@
+planos distintos em 1000 sementes: 982
+trocas que desfazem a anterior: 1341 em 4000 pares seguidos
+vezes que a caixa dele se mexe (de 5): { 1: 44, 3: 352, 4: 308, 5: 131, 2: 161, 0: 4 }
+caixa -> lugar final: { "0->1": 102, "2->1": 109, "0->0": 120, "1->1": 107, "1->2": 103, "0->2": 120, "2->0": 111, "1->0": 116, "2->2": 112 }

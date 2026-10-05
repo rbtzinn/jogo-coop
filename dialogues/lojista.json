@@ -1,0 +1,29 @@
+{
+	"nome": "Seu Bonifácio",
+	"boas_vindas": [
+		"Entrem, entrem! O dono saiu... ou eu que saí dele? Hehehe.",
+		"Ah, clientes! Faz tanto tempo que ninguém mexe a minha boca... digo, que ninguém vem aqui.",
+		"Curiosidades! Bugigangas! Coisas que piscam sozinhas! Tudo pela metade do preço do dobro!",
+		"Shhh. Falem baixo, o patrão está dormindo. Na prateleira. Embaixo do pano."
+	],
+	"compra": [
+		"Ótima escolha! Eu mesmo teria comprado, se tivesse braços que funcionam.",
+		"Vendido! Sem devolução. Nem reclamação. Nem perguntas.",
+		"Leva, leva! Essa coisa já estava me olhando estranho."
+	],
+	"sem_ingressos": [
+		"Ingressos insuficientes! Eu aceitaria fiado, mas o patrão não deixa. Ele nunca deixa nada.",
+		"Hmm, faltam ingressos. Vençam mais um número e voltem, sim?"
+	],
+	"ja_tem": [
+		"Você já tem esse! Quer dois? Não. Não pode ter dois."
+	],
+	"doacao": [
+		"Que bonito! Dividir ingressos com o parceiro. O patrão nunca dividiu nada comigo.",
+		"Ingressos transferidos! Eu contei. Duas vezes. Com os olhos que não fecham."
+	],
+	"tchau": [
+		"Voltem sempre! Eu não vou a lugar nenhum. Literalmente.",
+		"Até a próxima! Se eu piscar, foi o vento."
+	]
+}

@@ -19,6 +19,10 @@ var shoot_pressed := false
 var dash_pressed := false
 var lock_held := false
 var special_pressed := false
+## Testes e pilotos: ligado, `update()` não lê o teclado e deixa os campos como o roteiro (bot) pôs.
+var scripted := false
+## Desligado (mapa 3D, onde não se pula): a opção "Cima também pula" não vale e "cima" sempre anda.
+var up_can_jump := true
 
 var _prev_jump_held := false
 var _prev_up_key := false
@@ -27,7 +31,10 @@ var _up_is_jumping := false
 
 
 func update() -> void:
-	if not local_control or PauseMenu.is_open():
+	if scripted:
+		return
+	# Menu de pausa ou outra tela por cima (loja, Camarim): o personagem não obedece.
+	if not local_control or PauseMenu.is_open() or get_tree().get_first_node_in_group(&"blocking_ui") != null:
 		clear()
 		return
 	move = Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -67,7 +74,7 @@ func get_vertical() -> int:
 ## travando a mira, ela volta a mirar para cima. Só vale um aperto novo da tecla,
 ## para soltar a trava segurando cima não fazer o boneco pular sozinho.
 func _update_jump() -> void:
-	var up_key := Settings.up_jumps and _is_keyboard_up_pressed()
+	var up_key := Settings.up_jumps and up_can_jump and _is_keyboard_up_pressed()
 	if up_key and not _prev_up_key and not lock_held:
 		_up_is_jumping = true
 	elif not up_key:

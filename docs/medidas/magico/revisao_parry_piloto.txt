@@ -1,0 +1,27 @@
+Revisão do marco: parry e dano reais (04/10). Piloto -- magico_perseguidoras, conjunto B, 6 ataques (sementes 100 a 105), bots com o input real de pulo e parry (PlayerInput).
+
+Antes (09:27): bot de parry P1 9 parries, P2 0 (o P2 pulava cedo para a rosa baixa e, depois do 1º pulo, ficava em cima do trapézio em x 480, 240 px acima do chão, onde as rosas passam por baixo; o bot media a altura a partir do chão).
+Bot corrigido: altura medida a partir dos pés, pulo curto e tarde para rosa baixa, aperta o parry a menos de 110 px (o raio da área é 105), desce do trapézio (abaixar + dash).
+
+== p_parado_parry
+perseguidoras B: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras B: alvo parado, 9 de 9 pretas acertaram (100%)
+perseguidoras B: alvo parry, 1 de 9 pretas acertaram (11%)
+perseguidoras B: rosas passando pelos jogadores, altura acima do chão (y 1000): [156, -54, -100, 156]
+perseguidoras B: parries P1 0, P2 11
+perseguidoras B: contatos das retas P1 (parado) 0, P2 (parry) 2
+== p_parry_parado
+perseguidoras B: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras B: alvo parry, 5 de 9 pretas acertaram (56%)
+perseguidoras B: alvo parado, 9 de 9 pretas acertaram (100%)
+perseguidoras B: rosas passando pelos jogadores, altura acima do chão (y 1000): [156, 156, 363, 363, 363, 156, 363, -54, -100, 363, 156, 363, 363]
+perseguidoras B: parries P1 11, P2 0
+perseguidoras B: contatos das retas P1 (parry) 2, P2 (parado) 0
+== p_parry_parry
+perseguidoras B: alvos em ordem P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2 P1 P2
+perseguidoras B: alvo parry, 5 de 18 pretas acertaram (28%)
+perseguidoras B: rosas passando pelos jogadores, altura acima do chão (y 1000): [156, -54, -100, 156]
+perseguidoras B: parries P1 0, P2 11
+perseguidoras B: contatos das retas P1 (parry) 0, P2 (parry) 2
+
+Com os dois tentando, a rosa estoura no primeiro da fila (o P2 fica mais perto do mágico), então o P1 fica sem.
