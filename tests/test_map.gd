@@ -150,6 +150,21 @@ func _run() -> void:
 	check(SaveGame.is_defeated("tamer"), "tamer defeated in save")
 	check(int(SaveGame.data.players.clown.tickets) >= 3, "tickets earned")
 	check(map.get_node("DoorMagician").missing().size() == 2, "one lock less on the magician")
+	# Pausa no meio da luta: "Voltar ao mapa" larga a luta e volta na frente da tenda (pedido de 05/10/2026).
+	map.get_node("DoorTamer").try_enter(back)
+	await frames(20)
+	check(get_tree().current_scene.scene_file_path == "res://bosses/tamer/tamer_fight.tscn", "entered the tamer fight again")
+	PauseMenu.open()
+	check(PauseMenu._map_button.visible and not PauseMenu._dressing_button.visible, "pause in a fight offers back to map")
+	PauseMenu._back_to_map()
+	await frames(20)
+	map = get_tree().current_scene
+	check(map.scene_file_path == Levels.MAP and not PauseMenu.is_open() and not get_tree().paused, "pause back to map works")
+	back = map.get_node("PlayerSpawner/Player_1")
+	check(back.global_position.distance_to(map.get_node("DoorTamer").global_position) < 6.0, "pause return in front of the tamer tent")
+	PauseMenu.open()
+	check(not PauseMenu._map_button.visible, "no back to map button on the map")
+	PauseMenu.close()
 	var file := FileAccess.open(SaveGame.path, FileAccess.READ)
 	check(file != null and file.get_as_text().contains("tamer"), "save file written")
 	file = null

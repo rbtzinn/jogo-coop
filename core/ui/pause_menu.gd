@@ -1,5 +1,6 @@
 extends CanvasLayer
-## Menu de pausa (Esc ou Start): continuar, Camarim (só no mapa), configurações, voltar ao menu e sair.
+## Menu de pausa (Esc ou Start): continuar, Camarim (só no mapa), voltar ao mapa (fora dele), configurações,
+## voltar ao menu e sair.
 ## Sozinho, congela o jogo. Online, a pausa do HOST congela os dois PCs (pedido do usuário em 04/10/2026: jogam
 ## em call, e o parceiro pede a pausa falando); o cliente vê a faixa "Pausa do host". A pausa do CLIENTE não
 ## congela nada: só o personagem dele para de obedecer enquanto o menu está aberto.
@@ -12,6 +13,7 @@ var _settings_menu: SettingsMenu
 var _continue_button: Button
 var _dressing_room: DressingRoom
 var _dressing_button: Button
+var _map_button: Button
 ## Cliente: o host pausou (o jogo fica congelado aqui até ele continuar).
 var _host_paused := false
 var _host_banner: Control
@@ -48,6 +50,7 @@ func _ready() -> void:
 	layout.add_child(_both_note)
 	_continue_button = _add_button(layout, "Continuar", close)
 	_dressing_button = _add_button(layout, "Camarim", _open_dressing_room)
+	_map_button = _add_button(layout, "Voltar ao mapa", _back_to_map)
 	_add_button(layout, "Configurações", _open_settings)
 	_add_button(layout, "Voltar ao menu", _back_to_menu)
 	_add_button(layout, "Sair do jogo", func() -> void: get_tree().quit())
@@ -93,6 +96,8 @@ func open(share := true) -> void:
 	# O Camarim só abre no mapa (não no meio da luta).
 	var scene := get_tree().current_scene
 	_dressing_button.visible = scene != null and scene.scene_file_path == Levels.MAP
+	# Voltar ao mapa: no meio de uma luta ou do trem. Online, só o host (ele leva os dois).
+	_map_button.visible = scene != null and scene.scene_file_path != Levels.MAP and (not Network.is_online() or Network.is_host())
 	_sharing = share and Network.is_online() and Network.is_host()
 	_both_note.visible = _sharing
 	if _sharing:
@@ -140,6 +145,12 @@ func is_open() -> bool:
 ## Cliente: o host pausou o jogo para os dois agora.
 func is_host_paused() -> bool:
 	return _host_paused
+
+
+## Larga a luta ou a fase e volta para o parque, na frente da atração por onde entraram.
+func _back_to_map() -> void:
+	close()
+	Network.change_level(Levels.MAP)
 
 
 func _back_to_menu() -> void:

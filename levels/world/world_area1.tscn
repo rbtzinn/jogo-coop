@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="4_clown"]
 [ext_resource type="PackedScene" path="res://core/player/characters/acrobat/acrobat_rig.tscn" id="5_acrobat"]
 [ext_resource type="PackedScene" path="res://core/world/world_walker.tscn" id="6_walker"]
+[ext_resource type="Script" path="res://core/debug/ticket_cheat.gd" id="98_cheat"]
 
 [node name="WorldArea1" type="Node3D"]
 script = ExtResource("1_world")
@@ -85,3 +86,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4, 1, 11)
 
 [node name="SpawnAcrobat" type="Marker3D" parent="PlayerSpawner"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.4, 1, 11.4)
+
+[node name="TicketCheat" type="Node" parent="."]
+script = ExtResource("98_cheat")
