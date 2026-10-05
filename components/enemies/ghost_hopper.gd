@@ -1,7 +1,10 @@
 class_name GhostHopper
 extends Enemy
-## Palhacinho-fantasma que vai e volta pulando em cima de um vagão (provisório, desenhado
-## por código). Encostar machuca; 4 tiros derrubam.
+## Palhacinho-fantasma que vai e volta pulando em cima de um vagão. Encostar machuca; 4 tiros
+## derrubam. Desenho em quadros: agachado, subindo, no alto e caindo; derrotado, murcha num lençol.
+
+const HOP := preload("res://components/enemies/art/ghost_hop.tres")
+const DEFEAT := preload("res://components/enemies/art/ghost_defeat.tres")
 
 ## Até onde vai para cada lado a partir de onde foi colocado.
 @export var patrol_range := 200.0
@@ -11,11 +14,21 @@ extends Enemy
 
 var _facing := 1.0
 var _hop := 0.0
+## Subindo no pulo (para escolher o quadro).
+var _rising := true
+var _art := Sprite2D.new()
 
 
 func _init() -> void:
 	max_health = 4
 	body_size = Vector2(64, 86)
+	death_drawn = true
+	death_duration = 0.6
+
+
+func _ready() -> void:
+	super()
+	add_child(_art)
 
 
 func _move(t: float) -> void:
@@ -25,33 +38,26 @@ func _move(t: float) -> void:
 	var x := -patrol_range + 4.0 * patrol_range * u if u < 0.5 else 3.0 * patrol_range - 4.0 * patrol_range * u
 	_facing = 1.0 if u < 0.5 else -1.0
 	_hop = absf(sin(t * 7.0))
+	_rising = sin(t * 7.0) * cos(t * 7.0) > 0.0
 	position = home + Vector2(x, -_hop * 28.0)
 
 
-func _draw() -> void:
-	var f := _facing
-	var squash := 1.0 + (1.0 - _hop) * 0.12
-	# Corpo de lençol com babado.
-	var body := PackedVector2Array()
-	for i in 13:
-		var a := PI + PI * i / 12.0
-		body.append(Vector2(cos(a) * 32, -54 + sin(a) * 34))
-	for i in 7:
-		var x := 32.0 - i * (64.0 / 6.0)
-		body.append(Vector2(x, -6.0 if i % 2 == 0 else 2.0))
-	var transform_body := Transform2D(0.0, Vector2(1.0 / squash, squash), 0.0, Vector2.ZERO)
-	var squashed := transform_body * body
-	draw_colored_polygon(squashed, Color(0.94, 0.94, 1.0, 0.92))
-	squashed.append(squashed[0])
-	draw_polyline(squashed, INK, 4.0, true)
-	# Gola de palhaço, nariz e olhos vazios.
-	draw_circle(Vector2(0, -24 * squash), 10, Color("d23a3a"))
-	for side in [-1.0, 1.0]:
-		draw_circle(Vector2(side * 10 + 6 * f, -62 * squash), 7, INK)
-	draw_circle(Vector2(16 * f, -50 * squash), 6, Color("d23a3a"))
-	draw_arc(Vector2(10 * f, -38 * squash), 8, 0.2, PI - 0.2, 8, INK, 3.0)
-	# Chapeuzinho cônico.
-	var hat := PackedVector2Array([Vector2(-14, -84 * squash), Vector2(14, -84 * squash), Vector2(4 * f, -112 * squash)])
-	draw_colored_polygon(hat, Color("5fbfd8"))
-	hat.append(hat[0])
-	draw_polyline(hat, INK, 3.0)
+func _update_art() -> void:
+	# No chão: agachado (antes de sair) ou caindo no pouso; no ar: subindo ou no alto.
+	var index := 0
+	if _hop > 0.8:
+		index = 2
+	elif _hop > 0.25:
+		index = 1 if _rising else 2
+	else:
+		index = 0 if _rising else 3
+	_show(HOP, index)
+
+
+func _update_death(progress: float) -> void:
+	_show(DEFEAT, mini(int(progress * 5.0), DEFEAT.frame_count() - 1))
+
+
+func _show(animation: FrameAnimation, index: int) -> void:
+	animation.show_on(_art, index)
+	_art.scale = Vector2(animation.frame_scale * _facing, animation.frame_scale)

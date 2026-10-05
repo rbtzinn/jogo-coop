@@ -4,7 +4,8 @@ extends Node2D
 ## nos dois PCs, sem mandar posição pela rede. Quem decide a vida e a morte é o host (o tiro
 ## do cliente é avisado pelo RunLevel). Os rosa aceitam parry (morrem com ele).
 ## As áreas são criadas aqui: Hurtbox (leva tiro) e EnemyHitbox (encostar machuca).
-## Cada tipo sobrescreve `_move(t)` e desenha a si mesmo em `_draw()`.
+## Cada tipo sobrescreve `_move(t)` e mostra o desenho dele (quadros num Sprite2D, `_update_art`).
+## Com `death_drawn`, a derrota é desenhada pelo tipo (`_update_death`) em vez de crescer e sumir.
 
 const POOF := preload("res://components/fx/dust_puff.tscn")
 const INK := Color("1b1410")
@@ -13,6 +14,9 @@ const INK := Color("1b1410")
 ## Caixa do corpo (a área que leva tiro; a que machuca é um pouco menor).
 @export var body_size := Vector2(70, 90)
 @export var pink := false
+## Quanto dura a derrota (segundos) e se ela é desenhada pelo tipo.
+var death_duration := 0.25
+var death_drawn := false
 
 var health := 0
 var dead := false
@@ -48,15 +52,20 @@ func _physics_process(delta: float) -> void:
 	_flash = maxf(_flash - delta * 6.0, 0.0)
 	modulate = Color(1.0 + _flash, 1.0 + _flash * 0.8, 1.0 + _flash * 0.6, 1.0 - _vanish)
 	if dead:
-		_vanish = minf(_vanish + delta * 4.0, 1.0)
-		scale = Vector2.ONE * (1.0 + _vanish * 0.5)
+		_vanish = minf(_vanish + delta / death_duration, 1.0)
+		if death_drawn:
+			# O desenho da derrota toca e só some no último quarto.
+			modulate.a = clampf((1.0 - _vanish) * 4.0, 0.0, 1.0)
+			_update_death(_vanish)
+		else:
+			scale = Vector2.ONE * (1.0 + _vanish * 0.5)
 		if _vanish >= 1.0:
 			hide()
 			set_physics_process(false)
 		return
 	var level := RunLevel.find(get_tree())
 	_move(level.clock if level != null else 0.0)
-	queue_redraw()
+	_update_art()
 
 
 ## Só no host. Retorna verdadeiro se morreu com este dano.
@@ -105,4 +114,14 @@ func _box(box_size: Vector2) -> CollisionShape2D:
 # --- Para cada tipo sobrescrever ---
 
 func _move(_t: float) -> void:
+	pass
+
+
+## Escolhe o quadro do desenho (chamado depois de `_move`).
+func _update_art() -> void:
+	pass
+
+
+## Derrota desenhada (`death_drawn`): `progress` vai de 0 a 1.
+func _update_death(_progress: float) -> void:
 	pass

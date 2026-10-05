@@ -3,14 +3,16 @@ extends Area2D
 ## Ingresso dourado escondido numa fase de plataforma (docs/shop.md: 3 por fase). Encostar
 ## pega; na primeira vez, cada jogador ganha 1 ingresso (o RunLevel avisa o save do host).
 ## Os que a dupla já achou antes aparecem transparentes (pegar de novo não dá nada).
+## Desenho: o ingresso dourado girando como uma moeda (4 quadros) e boiando.
 
-const INK := Color("1b1410")
-const GOLD := Color("ffc93c")
+const ART := preload("res://components/stage/art/ticket.tres")
+const SPIN_FPS := 7.0
 
 @export var ticket_id := ""
 
 var _time := 0.0
 var _taken := false
+var _art := Sprite2D.new()
 
 
 func _ready() -> void:
@@ -24,11 +26,15 @@ func _ready() -> void:
 	circle.radius = 34.0
 	shape.shape = circle
 	add_child(shape)
+	_art.scale = Vector2.ONE * ART.frame_scale
+	add_child(_art)
 
 
 func _physics_process(delta: float) -> void:
 	_time += delta
-	queue_redraw()
+	ART.show_on(_art, int(_time * SPIN_FPS) % ART.frame_count())
+	_art.position.y = sin(_time * 3.0) * 6.0
+	_art.modulate.a = 0.35 if SaveGame.has_ticket(ticket_id) else 1.0
 	if _taken:
 		return
 	for player: Player in get_tree().get_nodes_in_group(&"players"):
@@ -49,24 +55,3 @@ func take() -> void:
 	ParryFlash.spawn_gold(global_position, 1.2)
 	CheerText.spawn(global_position + Vector2(0, -60), "Ingresso!")
 	hide()
-
-
-func _draw() -> void:
-	var bob := sin(_time * 3.0) * 6.0
-	var alpha := 0.35 if SaveGame.has_ticket(ticket_id) else 1.0
-	draw_set_transform(Vector2(0, bob), sin(_time * 2.0) * 0.15)
-	var rect := Rect2(-30, -18, 60, 36)
-	draw_rect(rect.grow(6), Color(GOLD, 0.25 * alpha))
-	draw_rect(rect, Color(GOLD, alpha))
-	draw_rect(rect, Color(INK, alpha), false, 3.0)
-	draw_line(Vector2(-12, -18), Vector2(-12, 18), Color(INK, 0.6 * alpha), 2.0)
-	_draw_star(Vector2(9, 0), 10.0, Color("a3282a", alpha))
-	draw_set_transform(Vector2.ZERO)
-
-
-func _draw_star(at: Vector2, r: float, color: Color) -> void:
-	var points := PackedVector2Array()
-	for i in 10:
-		var radius := r if i % 2 == 0 else r * 0.45
-		points.append(at + Vector2.from_angle(-PI * 0.5 + TAU * i / 10.0) * radius)
-	draw_colored_polygon(points, color)

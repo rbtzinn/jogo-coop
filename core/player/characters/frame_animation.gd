@@ -44,3 +44,11 @@ func index_at(fraction: float, weights: PackedFloat32Array = PackedFloat32Array(
 ## Canto de cima à esquerda do quadro `index` no espaço do rig (a origem mais o deslocamento dele).
 func origin_of(index: int) -> Vector2:
 	return origin + (offsets[index] if index < offsets.size() else Vector2.ZERO)
+
+
+## Mostra o quadro `index` num Sprite2D, com o canto no lugar certo em volta do ponto (0, 0) do
+## sprite. A escala (e o espelhamento) do sprite fica com quem chama: `frame_scale` vezes o tamanho.
+func show_on(sprite: Sprite2D, index: int) -> void:
+	sprite.centered = false
+	sprite.texture = frames[index]
+	sprite.offset = origin_of(index) / frame_scale

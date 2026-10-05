@@ -117,6 +117,9 @@ func _ready() -> void:
 	if args[0] == "monociclo":
 		_unicycle_capture()
 		return
+	if args[0] == "trem_detalhes":
+		_train_details()
+		return
 	if args[0] == "salto_mortal" or args[0] == "salto_mortal2":
 		_somersault_capture(args[0] == "salto_mortal2")
 		return
@@ -873,6 +876,80 @@ func _duo_capture() -> void:
 		grid.save_png(_out.path_join("dupla_%d.png" % side))
 		await seconds(0.5)
 	print("foto: dupla")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.path))
+	get_tree().quit()
+
+
+## Trem (Pedido B) de perto: o aviso da ponte, a ponte passando por cima do palhaço abaixado, uma
+## tira de 8 recortes de cada inimigo (fantasma pulando, pombo, canhão atirando) e a derrota do fantasma.
+func _train_details() -> void:
+	SaveGame.path = "user://test_save_shots.json"
+	SaveGame.reset()
+	var scene: Node2D = load("res://levels/train/train_level.tscn").instantiate()
+	add_child(scene)
+	var level: RunLevel = scene.get_node("RunLevel")
+	var camera := scene.get_node("Camera") as Camera2D
+	var players := get_tree().get_nodes_in_group(&"players")
+	for player: Player in players:
+		player.player_health._invincible_timer = 100000.0
+		player.input.scripted = true
+	await seconds(1.0)
+	var train := scene as Node
+	var bridge_speed: float = train.BRIDGE_SPEED
+	var spawn: float = train.LEVEL_WIDTH + 600.0
+	# Aviso: a ponte ainda fora da tela, à direita.
+	camera.global_position.x = 3000.0
+	for i in 12:
+		level.clock = train.FIRST_BRIDGE + (spawn - 4600.0) / bridge_speed
+		await get_tree().physics_frame
+		if fmod(train._time, 0.3) < 0.15:
+			break
+	await shot("trem_aviso")
+	# Ponte em cima do palhaço abaixado.
+	var clown: Player = players[0]
+	clown.global_position = Vector2(3000.0, 700.0)
+	clown.reset_physics_interpolation()
+	clown.input.move = Vector2(0, 1)
+	for i in 30:
+		level.clock = train.FIRST_BRIDGE + (spawn - 3010.0) / bridge_speed
+		await get_tree().physics_frame
+	await shot("trem_ponte")
+	clown.input.move = Vector2.ZERO
+	level.clock = 0.5
+	# Inimigos de perto.
+	for kind in [["hopper", Vector2(1380, 660)], ["pigeon", Vector2(3000, 470)], ["cannon", Vector2(2420, 660)]]:
+		var enemy: Enemy = null
+		for e: Enemy in get_tree().get_nodes_in_group(&"enemies"):
+			if e.home.distance_to(kind[1]) < 60.0 or (kind[0] == "pigeon" and e is MagicPigeon and absf(e.home.x - kind[1].x) < 10.0) \
+					or (kind[0] == "hopper" and e is GhostHopper and absf(e.home.x - kind[1].x) < 10.0) \
+					or (kind[0] == "cannon" and e is ConfettiCannon and absf(e.home.x - kind[1].x) < 10.0):
+				enemy = e
+				break
+		camera.global_position.x = enemy.home.x
+		for player: Player in players:
+			player.global_position = Vector2(enemy.home.x - 700.0, 700.0)
+			player.reset_physics_interpolation()
+		await seconds(0.5)
+		var grid := Image.create(4 * 320, 2 * 320, false, Image.FORMAT_RGBA8)
+		for i in 8:
+			for k in 8:
+				await get_tree().physics_frame
+			await RenderingServer.frame_post_draw
+			var view := get_viewport().get_texture().get_image()
+			var ratio := float(view.get_width()) / get_viewport().get_visible_rect().size.x
+			var focus := enemy.global_position + (Vector2(-150, 0) if kind[0] == "cannon" else Vector2.ZERO)
+			var screen := get_viewport().get_canvas_transform() * focus * ratio
+			var size := Vector2(320, 320) * ratio
+			var at := (screen + Vector2(-160, -220) * ratio).clamp(Vector2.ZERO, Vector2(view.get_size()) - size)
+			var crop := view.get_region(Rect2i(Vector2i(at), Vector2i(size)))
+			crop.resize(320, 320)
+			grid.blit_rect(crop, Rect2i(0, 0, 320, 320), Vector2i((i % 4) * 320, (i / 4) * 320))
+		grid.save_png(_out.path_join("trem_%s.png" % kind[0]))
+		print("foto: ", kind[0])
+		if kind[0] == "hopper":
+			enemy.die()
+			await seconds(0.25)
+			await shot("trem_fantasma_derrota")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.path))
 	get_tree().quit()
 

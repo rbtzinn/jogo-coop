@@ -3,6 +3,12 @@ extends Enemy
 ## Canhão de confete parado em cima de um vagão, virado para a esquerda (de onde os jogadores
 ## vêm). De tempos em tempos solta uma bola de confete rente ao chão (pular por cima); a cada
 ## quatro, uma vem rosa (parry). 8 tiros derrubam. As bolas também seguem o relógio da fase.
+## Desenho em 4 quadros: entediado, enchendo as bochechas antes do tiro, atirando e tonto depois.
+
+const ART := preload("res://components/enemies/art/cannon.tres")
+## Quanto antes do tiro ele enche as bochechas, e quanto tempo fica tonto depois.
+const CHARGE_TIME := 0.45
+const DIZZY_TIME := 0.6
 
 const BALL_RADIUS := 18.0
 
@@ -14,11 +20,20 @@ const BALL_RADIUS := 18.0
 ## Bolas na tela: número do disparo -> nó.
 var _balls := {}
 var _recoil := 0.0
+## Tempo desde o último tiro e até o próximo (para escolher o quadro).
+var _since_shot := INF
+var _to_shot := INF
+var _art := Sprite2D.new()
 
 
 func _init() -> void:
 	max_health = 8
 	body_size = Vector2(90, 70)
+
+
+func _ready() -> void:
+	super()
+	add_child(_art)
 
 
 func _move(t: float) -> void:
@@ -41,6 +56,8 @@ func _move(t: float) -> void:
 			_balls.erase(k)
 	var since_last := t - offset - newest * period
 	_recoil = clampf(1.0 - since_last / 0.25, 0.0, 1.0) if newest >= 0 else 0.0
+	_since_shot = since_last if newest >= 0 else INF
+	_to_shot = (newest + 1) * period + offset - t
 
 
 func die() -> void:
@@ -59,19 +76,14 @@ func _make_ball(k: int) -> Node2D:
 	return ball
 
 
-func _draw() -> void:
-	var kick := _recoil * 8.0
-	# Rodas.
-	for x in [-26.0, 26.0]:
-		draw_circle(Vector2(x + kick, -16), 17, INK)
-		draw_circle(Vector2(x + kick, -16), 13, Color("a3282a"))
-	# Cano listrado virado para a esquerda, com cara.
-	var barrel := Rect2(Vector2(-56 + kick, -66), Vector2(96, 40))
-	draw_rect(barrel.grow(3), INK)
-	draw_rect(barrel, Color("f2e6cc"))
-	for i in 3:
-		draw_rect(Rect2(barrel.position + Vector2(14 + i * 28, 0), Vector2(12, 40)), Color("5fbfd8"))
-	draw_circle(Vector2(-58 + kick, -46), 22, INK)
-	draw_circle(Vector2(-58 + kick, -46), 15, Color("2a1f2e"))
-	draw_circle(Vector2(18 + kick, -56), 5, INK)
-	draw_arc(Vector2(16 + kick, -40), 9, 0.3, PI - 0.3, 8, INK, 3.0)
+func _update_art() -> void:
+	var index := 0
+	if _since_shot < 0.25:
+		index = 2
+	elif _since_shot < DIZZY_TIME:
+		index = 3
+	elif _to_shot < CHARGE_TIME:
+		index = 1
+	ART.show_on(_art, index)
+	_art.scale = Vector2.ONE * ART.frame_scale
+	_art.position.x = _recoil * 8.0
