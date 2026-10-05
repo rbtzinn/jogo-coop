@@ -63,6 +63,29 @@ func _run() -> void:
 	await frames(5)
 	check(get_tree().current_scene == map, "locked tent does not change scene")
 
+	# Camarim pela porta: Atirar abre; Voltar e Esc fecham e ele não reabre sozinho (bug do usuário em 05/10/2026:
+	# a porta relia o aperto que abriu o Camarim, guardado enquanto o jogo ficava pausado).
+	var dressing: WorldDoor = map.get_node("DoorDressing")
+	var spot := clown.global_position
+	clown.global_position = dressing.front_point() + Vector3(0, 0.4, 0)
+	await frames(5)
+	await press(&"shoot")
+	await frames(5)
+	check(PauseMenu.is_open() and PauseMenu._dressing_room.visible, "dressing room opens from its door")
+	PauseMenu._dressing_room.close()
+	await frames(10)
+	check(not PauseMenu.is_open(), "Voltar closes the dressing room for good")
+	await press(&"shoot")
+	await frames(5)
+	var esc := InputEventAction.new()
+	esc.action = &"ui_cancel"
+	esc.pressed = true
+	Input.parse_input_event(esc)
+	await frames(10)
+	check(not PauseMenu.is_open(), "Esc closes the dressing room for good")
+	clown.global_position = spot
+	await frames(5)
+
 	# Andar até o Domador (para a direita e depois para cima, até a frente da tenda) e entrar.
 	var door: WorldDoor = map.get_node("DoorTamer")
 	var start := clown.global_position

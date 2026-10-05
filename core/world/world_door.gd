@@ -167,6 +167,9 @@ func _physics_process(delta: float) -> void:
 			continue
 		near = true
 		if walker.input.shoot_pressed:
+			# Gasta o aperto: o Camarim e a loja pausam o jogo antes de o boneco ler a entrada de novo, e o
+			# aperto guardado reabria o Camarim logo depois de fechar (bug do usuário em 05/10/2026).
+			walker.input.shoot_pressed = false
 			try_enter(walker)
 	if not near:
 		_waiting = false
