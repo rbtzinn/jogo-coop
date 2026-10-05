@@ -22,13 +22,14 @@ const HOME_RIGHT := Vector2(1730, 1000)
 ## Altura dos pés de quem fica nos ombros do irmão.
 const SHOULDER := 150.0
 ## No totem desenhado (E7): o meio do de cima a 110 px dos pés da base, medido no desenho (a cabeça da base
-## vai até ~115); as áreas seguem o desenho (210 px no quadro 1; a tábua pendurada começa a 216 do chão). O monociclo
-## continua com SHOULDER (os dois no boneco de código).
-const TOTEM_SHOULDER := 110.0
-const TOTEM_BASE_HIT := 110.0
-const TOTEM_TOP_HIT := 92.0
-const TOTEM_BASE_HURT := Vector2(0, 115)
-const TOTEM_TOP_HURT := Vector2(0, 102)
+## vai até ~115); as áreas seguem o desenho, com o totem crescido em Juggler.TOTEM_GROW (desde 05/10/2026 o de
+## cima chega a ~273 px do chão e pega quem está na tábua pendurada, de 216 a 240). O monociclo continua com
+## SHOULDER (os dois no boneco de código).
+const TOTEM_SHOULDER := 110.0 * Juggler.TOTEM_GROW
+const TOTEM_BASE_HIT := 110.0 * Juggler.TOTEM_GROW
+const TOTEM_TOP_HIT := 92.0 * Juggler.TOTEM_GROW
+const TOTEM_BASE_HURT := Vector2(0, 115) * Juggler.TOTEM_GROW
+const TOTEM_TOP_HURT := Vector2(0, 102) * Juggler.TOTEM_GROW
 const NAMES := ["Tico", "Teco"]
 
 var hp := {"Tico": BROTHER_MAX, "Teco": BROTHER_MAX}

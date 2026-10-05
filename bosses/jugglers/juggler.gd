@@ -91,6 +91,11 @@ const TOTEM_IDLE_HANDS := [[Vector2(-54, -136), Vector2(56, -140)], [Vector2(-51
 const TOTEM_JUGGLE := 0.9
 const TOTEM_BALL_SCALE := 0.22
 
+## O totem desenhado cresce TOTEM_GROW (05/10/2026, pedido do usuário: a luta ficava fácil com a tábua segura).
+## Com 1,3 o de cima passa na altura de quem está na tábua pendurada: lá em cima é preciso pular por cima
+## dele (ou dar dash); do chão o pulo passa rente. Todas as medidas TOTEM_* acima são do tamanho antigo.
+const TOTEM_GROW := 1.3
+
 enum TotemRole { NONE, BASE, TOP }
 ## Começo de cada desenho (tempo desde que a pose `throw` começou) e qual desenho da folha é.
 const THROW_STEPS: Array[float] = [0.0, 0.18, 0.31]
@@ -254,8 +259,9 @@ func _process(delta: float) -> void:
 			animation = TECO_THROW if teco else TICO_THROW
 			frame = throw_frame()
 		_art.texture = animation.frames[frame]
-		_art.scale = Vector2.ONE * animation.frame_scale
-		_art.position = animation.origin
+		var grow := TOTEM_GROW if _totem_art() else 1.0
+		_art.scale = Vector2.ONE * animation.frame_scale * grow
+		_art.position = animation.origin * grow
 		_art_holder.scale.x = facing
 		_art_holder.rotation = dizzy_rotation() * facing if _dizzy_art() else 0.0
 	queue_redraw()
@@ -355,17 +361,17 @@ func set_hurtbox_span(bottom: float, top: float) -> void:
 ## Mão que joga (na frente) e a de trás, no espaço do mundo.
 func hand_position() -> Vector2:
 	if _totem_hidden():
-		var hand: Vector2 = TOTEM_FRONT_HANDS[totem_partner.totem_frame()]
+		var hand: Vector2 = TOTEM_FRONT_HANDS[totem_partner.totem_frame()] * TOTEM_GROW
 		return totem_partner.global_position + Vector2(hand.x * totem_partner.facing, hand.y)
 	return global_position + Vector2(facing * 38, -150 if pose != &"crouch" else -120)
 
 
 func head_position() -> Vector2:
 	if _totem_art():
-		var own: Vector2 = TOTEM_BASE_HEADS[totem_frame()]
+		var own: Vector2 = TOTEM_BASE_HEADS[totem_frame()] * TOTEM_GROW
 		return global_position + Vector2(own.x * facing, own.y)
 	if _totem_hidden():
-		var top_head: Vector2 = TOTEM_TOP_HEADS[totem_partner.totem_frame()]
+		var top_head: Vector2 = TOTEM_TOP_HEADS[totem_partner.totem_frame()] * TOTEM_GROW
 		return totem_partner.global_position + Vector2(top_head.x * totem_partner.facing, top_head.y)
 	if _dizzy_art():
 		var head := DIZZY_HEADS[dizzy_frame()].rotated(dizzy_rotation())
@@ -391,7 +397,7 @@ func _totem_hidden() -> bool:
 func totem_frame() -> int:
 	var top := totem_partner
 	if walking:
-		return 2 + int(absf(global_position.x - _walk_from_x) / TOTEM_STEP) % 4
+		return 2 + int(absf(global_position.x - _walk_from_x) / (TOTEM_STEP * TOTEM_GROW)) % 4
 	if top != null and top.pose == &"throw":
 		return 7 if top.throw_released else 6
 	if pose == &"crouch":
@@ -415,15 +421,15 @@ func _draw_totem_top() -> void:
 	var pair: Array = TOTEM_IDLE_HANDS[frame]
 	var hands: Array[Vector2] = []
 	for hand: Vector2 in pair:
-		hands.append(to_local(base.global_position + Vector2(hand.x * base.facing, hand.y - 12.0)))
-	var size := BALL_TEXTURE.get_size() * TOTEM_BALL_SCALE
+		hands.append(to_local(base.global_position + Vector2(hand.x * base.facing, hand.y - 12.0) * TOTEM_GROW))
+	var size := BALL_TEXTURE.get_size() * TOTEM_BALL_SCALE * TOTEM_GROW
 	for i in 3:
 		var u := fposmod(_time / TOTEM_JUGGLE + i / 3.0, 1.0)
 		var at: Vector2
 		if u < 0.5:
-			at = BossAttack.arc_point(hands[0], hands[1], 70.0, u * 2.0)
+			at = BossAttack.arc_point(hands[0], hands[1], 70.0 * TOTEM_GROW, u * 2.0)
 		else:
-			at = BossAttack.arc_point(hands[1], hands[0], 30.0, (u - 0.5) * 2.0)
+			at = BossAttack.arc_point(hands[1], hands[0], 30.0 * TOTEM_GROW, (u - 0.5) * 2.0)
 		draw_texture_rect(BALL_TEXTURE, Rect2(at - size * 0.5, size), false)
 
 

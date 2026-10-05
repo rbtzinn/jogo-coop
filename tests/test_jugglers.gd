@@ -113,7 +113,8 @@ func _run() -> void:
 			"totem: the base draws both, the top draws no body")
 	var sheet: FrameAnimation = Juggler.TOTEM_TECO if base.teco else Juggler.TOTEM_TICO
 	check(sheet.frames.has(base._art.texture), "totem: sheet of the brother at the bottom (%s)" % base.name)
-	# Tudo abaixo da tábua pendurada (o fundo dela a 216 px do chão): o desenho e as áreas do de cima.
+	# Desde 05/10/2026 o totem é maior: o de cima pega quem está em cima da tábua pendurada (o topo dela a 240
+	# px do chão), mas do chão ainda se pula por cima (a área que machuca fica abaixo do pulo, 270 px).
 	var board: Node2D = scene.get_node("PlatformRight")
 	var board_bottom := board.global_position.y + 12.0
 	var tallest := 0.0
@@ -121,9 +122,11 @@ func _run() -> void:
 		tallest = maxf(tallest, -(sheet.origin.y + texture.get_image().get_used_rect().position.y * sheet.frame_scale))
 	var top_hit := top.hitbox.get_child(0) as CollisionShape2D
 	var top_hurt := top.hurtbox.get_child(0) as CollisionShape2D
-	check(base.global_position.y - tallest > board_bottom, "totem drawing under the board (%.1f px tall, board bottom %.0f px up)" % [tallest, base.global_position.y - board_bottom])
-	check(top_hit.global_position.y - (top_hit.shape as RectangleShape2D).size.y * 0.5 > board_bottom
-			and top_hurt.global_position.y - (top_hurt.shape as RectangleShape2D).size.y * 0.5 > board_bottom, "totem areas under the board")
+	var board_top := board.global_position.y - 12.0
+	var hit_top := top_hit.global_position.y - (top_hit.shape as RectangleShape2D).size.y * 0.5
+	check(base.global_position.y - tallest * Juggler.TOTEM_GROW < board_top, "totem drawing taller than the board (%.1f px)" % (tallest * Juggler.TOTEM_GROW))
+	check(hit_top < board_top - 15.0, "totem hits whoever stands on the board (%.0f px above its top)" % (board_top - hit_top))
+	check(base.global_position.y - hit_top < 270.0, "totem still jumpable from the floor (%.0f px)" % (base.global_position.y - hit_top))
 	# Claves em Linha: a clave nasce na luva do desenho de soltura (8) que está na tela.
 	var volley: BossAttack = boss.get_node("Attacks/ClubVolley")
 	boss.sync.start_attack(&"ClubVolley", 21, boss._args_for(&"ClubVolley"))
@@ -145,6 +148,10 @@ func _run() -> void:
 	boss.apply_damage(1000, "", "Teco")
 	await seconds(3.0)
 	check(boss.phase == 2 and boss.mode == &"unicycle" and boss.unicycle.visible, "unicycle phase")
+	# O de baixo, no selim, pega quem está em cima da tábua (05/10/2026); a roda ainda passa por baixo dela.
+	var seat_board: Node2D = scene.get_node("PlatformRight")
+	check(boss.base().global_position.y > seat_board.global_position.y - 12.0 - 125.0, "unicycle riders reach the board")
+	check(boss.unicycle.global_position.y - 2.0 * Unicycle.WHEEL_RADIUS > seat_board.global_position.y + 12.0 - 6.0, "unicycle wheel passes under the board")
 
 	# Fase 3: sem limite; quem chega a zero passa o dano para o outro.
 	boss.apply_damage(1000, "", "Tico")

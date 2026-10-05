@@ -1,7 +1,7 @@
 extends JugglerAttack
 ## Monociclo Gigante (fase 3): os irmãos balançam para trás (aviso) e atravessam a arena de
-## monociclo, ida e volta. Só a roda machuca: dá para pular por cima dela, atravessar com o
-## dash ou ficar num pedestal (o vão entre a roda e o selim passa pelo pedestal).
+## monociclo, ida e volta. A roda e os irmãos machucam: desde 05/10/2026 o selim é baixo e a tábua
+## pendurada deixou de ser segura. Atravessar com o dash (ou pular a roda bem rente, do chão).
 
 const WIND := 0.6
 const RIDE := 1.7

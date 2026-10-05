@@ -1,13 +1,14 @@
 class_name Unicycle
 extends Node2D
 ## Monociclo gigante da fase 3 (desenhado por código). O ponto do nó é onde a roda toca o
-## chão. Só a roda machuca; entre a roda e o selim fica um vão onde cabe quem está num
-## pedestal (o monociclo passa por baixo dele).
+## chão. A roda machuca e os irmãos em cima também. A roda passa por baixo da tábua pendurada (216 px), mas
+## desde 05/10/2026 o selim fica baixo o bastante para os irmãos pegarem quem está em cima dela (pedido do
+## usuário: a tábua era um lugar seguro demais). O desvio seguro é o dash; pular a roda do chão fica arriscado.
 
 const INK := Color("1b1410")
 const WHEEL_RADIUS := 110.0
 ## Altura do selim acima do chão (os irmãos ficam em cima dele).
-const SEAT_HEIGHT := 380.0
+const SEAT_HEIGHT := 330.0
 
 ## Ângulo da roda (gira conforme anda).
 var roll := 0.0
