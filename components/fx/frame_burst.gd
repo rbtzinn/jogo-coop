@@ -6,6 +6,8 @@ extends Node2D
 
 @export var animation: FrameAnimation
 @export var fps := 14.0
+## O último quadro some aos poucos (em vez de sumir de uma vez).
+@export var fade_last := false
 
 var _time := 0.0
 var _sprite := Sprite2D.new()
@@ -31,3 +33,5 @@ func _process(delta: float) -> void:
 			queue_free()
 		return
 	_sprite.texture = animation.frames[index]
+	if fade_last and index == animation.frame_count() - 1:
+		_sprite.modulate.a = 1.0 - (_time * fps - index)

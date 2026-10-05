@@ -5,9 +5,27 @@ extends Area2D
 ## `look` (desenho), `homing` (teleguiado), `boomerang` (vai e volta), `pierce` (atravessa),
 ## `blast_damage` (explode em área ao acertar).
 
-const HIT_SPARK_SCENE := preload("res://components/fx/hit_spark.tscn")
-const CONFETTI_COLORS := [Color("ffc93c"), Color("ff5fa2"), Color("5fe3ff"), Color("8fd86a")]
-const INK := Color("1b1410")
+const ART := "res://components/projectile/art/"
+## Desenho em voo e acerto de cada `look` (recortados por tools/cut_weapon_art.gd).
+const FLY := {
+	&"cork": preload(ART + "cork_fly.tres"),
+	&"confetti": preload(ART + "confetti_fly.tres"),
+	&"club": preload(ART + "club_fly.tres"),
+	&"bubble": preload(ART + "bubble_fly.tres"),
+	&"big_bubble": preload(ART + "big_bubble_fly.tres"),
+}
+const HIT := {
+	&"cork": preload(ART + "cork_hit.tres"),
+	&"confetti": preload(ART + "confetti_hit.tres"),
+	&"club": preload(ART + "club_hit.tres"),
+	&"bubble": preload(ART + "bubble_hit.tres"),
+}
+const BUBBLE_POP := preload(ART + "big_bubble_pop.tres")
+## Quadros por segundo do voo (a rolha gira, a bolha balança).
+const FLY_FPS := {&"cork": 16.0, &"bubble": 10.0}
+## Giro da clave (radianos por segundo, como o desenho antigo) e do confete.
+const CLUB_SPIN := 18.0
+const CONFETTI_SPIN := 9.0
 
 @export var speed := 1800.0
 @export var lifetime := 1.0
@@ -41,7 +59,9 @@ var turbo := false
 var _time := 0.0
 var _hit := {}
 var _returning := false
-var _color := Color.WHITE
+var _fly: FrameAnimation
+## Confete: qual dos 4 pedaços (cada um de uma cor).
+var _piece := 0
 
 @onready var _sprite: Sprite2D = $Sprite
 
@@ -51,8 +71,12 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	area_entered.connect(_on_area_entered)
 	get_tree().create_timer(lifetime, false).timeout.connect(queue_free)
-	_color = CONFETTI_COLORS[randi() % CONFETTI_COLORS.size()]
-	_sprite.visible = look == &"cork"
+	_fly = FLY.get(look, FLY[&"cork"])
+	_piece = randi() % _fly.frame_count()
+	_sprite.centered = false
+	_sprite.scale = Vector2.ONE * _fly.frame_scale
+	_sprite.offset = _fly.origin / _fly.frame_scale
+	_update_sprite()
 	if boomerang:
 		set_collision_mask_value(1, false)
 
@@ -72,8 +96,7 @@ func _physics_process(delta: float) -> void:
 		position += direction * speed * delta
 	if turbo:
 		_check_turbo()
-	if look != &"cork":
-		queue_redraw()
+	_update_sprite()
 
 
 func _move_boomerang(delta: float) -> void:
@@ -104,7 +127,8 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 	_hit[area] = true
 	if blast_damage > 0:
-		AreaBlast.spawn(global_position, 200.0, blast_damage, 1, deals_damage, source, Color("8fe3ff"))
+		AreaBlast.spawn(global_position, 200.0, blast_damage, 1, deals_damage, source, Color("8fe3ff"),
+				BUBBLE_POP)
 		_explode()
 		return
 	if deals_damage:
@@ -112,14 +136,19 @@ func _on_area_entered(area: Area2D) -> void:
 		if dealt > 0 and gives_applause and is_instance_valid(shooter):
 			shooter.applause.add_damage(dealt)
 	if pierce or boomerang:
-		Fx.spawn(HIT_SPARK_SCENE, global_position, rotation)
+		_play_hit(global_position)
 		return
 	_explode()
 
 
 func _explode() -> void:
-	Fx.spawn(HIT_SPARK_SCENE, global_position + direction * 20.0, rotation)
+	if look != &"big_bubble":
+		_play_hit(global_position + direction * 20.0)
 	queue_free()
+
+
+func _play_hit(at: Vector2) -> void:
+	Fx.burst(HIT.get(look, HIT[&"cork"]), at, direction.angle(), 16.0)
 
 
 ## Inimigo (parte que leva tiro) mais perto, até 1000 px. INF se nenhum.
@@ -156,23 +185,23 @@ func _check_turbo() -> void:
 			return
 
 
-func _draw() -> void:
+## Escolhe o quadro e o giro do desenho. O nó gira na direção do tiro; a clave e o confete
+## giram por cima disso, e as bolhas ficam sempre em pé (só espelham para a esquerda).
+func _update_sprite() -> void:
 	match look:
 		&"confetti":
-			draw_rect(Rect2(-9, -6, 18, 12), INK)
-			draw_rect(Rect2(-7, -4, 14, 8), _color)
+			_sprite.texture = _fly.frames[_piece]
+			_sprite.rotation = _time * CONFETTI_SPIN
 		&"club":
-			draw_set_transform(Vector2.ZERO, _time * 18.0)
-			var body := PackedVector2Array([Vector2(-5, -26), Vector2(5, -26), Vector2(11, 6), Vector2(8, 20),
-					Vector2(-8, 20), Vector2(-11, 6)])
-			draw_colored_polygon(body, Color("f2e6cc"))
-			body.append(body[0])
-			draw_polyline(body, INK, 3.0)
-			draw_rect(Rect2(-7, 2, 14, 5), Color("5fe3ff"))
-			draw_set_transform(Vector2.ZERO)
+			# 4 desenhos de 0 a 135 graus; a outra meia volta é o mesmo desenho virado.
+			var step := int(_time * CLUB_SPIN / (PI / 4.0))
+			_sprite.texture = _fly.frames[step % 4]
+			_sprite.rotation = PI if (step / 4) % 2 == 1 else 0.0
 		&"bubble", &"big_bubble":
-			var r := 13.0 if look == &"bubble" else 46.0
-			r *= 1.0 + sin(_time * 14.0) * 0.06
-			draw_circle(Vector2.ZERO, r, Color(0.7, 0.95, 1.0, 0.35))
-			draw_arc(Vector2.ZERO, r, 0.0, TAU, 24, Color(0.85, 1.0, 1.0, 0.95), 3.0)
-			draw_arc(Vector2.ZERO, r * 0.65, -2.2, -1.2, 8, Color(1, 1, 1, 0.9), 3.0)
+			_sprite.texture = _fly.frames[int(_time * FLY_FPS.get(look, 10.0)) % _fly.frame_count()]
+			_sprite.rotation = -rotation
+			_sprite.scale.x = absf(_sprite.scale.x) * (-1.0 if direction.x < 0.0 else 1.0)
+			if look == &"big_bubble":
+				_sprite.scale.y = _fly.frame_scale * (1.0 + sin(_time * 14.0) * 0.06)
+		_:
+			_sprite.texture = _fly.frames[int(_time * FLY_FPS.get(look, 16.0)) % _fly.frame_count()]

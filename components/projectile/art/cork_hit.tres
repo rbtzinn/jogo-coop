@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="FrameAnimation" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://core/player/characters/frame_animation.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://components/projectile/art/cork_hit_1.png" id="2_frame"]
+[ext_resource type="Texture2D" path="res://components/projectile/art/cork_hit_2.png" id="3_frame"]
+[ext_resource type="Texture2D" path="res://components/projectile/art/cork_hit_3.png" id="4_frame"]
+[ext_resource type="Texture2D" path="res://components/projectile/art/cork_hit_4.png" id="5_frame"]
+
+[resource]
+script = ExtResource("1_script")
+frames = Array[Texture2D]([ExtResource("2_frame"), ExtResource("3_frame"), ExtResource("4_frame"), ExtResource("5_frame")])
+frame_scale = 0.5
+origin = Vector2(-42.0, -37.682243347168)

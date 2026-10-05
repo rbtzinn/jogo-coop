@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" path="res://components/projectile/piercing_projectile.gd" id="1_script"]
 [ext_resource type="Script" path="res://components/hitbox/damage_area.gd" id="2_damage"]
-[ext_resource type="Texture2D" path="res://components/projectile/big_cork.svg" id="3_art"]
-[ext_resource type="PackedScene" path="res://components/fx/hit_spark.tscn" id="4_spark"]
+[ext_resource type="Script" path="res://components/fx/frame_loop_sprite.gd" id="3_art"]
+[ext_resource type="Resource" path="res://components/projectile/art/big_cork_fly.tres" id="5_frames"]
+[ext_resource type="PackedScene" path="res://components/projectile/art/big_cork_hit.tscn" id="4_spark"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(40, 20)
@@ -36,5 +37,6 @@ max_hits = 6
 shape = SubResource("RectangleShape2D_damage")
 
 [node name="Sprite" type="Sprite2D" parent="."]
-position = Vector2(-24, 0)
-texture = ExtResource("3_art")
+script = ExtResource("3_art")
+animation = ExtResource("5_frames")
+fps = 12.0

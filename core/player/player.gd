@@ -124,6 +124,7 @@ func _ready() -> void:
 	player_health.out.connect(_on_out)
 	rig = character.instantiate()
 	visual.add_child(rig)
+	rig.set_weapon(gun.weapon)
 	balloon.set_face(rig.head as Sprite2D, rig.scale.x)
 	balloon.set_frames(rig.balloon_animation, rig.balloon_turn_animation, BALLOON_SWAY_SPEED)
 	rig.dash_length = _dash_length()

@@ -111,6 +111,9 @@ func _ready() -> void:
 	if args[0] == "dupla":
 		_duo_capture()
 		return
+	if args[0] == "pistolas":
+		_guns_capture()
+		return
 	if args[0] == "salto_mortal" or args[0] == "salto_mortal2":
 		_somersault_capture(args[0] == "salto_mortal2")
 		return
@@ -871,6 +874,57 @@ func _duo_capture() -> void:
 	get_tree().quit()
 
 
+## Pistolas (Pedido A): o palhaço atira com cada pistola e solta o Tiro EX dela. Para cada uma,
+## uma tira de 12 recortes (perto da mão e do caminho do tiro), a cada 3 quadros de física.
+func _guns_capture() -> void:
+	SaveGame.path = "user://test_save_shots.json"
+	SaveGame.reset()
+	var scene: Node = load("res://bosses/tamer/tamer_fight.tscn").instantiate()
+	add_child(scene)
+	var boss: BossBrain = (scene.get_node("Fight") as Fight).boss
+	boss._wait = 100000.0
+	boss.pause_between_attacks = Vector2(100000.0, 100000.0)
+	await seconds(3.5)
+	var player: Player = get_tree().get_nodes_in_group(&"players")[0]
+	player.input.scripted = true
+	player.global_position.x = 560.0
+	player.reset_physics_interpolation()
+	var partner: Player = get_tree().get_nodes_in_group(&"players")[1]
+	partner.input.scripted = true
+	partner.input.clear()
+	partner.global_position.x = 1500.0
+	partner.reset_physics_interpolation()
+	for weapon in ["cork_gun", "confetti_fan", "juggling_club", "soap_bubble"]:
+		player.gun.weapon = weapon
+		player.rig.set_weapon(weapon)
+		for mode in ["tiro", "ex"]:
+			player.input.clear()
+			await seconds(1.5)
+			var grid := Image.create(4 * 480, 3 * 270, false, Image.FORMAT_RGBA8)
+			if mode == "tiro":
+				player.input.shoot_held = true
+			else:
+				player.applause.stars = 1.0
+				player.input.special_pressed = true
+			for i in 12:
+				for k in 3:
+					await get_tree().physics_frame
+				player.input.special_pressed = false
+				await RenderingServer.frame_post_draw
+				var view := get_viewport().get_texture().get_image()
+				var ratio := float(view.get_width()) / get_viewport().get_visible_rect().size.x
+				var screen := get_viewport().get_canvas_transform() * player.global_position * ratio
+				var size := (Vector2(600, 338) if mode == "tiro" else Vector2(960, 540)) * ratio
+				var at := (screen + Vector2(-120, -250) * ratio).clamp(Vector2.ZERO, Vector2(view.get_size()) - size)
+				var crop := view.get_region(Rect2i(Vector2i(at), Vector2i(size)))
+				crop.resize(480, 270)
+				grid.blit_rect(crop, Rect2i(0, 0, 480, 270), Vector2i((i % 4) * 480, (i / 4) * 270))
+			grid.save_png(_out.path_join("%s_%s.png" % [weapon, mode]))
+			print("foto: ", weapon, " ", mode)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.path))
+	get_tree().quit()
+
+
 ## Auditoria das telas (M2): menu principal, painel de entrar, configurações (as três abas), pausa
 ## na luta e cartaz de vitória e de derrota. Uma foto da tela inteira para cada.
 func _menu_shots() -> void:
@@ -1111,8 +1165,8 @@ func _footstep_measure() -> void:
 				await get_tree().physics_frame
 				tick += 1
 				for walker: WorldWalker in [clown, acro]:
-					var who := walker.miniature.kind
-					var feet := walker.miniature.feet_positions()
+					var who: Variant = walker.miniature.kind
+					var feet: Variant = walker.miniature.feet_positions()
 					for i in feet.size():
 						var airborne: bool = walker.miniature._feet[i].t >= 0.0
 						var speed := Vector2(walker.velocity.x, walker.velocity.z).length()
@@ -1194,8 +1248,8 @@ func _walk_capture() -> void:
 			tick += 1
 			var part: String = step[1]
 			for walker: WorldWalker in [clown, acro]:
-				var who := walker.miniature.kind
-				var feet := walker.miniature.feet_positions()
+				var who: Variant = walker.miniature.kind
+				var feet: Variant = walker.miniature.feet_positions()
 				var speed := Vector2(walker.velocity.x, walker.velocity.z).length()
 				for i in feet.size():
 					var airborne: bool = walker.miniature._feet[i].t >= 0.0

@@ -71,6 +71,8 @@ var _phase := 0.0
 var _time := 0.0
 var _recoil := 0.0
 var _flash_timer := 0.0
+## Clarão da pistola equipada.
+var _flash_frames: FrameAnimation
 var _blink_timer := 3.0
 var _squash := Vector2.ONE
 ## 0 = em pé, 1 = abaixado (transição suave).
@@ -145,7 +147,23 @@ func _ready() -> void:
 	_frame_sprite.hide()
 	add_child(_frame_sprite)
 	move_child(_frame_sprite, front_arm.get_index())
+	set_weapon("cork_gun")
 	update_pose(0.0, Vector2.ZERO, true, false, Vector2.RIGHT, 1.0, false)
+
+
+## Mostra na mão a pistola equipada (id do item), com a boca e o clarão dela.
+func set_weapon(weapon: String) -> void:
+	var sprite := gun_hand as Sprite2D
+	sprite.texture = GunLooks.glove(weapon)
+	sprite.offset = GunLooks.HAND_OFFSET
+	muzzle.position = GunLooks.muzzle(weapon)
+	var flash := muzzle_flash as Sprite2D
+	_flash_frames = GunLooks.flash(weapon)
+	flash.centered = false
+	flash.position = Vector2.ZERO
+	flash.rotation = 0.0
+	flash.texture = _flash_frames.frames[0]
+	flash.offset = _flash_frames.origin / _flash_frames.frame_scale
 
 
 ## Chamado pelo Player a cada quadro de física. `aim` já vem no espaço do personagem
@@ -184,8 +202,8 @@ func play_fire(kick := 1.0) -> void:
 	_recoil = 7.0 * kick
 	_flash_timer = 0.05 * kick
 	muzzle_flash.show()
-	muzzle_flash.rotation = randf() * TAU
-	muzzle_flash.scale = Vector2.ONE * randf_range(0.6, 0.85) * sqrt(kick)
+	# O clarão sai da boca para a frente; só o tamanho varia um pouco a cada tiro.
+	muzzle_flash.scale = Vector2.ONE * _flash_frames.frame_scale * randf_range(0.85, 1.0) * sqrt(kick)
 
 
 ## O personagem levou um golpe: toca o dano desenhado durante `duration` segundos (só desenho).

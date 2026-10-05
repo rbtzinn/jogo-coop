@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="FrameAnimation" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/player/characters/frame_animation.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://core/player/characters/shared/guns/flash_juggling_club_1.png" id="2_frame"]
+
+[resource]
+script = ExtResource("1_script")
+frames = Array[Texture2D]([ExtResource("2_frame")])
+frame_scale = 0.5
+origin = Vector2(0.0, -18.5840702056885)

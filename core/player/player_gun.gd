@@ -9,6 +9,7 @@ extends Node
 
 const PROJECTILE_SCENE := preload("res://components/projectile/projectile.tscn")
 const EX_SCENE := preload("res://components/projectile/big_cork.tscn")
+const CONFETTI_BLAST := preload("res://components/projectile/art/confetti_blast.tres")
 ## Cadência de cada pistola (segundos entre tiros).
 const INTERVALS := {"cork_gun": 0.12, "confetti_fan": 0.2, "juggling_club": 0.4, "soap_bubble": 0.18}
 
@@ -77,7 +78,8 @@ func spawn_ex(aim: Vector2, muzzle_position: Vector2, deals_damage := true) -> v
 	var source := String(_player.name)
 	match weapon:
 		"confetti_fan":
-			AreaBlast.spawn(_player.global_position + Vector2(0, -70), 230.0, 6, 5, deals_damage, source)
+			AreaBlast.spawn(_player.global_position + Vector2(0, -70), 230.0, 6, 5, deals_damage, source,
+					Color("ffc93c"), CONFETTI_BLAST)
 		"juggling_club":
 			for i in 5:
 				var x := _player.global_position.x + _player.facing * (140.0 + i * 130.0)
