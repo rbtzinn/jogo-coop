@@ -4,6 +4,8 @@ class_name Catalog
 
 const ITEMS_PATH := "res://dialogues/items.json"
 const LINES_PATH := "res://dialogues/lojista.json"
+## Ícone de cada item: <pasta><id>.png (recortados por tools/cut_item_icons.gd).
+const ICONS_PATH := "res://core/shop/icons/"
 ## Os quatro espaços de equipamento, na ordem do Camarim.
 const SLOTS := ["gun", "trick", "prop", "duo"]
 const SLOT_NAMES := {"gun": "Pistola", "trick": "Truque", "prop": "Adereço", "duo": "Número de dupla"}
@@ -32,6 +34,12 @@ static func ids_for_slot(slot: String) -> Array[String]:
 			result.append(item_id)
 	result.sort_custom(func(a: String, b: String) -> bool: return items()[a].price < items()[b].price)
 	return result
+
+
+## Ícone do item (null se não tiver).
+static func icon(item_id: String) -> Texture2D:
+	var path := ICONS_PATH + item_id + ".png"
+	return load(path) if ResourceLoader.exists(path) else null
 
 
 ## Uma fala do lojista do tipo pedido ("boas_vindas", "compra"...), escolhida ao acaso.

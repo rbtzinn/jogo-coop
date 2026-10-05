@@ -91,4 +91,4 @@ normaliza o que precisar e liga no jogo sem mudar números da luta.
 ## Situação (05/10/2026)
 Os três pedidos chegaram (o usuário mandou num zip), todos no tamanho pedido. O ingresso escondido veio
 estragado (quadro 1 cortado, quadro 3 vazio) e foi refeito. O clarão foi salvo como `claroes.png`, sem acento.
-O Pedido A está no jogo (Fase 1, ver docs/DESIGN.md); o B e o C esperam as fases 2 e 4.
+O Pedido A está no jogo (Fase 1) e o C também (Fase 2), ver docs/DESIGN.md; o B espera a Fase 4.

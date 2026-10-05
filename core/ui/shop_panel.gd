@@ -16,6 +16,7 @@ var _line: Label
 var _tickets: Label
 var _shelf: VBoxContainer
 var _name: Label
+var _icon: TextureRect
 var _details: RichTextLabel
 var _buy: Button
 var _gift_amount: SpinBox
@@ -96,10 +97,19 @@ func _ready() -> void:
 	artist_text.add_child(artist_hint)
 	artist.add_child(artist_text)
 	info.add_child(artist)
+	var heading := HBoxContainer.new()
+	heading.add_theme_constant_override("separation", 18)
+	info.add_child(heading)
+	_icon = TextureRect.new()
+	_icon.custom_minimum_size = Vector2(120, 120)
+	_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	heading.add_child(_icon)
 	_name = UiTheme.title_label("", 38)
 	_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	info.add_child(_name)
+	_name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	heading.add_child(_name)
 	info.add_child(HSeparator.new())
 	_details = RichTextLabel.new()
 	_details.bbcode_enabled = true
@@ -161,6 +171,9 @@ func _build_shelf() -> void:
 			button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 			button.custom_minimum_size = Vector2(0, 54)
 			button.add_theme_font_size_override("font_size", 24)
+			button.icon = Catalog.icon(item_id)
+			button.expand_icon = true
+			button.add_theme_constant_override("icon_max_width", 46)
 			button.set_meta(&"item", item_id)
 			button.focus_entered.connect(_select.bind(item_id))
 			button.pressed.connect(_select.bind(item_id))
@@ -213,6 +226,7 @@ func _refresh() -> void:
 	if item.is_empty():
 		return
 	_name.text = item.name
+	_icon.texture = Catalog.icon(_selected)
 	var text: String = item.description
 	if item.has("ex"):
 		text += "\n\n[b][color=#dfbc7d]Tiro EX:[/color][/b] " + item.ex

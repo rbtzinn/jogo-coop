@@ -81,8 +81,13 @@ func _rebuild() -> void:
 			for item_id in Catalog.ids_for_slot(slot):
 				if Shop.owns(key, item_id):
 					options.append(item_id)
+			choice.add_theme_constant_override("icon_max_width", 40)
+			choice.get_popup().add_theme_constant_override("icon_max_width", 40)
 			for item_id in options:
-				choice.add_item("—" if item_id.is_empty() else Catalog.item(item_id).name)
+				if item_id.is_empty():
+					choice.add_item("—")
+				else:
+					choice.add_icon_item(Catalog.icon(item_id), Catalog.item(item_id).name)
 			choice.select(maxi(options.find(Shop.equipped(key, slot)), 0))
 			choice.item_selected.connect(func(index: int) -> void: Shop.equip(key, slot, options[index]))
 			column.add_child(choice)
