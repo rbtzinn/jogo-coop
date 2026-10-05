@@ -6,8 +6,9 @@ extends CharacterBody3D
 ## Online: cada PC move o seu e manda a posição para o outro, que suaviza.
 ## Sozinho: o personagem que você não controla segue o outro (Tab troca), como um parceiro.
 
-const SPEED := 2.4
-const ACCEL := 30.0
+## Velocidade no mapa (m/s): era 2,4 até 05/10/2026; o usuário achou lento demais no mapa ampliado.
+const SPEED := 4.6
+const ACCEL := 45.0
 ## Sozinho: distância em que o parceiro segue (para atrás de quem anda).
 const FOLLOW_DISTANCE := 1.4
 ## Quanto tempo a posição do parceiro leva para alcançar a recebida pela rede.

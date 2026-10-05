@@ -55,3 +55,16 @@ Sem profundidade na pintura: os bonecos ficam sempre na frente do cenário (o ar
 Medição (tools/visual_audit, 1280×720, qualidade alta): 346 FPS (2,9 ms), 24 chamadas de desenho, 2 mil primitivas (antes 196 FPS e 287 chamadas).
 
 Testes: run_all sem falhas; o teste do mapa anda pelas trilhas pintadas até o Domador.
+
+## Etapa 3c: mapa ampliado em quatro partes, com câmera que acompanha
+Pedido de 05/10/2026 (docs/prompts/claude_integrar_mapa_4partes.md): o parque cresceu para um conjunto 2 × 2 de 1672 × 941 pixels (docs/referencias/remap_conceitos/mapa_amplo_4partes/, copiados para levels/world/art/park_0*.png). A tela mostra uma região por vez (620 pixels do conjunto na altura da vista, cerca de 1100 na largura) e a câmera ortográfica segue o meio da dupla, presa para nunca mostrar fora do conjunto. Os dois ficam sempre na tela: cada personagem deste PC guarda uma margem da beira da vista.
+
+As quatro partes são uma malha só com quatro materiais, num plano de frente para a câmera atrás do chão; os cantos saem da mesma conta (pixel_to_world), então as partes vizinhas dividem os mesmos vértices (sem vão nem sobreposição), com filtro linear, sem repetição e sem compressão de VRAM.
+
+Onde se anda: máscara da terra pintada (levels/world/art/park_walk.png, feita por tools/blender/park_walk_mask.py: cor da terra, só o pedaço principal, furos pequenos tapados, entradas acrescentadas à mão e o pilar do portão tirado). Bater na beira leva ao ponto andável mais perto de onde se queria ir: o personagem escorrega pela beira em vez de travar (reclamação do usuário: o andar ficava travado nas paredes). Velocidade no mapa de 2,4 para 4,6 m/s (pedido do usuário: estava lento).
+
+Portas nas entradas pintadas: tapetes do Domador, dos Malabaristas e do Mágico, escada do Camarim, escada da loja e plataforma da estação. Os personagens nascem no pátio logo depois do portão. Como antes, os personagens ficam sempre na frente do cenário (a pintura não tem profundidade).
+
+Medição (tools/visual_audit, 1280×720, qualidade alta): 315 a 368 FPS e 24 a 32 chamadas de desenho nas seis entradas (antes, com a pintura única, 346 FPS e 24 chamadas).
+
+Testes: run_all sem falhas (o teste do mapa anda pela estrada até o Domador e confere que cada ponto da rota está na terra).

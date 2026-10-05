@@ -7,7 +7,7 @@ extends Node3D
 ## Altura do personagem no mapa (metros na tela; na câmera do mapa dá uns 12% da altura da tela).
 const HEIGHT := 1.9
 ## Metros andados por ciclo da corrida (os pés acompanham o chão).
-const CYCLE_LENGTH := 1.3
+const CYCLE_LENGTH := 1.9
 ## Quadros por segundo da animação parada (a mesma da luta).
 const IDLE_FPS := 8.0
 ## Luz da noite por cima do desenho (os quadros são pintados claros, para o dia do picadeiro).

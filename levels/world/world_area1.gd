@@ -1,51 +1,36 @@
 extends Node3D
 ## Mundo da Área 1 em 3D (a aventura): o parque do circo assombrado à noite, visto de cima numa câmera
-## ortográfica inclinada e parada. As miniaturas 3D andam juntas pelas trilhas entre as atrações; entra-se
-## andando até elas (WorldDoor). As lutas continuam 2D.
+## ortográfica inclinada que acompanha a dupla. Os personagens (desenhos da luta, menores) andam juntos pelas
+## trilhas entre as atrações; entra-se andando até elas (WorldDoor). As lutas continuam 2D.
 ## Atrações: portão e carroção do Camarim, O Domador, carroção da Cartomante (loja), Os Malabaristas, a
 ## estação do Trem e a tenda grande do Grande Mágico, fechada até vencer os outros três.
-## O cenário é a pintura de referência do parque (pedido do usuário em 05/10/2026), parada e ocupando a
-## tela toda; a câmera ortográfica fica fixa e casa o chão do mundo com o chão pintado, então os bonecos
-## andam por cima da imagem. Onde se anda é desenhado aqui em pixels da pintura (WALK_AREAS e
-## WALK_TRAILS); as portas ficam nas entradas pintadas (DOOR_FRONTS). A lógica das portas não muda.
+## O cenário é o mapa ampliado pintado em quatro partes 2 x 2 (docs/prompts/claude_integrar_mapa_4partes.md,
+## 05/10/2026), montadas numa malha só no fundo da câmera; a tela mostra uma região por vez e a câmera revela o
+## resto conforme a dupla anda. O chão do mundo casa com o chão pintado (cada pixel do conjunto vira um ponto no
+## chão). Onde se anda vem de uma máscara da terra pintada (park_walk.png, feita por
+## tools/blender/park_walk_mask.py); quem bate na beira escorrega por ela. As portas ficam nas entradas
+## pintadas (DOOR_FRONTS). A lógica das portas não muda.
 ## Ao chegar aqui, o host salva o jogo.
 
-const PAINTING := preload("res://levels/world/art/park_painted.jpg")
-## Tamanho da pintura em pixels (as coordenadas abaixo são nela).
-const IMAGE_SIZE := Vector2(1376, 768)
-## Chão onde se anda: elipses [centro, raios] em pixels da pintura.
-const WALK_AREAS: Array = [
-	[Vector2(640, 540), Vector2(190, 95)],  # pátio do meio, logo depois do portão
-	[Vector2(560, 445), Vector2(70, 25)],  # frente do carroção da Cartomante
-	[Vector2(420, 545), Vector2(140, 40)],  # terra em cima do portão
-	[Vector2(730, 420), Vector2(60, 40)],  # pé da subida
-	[Vector2(175, 428), Vector2(80, 20)],  # frente do carroção do Camarim
-	[Vector2(318, 203), Vector2(45, 14)],  # tapete do Domador
-	[Vector2(715, 208), Vector2(45, 14)],  # tapete dos Malabaristas
-	[Vector2(1090, 247), Vector2(60, 16)],  # tapete do Mágico
-	[Vector2(1000, 405), Vector2(35, 18)],  # escada da estação
+## As quatro partes do mapa e o canto de cima à esquerda de cada uma no conjunto (pixels).
+const PARTS: Array = [
+	[preload("res://levels/world/art/park_01_noroeste.png"), Vector2(0, 0)],
+	[preload("res://levels/world/art/park_02_nordeste.png"), Vector2(836, 0)],
+	[preload("res://levels/world/art/park_03_sudoeste.png"), Vector2(0, 470)],
+	[preload("res://levels/world/art/park_04_sudeste.png"), Vector2(836, 470)],
 ]
-## Trilhas: [pontos em pixels da pintura, meia largura em pixels].
-const WALK_TRAILS: Array = [
-	[[Vector2(385, 768), Vector2(385, 660), Vector2(420, 600), Vector2(480, 545)], 40.0],  # portão
-	[[Vector2(175, 428), Vector2(230, 460), Vector2(300, 495), Vector2(420, 520), Vector2(520, 530)], 30.0],  # Camarim
-	[[Vector2(720, 440), Vector2(715, 340), Vector2(712, 240)], 28.0],  # subida para os Malabaristas
-	[[Vector2(318, 205), Vector2(450, 218), Vector2(560, 228), Vector2(650, 245), Vector2(712, 250)], 17.0],
-	[[Vector2(712, 250), Vector2(760, 280), Vector2(860, 282), Vector2(950, 276), Vector2(1000, 262),
-		Vector2(1060, 250)], 12.0],  # atrás do elefante, até o Mágico
-	[[Vector2(990, 265), Vector2(995, 330), Vector2(1000, 400)], 28.0],  # descida para a estação
-	[[Vector2(760, 400), Vector2(870, 388), Vector2(990, 385)], 12.0],  # na frente do elefante
-	[[Vector2(930, 262), Vector2(915, 180), Vector2(900, 110)], 20.0],  # trilha do fundo
-	[[Vector2(700, 600), Vector2(720, 690), Vector2(730, 768)], 45.0],  # trilha de baixo
-]
-## Onde fica a frente de cada atração na pintura (o meio da área de entrada da porta).
+## Tamanho do conjunto em pixels (a linha de baixo tem 471 de altura).
+const IMAGE_SIZE := Vector2(1672, 941)
+## Terra onde se anda (branco), na metade da resolução do conjunto.
+const WALK_MASK := preload("res://levels/world/art/park_walk.png")
+## Onde fica a frente de cada atração no conjunto (o meio da área de entrada da porta).
 const DOOR_FRONTS := {
-	"DoorDressing": Vector2(175, 428),
-	"DoorTamer": Vector2(318, 203),
-	"DoorShop": Vector2(560, 445),
-	"DoorJugglers": Vector2(715, 208),
-	"DoorTrain": Vector2(1000, 405),
-	"DoorMagician": Vector2(1090, 247),
+	"DoorDressing": Vector2(250, 545),
+	"DoorTamer": Vector2(362, 212),
+	"DoorShop": Vector2(592, 598),
+	"DoorJugglers": Vector2(1022, 214),
+	"DoorTrain": Vector2(1350, 728),
+	"DoorMagician": Vector2(1418, 290),
 }
 ## Sozinho: se o parceiro ficar mais longe que isto (preso numa curva), ele reaparece atrás de quem anda.
 const FOLLOW_RESCUE := 5.0
@@ -58,16 +43,27 @@ const FACES := {
 const BASE_HEALTH := 3
 const EXTRA_HEALTH_PROP := "cloth_heart"
 
-## Câmera: ortográfica e parada, inclinada como a vista da pintura, mostrando o parque inteiro.
+## Câmera: ortográfica, inclinada como a vista da pintura, seguindo o meio da dupla.
 const CAMERA_PITCH := -42.0
-## Altura da vista em metros: a pintura inteira (os bonecos ficam com uns 12% da tela, como na referência).
+## Altura da vista em metros (os personagens ficam com uns 12% da tela).
 const VIEW_HEIGHT := 15.5
-## Distância da câmera ao meio do chão (só afasta os planos de corte; a imagem não muda).
+## Quantos pixels do conjunto cabem na altura da vista: 620 de 941 (cerca de dois terços na altura e 1100 de 1672
+## na largura). Ampliação de 1,74 na janela de 1080 linhas: a arte tem só 1672 x 941.
+const VIEW_PIXELS := 620.0
+## Distância da câmera ao ponto seguido (só afasta os planos de corte; a imagem não muda).
 const CAMERA_BACK := 40.0
-## A pintura fica bem no fundo, atrás de tudo que está no chão.
-const PAINTING_DISTANCE := 150.0
+const CAMERA_SMOOTH := 6.0
+## A pintura fica atrás de tudo que está no chão, a esta distância do chão ao longo do olhar.
+const PAINTING_DEPTH := 30.0
+## Margem (metros) que cada personagem deste PC guarda da beira da tela (os dois sempre na vista).
+const SCREEN_MARGIN := Vector2(1.0, 1.4)
+## Quando bate na beira, procura o ponto andável mais perto do desejado até esta distância (pixels da máscara).
+const SLIDE_SEARCH := 8
+
+static var _walk_image: Image
 
 var _camera := Camera3D.new()
+var _focus := Vector3.ZERO
 var _lives := {}
 var _prompts := {}
 var _prompt_layer := Control.new()
@@ -89,15 +85,17 @@ func _ready() -> void:
 	_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	_camera.size = VIEW_HEIGHT
 	_camera.near = 0.5
-	_camera.far = PAINTING_DISTANCE + 10.0
+	_camera.far = CAMERA_BACK + PAINTING_DEPTH + 20.0
 	_camera.rotation_degrees = Vector3(CAMERA_PITCH, 0, 0)
-	_camera.position = _camera.transform.basis.z * CAMERA_BACK
 	add_child(_camera)
 	_build_painting()
+	_focus = _target_focus()
+	_update_camera(1.0)
 	_camera.make_current()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_update_camera(1.0 - exp(-CAMERA_SMOOTH * delta))
 	_update_hud()
 
 
@@ -125,82 +123,144 @@ func height_at(_x: float, _z: float) -> float:
 	return 0.0
 
 
-## Ponto da pintura (pixels) no chão do mundo: a câmera parada mira a origem no meio da tela, e cada
-## pixel para baixo na tela anda 1/sen(inclinação) vezes mais no chão.
+## Metros de chão (na tela) por pixel do conjunto.
+static func meters_per_pixel() -> float:
+	return VIEW_HEIGHT / VIEW_PIXELS
+
+
+## Ponto do conjunto (pixels) no chão do mundo: o meio do conjunto fica na origem, e cada pixel para baixo
+## na tela anda 1/sen(inclinação) vezes mais no chão. Uma transformação só para as quatro partes.
 static func pixel_to_world(pixel: Vector2) -> Vector3:
-	var meters := VIEW_HEIGHT / IMAGE_SIZE.y
-	var rel := pixel - IMAGE_SIZE * 0.5
-	return Vector3(rel.x * meters, 0.0, rel.y * meters / sin(deg_to_rad(-CAMERA_PITCH)))
+	var rel := (pixel - IMAGE_SIZE * 0.5) * meters_per_pixel()
+	return Vector3(rel.x, 0.0, rel.y / sin(deg_to_rad(-CAMERA_PITCH)))
 
 
 static func world_to_pixel(point: Vector3) -> Vector2:
-	var meters := VIEW_HEIGHT / IMAGE_SIZE.y
-	return IMAGE_SIZE * 0.5 + Vector2(point.x / meters, point.z * sin(deg_to_rad(-CAMERA_PITCH)) / meters)
+	return IMAGE_SIZE * 0.5 + Vector2(point.x, point.z * sin(deg_to_rad(-CAMERA_PITCH))) / meters_per_pixel()
+
+
+static func _mask() -> Image:
+	if _walk_image == null:
+		_walk_image = WALK_MASK.get_image()
+		if _walk_image.is_compressed():
+			_walk_image.decompress()
+	return _walk_image
+
+
+## Se o pixel da máscara (metade da resolução do conjunto) é terra onde se anda.
+static func _walkable_cell(cell: Vector2i) -> bool:
+	var mask := _mask()
+	if cell.x < 0 or cell.y < 0 or cell.x >= mask.get_width() or cell.y >= mask.get_height():
+		return false
+	return mask.get_pixelv(cell).r > 0.5
+
+
+static func _cell_of(point: Vector3) -> Vector2i:
+	var pixel := world_to_pixel(point) * float(_mask().get_width()) / IMAGE_SIZE.x
+	return Vector2i(floori(pixel.x), floori(pixel.y))
+
+
+## O ponto dentro do pixel `cell` da máscara mais perto de `point` (a beira do pixel, não o meio: escorregar
+## pela beira fica contínuo, sem pular de pixel em pixel).
+static func _closest_in_cell(cell: Vector2i, point: Vector3) -> Vector3:
+	var scale := IMAGE_SIZE.x / float(_mask().get_width())
+	var low := pixel_to_world((Vector2(cell) + Vector2(0.02, 0.02)) * scale)
+	var high := pixel_to_world((Vector2(cell) + Vector2(0.98, 0.98)) * scale)
+	return Vector3(clampf(point.x, low.x, high.x), point.y, clampf(point.z, low.z, high.z))
 
 
 ## Se o ponto (mundo) está no chão pintado onde se anda.
 static func is_walkable(point: Vector3) -> bool:
-	var pixel := world_to_pixel(point)
-	for area: Array in WALK_AREAS:
-		var d: Vector2 = (pixel - area[0]) / area[1]
-		if d.length_squared() <= 1.0:
-			return true
-	for trail: Array in WALK_TRAILS:
-		var points: Array = trail[0]
-		for i in points.size() - 1:
-			if pixel.distance_to(Geometry2D.get_closest_point_to_segment(pixel, points[i], points[i + 1])) <= trail[1]:
-				return true
-	return false
+	return _walkable_cell(_cell_of(point))
 
 
-## O ponto andável mais perto (mundo), para quem nasceu ou foi posto fora do chão pintado.
-static func nearest_walkable(point: Vector3) -> Vector3:
+## O ponto andável mais perto (mundo), procurando em volta até `reach` pixels da máscara (INF se não achar
+## nada: devolve o próprio ponto).
+static func nearest_walkable(point: Vector3, reach := 200) -> Vector3:
 	if is_walkable(point):
 		return point
-	var pixel := world_to_pixel(point)
-	var best := Vector2.ZERO
-	var best_distance := INF
-	for area: Array in WALK_AREAS:
-		var d: Vector2 = (pixel - area[0]) / area[1]
-		var inside: Vector2 = area[0] + (d.normalized() * 0.95 if d.length() > 0.95 else d) * area[1]
-		if pixel.distance_to(inside) < best_distance:
-			best_distance = pixel.distance_to(inside)
-			best = inside
-	for trail: Array in WALK_TRAILS:
-		var points: Array = trail[0]
-		for i in points.size() - 1:
-			var on := Geometry2D.get_closest_point_to_segment(pixel, points[i], points[i + 1])
-			if pixel.distance_to(on) < best_distance:
-				best_distance = pixel.distance_to(on)
-				best = on
-	var result := pixel_to_world(best)
-	return Vector3(result.x, point.y, result.z)
+	var center := _cell_of(point)
+	for radius in range(1, reach + 1):
+		var best := Vector2i(-1, -1)
+		var best_distance := INF
+		for dy in range(-radius, radius + 1):
+			for dx in range(-radius, radius + 1):
+				if maxi(absi(dx), absi(dy)) != radius:
+					continue
+				var cell := center + Vector2i(dx, dy)
+				if _walkable_cell(cell):
+					var distance := _closest_in_cell(cell, point).distance_squared_to(point)
+					if distance < best_distance:
+						best_distance = distance
+						best = cell
+		if best.x >= 0:
+			return _closest_in_cell(best, point)
+	return point
 
 
-## Segura o boneco no chão pintado: escorrega pela beira (tenta só um dos eixos) ou volta ao último ponto bom.
+## Segura o boneco no chão pintado e na tela. Bateu na beira: vai para o ponto andável mais perto de onde
+## queria ir (escorrega pela beira, também em curvas e na diagonal), em vez de voltar para trás e travar.
 func _keep_on_ground(walker: WorldWalker) -> void:
-	var at := walker.global_position
-	if is_walkable(at):
-		_last_good[walker] = at
-		return
-	if not _last_good.has(walker):
-		walker.global_position = nearest_walkable(at)
-		_last_good[walker] = walker.global_position
-		return
-	var last: Vector3 = _last_good[walker]
-	var along_x := Vector3(at.x, at.y, last.z)
-	var along_z := Vector3(last.x, at.y, at.z)
-	if is_walkable(along_x):
-		walker.global_position = along_x
-		walker.velocity.z = 0.0
-	elif is_walkable(along_z):
-		walker.global_position = along_z
-		walker.velocity.x = 0.0
-	else:
-		walker.global_position = Vector3(last.x, at.y, last.z)
-		walker.velocity.x = 0.0
-		walker.velocity.z = 0.0
+	var at := _inside_view(walker.global_position)
+	if not is_walkable(at):
+		var near := nearest_walkable(at, SLIDE_SEARCH)
+		if not is_walkable(near):
+			near = _last_good.get(walker, nearest_walkable(at))
+		elif _last_good.has(walker) and not is_walkable(_inside_view(near)):
+			near = _last_good[walker]
+		at = Vector3(near.x, at.y, near.z)
+	if at != walker.global_position:
+		# Tira só a parte da velocidade que empurrava para fora; o resto continua (desliza).
+		var pushed := Vector3(at.x - walker.global_position.x, 0, at.z - walker.global_position.z)
+		if pushed.length_squared() > 0.000001:
+			var normal := pushed.normalized()
+			var into := Vector3(walker.velocity.x, 0, walker.velocity.z).dot(-normal)
+			if into > 0.0:
+				walker.velocity += normal * into
+		walker.global_position = at
 	_last_good[walker] = walker.global_position
+
+
+## O ponto preso dentro da vista da câmera (com margem): os dois ficam sempre na tela.
+func _inside_view(point: Vector3) -> Vector3:
+	var half := Vector2(VIEW_HEIGHT * 0.5 * _aspect(), VIEW_HEIGHT * 0.5) - SCREEN_MARGIN
+	var center := _screen_coords(_target_focus())
+	var at := _screen_coords(point)
+	var held := Vector2(clampf(at.x, center.x - half.x, center.x + half.x), clampf(at.y, center.y - half.y, center.y + half.y))
+	if held == at:
+		return point
+	return Vector3(held.x, point.y, -held.y / sin(deg_to_rad(-CAMERA_PITCH)))
+
+
+## Posição na tela (metros: x para a direita, y para cima) de um ponto no chão.
+static func _screen_coords(point: Vector3) -> Vector2:
+	return Vector2(point.x, -point.z * sin(deg_to_rad(-CAMERA_PITCH)))
+
+
+func _aspect() -> float:
+	var size := get_viewport().get_visible_rect().size
+	return size.x / maxf(size.y, 1.0)
+
+
+func _update_camera(weight: float) -> void:
+	_focus = _focus.lerp(_target_focus(), weight)
+	_camera.position = _focus + _camera.transform.basis.z * CAMERA_BACK
+
+
+## Ponto seguido (no chão): o meio da dupla, preso para a vista nunca sair do conjunto pintado.
+func _target_focus() -> Vector3:
+	var walkers := get_tree().get_nodes_in_group(&"walkers")
+	var middle := Vector3.ZERO
+	for walker: WorldWalker in walkers:
+		middle += walker.global_position
+	if not walkers.is_empty():
+		middle /= walkers.size()
+	var half_view := Vector2(VIEW_HEIGHT * 0.5 * _aspect(), VIEW_HEIGHT * 0.5)
+	var half_map := IMAGE_SIZE * 0.5 * meters_per_pixel()
+	var at := _screen_coords(middle)
+	at.x = clampf(at.x, -half_map.x + half_view.x, half_map.x - half_view.x) if half_map.x > half_view.x else 0.0
+	at.y = clampf(at.y, -half_map.y + half_view.y, half_map.y - half_view.y) if half_map.y > half_view.y else 0.0
+	return Vector3(at.x, 0.0, -at.y / sin(deg_to_rad(-CAMERA_PITCH)))
 
 
 ## Sozinho: o parceiro que ficou preso longe reaparece logo atrás de quem você controla.
@@ -269,22 +329,47 @@ func _build_floor() -> void:
 	add_child(body)
 
 
-## A pintura num quadrado no fundo da câmera, do tamanho exato da vista.
+## As quatro partes numa malha só, cada uma com o seu material, num plano de frente para a câmera atrás do chão.
+## Os cantos vêm da mesma conta (pixel_to_world) para as quatro: as partes vizinhas dividem exatamente os
+## mesmos vértices, sem vão nem sobreposição. A textura não repete (sem borda puxada do outro lado).
 func _build_painting() -> void:
-	var quad := QuadMesh.new()
-	quad.size = Vector2(VIEW_HEIGHT * IMAGE_SIZE.x / IMAGE_SIZE.y, VIEW_HEIGHT)
-	var material := StandardMaterial3D.new()
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.albedo_texture = PAINTING
-	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
-	material.disable_receive_shadows = true
+	var basis := _camera.transform.basis
+	var behind := -basis.z * PAINTING_DEPTH
+	var up := basis.y
+	var mesh := ArrayMesh.new()
+	for part: Array in PARTS:
+		var texture: Texture2D = part[0]
+		var corner: Vector2 = part[1]
+		var size := texture.get_size()
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		st.set_normal(basis.z)
+		var points := [corner, corner + Vector2(size.x, 0), corner + size, corner + Vector2(0, size.y)]
+		var uvs := [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)]
+		var vertices := []
+		for p: Vector2 in points:
+			# O ponto do chão desse pixel, levado ao plano da pintura ao longo do olhar (mesmo lugar na tela).
+			var ground := pixel_to_world(p)
+			var screen := _screen_coords(ground)
+			vertices.append(Vector3(screen.x, 0, 0) + up * screen.y + behind)
+		for k in [0, 1, 2, 0, 2, 3]:
+			st.set_uv(uvs[k])
+			st.add_vertex(vertices[k])
+		var material := StandardMaterial3D.new()
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		material.albedo_texture = texture
+		material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+		material.texture_repeat = false
+		material.disable_receive_shadows = true
+		material.cull_mode = BaseMaterial3D.CULL_DISABLED
+		st.set_material(material)
+		st.commit(mesh)
 	var painting := MeshInstance3D.new()
 	painting.name = "Painting"
-	painting.mesh = quad
-	painting.material_override = material
+	painting.mesh = mesh
 	painting.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	painting.position = Vector3(0, 0, -PAINTING_DISTANCE)
-	_camera.add_child(painting)
+	painting.extra_cull_margin = 100.0
+	add_child(painting)
 
 
 ## Cada porta vai para a entrada pintada (a área de entrada fica em DOOR_FRONTS). O corpo da atração não

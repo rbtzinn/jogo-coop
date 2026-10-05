@@ -84,6 +84,8 @@ func _run() -> void:
 	await frames(10)
 	check(not PauseMenu.is_open(), "Esc closes the dressing room for good")
 	clown.global_position = spot
+	# O parceiro foi atrás até o Camarim; volta junto (o mapa ampliado é grande para ele vir andando).
+	acro.global_position = spot + Vector3(1.0, 0, 0.3)
 	await frames(5)
 
 	# Andar até o Domador (para a direita e depois para cima, até a frente da tenda) e entrar.
@@ -112,11 +114,13 @@ func _run() -> void:
 	await frames(20)
 	Settings.up_jumps = up_jumps_before
 	check(clown.global_position.z < start.z - expected * 0.8, "W walks forward even with up-jumps on (%.2f m)" % (start.z - clown.global_position.z))
-	# Pelas trilhas pintadas (pixels da pintura do parque): subida dos Malabaristas e estrada do Domador.
+	# Pelas trilhas pintadas (pixels do mapa em quatro partes): do pátio pela estrada do Domador.
 	var route: Array[Vector3] = []
-	for pixel in [Vector2(600, 520), Vector2(718, 440), Vector2(715, 330), Vector2(712, 252), Vector2(650, 245),
-			Vector2(560, 228), Vector2(450, 218)]:
+	for pixel in [Vector2(640, 660), Vector2(780, 600), Vector2(820, 520),
+			Vector2(790, 450), Vector2(730, 410), Vector2(660, 380), Vector2(560, 330),
+			Vector2(450, 270), Vector2(400, 240)]:
 		route.append(map.pixel_to_world(pixel))
+		check(map.is_walkable(route[-1]), "route point %s is on the painted ground" % pixel)
 	route.append(door.front_point())
 	var walked := 0
 	while not door.overlaps_body(clown) and walked < 900:
@@ -135,7 +139,7 @@ func _run() -> void:
 		walked += 1
 	for action in [&"move_left", &"move_right", &"move_up", &"move_down"]:
 		Input.action_release(action)
-	check(door.overlaps_body(clown), "walked to the tamer tent")
+	check(door.overlaps_body(clown), "walked to the tamer tent (stopped at %s)" % map.world_to_pixel(clown.global_position))
 	await frames(5)
 	await press(&"shoot")
 	await frames(20)
