@@ -20,10 +20,21 @@ func _run() -> void:
 	Settings.quality = 2
 	Engine.max_fps = 0
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+	if scene_path == "res://core/ui/boot_screen.tscn":
+		Engine.set_meta(&"hold_boot", true)
 	var scene := (load(scene_path) as PackedScene).instantiate()
 	get_tree().root.add_child(scene)
 	get_tree().current_scene = scene
 	await get_tree().create_timer(2.0).timeout
+	if args.size() > 2 and args[2].begins_with("map_"):
+		var key := args[2].trim_prefix("map_")
+		for door: WorldDoor in get_tree().get_nodes_in_group(&"world_doors"):
+			if door.level_id != key and not (key == "shop" and door.opens_shop) and not (key == "dressing" and door.opens_dressing_room):
+				continue
+			var walkers := get_tree().get_nodes_in_group(&"walkers")
+			for i in walkers.size():
+				walkers[i].global_position = door.front_point() + Vector3(i * 0.7 - 0.35, 0.3, 1.0)
+			await get_tree().create_timer(1.5).timeout
 	if args.size() > 2:
 		match args[2]:
 			"settings": scene._settings_menu.open()
@@ -32,6 +43,9 @@ func _run() -> void:
 				var tabs: Array = scene._settings_menu.find_children("*", "TabContainer", true, false)
 				(tabs[0] as TabContainer).current_tab = 1 if args[2] == "video" else 2
 			"shop": ShopPanel.open_for("clown", scene)
+			"boot_half":
+				scene._requested = false
+				scene._progress.value = 52.0
 			"pause": PauseMenu.open(false)
 			"victory", "defeat":
 				var end: CanvasLayer = load("res://core/ui/fight_end_screen.gd").new()
@@ -46,7 +60,7 @@ func _run() -> void:
 				scene.add_child(center)
 				center.add_child(dressing)
 				dressing.open()
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.9).timeout
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(_destination + "/capture.png")
 	_sampling = true

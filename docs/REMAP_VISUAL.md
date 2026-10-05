@@ -28,3 +28,10 @@ Abertura com progresso real, menu assimétrico, cenário Blender e filtro de fil
 ## Etapa 2 concluída
 Configurações, pausa/Intervalo, loja, Camarim e resultados reorganizados com cabeçalhos e retratos. Conteúdo e callbacks de compras, equipamento, recompensas e rede preservados. Teste test_shop: zero falhas. Capturas de configurações/loja/Camarim/resultado/pausa conferidas. Animação decorativa dos painéis atualiza só quando visível e a 12,5 Hz.
 
+
+## Tela de carregamento (referência ilustrada)
+Pedido do usuário em 05/10/2026: a abertura igual em espírito a docs/referencias/remap/carregamento_referencia.png. Decisão: usar a própria pintura como arte, separada em camadas por tools/blender/loading_screen.py (só numpy do Blender): palco sem os personagens e com a barra vazia, palhaço e acrobata recortados pelo contorno de tinta, preenchimento dourado da barra e um mapa das lâmpadas. Os polígonos dos recortes são aproximados à mão e o script os encaixa no traço preto.
+
+Vida sem quadros novos (shaders/loading_puppet.gdshader): respiração esticando a partir dos pés, balanço do tronco, os dois braços mexendo em volta do ombro e piscadas com pálpebra desenhada (olho fechado em curva). Lâmpadas da moldura e do letreiro correm em sequência de três; as dos varais oscilam soltas; névoa passa devagar na rua (shaders/loading_stage.gdshader). A barra revela o dourado pelo progresso real do carregamento do menu, sem atraso.
+
+Medição (tools/visual_audit, 1280×720, qualidade alta, mesmo PC): antes 481 FPS, 8 chamadas de desenho; depois 305 FPS (3,3 ms por quadro), 5 chamadas de desenho. O custo extra é o shader em tela cheia; folgado para a UHD 630.
