@@ -8,10 +8,22 @@ extends Control
 
 const BAR_PANEL := Vector2(820, 100)
 const BAR_SIZE := Vector2(720, 26)
-const TICKET := Vector2(290, 80)
+## Ingresso de cada jogador (05/10/2026, pedido do usuário: corações e estrelas maiores, fáceis de ler).
+const TICKET := Vector2(500, 140)
+## Onde ficam o picote, a fileira de corações e a de estrelas no ingresso, e o tamanho de cada um.
+const CUT_X := 140.0
+const HEART_ROW := Vector2(182, 46)
+const HEART_STEP := 54.0
+const HEART_R := 22.0
+const STAR_ROW := Vector2(178, 104)
+const STAR_STEP := 50.0
+const STAR_R := 20.0
+## Dourado forte das estrelas cheias (o dourado da interface é claro demais no papel do ingresso).
+const STAR_GOLD := Color("ffb627")
 const MARGIN := 12.0
 const HEART_RED := Color("d23a3a")
-const HEART_EMPTY := Color(0.55, 0.45, 0.38, 0.55)
+const HEART_EMPTY := Color("4a3b31")
+const STAR_EMPTY := Color("5a4a36")
 const TICKET_PAPER := Color("f2e6cc")
 const TICKET_RED := Color("a3282a")
 
@@ -74,7 +86,7 @@ func _draw() -> void:
 		_draw_ticket(player, origin)
 	for pop in _heart_pops:
 		var k: float = pop[1] / 0.6
-		_draw_heart(pop[0] + Vector2(0, -30.0 * k), 13.0 * (1.0 + k), Color(HEART_RED, 1.0 - k))
+		_draw_heart(pop[0] + Vector2(0, -30.0 * k), HEART_R * (1.0 + k), Color(HEART_RED, 1.0 - k))
 	if _boss != null:
 		_draw_boss_marquee()
 
@@ -166,52 +178,65 @@ func _draw_ticket(player: Player, origin: Vector2) -> void:
 	draw_polyline(border, UiTheme.INK, 5.0, true)
 	draw_polyline(_ticket_shape(origin + Vector2(6, 6), TICKET - Vector2(12, 12), 7.0), TICKET_RED, 2.5, true)
 	# Picote do ingresso.
-	var cut_x := origin.x + 116.0
+	var cut_x := origin.x + CUT_X
 	var y := origin.y + 8.0
 	while y < origin.y + TICKET.y - 8.0:
 		draw_line(Vector2(cut_x, y), Vector2(cut_x, y + 5.0), TICKET_RED, 2.0)
 		y += 10.0
 	var name_text: String = player.rig.display_name if player.rig != null else String(player.name)
 	var font := UiTheme.TITLE_FONT
-	draw_string(font, origin + Vector2(14, TICKET.y * 0.5 + 7.0), name_text, HORIZONTAL_ALIGNMENT_LEFT, 100, 18, TICKET_RED)
+	draw_string(font, origin + Vector2(14, TICKET.y * 0.5 + 9.0), name_text, HORIZONTAL_ALIGNMENT_LEFT, CUT_X - 20.0, 21, TICKET_RED)
 	var health := player.player_health.health
 	var key := String(player.name)
-	var hearts_origin := origin + Vector2(150, 27)
+	var hearts_origin := origin + HEART_ROW
 	if _last_hearts.has(key) and health.current < _last_hearts[key]:
 		for h in range(health.current, _last_hearts[key]):
-			_heart_pops.append([hearts_origin + Vector2(h * 38, 0), 0.0])
+			_heart_pops.append([hearts_origin + Vector2(h * HEART_STEP, 0), 0.0])
 	_last_hearts[key] = health.current
-	_draw_applause(player.applause.stars, origin + Vector2(140, 60))
+	_draw_applause(player.applause.stars, origin + STAR_ROW)
 	if player.player_health.is_out:
-		_draw_stamp(origin + Vector2(200, 27), "FORA!")
+		_draw_stamp(origin + Vector2(290, HEART_ROW.y), "FORA!")
 		return
 	if player.player_health.is_downed:
-		_draw_stamp(origin + Vector2(200, 27), "CAIU!")
+		_draw_stamp(origin + Vector2(290, HEART_ROW.y), "CAIU!")
 		return
 	# Vida grande (modo de teste): um coração e o número, em vez de uma fileira sem fim.
 	if health.maximum > 6:
-		_draw_heart(hearts_origin, 13.0, HEART_RED)
-		draw_string(UiTheme.BODY_FONT, hearts_origin + Vector2(22, 9), "x %d" % health.current, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, TICKET_RED)
+		_draw_heart(hearts_origin, HEART_R, HEART_RED)
+		draw_string(UiTheme.BODY_FONT, hearts_origin + Vector2(28, 11), "x %d" % health.current, HORIZONTAL_ALIGNMENT_LEFT, -1, 32, TICKET_RED)
 		return
 	for h in health.maximum:
 		var beat := 1.0 + (sin(_time * 8.0) * 0.08 if health.current == 1 and h == 0 else 0.0)
-		_draw_heart(hearts_origin + Vector2(h * 38, 0), 13.0 * beat, HEART_RED if h < health.current else HEART_EMPTY)
+		_draw_heart(hearts_origin + Vector2(h * HEART_STEP, 0), HEART_R * beat, HEART_RED if h < health.current else HEART_EMPTY)
 
 
-## Cinco estrelas de Aplauso: cheias douradas, a que está enchendo cresce por dentro.
+## Cinco estrelas de Aplauso: cheias douradas; a que está carregando enche de baixo para cima (dá para ver
+## quanto falta); com as cinco cheias, um brilho atrás da fileira avisa que o Grande Número está pronto.
 func _draw_applause(stars: float, at: Vector2) -> void:
 	var full := int(floor(stars + 0.0001))
-	for i in int(PlayerApplause.MAX_STARS):
-		var center := at + Vector2(i * 28, 0)
+	var count := int(PlayerApplause.MAX_STARS)
+	if full >= count:
+		var glow := 0.45 + 0.25 * sin(_time * 6.0)
+		for i in count:
+			draw_colored_polygon(_star_points(at + Vector2(i * STAR_STEP, 0), STAR_R * 1.6), Color(0.95, 0.3, 0.1, glow))
+	for i in count:
+		var center := at + Vector2(i * STAR_STEP, 0)
 		if i < full:
-			var shine := 1.0 + (sin(_time * 6.0 + i) * 0.08 if full >= 5 else 0.0)
-			_draw_star(center, 11.0 * shine, UiTheme.GOLD)
-		else:
-			_draw_star(center, 11.0, Color("d9c9a6"))
-			if i == full:
-				var part := stars - full
-				if part > 0.02:
-					_draw_star(center, 11.0 * part, Color(UiTheme.GOLD, 0.9))
+			var shine := 1.0 + (sin(_time * 6.0 + i) * 0.08 if full >= count else 0.0)
+			_draw_star(center, STAR_R * shine, STAR_GOLD)
+			continue
+		_draw_star(center, STAR_R, STAR_EMPTY)
+		if i == full:
+			var part := stars - full
+			if part > 0.02:
+				var star := _star_points(center, STAR_R)
+				var top := center.y + STAR_R - STAR_R * 2.0 * part
+				var level := PackedVector2Array([Vector2(center.x - STAR_R * 2.0, top), Vector2(center.x + STAR_R * 2.0, top),
+						Vector2(center.x + STAR_R * 2.0, center.y + STAR_R * 2.0), Vector2(center.x - STAR_R * 2.0, center.y + STAR_R * 2.0)])
+				for piece in Geometry2D.intersect_polygons(star, level):
+					draw_colored_polygon(piece, STAR_GOLD)
+				star.append(star[0])
+				draw_polyline(star, UiTheme.INK, 3.0, true)
 
 
 static func _ticket_shape(origin: Vector2, ticket_size: Vector2, notch: float) -> PackedVector2Array:
@@ -257,10 +282,15 @@ func _draw_heart(center: Vector2, r: float, color: Color) -> void:
 
 
 func _draw_star(at: Vector2, r: float, color: Color) -> void:
+	var points := _star_points(at, r)
+	draw_colored_polygon(points, color)
+	points.append(points[0])
+	draw_polyline(points, UiTheme.INK, 3.0, true)
+
+
+static func _star_points(at: Vector2, r: float) -> PackedVector2Array:
 	var points := PackedVector2Array()
 	for i in 10:
 		var radius := r if i % 2 == 0 else r * 0.45
 		points.append(at + Vector2.from_angle(-PI * 0.5 + TAU * i / 10.0) * radius)
-	draw_colored_polygon(points, color)
-	points.append(points[0])
-	draw_polyline(points, UiTheme.INK, 3.0, true)
+	return points

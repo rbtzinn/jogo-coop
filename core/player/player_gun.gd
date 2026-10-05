@@ -3,7 +3,7 @@ extends Node
 ## Arma do jogador: controla a cadência e cria os projéteis na direção da mira.
 ## A pistola equipada (docs/shop.md) muda o tiro e o Tiro EX:
 ## - Rolha: reto e rápido / EX Rolhão (rolha gigante que atravessa);
-## - Leque de Confete: 3 confetes em leque, alcance curto / EX Canhão de Confete (explosão em volta);
+## - Leque de Confete: 3 confetes em leque, alcance médio / EX Canhão de Confete (explosão em volta);
 ## - Clave de Malabares: clave que vai e volta / EX Chuva de Claves (5 caem à frente);
 ## - Bolha de Sabão: bolhas teleguiadas / EX Bolhona (bolha grande que estoura em área).
 
@@ -46,11 +46,12 @@ func scaled(base: int, factor: float) -> int:
 func spawn_projectile(aim: Vector2, muzzle_position: Vector2, deals_damage := true) -> void:
 	match weapon:
 		"confetti_fan":
-			for angle in [-0.21, 0.0, 0.21]:
+			# Desde 05/10/2026 (pedido do usuário: só acertava de perto) vai uns 830 px, num leque mais fechado.
+			for angle in [-0.15, 0.0, 0.15]:
 				var pellet := _make(aim.rotated(angle), muzzle_position, deals_damage)
 				pellet.look = &"confetti"
 				pellet.speed = 1500.0
-				pellet.lifetime = 0.3
+				pellet.lifetime = 0.55
 				_add(pellet, muzzle_position)
 		"juggling_club":
 			var club := _make(aim, muzzle_position, deals_damage)

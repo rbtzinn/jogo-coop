@@ -10,7 +10,7 @@
 		"name": "Leque de Confete",
 		"slot": "gun",
 		"price": 4,
-		"description": "Três confetes em leque, alcance curto. Muito dano de perto.",
+		"description": "Três confetes em leque, alcance médio. Muito dano quando os três acertam.",
 		"ex": "Canhão de Confete: explosão em volta de você."
 	},
 	"juggling_club": {
