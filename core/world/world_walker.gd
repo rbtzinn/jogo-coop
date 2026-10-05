@@ -1,22 +1,19 @@
 class_name WorldWalker
 extends CharacterBody3D
-## Personagem andando no mundo 3D da aventura (o mapa da área): a miniatura 3D do palhaço ou da
-## acrobata (Miniature), que anda em qualquer direção, gira para onde vai e pisa no chão sem
-## deslizar. Usa os mesmos comandos da luta (andar nas 4 direções); não pula nem atira.
+## Personagem andando no mundo 3D da aventura (o mapa da área): o desenho da luta do palhaço ou da
+## acrobata (MapSprite, os mesmos quadros PNG, menores), que anda em qualquer direção e vira para o lado
+## em que vai. Usa os mesmos comandos da luta (andar nas 4 direções); não pula nem atira.
 ## Online: cada PC move o seu e manda a posição para o outro, que suaviza.
 ## Sozinho: o personagem que você não controla segue o outro (Tab troca), como um parceiro.
 
 const SPEED := 2.4
 const ACCEL := 30.0
-## Tamanho da miniatura no mundo (o palhaço fica com uns 1,8 m e a acrobata com uns 2,3 m; era 1,35 até
-## 04/10/2026, pequenos demais na câmera alta do mapa).
-const MINI_SCALE := 1.55
 ## Sozinho: distância em que o parceiro segue (para atrás de quem anda).
 const FOLLOW_DISTANCE := 1.4
 ## Quanto tempo a posição do parceiro leva para alcançar a recebida pela rede.
 const REMOTE_SMOOTH := 12.0
 
-## Cena do desenho do personagem da luta (o rig); daqui sai qual miniatura usar.
+## Cena do desenho do personagem da luta (o rig); daqui saem os quadros do mapa.
 @export var character: PackedScene
 @export var controlled_locally := true
 ## 1 = olhando para a direita (x+), -1 = esquerda.
@@ -24,7 +21,7 @@ const REMOTE_SMOOTH := 12.0
 
 var input := PlayerInput.new()
 var moving := false
-var miniature := Miniature.new()
+var sprite := MapSprite.new()
 
 var _remote_target := Vector3.ZERO
 var _remote_moving := false
@@ -48,10 +45,10 @@ func _ready() -> void:
 	shape.shape = capsule
 	shape.position.y = 0.6
 	add_child(shape)
-	miniature.kind = "acrobat" if character != null and character.resource_path.contains("acrobat") else "clown"
-	miniature.scale = Vector3.ONE * MINI_SCALE
-	add_child(miniature)
-	miniature._yaw = PI * 0.5 * facing
+	if character != null:
+		sprite.setup(character)
+	sprite.facing = facing
+	add_child(sprite)
 	WorldProps.contact_shadow(self, 0.42, Vector3.ZERO, 0.55)
 	_remote_target = global_position
 
@@ -64,7 +61,8 @@ func _physics_process(delta: float) -> void:
 				_receive_state.rpc_id(peer_id, global_position, facing, moving)
 	else:
 		_move_remote(delta)
-	miniature.update_pose(delta, Vector3(velocity.x, 0, velocity.z) if moving else Vector3.ZERO)
+	sprite.facing = facing
+	sprite.update_pose(delta, Vector3(velocity.x, 0, velocity.z) if moving else Vector3.ZERO)
 
 
 func _move_local(delta: float) -> void:
