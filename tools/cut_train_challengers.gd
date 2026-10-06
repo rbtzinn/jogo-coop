@@ -20,6 +20,9 @@ const SHEETS := [
 	["trapezista.png", 4, 2, [0, 1, 2, 3, 4, 5, 6, 7], 0.5, "bar", ENEMY_ART + "trapeze_ghost"],
 	["leaozinho.png", 4, 2, [0, 1, 2, 3, 4, 5, 6, 7], 0.45, "base", ENEMY_ART + "plush_lion"],
 	["novelo.png", 4, 1, [0, 1, 2, 3], 0.2, "center", ENEMY_ART + "yarn"],
+	["baloeiro.png", 4, 2, [0, 1, 2, 3, 4, 5, 6, 7], 0.6, "center", ENEMY_ART + "balloon_ghost"],
+	["bexiga_agua.png", 4, 1, [0, 1, 2, 3], 0.22, "center", ENEMY_ART + "water_balloon"],
+	["balao_plataforma.png", 4, 1, [0, 1, 2, 3], 0.65, "feet", STAGE_ART + "balloon_platform"],
 ]
 
 
