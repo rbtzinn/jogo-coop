@@ -1,9 +1,9 @@
 extends CanvasLayer
 ## Menu de pausa (Esc ou Start): continuar, Camarim (só no mapa), voltar ao mapa (fora dele), configurações,
 ## voltar ao menu e sair.
-## Sozinho, congela o jogo. Online, a pausa do HOST congela os dois PCs (pedido do usuário em 04/10/2026: jogam
-## em call, e o parceiro pede a pausa falando); o cliente vê a faixa "Pausa do host". A pausa do CLIENTE não
-## congela nada: só o personagem dele para de obedecer enquanto o menu está aberto.
+## Sozinho, congela o jogo. Online, a pausa de QUALQUER UM congela os dois PCs (pedido do usuário em 06/10/2026;
+## até então só a do host congelava); o outro vê a faixa "Pausa do parceiro". Se os dois pausarem, o jogo só volta
+## quando os dois continuarem.
 
 const MAIN_MENU := "res://core/ui/main_menu.tscn"
 
@@ -14,11 +14,11 @@ var _continue_button: Button
 var _dressing_room: DressingRoom
 var _dressing_button: Button
 var _map_button: Button
-## Cliente: o host pausou (o jogo fica congelado aqui até ele continuar).
-var _host_paused := false
-var _host_banner: Control
+## O parceiro pausou (o jogo fica congelado aqui até ele continuar).
+var _partner_paused := false
+var _partner_banner: Control
 var _both_note: Label
-## Host: esta pausa está congelando os dois PCs.
+## Esta pausa está congelando os dois PCs (online).
 var _sharing := false
 
 
@@ -67,12 +67,14 @@ func _ready() -> void:
 	center.add_child(_dressing_room)
 
 	_root.hide()
-	_build_host_banner()
+	_build_partner_banner()
 	Network.host_lost.connect(_back_to_menu)
+	# Parceiro que sai no meio da pausa dele não deixa o jogo congelado aqui.
+	Network.partner_disconnected.connect(func(_peer_id: int) -> void: _set_partner_paused(false))
 	# Parceiro que entra (ou volta) com o host pausado também congela.
 	Network.peer_ready.connect(func(peer_id: int) -> void:
 		if Network.is_host() and _shares_pause():
-			_receive_host_pause.rpc_id(peer_id, true))
+			_receive_partner_pause.rpc_id(peer_id, true))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -86,8 +88,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 
-## `share`: online, a pausa do host congela os dois PCs (falso no Camarim aberto pela tenda do mapa: só o
-## host fica parado escolhendo roupa).
+## `share`: online, a pausa congela os dois PCs (falso no Camarim aberto pela tenda do mapa: só quem entrou fica
+## parado escolhendo roupa).
 func open(share := true) -> void:
 	_root.show()
 	_main_panel.show()
@@ -98,11 +100,11 @@ func open(share := true) -> void:
 	_dressing_button.visible = scene != null and scene.scene_file_path == Levels.MAP
 	# Voltar ao mapa: no meio de uma luta ou do trem. Online, só o host (ele leva os dois).
 	_map_button.visible = scene != null and scene.scene_file_path != Levels.MAP and (not Network.is_online() or Network.is_host())
-	_sharing = share and Network.is_online() and Network.is_host()
+	_sharing = share and Network.is_online()
 	_both_note.visible = _sharing
 	if _sharing:
-		_send_host_pause(true)
-	get_tree().paused = not Network.is_online() or _sharing or _host_paused
+		_send_pause(true)
+	get_tree().paused = not Network.is_online() or _sharing or _partner_paused
 	_continue_button.grab_focus()
 
 
@@ -110,8 +112,8 @@ func close() -> void:
 	_root.hide()
 	if _sharing:
 		_sharing = false
-		_send_host_pause(false)
-	get_tree().paused = _host_paused and Network.is_online()
+		_send_pause(false)
+	get_tree().paused = _partner_paused and Network.is_online()
 
 
 func _open_settings() -> void:
@@ -142,9 +144,9 @@ func is_open() -> bool:
 	return _root.visible
 
 
-## Cliente: o host pausou o jogo para os dois agora.
-func is_host_paused() -> bool:
-	return _host_paused
+## O parceiro pausou o jogo para os dois agora.
+func is_partner_paused() -> bool:
+	return _partner_paused
 
 
 ## Larga a luta ou a fase e volta para o parque, na frente da atração por onde entraram.
@@ -154,45 +156,48 @@ func _back_to_map() -> void:
 
 
 func _back_to_menu() -> void:
-	_set_host_paused(false)
+	_set_partner_paused(false)
 	close()
 	Network.leave()
 	get_tree().change_scene_to_file(MAIN_MENU)
 
 
-# --- Pausa do host para os dois -----------------------------------------------------------
+# --- Pausa de um para os dois ---------------------------------------------------------------
 
 func _shares_pause() -> bool:
 	return _sharing and _root.visible
 
 
-func _send_host_pause(on: bool) -> void:
-	for peer_id in Network.ready_peers:
-		_receive_host_pause.rpc_id(peer_id, on)
+func _send_pause(on: bool) -> void:
+	if Network.is_host():
+		for peer_id in Network.ready_peers:
+			_receive_partner_pause.rpc_id(peer_id, on)
+	else:
+		_receive_partner_pause.rpc_id(1, on)
 
 
-@rpc("authority", "call_remote", "reliable")
-func _receive_host_pause(on: bool) -> void:
-	Network.deliver(_set_host_paused.bind(on), false)
+@rpc("any_peer", "call_remote", "reliable")
+func _receive_partner_pause(on: bool) -> void:
+	Network.deliver(_set_partner_paused.bind(on), false)
 
 
-func _set_host_paused(on: bool) -> void:
-	_host_paused = on
-	_host_banner.visible = on
+func _set_partner_paused(on: bool) -> void:
+	_partner_paused = on
+	_partner_banner.visible = on
 	get_tree().paused = on or (_root.visible and not Network.is_online())
 
 
-## Faixa "Pausa do host" no alto da tela do cliente.
-func _build_host_banner() -> void:
+## Faixa "Pausa do parceiro" no alto da tela de quem não pausou.
+func _build_partner_banner() -> void:
 	var holder := VBoxContainer.new()
 	holder.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	holder.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	holder.offset_top = 40
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(holder)
-	holder.add_child(UiTheme.banner("Pausa do host", 56))
+	holder.add_child(UiTheme.banner("Pausa do parceiro", 56))
 	var hint := Label.new()
-	hint.text = "O jogo continua quando o host voltar."
+	hint.text = "O jogo continua quando o parceiro voltar."
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.add_theme_font_override("font", UiTheme.BODY_FONT)
 	hint.add_theme_font_size_override("font_size", 30)
@@ -200,5 +205,5 @@ func _build_host_banner() -> void:
 	hint.add_theme_color_override("font_outline_color", UiTheme.INK)
 	hint.add_theme_constant_override("outline_size", 8)
 	holder.add_child(hint)
-	_host_banner = holder
-	_host_banner.hide()
+	_partner_banner = holder
+	_partner_banner.hide()

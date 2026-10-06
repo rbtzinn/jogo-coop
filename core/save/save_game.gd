@@ -17,7 +17,10 @@ const TICKETS_FIRST_S := 1
 ## Cada jogador é guardado pelo personagem (palhaço = jogador 1, acrobata = jogador 2).
 const PLAYER_KEYS := ["clown", "acrobat"]
 
+## Save do jogo em dupla (quem hospeda) e o do jogo sozinho, separados (pedido do usuário em 06/10/2026). O de
+## dupla continua no arquivo de sempre; o sozinho começa como cópia dele na primeira vez.
 const MAIN_PATH := "user://save.json"
+const SOLO_PATH := "user://save_solo.json"
 
 ## Os testes trocam o caminho para não mexer no save de verdade.
 var path := MAIN_PATH
@@ -55,6 +58,24 @@ func save_game() -> void:
 		push_warning("Não consegui salvar em %s" % path)
 		return
 	file.store_string(JSON.stringify(data, "\t"))
+
+
+## Jogo sozinho: troca para o save do sozinho (na primeira vez, cópia do save de dupla).
+func use_solo() -> void:
+	if not FileAccess.file_exists(SOLO_PATH) and FileAccess.file_exists(MAIN_PATH):
+		DirAccess.copy_absolute(ProjectSettings.globalize_path(MAIN_PATH), ProjectSettings.globalize_path(SOLO_PATH))
+	_switch_to(SOLO_PATH)
+
+
+## Jogo em dupla: o save de sempre.
+func use_coop() -> void:
+	_switch_to(MAIN_PATH)
+
+
+func _switch_to(new_path: String) -> void:
+	path = new_path
+	load_game()
+	changed.emit()
 
 
 ## Quem guarda o save nesta partida: o host, ou o jogo sozinho.

@@ -553,8 +553,7 @@ func _run() -> void:
 
 
 
-	# 12) Pausa do host congela os dois PCs (pedido do usuário em 04/10/2026: jogam em call e o parceiro pede
-	# a pausa falando). A pausa do cliente não congela ninguém.
+	# 12) A pausa de qualquer um congela os dois PCs (pedido do usuário em 06/10/2026; antes só a do host).
 	await meet("pause")
 	var fight_now: Fight = get_tree().current_scene.get_node_or_null("Fight")
 	if role == "host":
@@ -567,21 +566,28 @@ func _run() -> void:
 		await meet("host_continued")
 	else:
 		await meet("host_paused")
-		check(await until(func() -> bool: return get_tree().paused and PauseMenu.is_host_paused(), 3.0), "host pause freezes the client too")
+		check(await until(func() -> bool: return get_tree().paused and PauseMenu.is_partner_paused(), 3.0), "host pause freezes the client too")
 		var clock: float = fight_now._elapsed if fight_now != null else 0.0
 		await wait(1.0)
 		check(fight_now == null or is_equal_approx(fight_now._elapsed, clock), "client fight clock stopped while host paused")
-		check(PauseMenu._host_banner.visible, "client sees the host pause banner")
+		check(PauseMenu._partner_banner.visible, "client sees the partner pause banner")
 		await meet("client_checked_pause")
 		await meet("host_continued")
-		check(await until(func() -> bool: return not get_tree().paused and not PauseMenu._host_banner.visible, 3.0), "client continues with the host")
-		# Pausa do cliente: só o menu dele, ninguém congela.
+		check(await until(func() -> bool: return not get_tree().paused and not PauseMenu._partner_banner.visible, 3.0), "client continues with the host")
+		# Pausa do cliente: também congela os dois.
 		PauseMenu.open()
-		check(not get_tree().paused, "client pause does not freeze")
+		check(get_tree().paused, "client pause freezes the client")
+		await meet("client_paused")
+		await meet("host_checked_pause")
 		PauseMenu.close()
-	await meet("pause_done")
+		check(not get_tree().paused, "client continues")
 	if role == "host":
-		check(not get_tree().paused, "client pause did not freeze the host")
+		await meet("client_paused")
+		check(await until(func() -> bool: return get_tree().paused and PauseMenu.is_partner_paused(), 3.0), "client pause freezes the host too")
+		check(PauseMenu._partner_banner.visible, "host sees the partner pause banner")
+		await meet("host_checked_pause")
+		check(await until(func() -> bool: return not get_tree().paused and not PauseMenu._partner_banner.visible, 3.0), "host continues with the client")
+	await meet("pause_done")
 
 	# 11) Loja pela rede: o cliente compra com a carteira da acrobata; o host confere e salva.
 	if role == "host":
