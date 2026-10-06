@@ -1,5 +1,6 @@
 extends Control
-## Tela inicial: hospedar partida, entrar numa partida por IP, jogar sozinho, configurações e sair (e o
+## Tela inicial: hospedar partida, entrar numa partida por IP, jogar sozinho (os dois com escolha entre dois saves,
+## continuar ou começar do zero), configurações e sair (e o
 ## "Testar sozinho", guardado e escondido: SHOW_TEST_MODE).
 
 const JOIN_TIMEOUT := 8.0
@@ -13,6 +14,9 @@ const SHOW_TEST_MODE := false
 
 var _main_buttons: VBoxContainer
 var _join_panel: VBoxContainer
+var _slot_panel: VBoxContainer
+## Jeito de jogar do painel de saves aberto ("coop" ou "solo").
+var _slot_mode := ""
 var _address_edit: LineEdit
 var _status: Label
 var _settings_menu: SettingsMenu
@@ -64,15 +68,16 @@ func _ready() -> void:
 	_main_buttons.add_theme_constant_override("separation", 10)
 	_main_buttons.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	poster_layout.add_child(_main_buttons)
-	var host_button := _add_button(_main_buttons, "Hospedar partida", _on_host_pressed)
+	var host_button := _add_button(_main_buttons, "Hospedar partida", _show_slot_panel.bind("coop"))
 	_add_button(_main_buttons, "Entrar na partida", _show_join_panel)
-	_add_button(_main_buttons, "Jogar sozinho", _on_solo_pressed)
+	_add_button(_main_buttons, "Jogar sozinho", _show_slot_panel.bind("solo"))
 	if SHOW_TEST_MODE:
 		_add_button(_main_buttons, "Testar sozinho", _on_test_pressed)
 	_add_button(_main_buttons, "Configurações", func() -> void: _settings_menu.open())
 	_add_button(_main_buttons, "Sair", func() -> void: get_tree().quit())
 
 	_build_join_panel(poster_layout)
+	_build_slot_panel(poster_layout)
 
 	_status = Label.new()
 	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -156,11 +161,80 @@ func _build_join_panel(parent: Control) -> void:
 	_add_button(_join_panel, "Voltar", _show_main_buttons)
 
 
+## Escolha do save (dupla ao hospedar, ou sozinho): continuar um dos dois ou começar do zero nele.
+func _build_slot_panel(parent: Control) -> void:
+	_slot_panel = VBoxContainer.new()
+	_slot_panel.add_theme_constant_override("separation", 12)
+	_slot_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_slot_panel.hide()
+	parent.add_child(_slot_panel)
+
+
+func _show_slot_panel(mode: String) -> void:
+	_slot_mode = mode
+	for child in _slot_panel.get_children():
+		child.queue_free()
+	var label := Label.new()
+	label.text = "Jogar sozinho: escolha o save" if mode == "solo" else "Hospedar: escolha o save da dupla"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_slot_panel.add_child(label)
+	var first: Button = null
+	for slot in SaveGame.SLOT_COUNT:
+		var info := SaveGame.slot_info(mode, slot)
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 10)
+		_slot_panel.add_child(row)
+		var play := _add_button(row, _slot_text(slot, info), _start_slot.bind(slot, false))
+		play.custom_minimum_size.x = 380
+		if first == null:
+			first = play
+		var fresh := _add_button(row, "Do zero", Callable())
+		fresh.custom_minimum_size.x = 190
+		fresh.disabled = not info.exists
+		fresh.pressed.connect(_confirm_fresh.bind(fresh, slot))
+	_add_button(_slot_panel, "Voltar", _show_main_buttons)
+	_main_buttons.hide()
+	_slot_panel.show()
+	_status.text = ""
+	first.grab_focus()
+
+
+static func _slot_text(slot: int, info: Dictionary) -> String:
+	if not info.exists:
+		return "Save %d: começar" % (slot + 1)
+	var done: int = info.done
+	return "Save %d: continuar (%d %s)" % [slot + 1, done, "atração" if done == 1 else "atrações"]
+
+
+## "Do zero" pede confirmação: o primeiro clique só troca o texto, o segundo apaga e começa.
+func _confirm_fresh(button: Button, slot: int) -> void:
+	if button.text != "Apagar?":
+		button.text = "Apagar?"
+		return
+	_start_slot(slot, true)
+
+
+func _start_slot(slot: int, fresh: bool) -> void:
+	if _slot_mode == "coop":
+		SaveGame.use_slot("coop", slot, fresh)
+		var error: Error = Network.host()
+		if error != OK:
+			_status.text = "Não consegui abrir a partida (erro %d). A porta %d pode estar em uso." % [error, Network.DEFAULT_PORT]
+			return
+	else:
+		Network.leave()
+		SaveGame.use_slot("solo", slot, fresh)
+		# Sozinho: um personagem só (o último escolhido; Tab no mapa troca).
+		PlayerSpawner.solo_slot = int(SaveGame.data.get("solo_character", 0))
+	get_tree().change_scene_to_file(first_level)
+
+
 func _add_button(parent: Control, text: String, callback: Callable) -> Button:
 	var button := Button.new()
 	button.text = text
 	button.custom_minimum_size = Vector2(580, 58)
-	button.pressed.connect(callback)
+	if callback.is_valid():
+		button.pressed.connect(callback)
 	parent.add_child(button)
 	return button
 
@@ -176,25 +250,9 @@ func _show_join_panel() -> void:
 func _show_main_buttons() -> void:
 	Network.leave()
 	_join_panel.hide()
+	_slot_panel.hide()
 	_main_buttons.show()
 	_main_buttons.get_child(0).grab_focus()
-
-
-func _on_host_pressed() -> void:
-	SaveGame.use_coop()
-	var error: Error = Network.host()
-	if error != OK:
-		_status.text = "Não consegui abrir a partida (erro %d). A porta %d pode estar em uso." % [error, Network.DEFAULT_PORT]
-		return
-	get_tree().change_scene_to_file(first_level)
-
-
-## Sozinho: um personagem só (o último escolhido; Tab no mapa troca), com o save do jogo sozinho.
-func _on_solo_pressed() -> void:
-	Network.leave()
-	SaveGame.use_solo()
-	PlayerSpawner.solo_slot = int(SaveGame.data.get("solo_character", 0))
-	get_tree().change_scene_to_file(first_level)
 
 
 ## Modo de teste (guardado, sem botão enquanto SHOW_TEST_MODE for falso): os dois personagens, save à parte,
@@ -213,7 +271,8 @@ func _on_connect_pressed() -> void:
 		return
 	Settings.set_option(&"last_join_address", address)
 	Network.leave()
-	SaveGame.use_coop()
+	# O cliente joga com a cópia do save do host; aqui só sai do save de sozinho ou de teste.
+	SaveGame.use_slot("coop", 0)
 	if Network.join(address) != OK:
 		_status.text = "Esse endereço não parece válido."
 		return

@@ -17,17 +17,23 @@ const TICKETS_FIRST_S := 1
 ## Cada jogador é guardado pelo personagem (palhaço = jogador 1, acrobata = jogador 2).
 const PLAYER_KEYS := ["clown", "acrobat"]
 
-## Save do jogo em dupla (quem hospeda) e o do jogo sozinho, separados (pedido do usuário em 06/10/2026). O de
-## dupla continua no arquivo de sempre; o sozinho começa como cópia dele na primeira vez.
-const MAIN_PATH := "user://save.json"
-const SOLO_PATH := "user://save_solo.json"
+## Dois saves para cada jeito de jogar (pedido do usuário em 06/10/2026): o de dupla (no PC de quem hospeda) e o
+## de jogar sozinho, cada um com a opção de continuar ou começar do zero. O save 1 de cada jeito é o arquivo que
+## já existia antes (save.json e save_solo.json).
+const SLOT_FILES := {
+	"coop": ["save.json", "save_coop_2.json"],
+	"solo": ["save_solo.json", "save_solo_2.json"],
+}
+const SLOT_COUNT := 2
 ## Modo de teste (05/10/2026; guardado sem botão desde 06/10/2026, ver MainMenu.SHOW_TEST_MODE): save à parte,
 ## todas as atrações abertas, ingressos de sobra, muita vida nas lutas e o especial sempre cheio.
 const TEST_PATH := "user://test_save.json"
 const TEST_TICKETS := 999
 
 ## Os testes trocam o caminho para não mexer no save de verdade.
-var path := MAIN_PATH
+var path := "user://save.json"
+## Pasta dos saves (os testes trocam para não mexer nos saves de verdade).
+var slot_folder := "user://"
 var test_mode := false
 var data := {}
 ## Cópia que veio do host (cliente online): nunca é gravada no disco.
@@ -65,16 +71,32 @@ func save_game() -> void:
 	file.store_string(JSON.stringify(data, "\t"))
 
 
-## Jogo sozinho: troca para o save do sozinho (na primeira vez, cópia do save de dupla).
-func use_solo() -> void:
-	if not FileAccess.file_exists(SOLO_PATH) and FileAccess.file_exists(MAIN_PATH):
-		DirAccess.copy_absolute(ProjectSettings.globalize_path(MAIN_PATH), ProjectSettings.globalize_path(SOLO_PATH))
-	_switch_to(SOLO_PATH)
+## Arquivo de um save (`mode` = "coop" ou "solo", `slot` = 0 ou 1).
+func slot_path(mode: String, slot: int) -> String:
+	return slot_folder + SLOT_FILES[mode][slot]
 
 
-## Jogo em dupla: o save de sempre.
-func use_coop() -> void:
-	_switch_to(MAIN_PATH)
+## Resumo de um save para o menu: {"exists", "done" (atrações concluídas)}.
+func slot_info(mode: String, slot: int) -> Dictionary:
+	var info := {"exists": false, "done": 0}
+	var file := FileAccess.open(slot_path(mode, slot), FileAccess.READ)
+	if file == null:
+		return info
+	var loaded: Variant = JSON.parse_string(file.get_as_text())
+	if not loaded is Dictionary or loaded.get("version", 0) != VERSION:
+		return info
+	info.exists = true
+	for entry: Variant in loaded.get("bosses", {}).values():
+		if entry is Dictionary and entry.get("defeated", false):
+			info.done += 1
+	return info
+
+
+## Troca para um save; com `fresh`, apaga o progresso dele e começa do zero.
+func use_slot(mode: String, slot: int, fresh := false) -> void:
+	_switch_to(slot_path(mode, slot))
+	if fresh:
+		reset()
 
 
 ## Modo de teste: troca para o save de teste e enche as carteiras.

@@ -1,7 +1,7 @@
 extends Node
 ## Rodar: Godot --headless --path . --fixed-fps 60 res://tests/test_solo.tscn
 ## Jogar sozinho (06/10/2026): um personagem só no mapa e nas lutas; Tab no mapa troca o palhaço pela acrobata
-## no mesmo lugar, e a escolha fica no save.
+## no mesmo lugar, e a escolha fica no save. Os dois saves de cada jeito de jogar (continuar ou do zero).
 
 var failures := 0
 
@@ -32,6 +32,7 @@ func _move_to_root() -> void:
 
 
 func _run() -> void:
+	await _check_slots()
 	SaveGame.path = "user://test_save_solo.json"
 	SaveGame.reset()
 	PlayerSpawner.solo_slot = 0
@@ -58,3 +59,34 @@ func _run() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://test_save_solo.json"))
 	print("FAILURES: ", failures)
 	get_tree().quit(failures)
+
+
+## Dois saves por jeito de jogar: cada um continua ou começa do zero, sem mexer no outro.
+func _check_slots() -> void:
+	SaveGame.slot_folder = "user://test_slots_"
+	for mode in SaveGame.SLOT_FILES:
+		for slot in SaveGame.SLOT_COUNT:
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.slot_path(mode, slot)))
+	check(not SaveGame.slot_info("solo", 0).exists, "empty slot")
+	SaveGame.use_slot("solo", 0, true)
+	SaveGame.record_level("train")
+	check(SaveGame.slot_info("solo", 0) == {"exists": true, "done": 1}, "slot 1 keeps the progress")
+	SaveGame.use_slot("solo", 1, true)
+	check(not SaveGame.is_defeated("train") and SaveGame.slot_info("solo", 0).done == 1, "slot 2 is a separate game")
+	check(not SaveGame.slot_info("coop", 0).exists, "co-op saves untouched")
+	SaveGame.use_slot("solo", 0)
+	check(SaveGame.is_defeated("train"), "continue loads slot 1")
+	SaveGame.use_slot("solo", 0, true)
+	check(not SaveGame.is_defeated("train") and SaveGame.slot_info("solo", 0).done == 0, "from zero wipes slot 1")
+	var menu: Node = load("res://core/ui/main_menu.tscn").instantiate()
+	add_child(menu)
+	await frames(2)
+	menu._show_slot_panel("solo")
+	await frames(2)
+	var rows: Array = menu._slot_panel.get_children().filter(func(node: Node) -> bool: return node is HBoxContainer)
+	check(rows.size() == 2, "menu shows two saves")
+	menu.queue_free()
+	for mode in SaveGame.SLOT_FILES:
+		for slot in SaveGame.SLOT_COUNT:
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.slot_path(mode, slot)))
+	SaveGame.slot_folder = "user://"
