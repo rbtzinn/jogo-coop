@@ -498,11 +498,15 @@ func defeat_frame() -> int:
 	return clampi(floori(maxf(_down_time - defeat_delay, 0.0) * DEFEAT_FPS), 0, 3)
 
 
-## Agachado, girando ou aterrissando: usa o desenho do salto.
+## Agachado, girando ou aterrissando: usa o desenho do salto. Quem fica tonto no meio do salto (levou o tiro
+## que faltava durante a Troca de Lugar) termina o salto desenhado e só fica tonto ao pousar; antes, caía no
+## boneco de código.
 func _flip_art() -> bool:
-	if dizzy or walking:
+	if walking:
 		return false
-	return pose == &"crouch" or pose == &"spin" or (pose == &"idle" and _landing > 0.0)
+	if pose == &"crouch" or pose == &"spin":
+		return true
+	return not dizzy and pose == &"idle" and _landing > 0.0
 
 
 ## Desenho do salto agora (0 agachado, 1 a 8 a bolinha, 9 aterrissagem).

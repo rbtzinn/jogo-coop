@@ -59,6 +59,12 @@ func _run() -> void:
 	# Tonto fica parado (pedido do usuário em 04/10/2026): não troca de lugar nem arremessa; o outro joga.
 	boss.dizzy_since.Tico = boss._clock + 1000.0  # sem bola de cura durante esta parte
 	check(not boss._can_choose(&"Swap") and boss._can_choose(&"JugglePass"), "no Swap while a brother is dizzy")
+	# Tonto no meio do salto (o tiro que faltava veio durante a Troca de Lugar): termina o salto desenhado.
+	boss.tico.pose = &"spin"
+	boss.tico.spin = 0.4
+	check(boss.tico.dizzy and boss.tico._uses_art() and boss.tico._flip_art(), "dizzy mid-swap keeps the drawn flip")
+	boss.tico.pose = &"idle"
+	boss.tico.spin = 0.0
 	var tico_at := boss.tico.global_position
 	var tico_left := boss.left() == boss.tico
 	var dizzy_moves := [0]
