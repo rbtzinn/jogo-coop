@@ -109,13 +109,36 @@ func _physics_process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	# Sozinho: Tab troca quem você controla (o outro segue).
+	# Sozinho: Tab troca de personagem (o palhaço vira a acrobata e vice-versa, no mesmo lugar; a escolha fica
+	# no save). Offline dos testes, com os dois: troca quem você controla (o outro segue).
 	if Network.is_online():
 		return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_TAB:
-		for walker: WorldWalker in get_tree().get_nodes_in_group(&"walkers"):
-			walker.input.local_control = not walker.input.local_control
+		if PlayerSpawner.solo_slot >= 0:
+			swap_solo_character()
+		else:
+			for walker: WorldWalker in get_tree().get_nodes_in_group(&"walkers"):
+				walker.input.local_control = not walker.input.local_control
 		get_viewport().set_input_as_handled()
+
+
+## Sozinho: troca o personagem por outro, no mesmo lugar.
+func swap_solo_character() -> void:
+	var old: WorldWalker = get_tree().get_first_node_in_group(&"walkers")
+	if old == null or get_tree().get_first_node_in_group(&"blocking_ui") != null:
+		return
+	var at := old.global_position
+	var facing := old.facing
+	_last_good.erase(old)
+	old.remove_from_group(&"walkers")
+	old.queue_free()
+	PlayerSpawner.solo_slot = 1 - PlayerSpawner.solo_slot
+	SaveGame.data.solo_character = PlayerSpawner.solo_slot
+	SaveGame.save_game()
+	var spawner: PlayerSpawner = $PlayerSpawner
+	var walker: WorldWalker = spawner.spawn_solo(PlayerSpawner.solo_slot)
+	walker.global_position = at
+	walker.facing = facing
 
 
 ## O chão é plano (o relevo está pintado).
@@ -412,7 +435,7 @@ func _build_hud() -> void:
 	hud.add_child(_prompt_layer)
 	var area := _plaque()
 	area.position = Vector2(26, 22)
-	var area_label := _plaque_label("ÁREA 1 — O GRANDE PICADEIRO" + ("  ·  MODO DE TESTE" if SaveGame.test_mode else ""), 27)
+	var area_label := _plaque_label("ÁREA 1 — O GRANDE PICADEIRO", 27)
 	area_label.add_theme_font_override("font", UiTheme.TITLE_FONT)
 	area.add_child(area_label)
 	hud.add_child(area)
@@ -486,8 +509,6 @@ func _update_hud() -> void:
 		var player: Dictionary = players.get(kind, {})
 		var equipped: Dictionary = player.get("equipped", {})
 		var health := BASE_HEALTH + (1 if equipped.get("prop", "") == EXTRA_HEALTH_PROP else 0)
-		if SaveGame.test_mode:
-			health = PlayerLoadout.TEST_HEALTH
 		_lives[kind][0].text = "x %02d" % health
 		_lives[kind][1].text = "%d ingressos" % int(player.get("tickets", 0))
 	for door in _doors():

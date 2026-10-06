@@ -10,8 +10,6 @@ var gun := "cork_gun"
 var trick := "tumble"
 var prop := ""
 var duo := ""
-## Vida de cada um no modo de teste ("Testar sozinho"), para ver todas as fases dos chefões.
-const TEST_HEALTH := 99
 
 @onready var _player: Player = owner
 
@@ -25,9 +23,6 @@ func load_from_save() -> void:
 	prop = equipped.get("prop", "")
 	duo = equipped.get("duo", "")
 	_apply_prop()
-	if SaveGame.test_mode:
-		_player.player_health.health.maximum = TEST_HEALTH
-		_player.player_health.health.current = TEST_HEALTH
 
 
 func has(item_id: String) -> bool:

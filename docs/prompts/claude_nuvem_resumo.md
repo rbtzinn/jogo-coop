@@ -6,9 +6,9 @@ exatamente o que testar na Godot. Decisões de design: perguntar uma de cada vez
 
 ## Como está o jogo
 - Área 1 completa: mapa, Domador, Malabaristas, Trem do Circo, Grande Mágico, loja e Camarim, sozinho e online.
-- Menu: "Jogar sozinho" (save normal), "Testar sozinho" (save à parte `user://test_save.json`: tudo aberto,
-  999 ingressos, 99 de vida, especial sempre cheio), Hospedar e Entrar. Pausa nas lutas tem "Voltar ao mapa".
-- Testes: `sh tests/run_all.sh` (todas as lutas, loja, mapa, trem, itens, modo de teste e online normal e com
+- Menu: "Jogar sozinho" (um personagem só, Tab no mapa troca; o "Testar sozinho" saiu em 06/10/2026),
+  Hospedar e Entrar. Pausa nas lutas tem "Voltar ao mapa".
+- Testes: `sh tests/run_all.sh` (todas as lutas, loja, mapa, trem, itens, jogar sozinho e online normal e com
   rede ruim). Último resultado: tudo passando.
 
 ## O que foi feito hoje (ver `git log`)

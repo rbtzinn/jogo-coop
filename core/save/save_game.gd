@@ -18,14 +18,9 @@ const TICKETS_FIRST_S := 1
 const PLAYER_KEYS := ["clown", "acrobat"]
 
 const MAIN_PATH := "user://save.json"
-## Modo de teste ("Testar sozinho" no menu, pedido do usuário em 05/10/2026): save à parte, todas as
-## atrações abertas, ingressos de sobra e muita vida nas lutas. "Jogar sozinho" e online usam o save normal.
-const TEST_PATH := "user://test_save.json"
-const TEST_TICKETS := 999
 
 ## Os testes trocam o caminho para não mexer no save de verdade.
 var path := MAIN_PATH
-var test_mode := false
 var data := {}
 ## Cópia que veio do host (cliente online): nunca é gravada no disco.
 var _borrowed := false
@@ -60,27 +55,6 @@ func save_game() -> void:
 		push_warning("Não consegui salvar em %s" % path)
 		return
 	file.store_string(JSON.stringify(data, "\t"))
-
-
-## Liga o modo de teste: troca para o save de teste e enche as carteiras.
-func start_test_mode() -> void:
-	test_mode = true
-	path = TEST_PATH
-	load_game()
-	for key in PLAYER_KEYS:
-		data.players[key].tickets = maxi(int(data.players[key].tickets), TEST_TICKETS)
-	save_game()
-	changed.emit()
-
-
-## Volta para o save de verdade (jogar sozinho ou online), se o modo de teste estava ligado.
-func start_normal() -> void:
-	if not test_mode:
-		return
-	test_mode = false
-	path = MAIN_PATH
-	load_game()
-	changed.emit()
 
 
 ## Quem guarda o save nesta partida: o host, ou o jogo sozinho.
@@ -188,7 +162,8 @@ static func _new_game() -> Dictionary:
 			"items": ["cork_gun", "tumble"],
 			"equipped": {"gun": "cork_gun", "trick": "tumble", "prop": "", "duo": ""},
 		}
-	return {"version": VERSION, "area": 1, "bosses": {}, "found_tickets": [], "players": players}
+	# solo_character: com quem se joga sozinho (0 = palhaço, 1 = acrobata; Tab no mapa troca).
+	return {"version": VERSION, "area": 1, "bosses": {}, "found_tickets": [], "players": players, "solo_character": 0}
 
 
 ## Copia o que veio do arquivo por cima do jogo novo (campos novos ganham o valor padrão).

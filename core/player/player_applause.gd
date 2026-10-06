@@ -18,12 +18,6 @@ var parries := 0
 var stars_used := 0
 
 
-## Modo de teste ("Testar sozinho"): a barra fica sempre cheia (pedido do usuário em 05/10/2026).
-func _process(_delta: float) -> void:
-	if SaveGame.test_mode:
-		stars = MAX_STARS
-
-
 func add_stars(amount: float) -> void:
 	stars = clampf(stars + amount * gain, 0.0, MAX_STARS)
 

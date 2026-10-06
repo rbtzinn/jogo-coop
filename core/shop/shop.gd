@@ -8,6 +8,10 @@ extends Node
 signal done(operation: String, ok: bool, message: String)
 
 
+## Personagem de cada lugar de jogador (0 = jogador 1, 1 = jogador 2).
+const PLAYER_KEYS_BY_SLOT := ["clown", "acrobat"]
+
+
 ## Personagem de um jogador da cena (Player_1 = palhaço, o outro = acrobata).
 static func key_for(player: Node) -> String:
 	return "clown" if String(player.name) == "Player_1" else "acrobat"
@@ -17,9 +21,11 @@ static func partner_key(key: String) -> String:
 	return "acrobat" if key == "clown" else "clown"
 
 
-## Personagens que este PC controla (sozinho, os dois).
+## Personagens que este PC controla (sozinho, o escolhido; offline dos testes, os dois).
 func local_keys() -> Array[String]:
 	if not Network.is_online():
+		if PlayerSpawner.solo_slot >= 0:
+			return [PLAYER_KEYS_BY_SLOT[PlayerSpawner.solo_slot]]
 		return ["clown", "acrobat"]
 	return ["clown"] if Network.is_host() else ["acrobat"]
 

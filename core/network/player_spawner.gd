@@ -2,7 +2,8 @@ class_name PlayerSpawner
 extends Node
 ## Cria os jogadores da fase.
 ## Online: um jogador por PC (host = palhaço, cliente = acrobata); cada PC controla o seu.
-## Offline ("Jogar sozinho" e "Testar sozinho"): os dois personagens, controlando um por vez (Tab troca).
+## Sozinho ("Jogar sozinho", desde 06/10/2026): um personagem só, o de `solo_slot` (Tab no mapa troca).
+## Offline sem `solo_slot` (os testes e as ferramentas): os dois personagens, controlando um por vez (Tab troca).
 ## Os pontos de nascimento são os filhos Marker2D (o 1º para o palhaço, o 2º para a acrobata).
 
 const PLAYER_SCENE := preload("res://core/player/player.tscn")
@@ -20,9 +21,15 @@ const ANNOUNCE_EVERY := 0.5
 ## `controlled_locally` e `facing`; nasce no ponto de spawn_points (Node3D) em vez dos Marker2D.
 @export var player_scene: PackedScene
 
+## Com quem se joga sozinho (0 = palhaço, 1 = acrobata); -1 = os dois (offline dos testes). O menu liga.
+static var solo_slot := -1
+
 
 func _ready() -> void:
 	if not Network.is_online():
+		if solo_slot >= 0:
+			spawn_solo(solo_slot)
+			return
 		_spawn(HOST_PEER_ID, 0, true)
 		_spawn(2, 1, false)
 		return
@@ -81,6 +88,11 @@ func _spawn(peer_id: int, slot: int, local: bool) -> Node:
 	add_child(player)
 	player.reset_physics_interpolation()
 	return player
+
+
+## Sozinho: cria o personagem `slot` (o nome segue o personagem: Player_1 é o palhaço, Player_2 a acrobata).
+func spawn_solo(slot: int) -> Node:
+	return _spawn(HOST_PEER_ID if slot == 0 else 2, slot, true)
 
 
 func _on_partner_disconnected(peer_id: int) -> void:
