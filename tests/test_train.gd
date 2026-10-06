@@ -70,7 +70,7 @@ func _run() -> void:
 	acrobat.global_position = Vector2(3300.0, 650.0)
 	clown.global_position = Vector2(2600.0, 900.0)
 	await frames(10)
-	check(absf(clown.global_position.x - 2790.0) < 5.0, "respawn stays on screen (%.0f)" % clown.global_position.x)
+	check(absf(clown.global_position.x - (TrainLevel.WAGONS[3][0] + 90.0)) < 5.0, "respawn stays on screen (%.0f)" % clown.global_position.x)
 	clown.player_health.health.set_current(2)
 
 	# Ponte baixa parada em x = 3000 (o relógio é segurado pelo teste).
@@ -97,6 +97,46 @@ func _run() -> void:
 	await frames(5)
 	check(SaveGame.has_ticket("train:1"), "ticket collected")
 	check(int(SaveGame.data.players.acrobat.tickets) == 1, "both players got the ticket")
+
+	# Desafios dos vagões (06/10/2026). O vão depois do TRAPÉZIO é largo demais para pular (pulo + dash dão uns
+	# 650 px): só pelo balanço, que leva quem está em cima até o outro lado.
+	check(TrainLevel.WAGONS[9][0] - TrainLevel.WAGONS[8][0] - TrainLevel.WAGONS[8][1] > 700.0, "trapeze gap too wide to jump")
+	var swing := scene.get_node("Platform0") as SwingPlatform
+	camera.global_position.x = 8500.0
+	acrobat.global_position = Vector2(8100.0, TrainLevel.ROOF_Y)
+	level.clock = swing.period * 0.75
+	await frames(1)
+	clown.global_position = swing.position + Vector2(0, -14)
+	clown.velocity = Vector2.ZERO
+	clown.reset_physics_interpolation()
+	await frames(int(swing.period * 30.0) - 3)
+	check(clown.global_position.x > 8790.0 and clown.global_position.y < TrainLevel.ROOF_Y, "the swing carries over the wide gap (%s)" % clown.global_position)
+	# Leãozinho de pelúcia: só leva tiro fora da escotilha.
+	var lion := PlushLion.new()
+	lion.name = "TestLion"
+	lion.position = Vector2(9250.0, TrainLevel.ROOF_Y)
+	scene.add_child(lion)
+	level.clock = 1.3
+	await frames(4)
+	check(not lion.hurtbox.monitorable and not lion.hitbox.active, "plush lion hidden in the hatch")
+	level.clock = 2.3
+	await frames(10)
+	check(lion.hurtbox.monitorable and lion.hitbox.active, "plush lion out of the hatch")
+	lion.die()
+	# Lanterninha: com a lanterna apagada os tiros atravessam.
+	var lantern := LanternGhost.new()
+	lantern.name = "TestLantern"
+	lantern.position = Vector2(11400.0, TrainLevel.ROOF_Y)
+	scene.add_child(lantern)
+	level.clock = 2.5
+	await frames(3)
+	check(not lantern.hurtbox.monitorable and lantern.hitbox.active, "lantern ghost is a shadow with the lantern out")
+	level.clock = 0.5
+	await frames(3)
+	check(lantern.hurtbox.monitorable, "lantern ghost solid with the lantern lit")
+	lantern.die()
+	clown.player_health.health.set_current(3)
+	acrobat.player_health.health.set_current(3)
 
 	# Chegada na locomotiva (a câmera vai junto, senão ela segura os jogadores).
 	camera.global_position.x = TrainLevel.LEVEL_WIDTH - 960.0

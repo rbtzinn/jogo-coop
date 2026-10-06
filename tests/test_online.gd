@@ -306,8 +306,8 @@ func _run() -> void:
 			me = player
 	var camera: GroupCamera = scene.get_node("Camera")
 	if role == "client":
-		camera.global_position.x = 2600.0
-		me.global_position = Vector2(2600.0, 510.0)
+		camera.global_position.x = TrainLevel.TICKETS[0][0]
+		me.global_position = Vector2(TrainLevel.TICKETS[0][0], TrainLevel.TICKETS[0][1] + 40.0)
 	await until(func() -> bool: return SaveGame.has_ticket("train:1"), 3.0)
 	check(SaveGame.has_ticket("train:1"), "ticket taken by the client is in the save")
 	await meet("train_end")

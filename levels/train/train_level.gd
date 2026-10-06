@@ -9,8 +9,9 @@ extends Node2D
 const ROOF_Y := 700.0
 const WAGON_BOTTOM := 900.0
 const RAIL_Y := 965.0
-## Comprimento da fase: 6900 até 06/10/2026, quando a fase ganhou 5 vagões (pedido do usuário: maior).
-const LEVEL_WIDTH := 11100.0
+## Comprimento da fase: 6900 até 06/10/2026, quando a fase ganhou 5 vagões (pedido do usuário: maior), e
+## 13140 desde os desafios dos vagões (vãos maiores).
+const LEVEL_WIDTH := 13140.0
 const INK := Color("1b1410")
 const TRIM := Color("ffc93c")
 const ART := "res://levels/train/art/"
@@ -37,64 +38,82 @@ const SMOKE_PUFFS := 4
 const BRIDGE_ART := preload(ART + "bridge.png")
 const SIGN_ART := preload(ART + "duck_sign.png")
 
-## Vagões: [x inicial, largura, letreiro]. O último é a locomotiva.
+## Vagões: [x inicial, largura, letreiro]. O último é a locomotiva. Desde 06/10/2026 (pedido do usuário: fase
+## simples e fácil demais) os vãos variam e os cinco últimos vagões têm um desafio com um desafiante próprio:
+## ACROBATAS (Saltimbanco de Mola), TRAPÉZIO (Trapezista do Além, e depois um vão largo demais para pular, só no
+## balanço), LEÕES (Leõezinhos de Pelúcia nas escotilhas), BALÕES (carga alta demais: subir no balão; Baloeiro
+## Assombrado por cima) e FANTASMAS (Sombras do Lanterninha).
 const WAGONS := [
 	[0.0, 900.0, "CIRCO"],
 	[1060.0, 640.0, "RESPEITÁVEL"],
-	[1880.0, 620.0, "PÚBLICO"],
-	[2700.0, 600.0, "FERAS"],
-	[3460.0, 740.0, "MALABARES"],
-	[4420.0, 580.0, "MÁGICAS"],
-	[5180.0, 720.0, "PALHAÇOS"],
-	[6060.0, 660.0, "ACROBATAS"],
-	[6880.0, 600.0, "TRAPÉZIO"],
-	[7680.0, 760.0, "LEÕES"],
-	[8640.0, 560.0, "BALÕES"],
-	[9380.0, 700.0, "FANTASMAS"],
-	[10260.0, 700.0, ""],
+	[1960.0, 620.0, "PÚBLICO"],
+	[2800.0, 600.0, "FERAS"],
+	[3700.0, 740.0, "MALABARES"],
+	[4660.0, 580.0, "MÁGICAS"],
+	[5540.0, 720.0, "PALHAÇOS"],
+	[6460.0, 900.0, "ACROBATAS"],
+	[7560.0, 700.0, "TRAPÉZIO"],
+	[9020.0, 900.0, "LEÕES"],
+	[10120.0, 800.0, "BALÕES"],
+	[11120.0, 900.0, "FANTASMAS"],
+	[12220.0, 700.0, ""],
 ]
 ## Caixotes em cima dos vagões: [x do meio, largura, altura, empilhado em cima de (y do topo de baixo)].
+## A pilha do vagão BALÕES (380 de altura) é alta demais para pular: sobe-se pelo balão.
 const CRATES := [
-	[2180.0, 110.0, 100.0, ROOF_Y],
-	[3800.0, 120.0, 100.0, ROOF_Y],
-	[3800.0, 90.0, 90.0, ROOF_Y - 100.0],
-	[5560.0, 120.0, 100.0, ROOF_Y],
-	[6400.0, 110.0, 100.0, ROOF_Y],
-	[7960.0, 120.0, 100.0, ROOF_Y],
-	[7960.0, 90.0, 90.0, ROOF_Y - 100.0],
-	[9700.0, 120.0, 100.0, ROOF_Y],
+	[2260.0, 110.0, 100.0, ROOF_Y],
+	[4040.0, 120.0, 100.0, ROOF_Y],
+	[4040.0, 90.0, 90.0, ROOF_Y - 100.0],
+	[5920.0, 120.0, 100.0, ROOF_Y],
+	[10640.0, 150.0, 130.0, ROOF_Y],
+	[10640.0, 140.0, 130.0, ROOF_Y - 130.0],
+	[10640.0, 130.0, 120.0, ROOF_Y - 260.0],
 ]
-## Inimigos: [tipo, x, y, extra...] (hopper: alcance, atraso; pigeon: rosa, atraso; cannon: atraso).
+## Inimigos: [tipo, x, y, extra...] (hopper: alcance, atraso; pigeon: rosa, atraso; cannon: atraso;
+## acrobat: alcance, atraso; trapeze: comprimento, atraso; lion: atraso; balloon: alcance, atraso;
+## lantern: alcance, atraso).
 const ENEMIES := [
 	["hopper", 1380.0, ROOF_Y, 200.0, 0.0],
-	["cannon", 2420.0, ROOF_Y, 0.4],
-	["pigeon", 3000.0, 470.0, false, 0.0],
-	["hopper", 3000.0, ROOF_Y, 220.0, 0.5],
-	["pigeon", 3600.0, 430.0, false, 0.5],
-	["hopper", 4700.0, ROOF_Y, 180.0, 0.25],
-	["cannon", 4930.0, ROOF_Y, 1.1],
-	["pigeon", 5400.0, 450.0, true, 0.2],
-	["hopper", 5850.0, ROOF_Y, 160.0, 0.7],
-	["hopper", 6300.0, ROOF_Y, 200.0, 0.3],
-	["pigeon", 6700.0, 470.0, false, 0.4],
-	["cannon", 7300.0, ROOF_Y, 0.6],
-	["hopper", 8250.0, ROOF_Y, 150.0, 0.1],
-	["pigeon", 8300.0, 440.0, true, 0.3],
-	["hopper", 8900.0, ROOF_Y, 160.0, 0.5],
-	["cannon", 9450.0, ROOF_Y, 0.9],
-	["pigeon", 9800.0, 450.0, false, 0.2],
-	["hopper", 9950.0, ROOF_Y, 180.0, 0.6],
+	["cannon", 2500.0, ROOF_Y, 0.4],
+	["pigeon", 3100.0, 470.0, false, 0.0],
+	["hopper", 3100.0, ROOF_Y, 220.0, 0.5],
+	["pigeon", 3840.0, 430.0, false, 0.5],
+	["hopper", 4940.0, ROOF_Y, 180.0, 0.25],
+	["cannon", 5170.0, ROOF_Y, 1.1],
+	["pigeon", 5760.0, 450.0, true, 0.2],
+	["hopper", 6060.0, ROOF_Y, 160.0, 0.7],
+	["acrobat", 6910.0, ROOF_Y, 300.0, 0.0],
+	["pigeon", 7200.0, 420.0, false, 0.3],
+	["trapeze", 7910.0, ROOF_Y - 100.0, 430.0, 0.0],
+	["cannon", 8200.0, ROOF_Y, 0.8],
+	["lion", 9250.0, ROOF_Y, 0.0],
+	["lion", 9530.0, ROOF_Y, 0.9],
+	["lion", 9810.0, ROOF_Y, 1.7],
+	["pigeon", 9530.0, 400.0, true, 0.6],
+	["balloon", 10520.0, ROOF_Y - 470.0, 300.0, 0.0],
+	["lantern", 11400.0, ROOF_Y, 200.0, 0.0],
+	["lantern", 11780.0, ROOF_Y, 180.0, 0.5],
+	["pigeon", 11600.0, 440.0, true, 0.4],
+	["hopper", 12500.0, ROOF_Y, 150.0, 0.2],
 ]
-## Ingressos escondidos: [x, y] (os mesmos 3; desde 06/10/2026 espalhados pela fase maior).
+## Plataformas que se mexem pelo relógio da fase: ["swing", x, y no ponto mais baixo, comprimento, atraso] e
+## ["balloon", x, y lá embaixo, altura da subida, atraso].
+const PLATFORMS := [
+	["swing", 8640.0, ROOF_Y - 8.0, 420.0, 0.0],
+	["balloon", 10380.0, ROOF_Y - 12.0, 420.0, 0.0],
+]
+## Ingressos escondidos: [x, y] (os mesmos 3, espalhados pela fase; o último em cima do balão).
 const TICKETS := [
-	[2600.0, 470.0],
-	[5560.0, 450.0],
-	[7960.0, 420.0],
+	[2690.0, 470.0],
+	[5920.0, 450.0],
+	[10380.0, 150.0],
 ]
 
-## Pontes baixas: a primeira passa aos FIRST_BRIDGE s e depois a cada BRIDGE_PERIOD s.
+## Pontes baixas: a primeira passa aos FIRST_BRIDGE s e depois a cada BRIDGE_PERIOD s (13 até 06/10/2026).
 const FIRST_BRIDGE := 9.0
-const BRIDGE_PERIOD := 13.0
+const BRIDGE_PERIOD := 9.0
+## Trechos em que a ponte não machuca (quem está no balanço ou no balão não tem como abaixar).
+const BRIDGE_FREE := [[8200.0, 9100.0], [10120.0, 10920.0]]
 const BRIDGE_SPEED := 1900.0
 ## Parte de baixo da ponte: em pé no teto do vagão encosta; abaixado passa.
 const BRIDGE_BOTTOM := ROOF_Y - 100.0
@@ -126,6 +145,7 @@ func _ready() -> void:
 	_build_crates()
 	_build_enemies()
 	_build_tickets()
+	_build_platforms()
 	_build_bridge()
 
 
@@ -151,7 +171,7 @@ func bridge_x() -> float:
 func _update_bridge() -> void:
 	var x := bridge_x() if _level.clock >= FIRST_BRIDGE else INF
 	_bridge.visible = x != INF
-	_bridge.active = x != INF
+	_bridge.active = x != INF and not _bridge_free(x)
 	if x != INF:
 		_bridge.global_position = Vector2(x, 0)
 	# Aviso na borda direita quando a ponte vai entrar na tela.
@@ -161,6 +181,13 @@ func _update_bridge() -> void:
 	_warning.visible = _level.clock > FIRST_BRIDGE - WARNING_TIME - 3.0 and ahead > 0.0 \
 			and ahead < BRIDGE_SPEED * WARNING_TIME
 	_warning.queue_redraw()
+
+
+func _bridge_free(x: float) -> bool:
+	for zone: Array in BRIDGE_FREE:
+		if x > zone[0] and x < zone[1]:
+			return true
+	return false
 
 
 func _build_wagons() -> void:
@@ -223,6 +250,31 @@ func _build_enemies() -> void:
 				var cannon := ConfettiCannon.new()
 				cannon.offset = data[3]
 				enemy = cannon
+			"acrobat":
+				var acrobat := SpringAcrobat.new()
+				acrobat.patrol_range = data[3]
+				acrobat.offset = data[4]
+				enemy = acrobat
+			"trapeze":
+				var trapeze := TrapezeGhost.new()
+				trapeze.length = data[3]
+				trapeze.offset = data[4]
+				enemy = trapeze
+			"lion":
+				var lion := PlushLion.new()
+				lion.offset = data[3]
+				enemy = lion
+			"balloon":
+				var balloon := BalloonGhost.new()
+				balloon.patrol_range = data[3]
+				balloon.offset = data[4]
+				balloon.ground_y = ROOF_Y
+				enemy = balloon
+			"lantern":
+				var lantern := LanternGhost.new()
+				lantern.patrol_range = data[3]
+				lantern.offset = data[4]
+				enemy = lantern
 		enemy.name = "Enemy%d" % i
 		enemy.position = Vector2(data[1], data[2])
 		holder.add_child(enemy)
@@ -234,6 +286,26 @@ func _build_tickets() -> void:
 		ticket.ticket_id = "train:%d" % (i + 1)
 		ticket.position = Vector2(TICKETS[i][0], TICKETS[i][1])
 		add_child(ticket)
+
+
+func _build_platforms() -> void:
+	for i in PLATFORMS.size():
+		var data: Array = PLATFORMS[i]
+		var platform: AnimatableBody2D
+		match data[0]:
+			"swing":
+				var swing := SwingPlatform.new()
+				swing.length = data[3]
+				swing.offset = data[4]
+				platform = swing
+			"balloon":
+				var balloon := BalloonPlatform.new()
+				balloon.rise = data[3]
+				balloon.offset = data[4]
+				platform = balloon
+		platform.name = "Platform%d" % i
+		platform.position = Vector2(data[1], data[2])
+		add_child(platform)
 
 
 func _build_bridge() -> void:

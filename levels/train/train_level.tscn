@@ -33,7 +33,7 @@ camera_path = NodePath("../../Camera")
 [node name="Enemies" type="Node2D" parent="."]
 
 [node name="EndZone" type="Area2D" parent="."]
-position = Vector2(10780, 700)
+position = Vector2(12740, 700)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
@@ -57,7 +57,7 @@ position = Vector2(290, 700)
 position = Vector2(960, 540)
 process_callback = 0
 script = ExtResource("6_camera")
-level_width = 11100.0
+level_width = 13140.0
 
 [node name="RunLevel" type="Node" parent="."]
 script = ExtResource("7_run")
