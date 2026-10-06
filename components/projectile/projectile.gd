@@ -1,7 +1,8 @@
 class_name Projectile
 extends Area2D
 ## Projétil que anda em linha reta e some ao bater no cenário ou num inimigo (com faíscas)
-## ou depois de um tempo. As pistolas da loja mudam o jeito (PlayerGun configura):
+## ou depois de um tempo, ou ao sair da tela (06/10/2026, pedido do usuário: dava para derrubar inimigo que
+## ainda nem tinha aparecido). As pistolas da loja mudam o jeito (PlayerGun configura):
 ## `look` (desenho), `homing` (teleguiado), `boomerang` (vai e volta), `pierce` (atravessa),
 ## `blast_damage` (explode em área ao acertar).
 
@@ -26,6 +27,8 @@ const FLY_FPS := {&"cork": 16.0, &"bubble": 10.0}
 ## Giro da clave (radianos por segundo, como o desenho antigo) e do confete.
 const CLUB_SPIN := 18.0
 const CONFETTI_SPIN := 9.0
+## Quanto o tiro pode passar da beira da tela antes de sumir.
+const SCREEN_MARGIN := 40.0
 
 @export var speed := 1800.0
 @export var lifetime := 1.0
@@ -94,6 +97,9 @@ func _physics_process(delta: float) -> void:
 		_move_boomerang(delta)
 	else:
 		position += direction * speed * delta
+	if not _on_screen():
+		queue_free()
+		return
 	if turbo:
 		_check_turbo()
 	_update_sprite()
@@ -205,3 +211,18 @@ func _update_sprite() -> void:
 				_sprite.scale.y = _fly.frame_scale * (1.0 + sin(_time * 14.0) * 0.06)
 		_:
 			_sprite.texture = _fly.frames[int(_time * FLY_FPS.get(look, 16.0)) % _fly.frame_count()]
+
+
+## Dentro da tela deste PC (com uma folga). Sem câmera (testes), sempre.
+func _on_screen() -> bool:
+	return Projectile.is_on_screen(self, SCREEN_MARGIN)
+
+
+## Um ponto do jogo está dentro da tela deste PC, com uma folga? Sem câmera (testes), sempre.
+static func is_on_screen(node: Node2D, margin: float) -> bool:
+	var camera := node.get_viewport().get_camera_2d()
+	if camera == null:
+		return true
+	var size := node.get_viewport_rect().size / camera.zoom
+	var view := Rect2(camera.get_screen_center_position() - size * 0.5, size)
+	return view.grow(margin).has_point(node.global_position)

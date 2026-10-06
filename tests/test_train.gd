@@ -98,6 +98,20 @@ func _run() -> void:
 	check(SaveGame.has_ticket("train:1"), "ticket collected")
 	check(int(SaveGame.data.players.acrobat.tickets) == 1, "both players got the ticket")
 
+	# O tiro some ao sair da tela: não derruba inimigo que ainda não apareceu.
+	var target := GhostHopper.new()
+	target.name = "OffscreenTarget"
+	target.patrol_range = 0.0
+	target.position = Vector2(camera.view_rect().end.x + 300.0, TrainLevel.ROOF_Y)
+	scene.add_child(target)
+	var shot: Projectile = load("res://components/projectile/projectile.tscn").instantiate()
+	shot.direction = Vector2.RIGHT
+	shot.position = Vector2(camera.view_rect().end.x - 100.0, TrainLevel.ROOF_Y - 45.0)
+	scene.add_child(shot)
+	await frames(30)
+	check(not is_instance_valid(shot) and target.health == target.max_health, "shots vanish off screen")
+	target.queue_free()
+
 	# Desafios dos vagões (06/10/2026). O vão depois do TRAPÉZIO é largo demais para pular (pulo + dash dão uns
 	# 650 px): só pelo balanço, que leva quem está em cima até o outro lado.
 	check(TrainLevel.WAGONS[9][0] - TrainLevel.WAGONS[8][0] - TrainLevel.WAGONS[8][1] > 700.0, "trapeze gap too wide to jump")

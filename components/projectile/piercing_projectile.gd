@@ -52,6 +52,10 @@ func _physics_process(delta: float) -> void:
 	_time += delta
 	var factor := speed_while_hitting if damage_area.is_touching() else 1.0
 	position += direction * speed * factor * delta
+	# Some ao sair da tela (o Rolhão é grande: a folga deixa ele sair inteiro antes).
+	if not Projectile.is_on_screen(self, 160.0):
+		_end()
+		return
 	_squash = move_toward(_squash, 0.0, delta * 5.0)
 	if not align_to_direction:
 		sprite.rotation = sin(_time * 10.0) * wobble
