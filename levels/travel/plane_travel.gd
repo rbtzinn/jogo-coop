@@ -4,19 +4,19 @@ extends Control
 ## cartão para cada área. Entra-se aqui pelo avião estacionado no mapa de cada área (WorldDoor "plane"); ao
 ## chegar, a dupla nasce na frente do avião da área escolhida.
 ## Online, qualquer um dos dois escolhe: o cliente pede e o host leva os dois (como nas tendas).
-## A arte do voo vem do pedido E2 (docs/prompts/chatgpt_aviao.md), em levels/travel/art/; enquanto não chega,
-## o avião, o céu e a fumaça são provisórios, desenhados por código, com as mesmas medidas.
+## A arte do voo vem do pedido E2 (docs/prompts/chatgpt_aviao.md), preparada por tools/cut_plane_art.py.
 
-const ART := "res://levels/travel/art/"
-## Folha do voo: 4 x 2 quadros de 768 x 512, o avião virado para a direita no meio de cada quadro.
-const PLANE_SHEET := ART + "aviao_voando.png"
+## Folha do voo: 4 x 2 quadros de 768 x 512, o avião virado para a direita no meio de cada quadro, com a dupla
+## e uma cara diferente em cada um.
+const PLANE_SHEET := preload("res://levels/travel/art/aviao_voando.png")
 const PLANE_FRAMES := Vector2i(4, 2)
 const PLANE_FPS := 10.0
-## Fumaça: 4 quadros de 256 x 256 numa fileira.
-const SMOKE_SHEET := ART + "fumaca.png"
-const SKY := ART + "ceu.png"
+## Fumaça: 4 quadros de 256 x 256 numa fileira (pequena, maior, se desfazendo, quase sumindo).
+const SMOKE_SHEET := preload("res://levels/travel/art/fumaca.png")
+## Entardecer sobre o mar, com o circo à esquerda e o vulcão à direita no horizonte.
+const SKY := preload("res://levels/travel/art/ceu.png")
 ## Faixa de nuvens que passa na frente do avião (repete lado a lado).
-const FRONT_CLOUDS := ART + "nuvens_frente.png"
+const FRONT_CLOUDS := preload("res://levels/travel/art/nuvens_frente.png")
 ## Cartão de cada área: nome e miniatura do mapa.
 const AREAS := {
 	1: ["Área 1 — O Grande Picadeiro", preload("res://levels/travel/art/area1.png")],
@@ -39,7 +39,7 @@ var _flying := true
 var _plane := Node2D.new()
 var _plane_sprite := Sprite2D.new()
 var _smoke_layer := Node2D.new()
-var _front_clouds: TextureRect
+var _front_clouds := TextureRect.new()
 var _menu: Control
 var _note := Label.new()
 
@@ -47,30 +47,29 @@ var _note := Label.new()
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	theme = UiTheme.build()
-	_build_sky()
+	var sky := TextureRect.new()
+	sky.texture = SKY
+	sky.set_anchors_preset(Control.PRESET_FULL_RECT)
+	sky.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	sky.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	add_child(sky)
 	add_child(_smoke_layer)
 	add_child(_plane)
-	if ResourceLoader.exists(PLANE_SHEET):
-		_plane_sprite.texture = load(PLANE_SHEET)
-		_plane_sprite.hframes = PLANE_FRAMES.x
-		_plane_sprite.vframes = PLANE_FRAMES.y
-		_plane.add_child(_plane_sprite)
-	else:
-		_plane.add_child(PlanePlaceholder.new())
-	if ResourceLoader.exists(FRONT_CLOUDS):
-		_front_clouds = TextureRect.new()
-		_front_clouds.texture = load(FRONT_CLOUDS)
-		_front_clouds.stretch_mode = TextureRect.STRETCH_TILE
-		_front_clouds.size = Vector2(_screen().x * 2.0 + 1920.0, 400)
-		_front_clouds.position = Vector2(0, _screen().y - 400)
-		add_child(_front_clouds)
+	_plane_sprite.texture = PLANE_SHEET
+	_plane_sprite.hframes = PLANE_FRAMES.x
+	_plane_sprite.vframes = PLANE_FRAMES.y
+	_plane.add_child(_plane_sprite)
+	_front_clouds.texture = FRONT_CLOUDS
+	_front_clouds.stretch_mode = TextureRect.STRETCH_TILE
+	_front_clouds.size = Vector2(_screen().x + FRONT_CLOUDS.get_width(), FRONT_CLOUDS.get_height())
+	_front_clouds.position = Vector2(0, _screen().y - FRONT_CLOUDS.get_height())
+	add_child(_front_clouds)
 	_place_plane()
 
 
 func _process(delta: float) -> void:
 	_time += delta
-	if _front_clouds != null:
-		_front_clouds.position.x = -fmod(_time * FRONT_CLOUDS_SPEED, 1920.0)
+	_front_clouds.position.x = -fmod(_time * FRONT_CLOUDS_SPEED, FRONT_CLOUDS.get_width())
 	if not _flying:
 		return
 	_place_plane()
@@ -99,20 +98,14 @@ func _place_plane() -> void:
 	var wave := _time * 2.6
 	_plane.position = Vector2(lerpf(-520.0, _screen().x + 520.0, t), FLIGHT_Y + sin(wave) * BOB)
 	_plane.rotation = -cos(wave) * 0.07
-	if _plane_sprite.texture != null:
-		_plane_sprite.frame = int(_time * PLANE_FPS) % (PLANE_FRAMES.x * PLANE_FRAMES.y)
+	_plane_sprite.frame = int(_time * PLANE_FPS) % (PLANE_FRAMES.x * PLANE_FRAMES.y)
 
 
 ## Uma nuvem de fumaça na cauda, que fica para trás, cresce e some.
 func _puff() -> void:
-	var puff: Node2D
-	if ResourceLoader.exists(SMOKE_SHEET):
-		var sprite := Sprite2D.new()
-		sprite.texture = load(SMOKE_SHEET)
-		sprite.hframes = 4
-		puff = sprite
-	else:
-		puff = SmokePlaceholder.new()
+	var puff := Sprite2D.new()
+	puff.texture = SMOKE_SHEET
+	puff.hframes = 4
 	puff.position = _plane.position + Vector2(-300, 10).rotated(_plane.rotation)
 	puff.scale = Vector2.ONE * 0.45
 	_smoke_layer.add_child(puff)
@@ -120,8 +113,7 @@ func _puff() -> void:
 	tween.tween_property(puff, "position", puff.position + Vector2(-140, -30), SMOKE_LIFE)
 	tween.tween_property(puff, "scale", Vector2.ONE * 0.9, SMOKE_LIFE)
 	tween.tween_property(puff, "modulate:a", 0.0, SMOKE_LIFE).set_ease(Tween.EASE_IN)
-	if puff is Sprite2D:
-		tween.tween_property(puff, "frame", 3, SMOKE_LIFE)
+	tween.tween_property(puff, "frame", 3, SMOKE_LIFE)
 	tween.chain().tween_callback(puff.queue_free)
 
 
@@ -200,75 +192,3 @@ func fly_to(area: int) -> void:
 		SaveGame.save_game()
 	Levels.return_door = "plane"
 	Network.change_level(Levels.MAPS[area])
-
-
-func _build_sky() -> void:
-	if ResourceLoader.exists(SKY):
-		var sky := TextureRect.new()
-		sky.texture = load(SKY)
-		sky.set_anchors_preset(Control.PRESET_FULL_RECT)
-		sky.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		sky.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		add_child(sky)
-		return
-	var sky := SkyPlaceholder.new()
-	sky.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(sky)
-
-
-## Céu provisório: entardecer roxo e laranja, mar escuro e nuvens redondas.
-class SkyPlaceholder:
-	extends Control
-
-	func _draw() -> void:
-		var area := get_rect().size
-		var top := Color("2a1838")
-		var low := Color("d0703c")
-		for i in 24:
-			var y := area.y * 0.76 * i / 24.0
-			draw_rect(Rect2(0, y, area.x, area.y * 0.76 / 24.0 + 1.0), top.lerp(low, float(i) / 23.0))
-		draw_rect(Rect2(0, area.y * 0.76, area.x, area.y * 0.24), Color("1b1f33"))
-		draw_line(Vector2(0, area.y * 0.76), Vector2(area.x, area.y * 0.76), Color("f0b070"), 3.0)
-		for cloud: Vector3 in [Vector3(0.12, 0.18, 70), Vector3(0.45, 0.12, 90), Vector3(0.8, 0.22, 80), Vector3(0.3, 0.86, 60), Vector3(0.7, 0.9, 70)]:
-			var at := Vector2(cloud.x * area.x, cloud.y * area.y)
-			for k in 4:
-				draw_circle(at + Vector2(k * cloud.z * 0.7, -sin(k * 1.3) * cloud.z * 0.3), cloud.z * (0.8 - 0.1 * absf(k - 1.5)), Color("f3d9c0", 0.75))
-
-
-## Avião provisório: biplano listrado de vermelho e creme com a hélice girando (o desenho de verdade vem do E2).
-class PlanePlaceholder:
-	extends Node2D
-	var _spin := 0.0
-
-	func _process(delta: float) -> void:
-		_spin += delta * 40.0
-		queue_redraw()
-
-	func _draw() -> void:
-		var ink := Color("1b1410")
-		draw_rect(Rect2(-230, -95, 360, 22), Color("e8dac0"))
-		draw_rect(Rect2(-230, -95, 360, 22), ink, false, 4.0)
-		var body := PackedVector2Array([Vector2(-300, -20), Vector2(200, -45), Vector2(240, 0), Vector2(200, 45), Vector2(-300, 10)])
-		draw_colored_polygon(body, Color("a8323a"))
-		for x in range(-260, 200, 60):
-			draw_rect(Rect2(x, -38, 26, 76), Color("e8dac0", 0.85))
-		draw_polyline(body + PackedVector2Array([body[0]]), ink, 5.0)
-		draw_rect(Rect2(-220, 30, 360, 20), Color("e8dac0"))
-		draw_rect(Rect2(-220, 30, 360, 20), ink, false, 4.0)
-		draw_circle(Vector2(-80, 85), 26, ink)
-		draw_circle(Vector2(-80, 85), 14, Color("dfbc7d"))
-		draw_colored_polygon(PackedVector2Array([Vector2(-300, -20), Vector2(-330, -90), Vector2(-260, -20)]), Color("a8323a"))
-		draw_circle(Vector2(170, -10), 16, Color.WHITE)
-		draw_circle(Vector2(174, -10), 7, ink)
-		var blade := Vector2(0, 90).rotated(_spin)
-		draw_line(Vector2(250, 0) - Vector2(0, blade.y), Vector2(250, 0) + Vector2(0, blade.y), Color("8a5a2a"), 12.0)
-		draw_circle(Vector2(250, 0), 14, Color("dfbc7d"))
-
-
-## Fumaça provisória: nuvem creme com contorno de tinta.
-class SmokePlaceholder:
-	extends Node2D
-
-	func _draw() -> void:
-		draw_circle(Vector2.ZERO, 60, Color("1b1410"))
-		draw_circle(Vector2.ZERO, 54, Color("ddd2c4"))
