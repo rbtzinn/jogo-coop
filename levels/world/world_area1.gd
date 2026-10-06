@@ -395,15 +395,12 @@ func _build_painting() -> void:
 	add_child(painting)
 
 
-## Cada porta vai para a entrada pintada (a área de entrada fica em DOOR_FRONTS). O corpo da atração não
-## bloqueia mais ninguém: a beira das trilhas pintadas é que segura os bonecos.
+## Cada porta vai para a entrada pintada (a área de entrada fica em DOOR_FRONTS).
 func _place_doors() -> void:
 	for door in _doors():
 		if DOOR_FRONTS.has(String(door.name)):
 			var offset := door.front_point() - door.global_position
 			door.position = pixel_to_world(DOOR_FRONTS[String(door.name)]) - Vector3(offset.x, 0, offset.z)
-		for body: StaticBody3D in door.find_children("*", "StaticBody3D", true, false):
-			body.collision_layer = 0
 
 
 func _doors() -> Array[WorldDoor]:
@@ -435,7 +432,7 @@ func _build_hud() -> void:
 	hud.add_child(_prompt_layer)
 	var area := _plaque()
 	area.position = Vector2(26, 22)
-	var area_label := _plaque_label("ÁREA 1 — O GRANDE PICADEIRO", 27)
+	var area_label := _plaque_label("ÁREA 1 — O GRANDE PICADEIRO" + ("  ·  MODO DE TESTE" if SaveGame.test_mode else ""), 27)
 	area_label.add_theme_font_override("font", UiTheme.TITLE_FONT)
 	area.add_child(area_label)
 	hud.add_child(area)
@@ -509,6 +506,8 @@ func _update_hud() -> void:
 		var player: Dictionary = players.get(kind, {})
 		var equipped: Dictionary = player.get("equipped", {})
 		var health := BASE_HEALTH + (1 if equipped.get("prop", "") == EXTRA_HEALTH_PROP else 0)
+		if SaveGame.test_mode:
+			health = PlayerLoadout.TEST_HEALTH
 		_lives[kind][0].text = "x %02d" % health
 		_lives[kind][1].text = "%d ingressos" % int(player.get("tickets", 0))
 	for door in _doors():

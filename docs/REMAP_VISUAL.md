@@ -50,7 +50,7 @@ Pedido de 05/10/2026: em vez da imagem renderizada no Blender, usar a própria r
 
 Personagens: a miniatura 3D foi trocada pelos quadros PNG da luta (parado e corrida), menores (core/world/map_sprite.gd), de frente para a câmera e virando para o lado em que andam. Os quadros parado e corrida ganharam mipmaps para não serrilhar pequenos.
 
-Sem profundidade na pintura: os bonecos ficam sempre na frente do cenário (o arco do portão e os lampiões não os escondem). O Blender do parque (tools/blender/park_*.py) continua no repositório, sem uso.
+Sem profundidade na pintura: os bonecos ficam sempre na frente do cenário (o arco do portão e os lampiões não os escondem). O Blender do parque (tools/blender/park_*.py) foi apagado na limpeza de 06/10/2026.
 
 Medição (tools/visual_audit, 1280×720, qualidade alta): 346 FPS (2,9 ms), 24 chamadas de desenho, 2 mil primitivas (antes 196 FPS e 287 chamadas).
 

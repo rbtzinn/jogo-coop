@@ -8,6 +8,8 @@ extends CharacterBody3D
 
 ## Velocidade no mapa (m/s): era 2,4 até 05/10/2026; o usuário achou lento demais no mapa ampliado.
 const SPEED := 4.6
+## Sombra embaixo dos pés.
+const CONTACT_SHADOW := preload("res://shaders/contact_shadow.gdshader")
 const ACCEL := 45.0
 ## Sozinho: distância em que o parceiro segue (para atrás de quem anda).
 const FOLLOW_DISTANCE := 1.4
@@ -50,8 +52,23 @@ func _ready() -> void:
 		sprite.setup(character)
 	sprite.facing = facing
 	add_child(sprite)
-	WorldProps.contact_shadow(self, 0.42, Vector3.ZERO, 0.55)
+	_add_contact_shadow(0.42, 0.55)
 	_remote_target = global_position
+
+
+## Sombra redonda e macia no chão, embaixo dos pés.
+func _add_contact_shadow(radius: float, strength: float) -> void:
+	var material := ShaderMaterial.new()
+	material.shader = CONTACT_SHADOW
+	material.set_shader_parameter("strength", strength)
+	var plane := PlaneMesh.new()
+	plane.size = Vector2(radius * 2.0, radius * 2.0)
+	var shadow := MeshInstance3D.new()
+	shadow.mesh = plane
+	shadow.material_override = material
+	shadow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	shadow.position.y = 0.03
+	add_child(shadow)
 
 
 func _physics_process(delta: float) -> void:

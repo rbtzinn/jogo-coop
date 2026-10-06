@@ -1,8 +1,11 @@
 extends Control
-## Tela inicial: hospedar partida, entrar numa partida por IP, testar sozinho,
-## configurações e sair.
+## Tela inicial: hospedar partida, entrar numa partida por IP, jogar sozinho, configurações e sair (e o
+## "Testar sozinho", guardado e escondido: SHOW_TEST_MODE).
 
 const JOIN_TIMEOUT := 8.0
+## Botão "Testar sozinho" (modo de teste: tudo aberto, ingressos e vida de sobra). Guardado e escondido desde
+## 06/10/2026 a pedido do usuário; trocar para true para usar de novo durante o desenvolvimento.
+const SHOW_TEST_MODE := false
 
 ## Fase que abre ao começar (o mapa do parque do circo).
 @export_file("*.tscn") var first_level := Levels.MAP
@@ -64,6 +67,8 @@ func _ready() -> void:
 	var host_button := _add_button(_main_buttons, "Hospedar partida", _on_host_pressed)
 	_add_button(_main_buttons, "Entrar na partida", _show_join_panel)
 	_add_button(_main_buttons, "Jogar sozinho", _on_solo_pressed)
+	if SHOW_TEST_MODE:
+		_add_button(_main_buttons, "Testar sozinho", _on_test_pressed)
 	_add_button(_main_buttons, "Configurações", func() -> void: _settings_menu.open())
 	_add_button(_main_buttons, "Sair", func() -> void: get_tree().quit())
 
@@ -189,6 +194,15 @@ func _on_solo_pressed() -> void:
 	Network.leave()
 	SaveGame.use_solo()
 	PlayerSpawner.solo_slot = int(SaveGame.data.get("solo_character", 0))
+	get_tree().change_scene_to_file(first_level)
+
+
+## Modo de teste (guardado, sem botão enquanto SHOW_TEST_MODE for falso): os dois personagens, save à parte,
+## tudo aberto, ingressos e vida de sobra.
+func _on_test_pressed() -> void:
+	Network.leave()
+	SaveGame.use_test()
+	PlayerSpawner.solo_slot = -1
 	get_tree().change_scene_to_file(first_level)
 
 

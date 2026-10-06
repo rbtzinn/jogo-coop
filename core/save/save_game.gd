@@ -21,9 +21,14 @@ const PLAYER_KEYS := ["clown", "acrobat"]
 ## dupla continua no arquivo de sempre; o sozinho começa como cópia dele na primeira vez.
 const MAIN_PATH := "user://save.json"
 const SOLO_PATH := "user://save_solo.json"
+## Modo de teste (05/10/2026; guardado sem botão desde 06/10/2026, ver MainMenu.SHOW_TEST_MODE): save à parte,
+## todas as atrações abertas, ingressos de sobra, muita vida nas lutas e o especial sempre cheio.
+const TEST_PATH := "user://test_save.json"
+const TEST_TICKETS := 999
 
 ## Os testes trocam o caminho para não mexer no save de verdade.
 var path := MAIN_PATH
+var test_mode := false
 var data := {}
 ## Cópia que veio do host (cliente online): nunca é gravada no disco.
 var _borrowed := false
@@ -72,7 +77,17 @@ func use_coop() -> void:
 	_switch_to(MAIN_PATH)
 
 
+## Modo de teste: troca para o save de teste e enche as carteiras.
+func use_test() -> void:
+	_switch_to(TEST_PATH)
+	test_mode = true
+	for key in PLAYER_KEYS:
+		data.players[key].tickets = maxi(int(data.players[key].tickets), TEST_TICKETS)
+	save_game()
+
+
 func _switch_to(new_path: String) -> void:
+	test_mode = false
 	path = new_path
 	load_game()
 	changed.emit()

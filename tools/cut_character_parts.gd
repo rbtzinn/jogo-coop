@@ -21,7 +21,6 @@ const PARTS := [
 	["acrobata_tronco.png", Rect2i(), "acrobat/acrobat_torso.png", 100.0],
 	["acrobata_folha.png", Rect2i(1200, 235, 445, 295), "acrobat/acrobat_shoe.png", 34.0],
 	["palhaco_folha.png", Rect2i(615, 610, 340, 290), "shared/glove_fist.png", 32.0],
-	["luva_pistola.png", Rect2i(), "shared/glove_gun.png", 42.0],
 ]
 
 

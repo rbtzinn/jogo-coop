@@ -1,15 +1,12 @@
 class_name WorldDoor
 extends Area3D
-## Entrada no mundo 3D da aventura: uma tenda (chefão ou fase), a barraca da loja ou o carroção do
-## Camarim. Quem chega na frente e aperta Atirar entra.
+## Entrada no mapa da aventura: uma tenda (chefão ou fase), a barraca da loja ou o carroção do Camarim.
+## Quem chega na frente e aperta Atirar entra. O desenho vem da pintura do mapa; aqui ficam só a área de
+## entrada e o aviso (status_text/status_color, que o mapa mostra numa plaquinha).
 ## Tenda de chefão online: os DOIS precisam estar na frente dela (ninguém é levado para a luta sem
 ## ter ido até lá); quem chega primeiro vê "Esperando o parceiro". Quem troca a fase é o host.
-## Sozinho, o parceiro segue você, então basta quem você controla.
-## Mostra o nome, a melhor nota e o cadeado. Desenho provisório (formas simples), trocável por arte.
 
-const INK := Color("1b1410")
-const CREAM := Color("f2e6cc")
-## Tamanho da área de entrada, na frente da tenda (metros).
+## Tamanho da área de entrada, na frente da atração (metros).
 const ZONE := Vector3(3.0, 2.0, 2.2)
 
 @export var title := ""
@@ -19,26 +16,16 @@ const ZONE := Vector3(3.0, 2.0, 2.2)
 @export var level_id := ""
 ## Só abre depois de vencer estes (ids do save).
 @export var requires: Array[String] = []
-@export var stripe_color := Color("a3282a")
 ## Em vez de trocar de fase, abre a loja para quem entrou.
 @export var opens_shop := false
-## Em vez de trocar de fase, abre o Camarim (o carroção perto do portão).
+## Em vez de trocar de fase, abre o Camarim.
 @export var opens_dressing_room := false
-## Tamanho da tenda (raio em metros).
+## Tamanho da atração (raio em metros): afasta a área de entrada do meio dela.
 @export var radius := 2.2
-
-## Como a atração aparece: "tent" (tenda de chefão), "stall" (barraca de vendedor), "wagon"
-## (carroção), "station" (estação do trem), "big_top" (a tenda grande do Mágico), "lion_tent" (tenda
-## com o portão de cabeça de leão na frente: o Domador).
+## Tipo da atração (muda a distância do meio até a frente): "tent", "stall", "wagon", "station", "big_top",
+## "lion_tent".
 @export_enum("tent", "stall", "wagon", "station", "big_top", "lion_tent") var landmark := "tent"
-## Altura do corpo da tenda (metros).
-@export var height := 2.2
-## Falso: só colisão e área de entrada; o desenho vem do parque renderizado e o aviso vai para a tela
-## (status_text/status_color, lidos pelo mapa).
-@export var draw_landmark := true
 
-var _sign := Label3D.new()
-var _status := Label3D.new()
 var _message := ""
 var _message_time := 0.0
 var _waiting := false
@@ -46,7 +33,7 @@ var _zone_center := Vector3.ZERO
 ## O aviso atual (vazio = nada) e o tipo: "enter" (pode entrar), "closed", "grade" ou "message".
 var status_text := ""
 var status_kind := ""
-var status_color := CREAM
+var status_color := UiTheme.CREAM
 
 
 func _ready() -> void:
@@ -54,19 +41,16 @@ func _ready() -> void:
 	collision_layer = 0
 	collision_mask = 2
 	monitorable = false
-	var front := _front_distance()
-	_zone_center = Vector3(0, 1.0, front + ZONE.z * 0.5 - 0.2)
+	_zone_center = Vector3(0, 1.0, _front_distance() + ZONE.z * 0.5 - 0.2)
 	var shape := CollisionShape3D.new()
 	var box := BoxShape3D.new()
 	box.size = ZONE
 	shape.shape = box
 	shape.position = _zone_center
 	add_child(shape)
-	_build_landmark()
-	_build_sign(front)
 
 
-## Distância do meio da atração até a frente dela (onde fica a placa e a área de entrada).
+## Distância do meio da atração até a frente dela (onde fica a área de entrada).
 func _front_distance() -> float:
 	match landmark:
 		"stall":
@@ -78,83 +62,6 @@ func _front_distance() -> float:
 		"lion_tent":
 			return radius + 0.9
 	return radius + 0.2
-
-
-## Placa de madeira pintada num poste, na frente da atração, com o nome; o aviso (entrar, nota,
-## fechado) fica numa faixinha logo acima.
-func _build_sign(front: float) -> void:
-	var post := Node3D.new()
-	add_child(post)
-	post.position = Vector3(radius * 0.55 + 0.6, 0, front + 0.3) if landmark != "station" else Vector3(-1.6, 0, front)
-	if not draw_landmark:
-		_sign.free()
-		_status.visible = false
-		post.add_child(_status)
-		return
-	WorldProps.cylinder(post, 0.05, 0.06, 1.7, WorldProps.paint(WorldProps.WOOD_DARK, 0.01), Vector3(0, 0.85, 0), Vector3.ZERO, 8)
-	var board_width := clampf(title.length() * 0.19 + 0.5, 1.3, 2.8)
-	var board := WorldProps.box(post, Vector3(board_width, 0.55, 0.08), WorldProps.paint(stripe_color.darkened(0.35), 0.015), Vector3(0, 1.75, 0), Vector3(-0.35, 0, 0))
-	WorldProps.box(board, Vector3(board_width + 0.12, 0.08, 0.1), WorldProps.paint(WorldProps.GOLD), Vector3(0, 0.3, 0))
-	WorldProps.box(board, Vector3(board_width + 0.12, 0.08, 0.1), WorldProps.paint(WorldProps.GOLD), Vector3(0, -0.3, 0))
-	_sign.text = title
-	_sign.font = UiTheme.TITLE_FONT
-	_sign.font_size = 64
-	_sign.pixel_size = 0.0045
-	_sign.outline_size = 10
-	_sign.modulate = CREAM
-	_sign.outline_modulate = INK
-	_sign.position = Vector3(0, 0, 0.06)
-	_sign.double_sided = false
-	board.add_child(_sign)
-	_status.font = UiTheme.BODY_FONT
-	_status.font_size = 60
-	_status.pixel_size = 0.004
-	_status.outline_size = 14
-	_status.outline_modulate = INK
-	_status.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	_status.no_depth_test = true
-	_status.position = Vector3(0, 2.45, 0)
-	post.add_child(_status)
-
-
-func _build_landmark() -> void:
-	var dim := 1.0 if is_open() else 0.55
-	var body := StaticBody3D.new()
-	body.collision_layer = 1
-	add_child(body)
-	var shape := CollisionShape3D.new()
-	match landmark:
-		"stall":
-			WorldProps.shop_wagon(body)
-			var b := BoxShape3D.new()
-			b.size = Vector3(3.6, 2.5, 2.2)
-			shape.shape = b
-			shape.position = Vector3(0, 1.25, 0)
-		"wagon":
-			WorldProps.dressing_wagon(body, stripe_color)
-			var b := BoxShape3D.new()
-			b.size = Vector3(3.2, 2.5, 1.8)
-			shape.shape = b
-			shape.position = Vector3(0, 1.25, 0)
-		"station":
-			WorldProps.station(body, Vector3.ZERO)
-			var b := BoxShape3D.new()
-			b.size = Vector3(4.6, 1.0, 1.8)
-			shape.shape = b
-			shape.position = Vector3(0, 0.5, 0)
-		_:
-			WorldProps.tent(body, radius, height, stripe_color, WorldProps.GOLD if landmark == "big_top" else CREAM.darkened(0.1), dim)
-			if landmark == "lion_tent":
-				WorldProps.lion_gate(body, Vector3(0, 0, radius + 0.2), 1.15)
-			var c := CylinderShape3D.new()
-			c.radius = radius
-			c.height = height + radius
-			shape.shape = c
-			shape.position.y = c.height * 0.5
-	body.add_child(shape)
-	if not draw_landmark:
-		for item in body.find_children("*", "GeometryInstance3D", true, false):
-			item.queue_free()
 
 
 func _physics_process(delta: float) -> void:
@@ -183,6 +90,9 @@ func is_open() -> bool:
 ## Ids que ainda faltam vencer para abrir.
 func missing() -> Array[String]:
 	var result: Array[String] = []
+	# Modo de teste: tudo aberto.
+	if SaveGame.test_mode:
+		return result
 	for id in requires:
 		if not SaveGame.is_defeated(id):
 			result.append(id)
@@ -254,7 +164,7 @@ func _say(text: String) -> void:
 func _update_status(near: bool) -> void:
 	var text := ""
 	var kind := ""
-	var color := CREAM
+	var color := UiTheme.CREAM
 	if _message_time > 0.0:
 		text = _message
 		kind = "message"
@@ -273,8 +183,6 @@ func _update_status(near: bool) -> void:
 	status_text = text
 	status_kind = kind
 	status_color = color
-	_status.text = text if draw_landmark else ""
-	_status.modulate = color
 
 
 static func _shoot_key_name() -> String:

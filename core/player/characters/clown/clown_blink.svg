@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100" height="110" viewBox="0 0 100 110"><defs><radialGradient id="paint_skin" cx="59" cy="57" r="35" gradientUnits="userSpaceOnUse">
-  <stop offset="0" stop-color="#f8ebcc"/><stop offset="0.6" stop-color="#f8ebcc"/><stop offset="1" stop-color="#d1ac7d"/>
-</radialGradient></defs>
-  <ellipse cx="61" cy="54" rx="9" ry="13" fill="url(#paint_skin)"/>
-  <ellipse cx="78" cy="53" rx="8" ry="12.5" fill="url(#paint_skin)"/>
-  <path d="M53 55 Q61 61 69 55 M71 54 Q78 60 85 54" fill="none" stroke="#1b1410" stroke-width="3.5" stroke-linecap="round"/>
-</svg>
