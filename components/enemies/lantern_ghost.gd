@@ -3,14 +3,18 @@ extends Enemy
 ## Sombra do Lanterninha (Trem, vagão FANTASMAS): fantasma de lanterninha de teatro que anda de um lado para
 ## o outro em cima do vagão. Com a lanterna acesa ele é sólido e leva tiro; com ela apagada vira uma sombra
 ## que os tiros atravessam, mas que continua machucando quem encosta. Tudo pelo relógio da fase. 6 tiros
-## derrubam. Desenho provisório por código (pedido de arte D5 em docs/prompts/chatgpt_trem_desafiantes.md).
+## derrubam. Desenho do pedido de arte D5 (docs/prompts/chatgpt_trem_desafiantes.md), recortado por
+## tools/cut_train_challengers.gd. Os quadros da sombra vieram quase opacos: o jogo os deixa transparentes.
 
+const ART := preload("res://components/enemies/art/lantern_ghost.tres")
 ## Ciclo da lanterna: acesa durante LIT_TIME, apagada no resto.
 const CYCLE := 3.4
 const LIT_TIME := 2.0
-const UNIFORM := Color("2f3d6b")
-const SKIN := Color("e9f0f2")
-const FLAME := Color("ffc93c")
+## Quanto tempo leva sumindo e voltando (o desenho meio transparente).
+const FADE_TIME := 0.35
+## Opacidade da sombra e de quem está sumindo.
+const SHADOW_ALPHA := 0.35
+const FADING_ALPHA := 0.65
 
 @export var patrol_range := 200.0
 @export var speed := 120.0
@@ -18,11 +22,21 @@ const FLAME := Color("ffc93c")
 
 var _facing := -1.0
 var _lit := true
+## Onde está no ciclo da lanterna (s).
+var _cycle_time := 0.0
+var _art := Sprite2D.new()
 
 
 func _init() -> void:
 	max_health = 6
-	body_size = Vector2(60, 140)
+	body_size = Vector2(70, 190)
+	death_drawn = true
+	death_duration = 0.9
+
+
+func _ready() -> void:
+	super()
+	add_child(_art)
 
 
 func _move(t: float) -> void:
@@ -31,30 +45,43 @@ func _move(t: float) -> void:
 	var x := -patrol_range + 4.0 * patrol_range * u if u < 0.5 else 3.0 * patrol_range - 4.0 * patrol_range * u
 	_facing = 1.0 if u < 0.5 else -1.0
 	position = home + Vector2(x, 0)
-	var lit := fmod(t + offset * CYCLE, CYCLE) < LIT_TIME
+	_cycle_time = fmod(t + offset * CYCLE, CYCLE)
+	var lit := _cycle_time < LIT_TIME
 	if lit != _lit:
 		_lit = lit
 		hurtbox.set_deferred(&"monitorable", lit and not dead)
 
 
 func _update_art() -> void:
-	if not _lit:
-		modulate.a *= 0.3
-	queue_redraw()
+	# Quadros: 0 andando de lanterna erguida, 1 girando a lanterna, 2 pedindo silêncio, 3 lanterna piscando,
+	# 4 sumindo, 5 só a sombra, 6 levou tiro.
+	var index := 0
+	var alpha := 1.0
+	if _flash > 0.25:
+		index = 6
+	elif _lit:
+		if _cycle_time < 0.9:
+			index = 0
+		elif _cycle_time < 1.3:
+			index = 1
+		elif _cycle_time < LIT_TIME - 0.4:
+			index = 2
+		else:
+			index = 3
+	else:
+		var dark := _cycle_time - LIT_TIME
+		var fading := dark < FADE_TIME or dark > CYCLE - LIT_TIME - FADE_TIME
+		index = 4 if fading else 5
+		alpha = FADING_ALPHA if fading else SHADOW_ALPHA
+	modulate.a *= alpha
+	_show(index)
 
 
-func _draw() -> void:
-	var body := Rect2(-24, -110, 48, 110)
-	draw_rect(body.grow(4), INK)
-	draw_rect(body, UNIFORM)
-	var head := Vector2(0, -128)
-	draw_circle(head, 24.0, INK)
-	draw_circle(head, 20.0, SKIN)
-	draw_rect(Rect2(head + Vector2(-20, -26), Vector2(40, 12)), UNIFORM)
-	var eye := FLAME if not _lit else INK
-	draw_circle(head + Vector2(_facing * 8.0 - 5.0, 0), 4.0, eye)
-	draw_circle(head + Vector2(_facing * 8.0 + 5.0, 0), 4.0, eye)
-	var lantern := Vector2(_facing * 38.0, -70)
-	draw_line(Vector2(_facing * 20.0, -90), lantern, INK, 8.0)
-	draw_rect(Rect2(lantern + Vector2(-12, 0), Vector2(24, 30)), INK)
-	draw_rect(Rect2(lantern + Vector2(-8, 4), Vector2(16, 22)), FLAME if _lit else Color("3a3a3a"))
+func _update_death(_progress: float) -> void:
+	_show(7)
+
+
+## O desenho olha para a esquerda; vira quando ele anda para a direita.
+func _show(index: int) -> void:
+	ART.show_on(_art, index)
+	_art.scale = Vector2(ART.frame_scale * -_facing, ART.frame_scale)

@@ -23,6 +23,7 @@ const SHEETS := [
 	["baloeiro.png", 4, 2, [0, 1, 2, 3, 4, 5, 6, 7], 0.6, "center", ENEMY_ART + "balloon_ghost"],
 	["bexiga_agua.png", 4, 1, [0, 1, 2, 3], 0.22, "center", ENEMY_ART + "water_balloon"],
 	["balao_plataforma.png", 4, 1, [0, 1, 2, 3], 0.65, "feet", STAGE_ART + "balloon_platform"],
+	["lanterninha.png", 4, 2, [0, 1, 2, 3, 4, 5, 6, 7], 0.52, "feet", ENEMY_ART + "lantern_ghost"],
 ]
 
 
