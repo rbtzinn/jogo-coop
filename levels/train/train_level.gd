@@ -9,7 +9,8 @@ extends Node2D
 const ROOF_Y := 700.0
 const WAGON_BOTTOM := 900.0
 const RAIL_Y := 965.0
-const LEVEL_WIDTH := 6900.0
+## Comprimento da fase: 6900 até 06/10/2026, quando a fase ganhou 5 vagões (pedido do usuário: maior).
+const LEVEL_WIDTH := 11100.0
 const INK := Color("1b1410")
 const TRIM := Color("ffc93c")
 const ART := "res://levels/train/art/"
@@ -45,7 +46,12 @@ const WAGONS := [
 	[3460.0, 740.0, "MALABARES"],
 	[4420.0, 580.0, "MÁGICAS"],
 	[5180.0, 720.0, "PALHAÇOS"],
-	[6060.0, 700.0, ""],
+	[6060.0, 660.0, "ACROBATAS"],
+	[6880.0, 600.0, "TRAPÉZIO"],
+	[7680.0, 760.0, "LEÕES"],
+	[8640.0, 560.0, "BALÕES"],
+	[9380.0, 700.0, "FANTASMAS"],
+	[10260.0, 700.0, ""],
 ]
 ## Caixotes em cima dos vagões: [x do meio, largura, altura, empilhado em cima de (y do topo de baixo)].
 const CRATES := [
@@ -53,6 +59,10 @@ const CRATES := [
 	[3800.0, 120.0, 100.0, ROOF_Y],
 	[3800.0, 90.0, 90.0, ROOF_Y - 100.0],
 	[5560.0, 120.0, 100.0, ROOF_Y],
+	[6400.0, 110.0, 100.0, ROOF_Y],
+	[7960.0, 120.0, 100.0, ROOF_Y],
+	[7960.0, 90.0, 90.0, ROOF_Y - 100.0],
+	[9700.0, 120.0, 100.0, ROOF_Y],
 ]
 ## Inimigos: [tipo, x, y, extra...] (hopper: alcance, atraso; pigeon: rosa, atraso; cannon: atraso).
 const ENEMIES := [
@@ -65,12 +75,21 @@ const ENEMIES := [
 	["cannon", 4930.0, ROOF_Y, 1.1],
 	["pigeon", 5400.0, 450.0, true, 0.2],
 	["hopper", 5850.0, ROOF_Y, 160.0, 0.7],
+	["hopper", 6300.0, ROOF_Y, 200.0, 0.3],
+	["pigeon", 6700.0, 470.0, false, 0.4],
+	["cannon", 7300.0, ROOF_Y, 0.6],
+	["hopper", 8250.0, ROOF_Y, 150.0, 0.1],
+	["pigeon", 8300.0, 440.0, true, 0.3],
+	["hopper", 8900.0, ROOF_Y, 160.0, 0.5],
+	["cannon", 9450.0, ROOF_Y, 0.9],
+	["pigeon", 9800.0, 450.0, false, 0.2],
+	["hopper", 9950.0, ROOF_Y, 180.0, 0.6],
 ]
-## Ingressos escondidos: [x, y].
+## Ingressos escondidos: [x, y] (os mesmos 3; desde 06/10/2026 espalhados pela fase maior).
 const TICKETS := [
 	[2600.0, 470.0],
-	[3800.0, 430.0],
 	[5560.0, 450.0],
+	[7960.0, 420.0],
 ]
 
 ## Pontes baixas: a primeira passa aos FIRST_BRIDGE s e depois a cada BRIDGE_PERIOD s.

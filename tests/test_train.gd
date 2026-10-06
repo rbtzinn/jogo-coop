@@ -100,8 +100,10 @@ func _run() -> void:
 
 	# Chegada na locomotiva (a câmera vai junto, senão ela segura os jogadores).
 	camera.global_position.x = TrainLevel.LEVEL_WIDTH - 960.0
-	acrobat.global_position = Vector2(6400.0, TrainLevel.ROOF_Y)
-	clown.global_position = Vector2(6560.0, TrainLevel.ROOF_Y)
+	# Os dois na locomotiva (o último vagão), perto do fim da linha.
+	var engine: Array = TrainLevel.WAGONS[-1]
+	acrobat.global_position = Vector2(engine[0] + 340.0, TrainLevel.ROOF_Y)
+	clown.global_position = Vector2(engine[0] + 500.0, TrainLevel.ROOF_Y)
 	await frames(200)
 	check(level._ended, "level complete at the locomotive")
 	check(SaveGame.is_defeated("train"), "train saved as done")

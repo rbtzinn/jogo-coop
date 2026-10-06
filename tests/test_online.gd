@@ -7,6 +7,7 @@ extends Node
 
 const PORT := 24690
 const FIGHT := "res://bosses/tamer/tamer_fight.tscn"
+const TrainLevel := preload("res://levels/train/train_level.gd")
 
 var failures := 0
 var role := ""
@@ -310,10 +311,10 @@ func _run() -> void:
 	await until(func() -> bool: return SaveGame.has_ticket("train:1"), 3.0)
 	check(SaveGame.has_ticket("train:1"), "ticket taken by the client is in the save")
 	await meet("train_end")
-	if role == "client":
-		camera.global_position.x = 5940.0
-		me.global_position = Vector2(6560.0, 700.0)
-	await until(func() -> bool: return level._ended, 4.0)
+	# Os dois na locomotiva (cada PC leva o seu; com o trem maior, quem fica para trás puxa a câmera).
+	camera.global_position.x = TrainLevel.LEVEL_WIDTH - 960.0
+	me.global_position = Vector2(TrainLevel.WAGONS[-1][0] + (520.0 if role == "client" else 480.0), TrainLevel.ROOF_Y)
+	await until(func() -> bool: return level._ended, 8.0)
 	check(level._ended, "train finished on this PC")
 	await wait(2.5)
 	check(SaveGame.is_defeated("train"), "train done in the save")

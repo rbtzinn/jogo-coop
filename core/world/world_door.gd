@@ -20,6 +20,9 @@ const ZONE := Vector3(3.0, 2.0, 2.2)
 @export var opens_shop := false
 ## Em vez de trocar de fase, abre o Camarim.
 @export var opens_dressing_room := false
+## Só se joga uma vez por save (a fase do Trem, que dá ingressos; pedido do usuário em 06/10/2026): depois de
+## concluída, a entrada mostra "Concluída" e não abre mais.
+@export var once := false
 ## Tamanho da atração (raio em metros): afasta a área de entrada do meio dela.
 @export var radius := 2.2
 ## Tipo da atração (muda a distância do meio até a frente): "tent", "stall", "wagon", "station", "big_top",
@@ -83,6 +86,11 @@ func _physics_process(delta: float) -> void:
 	_update_status(near)
 
 
+## Já foi concluída e só se joga uma vez (o modo de teste deixa jogar de novo).
+func done_for_good() -> bool:
+	return once and not SaveGame.test_mode and SaveGame.is_defeated(level_id)
+
+
 func is_open() -> bool:
 	return (opens_shop or opens_dressing_room or not target_scene.is_empty()) and missing().is_empty()
 
@@ -121,6 +129,9 @@ func try_enter(walker: WorldWalker = null) -> void:
 		PauseMenu.open(false)
 		PauseMenu._open_dressing_room()
 		return
+	if done_for_good():
+		_say("Vocês já fizeram este número!")
+		return
 	if not is_open():
 		_say("Em breve!" if target_scene.is_empty() else "Vençam os outros números primeiro!")
 		return
@@ -140,7 +151,7 @@ func _request_enter() -> void:
 
 
 func _enter_if_ready() -> void:
-	if is_open() and (not Network.is_online() or both_here()):
+	if is_open() and not done_for_good() and (not Network.is_online() or both_here()):
 		_enter()
 
 
@@ -169,6 +180,10 @@ func _update_status(near: bool) -> void:
 		text = _message
 		kind = "message"
 		color = Color("ffcf6a")
+	elif done_for_good():
+		text = "Concluída"
+		kind = "closed"
+		color = Color("ffd25a")
 	elif not missing().is_empty():
 		text = "Fechado"
 		kind = "closed"

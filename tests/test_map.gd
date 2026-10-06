@@ -62,6 +62,16 @@ func _run() -> void:
 	magician.try_enter()
 	await frames(5)
 	check(get_tree().current_scene == map, "locked tent does not change scene")
+	# O Trem só se joga uma vez por save (06/10/2026): concluído, não abre mais.
+	var train: WorldDoor = map.get_node("DoorTrain")
+	check(not train.done_for_good(), "train playable before finishing it")
+	SaveGame.data.bosses["train"] = {"defeated": true, "best_grade": "", "best_time": 0.0}
+	train.try_enter()
+	await frames(5)
+	check(train.done_for_good() and get_tree().current_scene == map, "finished train does not open again")
+	await frames(130)
+	check(train.status_text == "Concluída", "finished train shows Concluída (%s)" % train.status_text)
+	SaveGame.data.bosses.erase("train")
 
 	# Camarim pela porta: Atirar abre; Voltar e Esc fecham e ele não reabre sozinho (bug do usuário em 05/10/2026:
 	# a porta relia o aperto que abriu o Camarim, guardado enquanto o jogo ficava pausado).

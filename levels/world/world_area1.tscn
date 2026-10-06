@@ -49,6 +49,7 @@ script = ExtResource("2_door")
 title = "Trem do Circo"
 target_scene = "res://levels/train/train_level.tscn"
 level_id = "train"
+once = true
 radius = 1.8
 landmark = "station"
 
