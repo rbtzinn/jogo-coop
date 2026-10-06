@@ -57,15 +57,15 @@ func _initialize() -> void:
 	quit()
 
 
-func _cut(sheet_name: String, columns: int, cells: Array, scale: float, anchor: String, out: String) -> void:
+func _cut(sheet_name: String, columns: int, cells: Array, scale: float, anchor: String, out: String, rows := 1) -> void:
 	var sheet := Image.load_from_file(ProjectSettings.globalize_path(SOURCES + sheet_name))
 	sheet.convert(Image.FORMAT_RGBA8)
-	_erase_specks(sheet)
-	var cell_size := Vector2i(sheet.get_width() / columns, sheet.get_height())
+	_clean(sheet)
+	var cell_size := Vector2i(sheet.get_width() / columns, sheet.get_height() / rows)
 	var paths: Array[String] = []
 	var origins: Array[Vector2] = []
 	for i in cells.size():
-		var cell := sheet.get_region(Rect2i(Vector2i(cells[i] * cell_size.x, 0), cell_size))
+		var cell := sheet.get_region(Rect2i(Vector2i(cells[i] % columns, cells[i] / columns) * cell_size, cell_size))
 		var used := cell.get_used_rect().grow(2).intersection(Rect2i(Vector2i.ZERO, cell_size))
 		var point := Vector2(used.get_center().x, used.end.y) if anchor == "feet" else Vector2(used.get_center())
 		var frame := cell.get_region(used)
@@ -151,3 +151,8 @@ func _write_resource(path: String, frames: Array[String], scale: float, origins:
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	file.store_string(text)
 	print(path, " origem ", origins[0])
+
+
+## Limpeza da folha antes de recortar (as ferramentas filhas podem fazer mais).
+func _clean(sheet: Image) -> void:
+	_erase_specks(sheet)
