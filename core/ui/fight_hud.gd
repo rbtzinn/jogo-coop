@@ -3,13 +3,16 @@ extends Control
 ## Placar da luta em estilo de circo, desenhado por código:
 ## - no topo, o letreiro do chefão com lâmpadas correndo, barra de vida listrada,
 ##   rastro do dano e estrelas marcando onde cada fase começa;
-## - nos cantos de baixo, um "ingresso" para cada jogador com os corações e as estrelas
+## - nos cantos de baixo, um "ingresso" pequeno para cada jogador com os corações e as estrelas
 ##   de Aplauso (a estrela que está enchendo cresce aos poucos).
 
 const BAR_PANEL := Vector2(820, 100)
 const BAR_SIZE := Vector2(720, 26)
 ## Ingresso de cada jogador (05/10/2026, pedido do usuário: corações e estrelas maiores, fáceis de ler).
 const TICKET := Vector2(500, 140)
+## O ingresso é desenhado menor que isso (06/10/2026, pedido do usuário: corações e estrelas grandes tapavam os
+## golpes no canto da tela).
+const TICKET_SCALE := 0.6
 ## Onde ficam o picote, a fileira de corações e a de estrelas no ingresso, e o tamanho de cada um.
 const CUT_X := 140.0
 const HEART_ROW := Vector2(182, 46)
@@ -42,6 +45,8 @@ var _marker_pop := {}
 ## Corações de cada jogador no quadro anterior (para animar o coração perdido).
 var _last_hearts := {}
 var _heart_pops: Array = []
+## Posição e escala do ingresso que está sendo desenhado.
+var _ticket_xform := Transform2D.IDENTITY
 
 
 func _ready() -> void:
@@ -80,13 +85,17 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	var players := get_tree().get_nodes_in_group(&"players")
+	var ticket_size := TICKET * TICKET_SCALE
 	for i in mini(players.size(), 2):
 		var player := players[i] as Player
-		var origin := Vector2(MARGIN if i == 0 else size.x - MARGIN - TICKET.x, size.y - MARGIN - TICKET.y)
-		_draw_ticket(player, origin)
+		var corner := Vector2(MARGIN if i == 0 else size.x - MARGIN - ticket_size.x, size.y - MARGIN - ticket_size.y)
+		_ticket_xform = Transform2D(0.0, Vector2.ONE * TICKET_SCALE, 0.0, corner)
+		draw_set_transform_matrix(_ticket_xform)
+		_draw_ticket(player, Vector2.ZERO)
+		draw_set_transform_matrix(Transform2D.IDENTITY)
 	for pop in _heart_pops:
 		var k: float = pop[1] / 0.6
-		_draw_heart(pop[0] + Vector2(0, -30.0 * k), HEART_R * (1.0 + k), Color(HEART_RED, 1.0 - k))
+		_draw_heart(pop[0] + Vector2(0, -30.0 * k * TICKET_SCALE), HEART_R * TICKET_SCALE * (1.0 + k), Color(HEART_RED, 1.0 - k))
 	if _boss != null:
 		_draw_boss_marquee()
 
@@ -191,7 +200,7 @@ func _draw_ticket(player: Player, origin: Vector2) -> void:
 	var hearts_origin := origin + HEART_ROW
 	if _last_hearts.has(key) and health.current < _last_hearts[key]:
 		for h in range(health.current, _last_hearts[key]):
-			_heart_pops.append([hearts_origin + Vector2(h * HEART_STEP, 0), 0.0])
+			_heart_pops.append([_ticket_xform * (hearts_origin + Vector2(h * HEART_STEP, 0)), 0.0])
 	_last_hearts[key] = health.current
 	_draw_applause(player.applause.stars, origin + STAR_ROW)
 	if player.player_health.is_out:
@@ -258,12 +267,12 @@ static func _ticket_shape(origin: Vector2, ticket_size: Vector2, notch: float) -
 func _draw_stamp(center: Vector2, text: String) -> void:
 	var font := UiTheme.TITLE_FONT
 	var text_size := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 28)
-	draw_set_transform(center, -0.15, Vector2.ONE)
+	draw_set_transform_matrix(_ticket_xform * Transform2D(-0.15, center))
 	var box := Rect2(-text_size * 0.5 - Vector2(10, 4), text_size + Vector2(20, 8))
 	draw_rect(box, Color(HEART_RED, 0.15))
 	draw_rect(box, HEART_RED, false, 3.0)
 	draw_string(font, Vector2(-text_size.x * 0.5, text_size.y * 0.32), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 28, HEART_RED)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	draw_set_transform_matrix(_ticket_xform)
 
 
 # --- Formas ---
