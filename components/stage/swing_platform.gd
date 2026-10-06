@@ -4,11 +4,14 @@ extends AnimatableBody2D
 ## (RunLevel.clock, igual nos dois PCs). Leva quem está em cima por cima de um vão. Dá para subir por baixo.
 ## O ponto onde o nó é colocado é o meio da tábua no ponto mais baixo do balanço.
 
-const BOARD := preload("res://components/stage/art/hanging_platform.svg")
+## Tábua do pedido de arte D2 (recortada por tools/cut_train_challengers.gd), com o dobro da resolução.
+const SEAT := preload("res://components/stage/art/trapeze_seat.png")
 const BOARD_SIZE := Vector2(320, 24)
 const ROPE_COLOR := Color("c9b48a")
 const ROPE_OUTLINE := Color("1b1410")
-const ROPE_OFFSET := 146.0
+## Onde as cordas saem dos nós da tábua (o meio de baixo da tábua é a beira de baixo da colisão).
+const ROPE_OFFSET := 128.0
+const ROPE_BOTTOM := -56.0
 
 ## Comprimento das cordas, ângulo máximo (radianos), duração de uma ida e volta (s) e atraso (fração).
 @export var length := 420.0
@@ -30,8 +33,10 @@ func _ready() -> void:
 	shape.one_way_collision = true
 	add_child(shape)
 	var art := Sprite2D.new()
-	art.texture = BOARD
-	art.position = Vector2(0, 2)
+	art.texture = SEAT
+	art.scale = Vector2.ONE * 0.5
+	art.centered = false
+	art.offset = Vector2(-SEAT.get_width() * 0.5, BOARD_SIZE.y - SEAT.get_height())
 	add_child(art)
 
 
@@ -46,6 +51,6 @@ func _physics_process(_delta: float) -> void:
 func _draw() -> void:
 	var top := _pivot - position
 	for x in [-ROPE_OFFSET, ROPE_OFFSET]:
-		var bottom := Vector2(x, -18)
-		draw_line(top + Vector2(x * 0.3, 0), bottom, ROPE_OUTLINE, 7.0)
-		draw_line(top + Vector2(x * 0.3, 0), bottom, ROPE_COLOR, 3.5)
+		var bottom := Vector2(x, ROPE_BOTTOM)
+		draw_line(top + Vector2(x * 0.3, 0), bottom, ROPE_OUTLINE, 11.0)
+		draw_line(top + Vector2(x * 0.3, 0), bottom, ROPE_COLOR, 6.0)
