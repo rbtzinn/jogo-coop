@@ -68,6 +68,8 @@ func _cut(sheet_name: String, columns: int, cells: Array, scale: float, anchor: 
 		var cell := sheet.get_region(Rect2i(Vector2i(cells[i] % columns, cells[i] / columns) * cell_size, cell_size))
 		var used := cell.get_used_rect().grow(2).intersection(Rect2i(Vector2i.ZERO, cell_size))
 		var point := Vector2(used.get_center().x, used.end.y) if anchor == "feet" else Vector2(used.get_center())
+		if anchor == "base":
+			point = _base_point(cell, used)
 		if anchor == "bar":
 			point = _bar_point(cell, used)
 		var frame := cell.get_region(used)
@@ -171,3 +173,16 @@ func _bar_point(cell: Image, used: Rect2i) -> Vector2:
 				left = mini(left, x)
 				right = maxi(right, x)
 	return Vector2((left + right) * 0.5, used.position.y)
+
+
+## Âncora "base": o meio da beira de baixo do desenho (quem sai de um buraco, como o leãozinho da escotilha):
+## o meio dos pixels das últimas linhas do desenho, na beira de baixo dele.
+func _base_point(cell: Image, used: Rect2i) -> Vector2:
+	var left := used.end.x
+	var right := used.position.x
+	for y in range(maxi(used.end.y - 24, used.position.y), used.end.y):
+		for x in range(used.position.x, used.end.x):
+			if cell.get_pixel(x, y).a > 0.5:
+				left = mini(left, x)
+				right = maxi(right, x)
+	return Vector2((left + right) * 0.5, used.end.y)

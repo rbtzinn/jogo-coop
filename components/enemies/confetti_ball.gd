@@ -6,8 +6,15 @@ extends EnemyHitbox
 const ART := preload("res://components/enemies/art/ball.tres")
 ## Giro (radianos por segundo): a bola rola a 420 px/s com raio 18.
 const SPIN := 420.0 / 18.0
+## Quadros por segundo de quem rola trocando quadros (`roll_frames`).
+const ROLL_FPS := 12.0
 
 @export var pink := false
+## Desenho (quadro 0 normal e `pink_frame` o rosa); o Leãozinho de Pelúcia troca pelo novelo.
+var art: FrameAnimation = ART
+var pink_frame := 1
+## Com mais de um, rola trocando estes primeiros quadros (o novelo) em vez de girar o desenho.
+var roll_frames := 1
 
 var parry_id := ""
 var _time := 0.0
@@ -24,13 +31,18 @@ func _ready() -> void:
 	circle.radius = ConfettiCannon.BALL_RADIUS
 	shape.shape = circle
 	add_child(shape)
-	ART.show_on(_art, 1 if pink else 0)
-	_art.scale = Vector2.ONE * ART.frame_scale
+	art.show_on(_art, pink_frame if pink else 0)
+	_art.scale = Vector2.ONE * art.frame_scale
 	add_child(_art)
 
 
 func _process(delta: float) -> void:
 	_time += delta
+	if roll_frames > 1:
+		if pink:
+			return
+		art.show_on(_art, int(_time * ROLL_FPS) % roll_frames)
+		return
 	_art.rotation = -_time * SPIN
 
 

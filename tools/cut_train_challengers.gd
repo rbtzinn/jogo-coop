@@ -18,6 +18,8 @@ const SHEETS := [
 	["saltimbanco.png", 4, 2, [0, 1, 2, 3, 4, 5, 6, 7], 0.75, "feet", ENEMY_ART + "spring_acrobat"],
 	["onda_impacto.png", 4, 1, [0, 1, 2, 3], 0.5, "feet", ENEMY_ART + "shockwave"],
 	["trapezista.png", 4, 2, [0, 1, 2, 3, 4, 5, 6, 7], 0.5, "bar", ENEMY_ART + "trapeze_ghost"],
+	["leaozinho.png", 4, 2, [0, 1, 2, 3, 4, 5, 6, 7], 0.45, "base", ENEMY_ART + "plush_lion"],
+	["novelo.png", 4, 1, [0, 1, 2, 3], 0.2, "center", ENEMY_ART + "yarn"],
 ]
 
 
