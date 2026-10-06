@@ -12,6 +12,8 @@ extends Node3D
 ## escorrega por ela. Cada porta fica na entrada pintada (WorldDoor.painted_front).
 ## Ao chegar aqui, o host salva o jogo (com a área atual).
 
+const FRONT_SHADER := preload("res://shaders/painted_front.gdshader")
+
 ## Número da área (fica no save: é para onde "Voltar ao mapa" e o menu levam).
 @export var area := 1
 ## Nome na plaquinha do canto.
@@ -20,6 +22,9 @@ extends Node3D
 @export var parts: Array[Texture2D] = []
 ## Estrada onde se anda (branco), na metade da resolução do conjunto.
 @export var walk_mask: Texture2D
+## O que é alto no desenho e a linha do pé de cada pedaço (tools/front_layer.py): quem anda atrás some atrás
+## da pedra. Vazio = os bonecos ficam sempre na frente da pintura.
+@export var front_layer: Texture2D
 ## Quantos pixels do conjunto cabem na altura da vista (os personagens têm sempre o mesmo tamanho na tela; um
 ## número maior mostra mais do mapa). Área 1: 620 de 941 (a arte tem só 1672 x 941).
 @export var view_pixels := 620.0
@@ -354,8 +359,14 @@ func _build_floor() -> void:
 ## Os cantos vêm da mesma conta (pixel_to_world) para as quatro: as partes vizinhas dividem exatamente os
 ## mesmos vértices, sem vão nem sobreposição. A textura não repete (sem borda puxada do outro lado).
 func _build_painting() -> void:
+	add_child(_painting_mesh("Painting", PAINTING_DEPTH, _painting_material))
+	if front_layer != null:
+		add_child(_painting_mesh("Front", PAINTING_DEPTH - 1.0, _front_material))
+
+
+func _painting_mesh(mesh_name: String, depth: float, material_for: Callable) -> MeshInstance3D:
 	var basis := _camera.transform.basis
-	var behind := -basis.z * PAINTING_DEPTH
+	var behind := -basis.z * depth
 	var up := basis.y
 	var mesh := ArrayMesh.new()
 	var corners := [Vector2.ZERO, Vector2(parts[0].get_width(), 0), Vector2(0, parts[0].get_height()), parts[0].get_size()]
@@ -377,21 +388,39 @@ func _build_painting() -> void:
 		for k in [0, 1, 2, 0, 2, 3]:
 			st.set_uv(uvs[k])
 			st.add_vertex(vertices[k])
-		var material := StandardMaterial3D.new()
-		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		material.albedo_texture = texture
-		material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
-		material.texture_repeat = false
-		material.disable_receive_shadows = true
-		material.cull_mode = BaseMaterial3D.CULL_DISABLED
-		st.set_material(material)
+		st.set_material(material_for.call(texture, corner))
 		st.commit(mesh)
-	var painting := MeshInstance3D.new()
-	painting.name = "Painting"
-	painting.mesh = mesh
-	painting.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	painting.extra_cull_margin = 100.0
-	add_child(painting)
+	var instance := MeshInstance3D.new()
+	instance.name = mesh_name
+	instance.mesh = mesh
+	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	instance.extra_cull_margin = 100.0
+	return instance
+
+
+func _painting_material(texture: Texture2D, _corner: Vector2) -> Material:
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.albedo_texture = texture
+	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+	material.texture_repeat = false
+	material.disable_receive_shadows = true
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	return material
+
+
+## A mesma parte, só com o que é alto no desenho, na profundidade do pé de cada pedaço (shaders/painted_front).
+func _front_material(texture: Texture2D, corner: Vector2) -> Material:
+	var material := ShaderMaterial.new()
+	material.shader = FRONT_SHADER
+	material.set_shader_parameter("albedo", texture)
+	material.set_shader_parameter("front", front_layer)
+	material.set_shader_parameter("part_corner", corner)
+	material.set_shader_parameter("part_size", texture.get_size())
+	material.set_shader_parameter("image_size", image_size)
+	material.set_shader_parameter("meters_per_pixel", meters_per_pixel())
+	material.set_shader_parameter("sin_pitch", sin(deg_to_rad(-CAMERA_PITCH)))
+	return material
 
 
 ## Cada porta vai para a entrada pintada (o meio da área de entrada fica em painted_front).

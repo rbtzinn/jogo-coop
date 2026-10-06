@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" path="res://levels/world/art/volcano_03_sudoeste.png" id="9_sw"]
 [ext_resource type="Texture2D" path="res://levels/world/art/volcano_04_sudeste.png" id="10_se"]
 [ext_resource type="Texture2D" path="res://levels/world/art/volcano_walk.png" id="11_walk"]
+[ext_resource type="Texture2D" path="res://levels/world/art/volcano_front.png" id="12_front"]
 [ext_resource type="Script" path="res://core/debug/ticket_cheat.gd" id="98_cheat"]
 
 [node name="WorldArea2" type="Node3D"]
@@ -19,6 +20,7 @@ area = 2
 area_title = "ÁREA 2 — A ILHA DO VULCÃO"
 parts = Array[Texture2D]([ExtResource("7_nw"), ExtResource("8_ne"), ExtResource("9_sw"), ExtResource("10_se")])
 walk_mask = ExtResource("11_walk")
+front_layer = ExtResource("12_front")
 view_pixels = 720.0
 background_color = Color(0.1, 0.05, 0.06, 1)
 ambient_color = Color(0.55, 0.45, 0.5, 1)
