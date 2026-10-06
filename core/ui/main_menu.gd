@@ -226,7 +226,7 @@ func _start_slot(slot: int, fresh: bool) -> void:
 		SaveGame.use_slot("solo", slot, fresh)
 		# Sozinho: um personagem só (o último escolhido; Tab no mapa troca).
 		PlayerSpawner.solo_slot = int(SaveGame.data.get("solo_character", 0))
-	get_tree().change_scene_to_file(first_level)
+	get_tree().change_scene_to_file(_first_scene())
 
 
 func _add_button(parent: Control, text: String, callback: Callable) -> Button:
@@ -261,7 +261,7 @@ func _on_test_pressed() -> void:
 	Network.leave()
 	SaveGame.use_test()
 	PlayerSpawner.solo_slot = -1
-	get_tree().change_scene_to_file(first_level)
+	get_tree().change_scene_to_file(_first_scene())
 
 
 func _on_connect_pressed() -> void:
@@ -297,3 +297,8 @@ func _on_join_timeout(timer: SceneTreeTimer) -> void:
 		return
 	Network.leave()
 	_status.text = "Demorou demais para conectar. Confira o IP e se o parceiro já hospedou."
+
+
+## Cena aberta ao começar: o mapa da área onde o save parou (ou outra, se a cena do menu escolher).
+func _first_scene() -> String:
+	return Levels.current_map() if first_level == Levels.MAP else first_level

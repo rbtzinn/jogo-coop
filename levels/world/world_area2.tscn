@@ -1,0 +1,100 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://core/world/painted_world.gd" id="1_world"]
+[ext_resource type="Script" path="res://core/world/world_door.gd" id="2_door"]
+[ext_resource type="Script" path="res://core/network/player_spawner.gd" id="3_spawner"]
+[ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="4_clown"]
+[ext_resource type="PackedScene" path="res://core/player/characters/acrobat/acrobat_rig.tscn" id="5_acrobat"]
+[ext_resource type="PackedScene" path="res://core/world/world_walker.tscn" id="6_walker"]
+[ext_resource type="Texture2D" path="res://levels/world/art/volcano_01_noroeste.png" id="7_nw"]
+[ext_resource type="Texture2D" path="res://levels/world/art/volcano_02_nordeste.png" id="8_ne"]
+[ext_resource type="Texture2D" path="res://levels/world/art/volcano_03_sudoeste.png" id="9_sw"]
+[ext_resource type="Texture2D" path="res://levels/world/art/volcano_04_sudeste.png" id="10_se"]
+[ext_resource type="Texture2D" path="res://levels/world/art/volcano_walk.png" id="11_walk"]
+[ext_resource type="Script" path="res://core/debug/ticket_cheat.gd" id="98_cheat"]
+
+[node name="WorldArea2" type="Node3D"]
+script = ExtResource("1_world")
+area = 2
+area_title = "ÁREA 2 — A ILHA DO VULCÃO"
+parts = Array[Texture2D]([ExtResource("7_nw"), ExtResource("8_ne"), ExtResource("9_sw"), ExtResource("10_se")])
+walk_mask = ExtResource("11_walk")
+view_pixels = 720.0
+background_color = Color(0.1, 0.05, 0.06, 1)
+ambient_color = Color(0.55, 0.45, 0.5, 1)
+lamp_color = Color(1, 0.65, 0.42, 1)
+
+[node name="DoorShop" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(580, 1300)
+title = "Curiosidades"
+opens_shop = true
+radius = 1.5
+landmark = "stall"
+
+[node name="DoorDressing" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(900, 1360)
+title = "Camarim"
+opens_dressing_room = true
+radius = 1.4
+landmark = "wagon"
+
+[node name="DoorPlane" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(1080, 1150)
+title = "Avião"
+target_scene = "res://levels/travel/plane_travel.tscn"
+level_id = "plane"
+enter_label = "Voar"
+radius = 1.4
+landmark = "wagon"
+
+[node name="DoorMagmaKing" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(540, 400)
+title = "Rei Magma"
+level_id = "magma_king"
+
+[node name="DoorPhoenix" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(2720, 260)
+title = "Fênix das Cinzas"
+level_id = "ash_phoenix"
+
+[node name="DoorAnvil" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(2600, 1340)
+title = "Mestre Bigorna"
+level_id = "anvil_master"
+
+[node name="DoorMine" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(1660, 1440)
+title = "Mina de Brasa"
+level_id = "ember_mine"
+landmark = "station"
+
+[node name="DoorHeart" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(1620, 390)
+title = "Coração do Vulcão"
+level_id = "volcano_heart"
+requires = Array[String](["magma_king", "ash_phoenix", "anvil_master"])
+landmark = "big_top"
+
+[node name="PlayerSpawner" type="Node3D" parent="."]
+script = ExtResource("3_spawner")
+characters = Array[PackedScene]([ExtResource("4_clown"), ExtResource("5_acrobat")])
+facings = Array[int]([1, 1])
+armed = false
+player_scene = ExtResource("6_walker")
+
+[node name="SpawnClown" type="Marker3D" parent="PlayerSpawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4, 1, 13.8)
+
+[node name="SpawnAcrobat" type="Marker3D" parent="PlayerSpawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.1, 1, 14.2)
+
+[node name="TicketCheat" type="Node" parent="."]
+script = ExtResource("98_cheat")

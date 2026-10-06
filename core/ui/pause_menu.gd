@@ -97,9 +97,9 @@ func open(share := true) -> void:
 	_dressing_room.hide()
 	# O Camarim só abre no mapa (não no meio da luta).
 	var scene := get_tree().current_scene
-	_dressing_button.visible = scene != null and scene.scene_file_path == Levels.MAP
+	_dressing_button.visible = scene != null and Levels.is_map(scene.scene_file_path)
 	# Voltar ao mapa: no meio de uma luta ou do trem. Online, só o host (ele leva os dois).
-	_map_button.visible = scene != null and scene.scene_file_path != Levels.MAP and (not Network.is_online() or Network.is_host())
+	_map_button.visible = scene != null and not Levels.is_map(scene.scene_file_path) and (not Network.is_online() or Network.is_host())
 	_sharing = share and Network.is_online()
 	_both_note.visible = _sharing
 	if _sharing:
@@ -152,7 +152,7 @@ func is_partner_paused() -> bool:
 ## Larga a luta ou a fase e volta para o parque, na frente da atração por onde entraram.
 func _back_to_map() -> void:
 	close()
-	Network.change_level(Levels.MAP)
+	Network.change_level(Levels.current_map())
 
 
 func _back_to_menu() -> void:

@@ -28,6 +28,11 @@ const ZONE := Vector3(3.0, 2.0, 2.2)
 ## Tipo da atração (muda a distância do meio até a frente): "tent", "stall", "wagon", "station", "big_top",
 ## "lion_tent".
 @export_enum("tent", "stall", "wagon", "station", "big_top", "lion_tent") var landmark := "tent"
+## Onde fica a frente da atração no mapa pintado (pixels do conjunto; o meio da área de entrada). O mundo
+## (PaintedWorld) põe a porta ali. Negativo = fica onde está na cena.
+@export var painted_front := Vector2(-1, -1)
+## O verbo do aviso ("Entrar"; no avião, "Voar").
+@export var enter_label := "Entrar"
 
 var _message := ""
 var _message_time := 0.0
@@ -193,7 +198,7 @@ func _update_status(near: bool) -> void:
 		kind = "grade"
 		color = Color("ffd25a")
 	elif near:
-		text = "%s: entrar" % _shoot_key_name()
+		text = "%s: %s" % [_shoot_key_name(), enter_label.to_lower()]
 		kind = "enter"
 	status_text = text
 	status_kind = kind

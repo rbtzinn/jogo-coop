@@ -111,7 +111,7 @@ func _add_button(parent: Control, text: String, callback: Callable) -> Button:
 
 ## Host (ou sozinho): volta os dois para o mapa do parque.
 func back_to_map() -> void:
-	Network.change_level(Levels.MAP)
+	Network.change_level(Levels.current_map())
 
 
 func _back_to_menu() -> void:

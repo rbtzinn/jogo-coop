@@ -1,37 +1,33 @@
+class_name PaintedWorld
 extends Node3D
-## Mundo da Área 1 em 3D (a aventura): o parque do circo assombrado à noite, visto de cima numa câmera
-## ortográfica inclinada que acompanha a dupla. Os personagens (desenhos da luta, menores) andam juntos pelas
-## trilhas entre as atrações; entra-se andando até elas (WorldDoor). As lutas continuam 2D.
-## Atrações: portão e carroção do Camarim, O Domador, carroção da Cartomante (loja), Os Malabaristas, a
-## estação do Trem e a tenda grande do Grande Mágico, fechada até vencer os outros três.
-## O cenário é o mapa ampliado pintado em quatro partes 2 x 2 (docs/prompts/claude_integrar_mapa_4partes.md,
+## Mundo de uma área (a aventura): o mapa pintado da área, visto de cima numa câmera ortográfica inclinada que
+## acompanha a dupla. Os personagens (desenhos da luta, menores) andam juntos pelas trilhas entre as atrações;
+## entra-se andando até elas (WorldDoor). As lutas continuam 2D. Cada área é uma cena com este script e as
+## portas dela (levels/world/world_area1.tscn, world_area2.tscn).
+## O cenário é o mapa pintado em quatro partes 2 x 2 (docs/prompts/claude_integrar_mapa_4partes.md,
 ## 05/10/2026), montadas numa malha só no fundo da câmera; a tela mostra uma região por vez e a câmera revela o
 ## resto conforme a dupla anda. O chão do mundo casa com o chão pintado (cada pixel do conjunto vira um ponto no
-## chão). Onde se anda vem de uma máscara da terra pintada (park_walk.png, feita por
-## tools/blender/park_walk_mask.py); quem bate na beira escorrega por ela. As portas ficam nas entradas
-## pintadas (DOOR_FRONTS). A lógica das portas não muda.
-## Ao chegar aqui, o host salva o jogo.
+## chão). Onde se anda vem de uma máscara da estrada pintada (park_walk.png, feita por
+## tools/blender/park_walk_mask.py; volcano_walk.png, por tools/area2_walk_mask.py); quem bate na beira
+## escorrega por ela. Cada porta fica na entrada pintada (WorldDoor.painted_front).
+## Ao chegar aqui, o host salva o jogo (com a área atual).
 
-## As quatro partes do mapa e o canto de cima à esquerda de cada uma no conjunto (pixels).
-const PARTS: Array = [
-	[preload("res://levels/world/art/park_01_noroeste.png"), Vector2(0, 0)],
-	[preload("res://levels/world/art/park_02_nordeste.png"), Vector2(836, 0)],
-	[preload("res://levels/world/art/park_03_sudoeste.png"), Vector2(0, 470)],
-	[preload("res://levels/world/art/park_04_sudeste.png"), Vector2(836, 470)],
-]
-## Tamanho do conjunto em pixels (a linha de baixo tem 471 de altura).
-const IMAGE_SIZE := Vector2(1672, 941)
-## Terra onde se anda (branco), na metade da resolução do conjunto.
-const WALK_MASK := preload("res://levels/world/art/park_walk.png")
-## Onde fica a frente de cada atração no conjunto (o meio da área de entrada da porta).
-const DOOR_FRONTS := {
-	"DoorDressing": Vector2(250, 545),
-	"DoorTamer": Vector2(362, 212),
-	"DoorShop": Vector2(592, 598),
-	"DoorJugglers": Vector2(1022, 214),
-	"DoorTrain": Vector2(1350, 728),
-	"DoorMagician": Vector2(1418, 290),
-}
+## Número da área (fica no save: é para onde "Voltar ao mapa" e o menu levam).
+@export var area := 1
+## Nome na plaquinha do canto.
+@export var area_title := ""
+## As quatro partes do mapa, na ordem noroeste, nordeste, sudoeste, sudeste.
+@export var parts: Array[Texture2D] = []
+## Estrada onde se anda (branco), na metade da resolução do conjunto.
+@export var walk_mask: Texture2D
+## Quantos pixels do conjunto cabem na altura da vista (os personagens têm sempre o mesmo tamanho na tela; um
+## número maior mostra mais do mapa). Área 1: 620 de 941 (a arte tem só 1672 x 941).
+@export var view_pixels := 620.0
+## Luz dos bonecos (a do cenário já está pintada): o fundo, a luz ambiente e a luz quente dos lampiões.
+@export var background_color := Color("0b1a24")
+@export var ambient_color := Color("6f7f9a")
+@export var lamp_color := Color("ffc98a")
+
 ## Sozinho: se o parceiro ficar mais longe que isto (preso numa curva), ele reaparece atrás de quem anda.
 const FOLLOW_RESCUE := 5.0
 ## Rostos das plaquinhas de vida (recortes da arte da abertura): região de cada um.
@@ -47,9 +43,6 @@ const EXTRA_HEALTH_PROP := "cloth_heart"
 const CAMERA_PITCH := -42.0
 ## Altura da vista em metros (os personagens ficam com uns 12% da tela).
 const VIEW_HEIGHT := 15.5
-## Quantos pixels do conjunto cabem na altura da vista: 620 de 941 (cerca de dois terços na altura e 1100 de 1672
-## na largura). Ampliação de 1,74 na janela de 1080 linhas: a arte tem só 1672 x 941.
-const VIEW_PIXELS := 620.0
 ## Distância da câmera ao ponto seguido (só afasta os planos de corte; a imagem não muda).
 const CAMERA_BACK := 40.0
 const CAMERA_SMOOTH := 6.0
@@ -60,7 +53,9 @@ const SCREEN_MARGIN := Vector2(1.0, 1.4)
 ## Quando bate na beira, procura o ponto andável mais perto do desejado até esta distância (pixels da máscara).
 const SLIDE_SEARCH := 8
 
-static var _walk_image: Image
+## Tamanho do conjunto em pixels (as quatro partes juntas).
+var image_size := Vector2.ZERO
+var _walk_image: Image
 
 var _camera := Camera3D.new()
 var _focus := Vector3.ZERO
@@ -74,7 +69,9 @@ var _last_good := {}
 func _ready() -> void:
 	# Depois dos bonecos: segura quem saiu do chão pintado.
 	process_physics_priority = 10
+	image_size = parts[0].get_size() + parts[3].get_size()
 	if SaveGame.is_keeper():
+		SaveGame.data.area = area
 		SaveGame.save_game()
 	_build_environment()
 	_build_floor()
@@ -147,59 +144,59 @@ func height_at(_x: float, _z: float) -> float:
 
 
 ## Metros de chão (na tela) por pixel do conjunto.
-static func meters_per_pixel() -> float:
-	return VIEW_HEIGHT / VIEW_PIXELS
+func meters_per_pixel() -> float:
+	return VIEW_HEIGHT / view_pixels
 
 
 ## Ponto do conjunto (pixels) no chão do mundo: o meio do conjunto fica na origem, e cada pixel para baixo
 ## na tela anda 1/sen(inclinação) vezes mais no chão. Uma transformação só para as quatro partes.
-static func pixel_to_world(pixel: Vector2) -> Vector3:
-	var rel := (pixel - IMAGE_SIZE * 0.5) * meters_per_pixel()
+func pixel_to_world(pixel: Vector2) -> Vector3:
+	var rel := (pixel - image_size * 0.5) * meters_per_pixel()
 	return Vector3(rel.x, 0.0, rel.y / sin(deg_to_rad(-CAMERA_PITCH)))
 
 
-static func world_to_pixel(point: Vector3) -> Vector2:
-	return IMAGE_SIZE * 0.5 + Vector2(point.x, point.z * sin(deg_to_rad(-CAMERA_PITCH))) / meters_per_pixel()
+func world_to_pixel(point: Vector3) -> Vector2:
+	return image_size * 0.5 + Vector2(point.x, point.z * sin(deg_to_rad(-CAMERA_PITCH))) / meters_per_pixel()
 
 
-static func _mask() -> Image:
+func _mask() -> Image:
 	if _walk_image == null:
-		_walk_image = WALK_MASK.get_image()
+		_walk_image = walk_mask.get_image()
 		if _walk_image.is_compressed():
 			_walk_image.decompress()
 	return _walk_image
 
 
 ## Se o pixel da máscara (metade da resolução do conjunto) é terra onde se anda.
-static func _walkable_cell(cell: Vector2i) -> bool:
+func _walkable_cell(cell: Vector2i) -> bool:
 	var mask := _mask()
 	if cell.x < 0 or cell.y < 0 or cell.x >= mask.get_width() or cell.y >= mask.get_height():
 		return false
 	return mask.get_pixelv(cell).r > 0.5
 
 
-static func _cell_of(point: Vector3) -> Vector2i:
-	var pixel := world_to_pixel(point) * float(_mask().get_width()) / IMAGE_SIZE.x
+func _cell_of(point: Vector3) -> Vector2i:
+	var pixel := world_to_pixel(point) * float(_mask().get_width()) / image_size.x
 	return Vector2i(floori(pixel.x), floori(pixel.y))
 
 
 ## O ponto dentro do pixel `cell` da máscara mais perto de `point` (a beira do pixel, não o meio: escorregar
 ## pela beira fica contínuo, sem pular de pixel em pixel).
-static func _closest_in_cell(cell: Vector2i, point: Vector3) -> Vector3:
-	var scale := IMAGE_SIZE.x / float(_mask().get_width())
+func _closest_in_cell(cell: Vector2i, point: Vector3) -> Vector3:
+	var scale := image_size.x / float(_mask().get_width())
 	var low := pixel_to_world((Vector2(cell) + Vector2(0.02, 0.02)) * scale)
 	var high := pixel_to_world((Vector2(cell) + Vector2(0.98, 0.98)) * scale)
 	return Vector3(clampf(point.x, low.x, high.x), point.y, clampf(point.z, low.z, high.z))
 
 
 ## Se o ponto (mundo) está no chão pintado onde se anda.
-static func is_walkable(point: Vector3) -> bool:
+func is_walkable(point: Vector3) -> bool:
 	return _walkable_cell(_cell_of(point))
 
 
 ## O ponto andável mais perto (mundo), procurando em volta até `reach` pixels da máscara (INF se não achar
 ## nada: devolve o próprio ponto).
-static func nearest_walkable(point: Vector3, reach := 200) -> Vector3:
+func nearest_walkable(point: Vector3, reach := 200) -> Vector3:
 	if is_walkable(point):
 		return point
 	var center := _cell_of(point)
@@ -256,7 +253,7 @@ func _inside_view(point: Vector3) -> Vector3:
 
 
 ## Posição na tela (metros: x para a direita, y para cima) de um ponto no chão.
-static func _screen_coords(point: Vector3) -> Vector2:
+func _screen_coords(point: Vector3) -> Vector2:
 	return Vector2(point.x, -point.z * sin(deg_to_rad(-CAMERA_PITCH)))
 
 
@@ -279,7 +276,7 @@ func _target_focus() -> Vector3:
 	if not walkers.is_empty():
 		middle /= walkers.size()
 	var half_view := Vector2(VIEW_HEIGHT * 0.5 * _aspect(), VIEW_HEIGHT * 0.5)
-	var half_map := IMAGE_SIZE * 0.5 * meters_per_pixel()
+	var half_map := image_size * 0.5 * meters_per_pixel()
 	var at := _screen_coords(middle)
 	at.x = clampf(at.x, -half_map.x + half_view.x, half_map.x - half_view.x) if half_map.x > half_view.x else 0.0
 	at.y = clampf(at.y, -half_map.y + half_view.y, half_map.y - half_view.y) if half_map.y > half_view.y else 0.0
@@ -323,16 +320,16 @@ func _place_at_return_door() -> void:
 func _build_environment() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color("0b1a24")
+	env.background_color = background_color
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color("6f7f9a")
+	env.ambient_light_color = ambient_color
 	env.ambient_light_energy = 0.9
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	var world_env := WorldEnvironment.new()
 	world_env.environment = env
 	add_child(world_env)
 	var lamplight := DirectionalLight3D.new()
-	lamplight.light_color = Color("ffc98a")
+	lamplight.light_color = lamp_color
 	lamplight.light_energy = 1.3
 	lamplight.shadow_enabled = false
 	lamplight.rotation_degrees = Vector3(-50, -25, 0)
@@ -345,7 +342,8 @@ func _build_floor() -> void:
 	body.collision_layer = 1
 	var shape := CollisionShape3D.new()
 	var box := BoxShape3D.new()
-	box.size = Vector3(80, 1, 60)
+	var corner := pixel_to_world(image_size)
+	box.size = Vector3(corner.x * 2.0 + 10.0, 1, corner.z * 2.0 + 10.0)
 	shape.shape = box
 	shape.position.y = -0.5
 	body.add_child(shape)
@@ -360,9 +358,10 @@ func _build_painting() -> void:
 	var behind := -basis.z * PAINTING_DEPTH
 	var up := basis.y
 	var mesh := ArrayMesh.new()
-	for part: Array in PARTS:
-		var texture: Texture2D = part[0]
-		var corner: Vector2 = part[1]
+	var corners := [Vector2.ZERO, Vector2(parts[0].get_width(), 0), Vector2(0, parts[0].get_height()), parts[0].get_size()]
+	for index in parts.size():
+		var texture: Texture2D = parts[index]
+		var corner: Vector2 = corners[index]
 		var size := texture.get_size()
 		var st := SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -395,12 +394,12 @@ func _build_painting() -> void:
 	add_child(painting)
 
 
-## Cada porta vai para a entrada pintada (a área de entrada fica em DOOR_FRONTS).
+## Cada porta vai para a entrada pintada (o meio da área de entrada fica em painted_front).
 func _place_doors() -> void:
 	for door in _doors():
-		if DOOR_FRONTS.has(String(door.name)):
+		if door.painted_front.x >= 0.0:
 			var offset := door.front_point() - door.global_position
-			door.position = pixel_to_world(DOOR_FRONTS[String(door.name)]) - Vector3(offset.x, 0, offset.z)
+			door.position = pixel_to_world(door.painted_front) - Vector3(offset.x, 0, offset.z)
 
 
 func _doors() -> Array[WorldDoor]:
@@ -432,7 +431,7 @@ func _build_hud() -> void:
 	hud.add_child(_prompt_layer)
 	var area := _plaque()
 	area.position = Vector2(26, 22)
-	var area_label := _plaque_label("ÁREA 1 — O GRANDE PICADEIRO" + ("  ·  MODO DE TESTE" if SaveGame.test_mode else ""), 27)
+	var area_label := _plaque_label(area_title + ("  ·  MODO DE TESTE" if SaveGame.test_mode else ""), 27)
 	area_label.add_theme_font_override("font", UiTheme.TITLE_FONT)
 	area.add_child(area_label)
 	hud.add_child(area)
@@ -533,16 +532,16 @@ func _update_prompt(door: WorldDoor) -> void:
 		row.add_child(text)
 		_prompt_layer.add_child(plate)
 		_prompts[door] = [plate, key, key_label, text]
-	var parts: Array = _prompts[door]
-	var plate: PanelContainer = parts[0]
+	var pieces: Array = _prompts[door]
+	var plate: PanelContainer = pieces[0]
 	plate.visible = not door.status_text.is_empty()
 	if not plate.visible:
 		return
 	var entering := door.status_kind == "enter"
-	parts[1].visible = entering
-	parts[2].text = WorldDoor._shoot_key_name()
-	parts[3].text = "· Entrar" if entering else door.status_text
-	parts[3].add_theme_color_override("font_color", Color("f3e3c0") if entering else door.status_color)
+	pieces[1].visible = entering
+	pieces[2].text = WorldDoor._shoot_key_name()
+	pieces[3].text = "· " + door.enter_label if entering else door.status_text
+	pieces[3].add_theme_color_override("font_color", Color("f3e3c0") if entering else door.status_color)
 	var anchor := door.front_point() + Vector3(0, 2.6, -0.6)
 	var ratio := _prompt_layer.size / get_viewport().get_visible_rect().size
 	var at := _camera.unproject_position(anchor) * ratio
