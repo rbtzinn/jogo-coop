@@ -57,6 +57,8 @@ const PAINTING_DEPTH := 30.0
 const SCREEN_MARGIN := Vector2(1.0, 1.4)
 ## Quando bate na beira, procura o ponto andável mais perto do desejado até esta distância (pixels da máscara).
 const SLIDE_SEARCH := 8
+## Ângulos (graus) que o passo gira para acompanhar a beira, do menor para o maior.
+const SLIDE_ANGLES := [15.0, 30.0, 45.0, 60.0, 75.0, 85.0]
 
 ## Tamanho do conjunto em pixels (as quatro partes juntas).
 var image_size := Vector2.ZERO
@@ -227,23 +229,54 @@ func nearest_walkable(point: Vector3, reach := 200) -> Vector3:
 ## queria ir (escorrega pela beira, também em curvas e na diagonal), em vez de voltar para trás e travar.
 func _keep_on_ground(walker: WorldWalker) -> void:
 	var at := _inside_view(walker.global_position)
-	if not is_walkable(at):
-		var near := nearest_walkable(at, SLIDE_SEARCH)
-		if not is_walkable(near):
-			near = _last_good.get(walker, nearest_walkable(at))
-		elif _last_good.has(walker) and not is_walkable(_inside_view(near)):
-			near = _last_good[walker]
-		at = Vector3(near.x, at.y, near.z)
-	if at != walker.global_position:
-		# Tira só a parte da velocidade que empurrava para fora; o resto continua (desliza).
-		var pushed := Vector3(at.x - walker.global_position.x, 0, at.z - walker.global_position.z)
-		if pushed.length_squared() > 0.000001:
-			var normal := pushed.normalized()
-			var into := Vector3(walker.velocity.x, 0, walker.velocity.z).dot(-normal)
-			if into > 0.0:
-				walker.velocity += normal * into
-		walker.global_position = at
-	_last_good[walker] = walker.global_position
+	if is_walkable(at):
+		if at != walker.global_position:
+			walker.global_position = at
+		_last_good[walker] = at
+		return
+	var near := nearest_walkable(at, SLIDE_SEARCH)
+	if not is_walkable(near):
+		near = _last_good.get(walker, nearest_walkable(at))
+	elif _last_good.has(walker) and not is_walkable(_inside_view(near)):
+		near = _last_good[walker]
+	near = Vector3(near.x, at.y, near.z)
+	var from: Vector3 = _last_good.get(walker, near)
+	var wish := Vector3(at.x - from.x, 0, at.z - from.z)
+	# Também tenta deslizar acompanhando a beira (o passo girado para os lados) e fica com o que mais avança
+	# para onde ele queria ir: numa beira inclinada o ponto andável mais perto podia ser o próprio lugar dele, e
+	# o boneco travava (curva da frente da mina, 07/10/2026).
+	var slid := _slide_along_edge(from, at)
+	if slid != Vector3.INF and (slid - from).dot(wish) > (near - from).dot(wish):
+		near = slid
+	# A velocidade passa a seguir o caminho que ele de fato fez pela beira (desliza sem perder o embalo; parado
+	# contra a beira, para).
+	var moved := Vector3(near.x - from.x, 0, near.z - from.z)
+	var flat := Vector3(walker.velocity.x, 0, walker.velocity.z)
+	if moved.length_squared() > 0.0000001:
+		var along := moved.normalized()
+		flat = along * maxf(flat.dot(along), 0.0)
+	else:
+		flat = Vector3.ZERO
+	walker.velocity = Vector3(flat.x, walker.velocity.y, flat.z)
+	walker.global_position = near
+	_last_good[walker] = near
+
+
+## Desliza pela beira: de `from` (andável) querendo ir a `to` (fora da estrada), o passo girado para os lados
+## em ângulos crescentes, encolhido pelo quanto girou (só a parte do movimento que segue a beira). Devolve o
+## primeiro ponto andável e na tela, ou Vector3.INF se nenhum servir.
+func _slide_along_edge(from: Vector3, to: Vector3) -> Vector3:
+	var step := Vector3(to.x - from.x, 0, to.z - from.z)
+	if step.length_squared() < 0.000001:
+		return Vector3.INF
+	for degrees in SLIDE_ANGLES:
+		var angle := deg_to_rad(degrees)
+		for side in [1.0, -1.0]:
+			var turned := step.rotated(Vector3.UP, angle * side) * cos(angle)
+			var point := Vector3(from.x + turned.x, to.y, from.z + turned.z)
+			if is_walkable(point) and _inside_view(point) == point:
+				return point
+	return Vector3.INF
 
 
 ## O ponto preso dentro da vista da câmera (com margem): os dois ficam sempre na tela.

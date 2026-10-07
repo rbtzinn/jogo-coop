@@ -64,7 +64,16 @@ func _run() -> void:
 		check(volcano.is_walkable(walker.global_position), "%s on the road" % walker.name)
 	for door: WorldDoor in get_tree().get_nodes_in_group(&"world_doors"):
 		check(volcano.is_walkable(door.front_point()), "%s front on the road" % door.name)
-	check((volcano.get_node("DoorMagmaKing") as WorldDoor).status_text.is_empty() and not (volcano.get_node("DoorMagmaKing") as WorldDoor).is_open(), "boss without fight: coming soon")
+	check((volcano.get_node("DoorAnvil") as WorldDoor).status_text.is_empty() and not (volcano.get_node("DoorAnvil") as WorldDoor).is_open(), "boss without fight: coming soon")
+	check((volcano.get_node("DoorMagmaKing") as WorldDoor).is_open(), "Magma King door opens his fight")
+	# Curva da frente da mina: as pedras pintadas na frente cortavam a estrada e o boneco travava (07/10/2026).
+	var bend := [Vector2(1100, 1450), Vector2(1110, 1540), Vector2(1170, 1560), Vector2(1300, 1530)]
+	var cut := 0
+	for i in bend.size() - 1:
+		for k in 21:
+			if not volcano.is_walkable(volcano.pixel_to_world(bend[i].lerp(bend[i + 1], k / 20.0))):
+				cut += 1
+	check(cut == 0, "volcano: the road around the mine bend is continuous (%d gaps)" % cut)
 	check((volcano.get_node("DoorHeart") as WorldDoor).missing().size() == 3, "volcano heart locked until 3 wins")
 	back.try_enter()
 	await frames(10)

@@ -5,6 +5,7 @@
 # Mesmo jeito de tools/blender/park_walk_mask.py (Área 1), mas em Python puro (Pillow, numpy e scipy).
 # Uso: python tools/area2_walk_mask.py docs/referencias/mapas/area2_vulcao_aviao/mapa_completo.png \
 #   <pasta temporária> levels/world/art/volcano_walk.png
+import os
 import sys
 import numpy as np
 from PIL import Image
@@ -48,6 +49,9 @@ ADD = [
     (2770, 480, 50, 40), (2830, 450, 50, 40), (2870, 410, 50, 40), (2840, 365, 50, 40),
     (2790, 330, 50, 40), (2730, 290, 50, 40), (2670, 260, 50, 40), (2620, 240, 50, 40),
     (2720, 260, 120, 40),
+    # Curva da frente da mina: as pedras pintadas na frente tapam a estrada e cortavam a máscara (o boneco
+    # travava na curva; reclamação do usuário em 07/10/2026).
+    (1140, 1530, 60, 50), (1120, 1560, 60, 40), (1165, 1580, 50, 30),
 ]
 for e in ADD:
     ellipse(*e)
@@ -71,6 +75,10 @@ hs = ndimage.sum(np.ones_like(keep), holes, range(1, nh + 1))
 for k, s in enumerate(hs, 1):
     if s < 1500:
         keep[holes == k] = True
+# Beira lisa, sem dentes de poucos pixels onde o boneco entrava e travava (tools/smooth_walk_mask.py).
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from smooth_walk_mask import smooth  # noqa: E402
+keep = smooth(keep)
 Image.fromarray((keep * 255).astype(np.uint8)).save(final)
 # Conferência: o mapa escurecido com a estrada em verde e uma grade a cada 100 px.
 vis = px * 0.55
