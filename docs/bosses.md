@@ -133,6 +133,13 @@ Cores: o fundo da ilha tem muita lava, então **os fundos ficam escuros e com a 
 - Ao vencer: esfria, vira uma estátua de pedra fazendo uma reverência para os jogadores (finalmente ele é quem se curva).
 - Vida: 1200. Tempo-alvo: 2:30.
 
+**Como ficou no jogo (07/10/2026, primeira versão, decidido pelo Claude; números a calibrar):** `bosses/magma_king/`, entrada pela porta do Rei Magma no mapa da Área 2. Arte do pedido do Vulcão recortada por `tools/cut_magma_king_art.py` (as folhas vieram fora da grade; cada quadro é ancorado no apoio do desenho).
+- Arena: a caverna do pedido, com o chão (beira da margem) em y 1000; duas jangadas de basalto (tampo em y 760, x 620 e 1260) e o trono à direita. Uma faixa da beira da margem é desenhada por cima do rei, para ele afundar no lago (fase 2) e derreter até a altura do jato (fase 3). Na fase 3 o fundo e a beira trocam pela versão "quente".
+- **Fase 1:** *Cuspe Real* (3 bolas nos jogadores e espalhadas; poça de 1 s; 50% de chance de uma ser a gema turquesa, sem poça), *Cetro* (colunas a cada 230 px da frente dele para a esquerda, rachadura 0,5 s antes, de pé 0,4 s; 230 px de altura, não chegam nas jangadas), *Coroa Bumerangue* (vai até x 170 e volta; uma perna baixa em y 945, pular; a outra alta em y 812, abaixar; a gema turquesa cai na virada).
+- **Fase 2:** no lago ele não machuca quem encosta; cada ataque começa andando 0,8 s até um x sorteado (1180 a 1720). *Onda de Lava* (uma onda de 150 px de altura a 640 px/s; às vezes duas), *Goteira* (7 pingos, metade em cima de quem está de pé, sombra 0,55 s antes; um turquesa), *Coroa Pesada* (janela de 6,5 s com dano em dobro enquanto alguém encosta na coroa; duas mãos se arrastam a 75 px/s e caem com 20 de dano cada, contado como dano da mão e não do rei; se uma chega, ele pega a coroa. Sozinho: sem mãos, dobro por 3 s).
+- **Fase 3:** *Rajada* (afunda até a boca ficar em y 860, abaixar, ou 950, pular; linha de aviso piscando 0,8 s; jato de 1,3 s até a parede), *Coroa em Órbita* (1,2 s girando na cabeça, depois espiral que se abre 420 px/s; rente ao chão desliza em y 955), *Cuspe Real* 40% mais rápido com 4 bolas.
+- Teste: `tests/test_magma_king.tscn`; também entra no teste de fumaça.
+
 ### 5. A Fênix das Cinzas
 
 *Uma ave enorme de fumaça cinzenta e brasa, com penas longas como fitas de trapezista em chamas e uma máscara de baile de porcelana rachada no rosto. Era o número aéreo do festival; dramática, nunca para de se exibir.* Arena: o ninho no alto do pico, com o chão de galhos queimados e **três rochas flutuantes** em alturas diferentes.

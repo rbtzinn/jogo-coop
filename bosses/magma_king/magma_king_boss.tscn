@@ -1,0 +1,94 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://bosses/magma_king/magma_king_boss.gd" id="1_boss"]
+[ext_resource type="Script" path="res://components/health/health.gd" id="2_health"]
+[ext_resource type="Script" path="res://core/network/boss_sync.gd" id="3_sync"]
+[ext_resource type="Script" path="res://bosses/magma_king/magma_king.gd" id="4_king"]
+[ext_resource type="Script" path="res://components/hitbox/hurtbox.gd" id="5_hurtbox"]
+[ext_resource type="Script" path="res://components/hitbox/enemy_hitbox.gd" id="6_hitbox"]
+[ext_resource type="Texture2D" path="res://bosses/magma_king/art/throne.png" id="7_throne"]
+[ext_resource type="Script" path="res://bosses/magma_king/attacks/spit.gd" id="10_spit"]
+[ext_resource type="Script" path="res://bosses/magma_king/attacks/scepter.gd" id="11_scepter"]
+[ext_resource type="Script" path="res://bosses/magma_king/attacks/crown_throw.gd" id="12_crown"]
+[ext_resource type="Script" path="res://bosses/magma_king/attacks/intro_lake.gd" id="13_intro_lake"]
+[ext_resource type="Script" path="res://bosses/magma_king/attacks/lava_wave.gd" id="14_wave"]
+[ext_resource type="Script" path="res://bosses/magma_king/attacks/drip.gd" id="15_drip"]
+[ext_resource type="Script" path="res://bosses/magma_king/attacks/heavy_crown.gd" id="16_heavy"]
+[ext_resource type="Script" path="res://bosses/magma_king/attacks/intro_molten.gd" id="17_intro_molten"]
+[ext_resource type="Script" path="res://bosses/magma_king/attacks/jet.gd" id="18_jet"]
+[ext_resource type="Script" path="res://bosses/magma_king/attacks/crown_orbit.gd" id="19_orbit"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(300, 330)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(250, 260)
+
+[node name="MagmaKingBoss" type="Node2D"]
+script = ExtResource("1_boss")
+max_health = 1200
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+
+[node name="BossSync" type="Node" parent="."]
+script = ExtResource("3_sync")
+
+[node name="Throne" type="Sprite2D" parent="."]
+position = Vector2(1640, 707)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("7_throne")
+
+[node name="King" type="Node2D" parent="."]
+position = Vector2(1615, 897)
+script = ExtResource("4_king")
+
+[node name="Hurtbox" type="Area2D" parent="King"]
+script = ExtResource("5_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="King/Hurtbox"]
+position = Vector2(0, -220)
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="Hitbox" type="Area2D" parent="King"]
+script = ExtResource("6_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="King/Hitbox"]
+position = Vector2(0, -150)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Attacks" type="Node2D" parent="."]
+
+[node name="Spit" type="Node2D" parent="Attacks"]
+script = ExtResource("10_spit")
+
+[node name="SpitFast" type="Node2D" parent="Attacks"]
+script = ExtResource("10_spit")
+fast = true
+
+[node name="Scepter" type="Node2D" parent="Attacks"]
+script = ExtResource("11_scepter")
+
+[node name="CrownThrow" type="Node2D" parent="Attacks"]
+script = ExtResource("12_crown")
+
+[node name="IntroLake" type="Node2D" parent="Attacks"]
+script = ExtResource("13_intro_lake")
+
+[node name="LavaWave" type="Node2D" parent="Attacks"]
+script = ExtResource("14_wave")
+
+[node name="Drip" type="Node2D" parent="Attacks"]
+script = ExtResource("15_drip")
+
+[node name="HeavyCrown" type="Node2D" parent="Attacks"]
+script = ExtResource("16_heavy")
+
+[node name="IntroMolten" type="Node2D" parent="Attacks"]
+script = ExtResource("17_intro_molten")
+
+[node name="Jet" type="Node2D" parent="Attacks"]
+script = ExtResource("18_jet")
+
+[node name="CrownOrbit" type="Node2D" parent="Attacks"]
+script = ExtResource("19_orbit")

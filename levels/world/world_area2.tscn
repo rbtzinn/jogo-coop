@@ -57,6 +57,7 @@ script = ExtResource("2_door")
 painted_front = Vector2(540, 400)
 title = "Rei Magma"
 level_id = "magma_king"
+target_scene = "res://bosses/magma_king/magma_king_fight.tscn"
 
 [node name="DoorPhoenix" type="Area3D" parent="."]
 script = ExtResource("2_door")
