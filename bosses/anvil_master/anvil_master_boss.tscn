@@ -18,7 +18,7 @@ script = ExtResource("3_sync")
 [node name="Actor" type="Node2D" parent="."]
 script = ExtResource("4_actor")
 art_folder = "res://bosses/anvil_master/art/"
-animation_names = PackedStringArray("idle","hammer","throw","bellows","walk","armor","defeat")
+animation_names = Array[String](["idle", "hammer", "throw", "bellows", "walk", "armor", "defeat"])
 idle_animation = &"idle"
 
 [node name="Attacks" type="Node2D" parent="."]

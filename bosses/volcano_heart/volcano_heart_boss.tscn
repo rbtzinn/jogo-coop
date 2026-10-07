@@ -18,7 +18,7 @@ script = ExtResource("3_sync")
 [node name="Actor" type="Node2D" parent="."]
 script = ExtResource("4_actor")
 art_folder = "res://bosses/volcano_heart/art/"
-animation_names = PackedStringArray("beat","echo","free","defeat")
+animation_names = Array[String](["beat", "echo", "free", "defeat"])
 idle_animation = &"beat"
 box_center = Vector2(0, 0)
 hurt_size = Vector2(260, 320)

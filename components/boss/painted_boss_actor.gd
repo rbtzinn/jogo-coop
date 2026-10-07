@@ -3,7 +3,7 @@ extends Node2D
 ## Personagem desenhado quadro a quadro. A lógica da luta fica no BossBrain.
 
 @export var art_folder := ""
-@export var animation_names: PackedStringArray = []
+@export var animation_names: Array[String] = []
 @export var idle_animation := &"idle"
 var idle_frames := PackedInt32Array()
 @export var box_center := Vector2(0, -190)
