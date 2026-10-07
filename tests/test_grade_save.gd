@@ -27,9 +27,12 @@ func _ready() -> void:
 
 func _run() -> void:
 	# --- Nota ---
-	check(FightGrade.compute(100, 150, 6, 6, 3, 6).grade == "S", "perfect fight is S")
-	check(FightGrade.compute(150, 150, 6, 6, 3, 6).grade == "S", "on target time still S")
-	check(FightGrade.compute(150, 150, 4, 6, 2, 4).grade == "A", "good fight is A (%.1f)" % FightGrade.compute(150, 150, 4, 6, 2, 4).score)
+	check(FightGrade.compute(100, 150, 6, 6, 3, 5, 3).grade == "S", "perfect fight is S")
+	check(FightGrade.compute(150, 150, 6, 6, 3, 5, 3).grade == "S", "on target time still S")
+	check(FightGrade.compute(150, 150, 6, 6, 3, 5, 0).grade == "A", "a pair without duo acts tops at A (%.1f)" % FightGrade.compute(150, 150, 6, 6, 3, 5, 0).score)
+	check(FightGrade.compute(150, 150, 3, 3, 3, 5, 0, true).grade == "S", "alone can still get S")
+	check(FightGrade.verdict("S") == "Ovação!" and FightGrade.verdict("C") == "Silêncio", "verdicts")
+	check(FightGrade.compute(150, 150, 5, 6, 2, 4, 2).grade == "A", "good fight is A (%.1f)" % FightGrade.compute(150, 150, 5, 6, 2, 4, 2).score)
 	check(FightGrade.compute(200, 150, 2, 6, 1, 2).grade == "C", "weak fight is C (%.1f)" % FightGrade.compute(200, 150, 2, 6, 1, 2).score)
 	check(FightGrade.compute(400, 150, 0, 6, 0, 0).score == 0.0, "nothing is zero")
 	check(FightGrade.rank("S") > FightGrade.rank("A") and FightGrade.rank("") < FightGrade.rank("C"), "rank order")
@@ -63,6 +66,8 @@ func _run() -> void:
 	var clown: Player = scene.get_node("PlayerSpawner/Player_1")
 	clown.applause.parries = 2
 	clown.applause.stars_used = 3
+	# Um número em dupla (um resgate, por exemplo): com 5 truques e vida cheia, dá A.
+	DuoActs.find(get_tree()).acts = 1
 	await frames(30)
 	boss.apply_damage(boss.health.current)
 	await frames(200)

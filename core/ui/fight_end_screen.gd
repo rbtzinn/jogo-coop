@@ -119,19 +119,20 @@ func _back_to_menu() -> void:
 	get_tree().change_scene_to_file(MAIN_MENU)
 
 
-## Nota grande carimbada ao lado do placar (tempo, vida, parries, estrelas) e dos ingressos.
+## A reação da plateia carimbada ao lado do placar (tempo, vida, números em dupla, truques) e dos ingressos.
+## (Até 06/10/2026 o carimbo era a letra da nota; a letra ainda aparece pequena no placar e fica no save.)
 func _build_grade(data: Dictionary) -> Control:
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 48)
 	var grade := Label.new()
-	grade.text = String(data.get("grade", "C"))
+	grade.text = FightGrade.verdict(String(data.get("grade", "C")))
 	grade.add_theme_font_override("font", UiTheme.TITLE_FONT)
-	grade.add_theme_font_size_override("font_size", 150)
+	grade.add_theme_font_size_override("font_size", 96)
 	grade.add_theme_color_override("font_color", UiTheme.GOLD)
 	grade.add_theme_color_override("font_outline_color", UiTheme.INK)
 	grade.add_theme_constant_override("outline_size", 14)
-	grade.pivot_offset = Vector2(60, 90)
+	grade.pivot_offset = Vector2(160, 60)
 	grade.rotation = -0.12
 	row.add_child(grade)
 	# O carimbo bate depois do cartaz abrir.
@@ -147,11 +148,14 @@ func _build_grade(data: Dictionary) -> Control:
 	row.add_child(stats)
 	var time: float = data.get("time", 0.0)
 	var lines := [
+		"Nota da plateia: %s" % String(data.get("grade", "C")),
 		"Tempo: %d:%02d%s" % [int(time) / 60, int(time) % 60, "  (recorde!)" if data.get("best_time", false) and not data.get("first_win", false) else ""],
 		"Vida restante: %d de %d" % [data.get("health", 0), data.get("max_health", 0)],
-		"Parries: %d de %d" % [mini(data.get("parries", 0), FightGrade.MAX_PARRIES), FightGrade.MAX_PARRIES],
-		"Estrelas usadas: %d de %d" % [mini(data.get("stars_used", 0), FightGrade.MAX_STARS), FightGrade.MAX_STARS],
 	]
+	if not data.get("solo", false):
+		lines.append("Números em dupla: %d de %d" % [mini(data.get("duo_acts", 0), FightGrade.MAX_DUO_ACTS), FightGrade.MAX_DUO_ACTS])
+	var tricks: int = data.get("parries", 0) + data.get("stars_used", 0)
+	lines.append("Truques (parries e estrelas): %d de %d" % [mini(tricks, FightGrade.MAX_TRICKS), FightGrade.MAX_TRICKS])
 	var tickets: int = data.get("tickets", 0)
 	if tickets > 0:
 		lines.append("+%d %s para cada um!" % [tickets, "ingresso" if tickets == 1 else "ingressos"])

@@ -83,13 +83,17 @@ func _victory_result() -> Dictionary:
 	var max_health := 0
 	var parries := 0
 	var stars_used := 0
-	for player: Player in get_tree().get_nodes_in_group(&"players"):
+	var players := get_tree().get_nodes_in_group(&"players")
+	for player: Player in players:
 		max_health += player.player_health.health.maximum
 		if not player.player_health.is_downed:
 			health += player.player_health.health.current
 		parries += player.applause.parries
 		stars_used += player.applause.stars_used
-	var result := FightGrade.compute(_elapsed, target_time, health, max_health, parries, stars_used)
+	# Números em dupla (sozinho, os pontos deles vão para os outros critérios).
+	var duo := DuoActs.find(get_tree())
+	var result := FightGrade.compute(_elapsed, target_time, health, max_health, parries, stars_used,
+			duo.acts if duo != null else 0, players.size() < 2)
 	if not boss_id.is_empty():
 		result.merge(SaveGame.record_victory(boss_id, result.grade, _elapsed))
 	return result

@@ -194,7 +194,7 @@ func _update_status(near: bool) -> void:
 		kind = "closed"
 		color = Color("ff8a6a")
 	elif not _best_grade().is_empty():
-		text = "Nota: %s" % _best_grade()
+		text = "Plateia: %s" % FightGrade.verdict(_best_grade())
 		kind = "grade"
 		color = Color("ffd25a")
 	elif near:

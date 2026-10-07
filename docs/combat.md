@@ -64,29 +64,24 @@ Decisões tomadas pelo Claude enquanto o usuário estava fora (revisar):
 | 3 | Pulos nos Pedestais | 2 brasas de um dos pousos |
 | 3 | Chuva de Argolas | a última argola de cada leva |
 
-## Nota no fim da luta
+## Crítica da plateia (nota no fim da luta)
 
-Ao vencer, aparece um cartaz de circo com a nota de cada luta (da dupla):
+Ao vencer, aparece um cartaz de circo com a reação da plateia à luta da dupla. **Desde 06/10/2026** (pedido do
+usuário: os critérios antigos, tempo, vida, parries e estrelas, eram o mesmo conjunto do Cuphead) o que a dupla
+faz junta pesa um quarto da nota. 100 pontos no total (`FightGrade`):
 
-| Critério | Peso |
-|---|---|
-| Tempo | quanto mais rápido, melhor |
-| Vida restante (somando os dois) | quanto mais, melhor |
-| Parries (incluindo Números Perfeitos) | até 3 contam |
-| Estrelas usadas | até 6 contam |
+| Critério | Em dupla | Sozinho |
+|---|---|---|
+| Tempo (cheio até o tempo-alvo do chefão, zero no dobro) | 30 | 35 |
+| Vida restante (somando os dois; caído conta 0) | 25 | 30 |
+| Números em dupla: Número Perfeito, Grande Número em Dupla, resgate do parceiro (até 3) | 25 | — |
+| Truques: parries + estrelas usadas, dos dois (até 8) | 20 | 35 |
 
-Notas: **C, B, A, S**. Melhorar a melhor nota de um chefão dá ingressos de bônus (ver [shop.md](shop.md)).
-
-**Como ficou no jogo (02/10/2026, decidido pelo Claude, revisar; números a calibrar):** 100 pontos no total.
-
-| Critério | Pontos |
-|---|---|
-| Tempo | 40 até o tempo-alvo do chefão (Domador: 2:30), caindo até 0 no dobro do tempo |
-| Vida restante (somando os dois; caído conta 0) | 30, proporcional (6 de 6 = 30) |
-| Parries (dos dois, inclui reviver e Número Perfeito) | 5 cada, até 3 |
-| Estrelas usadas (dos dois) | 2,5 cada, até 6 |
-
-Nota: **S** a partir de 90, **A** a partir de 75, **B** a partir de 55, senão **C**. O cartaz de vitória carimba a nota e mostra tempo, vida, parries, estrelas e os ingressos ganhos. Online, quem calcula é o host e o cliente recebe o mesmo cartaz.
+Nota: **S** a partir de 90, **A** a partir de 75, **B** a partir de 55, senão **C**. No cartaz e na tenda do
+mapa a nota aparece como a reação da plateia: S **"Ovação!"**, A **"Aplausos"**, B **"Palmas"**, C
+**"Silêncio"** (a letra fica pequena no placar e no save). Em dupla, sem nenhum número em dupla a nota vai no
+máximo até A. Melhorar a melhor nota de um chefão dá ingressos de bônus (ver [shop.md](shop.md)). Online, quem
+calcula é o host e o cliente recebe o mesmo cartaz.
 
 ## Dificuldade
 

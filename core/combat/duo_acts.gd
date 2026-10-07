@@ -1,13 +1,15 @@
 class_name DuoActs
 extends Node
 ## Bônus em dupla da luta (docs/combat.md). O Fight cria este nó em toda luta.
-## - Número Perfeito: os dois dão parry no MESMO objeto rosa com até 0,3 s de diferença.
+## - Número Perfeito: os dois dão parry no MESMO objeto de parry com até 0,3 s de diferença.
 ##   Cada um ganha 2 estrelas (a de sempre + 1 de bônus).
 ## - Grande Número em Dupla: os dois soltam o Grande Número com até 1 s de diferença.
 ##   Sai a Torta de Ouro (DuoFinale), com dano extra: o total fica maior que a soma dos dois.
 ## Cada PC fica sabendo dos dois lados (o próprio na hora, o do parceiro quando a mensagem
 ## chega). Se em QUALQUER um dos PCs a diferença couber na janela, aquele PC declara o bônus e
 ## avisa o outro: favorável a quem joga, e os dois sempre concordam.
+## Também conta os números em dupla da luta para a crítica da plateia (FightGrade): Número Perfeito, Grande
+## Número em Dupla e cada resgate de parceiro caído (o `revived` de qualquer jogador neste PC).
 
 const PERFECT_WINDOW := EnemyHitbox.PARTNER_PARRY_WINDOW
 const DUO_WINDOW := 1.0
@@ -22,6 +24,9 @@ var _parries := {}
 ## Grandes Números recentes: {"time", "player"}.
 var _grand_numbers: Array[Dictionary] = []
 var _last_duo := -INF
+## Números em dupla nesta luta.
+var acts := 0
+var _watched: Array[Player] = []
 
 
 static func find(tree: SceneTree) -> DuoActs:
@@ -32,7 +37,15 @@ func _ready() -> void:
 	add_to_group(&"duo_acts")
 
 
-## Um jogador deu parry num objeto rosa (o deste PC na hora; o parceiro quando a mensagem chega).
+## Fica de olho nos resgates (os jogadores nascem depois deste nó).
+func _physics_process(_delta: float) -> void:
+	for player: Player in get_tree().get_nodes_in_group(&"players"):
+		if player not in _watched:
+			_watched.append(player)
+			player.player_health.revived.connect(func() -> void: acts += 1)
+
+
+## Um jogador deu parry num objeto (o deste PC na hora; o parceiro quando a mensagem chega).
 func report_parry(parry_id: String, player: Player, at: Vector2) -> void:
 	var now := _now()
 	_forget_old_parries(now)
@@ -81,6 +94,7 @@ func _perfect(parry_id: String) -> void:
 	if entry.perfect:
 		return
 	entry.perfect = true
+	acts += 1
 	for player: Player in get_tree().get_nodes_in_group(&"players"):
 		if player.is_multiplayer_authority() and String(player.name) in entry.players:
 			player.applause.add_stars(1.0)
@@ -95,6 +109,7 @@ func _duo() -> bool:
 	if now - _last_duo <= DUO_COOLDOWN:
 		return false
 	_last_duo = now
+	acts += 1
 	CheerText.spawn(Vector2(960, 330), "Grande Número em Dupla!")
 	ScreenFlash.spawn(Color(GOLD_FLASH, 0.3), 0.35)
 	# Quem causa o dano é o "cérebro" da luta (host ou jogo sozinho): conta uma vez só.
