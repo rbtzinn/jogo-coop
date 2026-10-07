@@ -5,7 +5,7 @@ extends CharacterBody2D
 ## Lê os comandos de um PlayerInput, para que a rede possa controlar jogadores remotos depois.
 ## Vida, dano e queda ficam no PlayerHealth; parry no PlayerParry; estrelas no PlayerApplause;
 ## Tiro EX e Grande Número no PlayerSpecial.
-## Caído, o jogador vira um balão (PlayerBalloon) que sobe até o parceiro reviver com parry.
+## Caído, o jogador vira um balão (PlayerBalloon) que sobe até o parceiro resgatar (encostando nele).
 
 const DUST_SCENE := preload("res://components/fx/dust_puff.tscn")
 ## Camada de física das plataformas que dá para atravessar (ver project.godot).

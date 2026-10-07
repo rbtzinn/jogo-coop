@@ -1,7 +1,7 @@
 class_name PlayerHealth
 extends Node
 ## Vida do jogador: levar dano, ficar invencível piscando, cair quando a vida acaba
-## (vira balão), voltar com 1 PV quando o parceiro dá parry no balão, ou ficar fora da
+## (vira balão), voltar com 1 PV quando o parceiro resgata o balão (encostando nele), ou ficar fora da
 ## luta se o balão sair pelo topo da tela.
 ## Quem decide "fui atingido" é o PC do próprio jogador (favorável a quem joga);
 ## o outro PC só recebe o novo valor pela rede e mostra.
@@ -71,8 +71,8 @@ func apply_remote(value: int) -> void:
 	health.set_current(value)
 
 
-## O parceiro deu parry no balão (chamado no PC do dono deste jogador).
-func revive_from_parry() -> void:
+## O parceiro resgatou o balão (chamado no PC do dono deste jogador).
+func revive_from_rescue() -> void:
 	if not can_be_revived():
 		return
 	_revive()

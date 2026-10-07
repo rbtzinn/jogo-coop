@@ -14,7 +14,7 @@
 Diferente do Cuphead (fantasma), aqui quem cai **vira um balão de circo com a própria cara**, que sobe devagar.
 
 - O balão leva **cerca de 6 segundos** para sair pelo topo da tela (sobe 190 px/s, balançando). Em "Testar sozinho", quando o personagem controlado cai, o controle passa sozinho para o outro.
-- O parceiro revive dando **parry no balão** (ver Parry). O revivido volta com **1 PV**.
+- O parceiro revive **ficando encostado no balão por 1 s** (um anel em volta do balão mostra quanto falta; até 06/10/2026 era com parry, como no Cuphead). O revivido volta com **1 PV** e quem resgatou ganha 1 estrela.
 - Se o balão sair da tela, aquele jogador está fora até o fim da luta.
 - **Os dois caírem = derrota.**
 - O balão balança com o vento dos ataques do chefão, o que deixa o resgate mais emocionante.
@@ -27,7 +27,6 @@ Objetos **rosa** (`#ff5fa2`) podem receber parry. Todo chefão tem alguns ataque
 - Efeito: o personagem **quica para cima** (pulo extra), o objeto é destruído ou anulado e ele ganha **1 estrela de Aplauso** (ver Especial).
 - Janela generosa: a área de parry do personagem é bem maior que o desenho (círculo de 105 px em volta do corpo) e o parry vale por 0,22 s depois de apertar. Uma tentativa por pulo; um parry certo devolve a tentativa.
 - **Parry em dupla (diferencial):** se os dois jogadores derem parry no **mesmo objeto** com até **0,3 s** de diferença, sai um **"Número Perfeito"**: cada um ganha 2 estrelas, a tela dá um flash e a plateia aplaude. Alguns chefões têm objetos rosa grandes feitos para isso.
-- Dar parry no balão do parceiro revive (e também conta como parry).
 
 ## Especial: a barra de Aplausos
 

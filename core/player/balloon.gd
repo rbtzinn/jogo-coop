@@ -1,9 +1,10 @@
 class_name PlayerBalloon
 extends Node2D
 ## Jogador caído vira um balão de circo turquesa (a cor do parry, ParryStyle) com a própria cara, que sobe devagar.
-## O parceiro revive dando parry no balão. Com balão desenhado (FrameAnimation do personagem),
+## O parceiro revive ficando encostado no balão um instante (PlayerDuo; até 06/10/2026 era com parry, como no
+## Cuphead), e o anel em volta mostra quanto falta. Com balão desenhado (FrameAnimation do personagem),
 ## toca os quadros; sem ele, é desenhado por código e a cara é a cabeça do personagem.
-## Só muda o desenho: subida, balanço e área do parry ficam no Player e no BalloonArea.
+## Só muda o desenho: subida e balanço ficam no Player, o resgate no PlayerDuo do parceiro.
 ## Com a folha de transformação: ao cair, os quadros 1-4 (virando balão) tocam uma vez antes
 ## do loop; no resgate, os 5-8 (estouro) tocam num efeito solto, porque o balão some na hora.
 
@@ -11,6 +12,8 @@ const BODY := ParryStyle.MAIN
 const BODY_DARK := ParryStyle.DARK
 const INK := Color("1b1410")
 const RADIUS := Vector2(66, 78)
+## Raio do anel do resgate (por fora do balão).
+const RESCUE_RING := 104.0
 ## Quadros por segundo do loop flutuando (quadros 1 a 6).
 const FLOAT_FPS := 6.0
 ## A partir de quanto do balanço (seno, 0 a 1) aparece o quadro inclinado.
@@ -25,8 +28,9 @@ var _frames: FrameAnimation
 var _turn: FrameAnimation
 var _frame_sprite := Sprite2D.new()
 var _sway_speed := 1.6
+## Quanto do resgate já foi (0 a 1), marcado pelo parceiro que está encostando (só no PC dele).
+var rescue_progress := 0.0
 
-@onready var area: BalloonArea = $BalloonArea
 
 
 func _ready() -> void:
@@ -95,7 +99,7 @@ func set_active(value: bool) -> void:
 		if _turn != null:
 			_show(_turn, 0)
 	visible = value
-	area.set_deferred("monitorable", value)
+	rescue_progress = 0.0
 
 
 func _process(delta: float) -> void:
@@ -107,8 +111,8 @@ func _process(delta: float) -> void:
 		_show(_turn, int(_time * TURN_FPS))
 	elif _frames != null:
 		_show(_frames, _frame_index())
-	else:
-		queue_redraw()
+	# O barbante (sem os quadros desenhados) e o anel do resgate.
+	queue_redraw()
 
 
 ## 1-6 em loop; no extremo direito do balanço o 7 (inclinado para a esquerda, puxado de volta),
@@ -123,6 +127,11 @@ func _frame_index() -> int:
 
 
 func _draw() -> void:
+	if rescue_progress > 0.0:
+		# Anel do resgate, enchendo no sentido do relógio.
+		draw_arc(Vector2.ZERO, RESCUE_RING, 0.0, TAU, 40, Color(INK, 0.5), 12.0, true)
+		draw_arc(Vector2.ZERO, RESCUE_RING, -PI * 0.5, -PI * 0.5 + TAU * minf(rescue_progress, 1.0), 40,
+				ParryStyle.RIM, 8.0, true)
 	if _frames != null:
 		return
 	# Barbante balançando até a "mão" de baixo.

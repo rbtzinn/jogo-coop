@@ -10,7 +10,6 @@
 [ext_resource type="Script" path="res://core/player/player_parry.gd" id="8_parry"]
 [ext_resource type="Script" path="res://core/player/player_applause.gd" id="9_applause"]
 [ext_resource type="Script" path="res://core/player/balloon.gd" id="10_balloon"]
-[ext_resource type="Script" path="res://core/player/balloon_area.gd" id="11_balloon_area"]
 [ext_resource type="Script" path="res://core/player/player_special.gd" id="12_special"]
 [ext_resource type="Script" path="res://core/player/player_loadout.gd" id="13_loadout"]
 [ext_resource type="Script" path="res://core/player/player_duo.gd" id="14_duo"]
@@ -20,9 +19,6 @@ size = Vector2(54, 132)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_parry"]
 radius = 105.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_balloon"]
-radius = 84.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
 size = Vector2(40, 118)
@@ -91,8 +87,3 @@ script = ExtResource("14_duo")
 position = Vector2(0, -110)
 script = ExtResource("10_balloon")
 
-[node name="BalloonArea" type="Area2D" parent="Balloon"]
-script = ExtResource("11_balloon_area")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Balloon/BalloonArea"]
-shape = SubResource("CircleShape2D_balloon")

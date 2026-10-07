@@ -433,7 +433,7 @@ func _balloon_strip(index := 0) -> void:
 	var center := Vector2.ZERO
 	for i in waits.size():
 		if i == revive_at:
-			player.player_health.revive_from_parry()
+			player.player_health.revive_from_rescue()
 		await RenderingServer.frame_post_draw
 		var view := get_viewport().get_texture().get_image()
 		var ratio := float(view.get_width()) / 1920.0

@@ -107,6 +107,6 @@
 		"name": "Rede de Segurança",
 		"slot": "duo",
 		"price": 3,
-		"description": "Quando o parceiro cai, o balão dele sobe 50% mais devagar e você revive só encostando."
+		"description": "Quando o parceiro cai, o balão dele sobe 50% mais devagar e o resgate é na hora, só encostando (sem esperar 1 segundo)."
 	}
 }

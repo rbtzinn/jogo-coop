@@ -53,11 +53,11 @@ func send_parry(parry_id: String) -> void:
 		_receive_parry.rpc_id(peer_id, parry_id)
 
 
-## O jogador local deu parry no balão DESTE jogador: pede para o PC dono dele reviver.
+## O jogador local resgatou o balão DESTE jogador: pede para o PC dono dele reviver.
 func request_revive() -> void:
 	var player := get_parent() as Player
 	if player.is_multiplayer_authority():
-		player.player_health.revive_from_parry()
+		player.player_health.revive_from_rescue()
 	else:
 		_receive_revive_request.rpc_id(player.get_multiplayer_authority())
 
@@ -144,7 +144,7 @@ func _receive_parry(parry_id: String) -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _receive_revive_request() -> void:
 	var player := get_parent() as Player
-	Network.deliver(player.player_health.revive_from_parry, false)
+	Network.deliver(player.player_health.revive_from_rescue, false)
 
 
 ## O parceiro deu parry num objeto rosa: estoura o mesmo objeto aqui (se ainda existir) e

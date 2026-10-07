@@ -188,6 +188,18 @@ func _run() -> void:
 	await frames(5)
 	check(not acrobat.player_health.is_downed, "safety net: revive just by touching")
 
+	# Resgate sem item: encostado no balão por 1 s (não é mais com parry).
+	await setup({}, {})
+	acrobat.player_health.health.damage(3)
+	await frames(2)
+	clown.global_position = acrobat.balloon.global_position + Vector2(0, 70)
+	await frames(20)
+	check(acrobat.player_health.is_downed and acrobat.balloon.rescue_progress > 0.2, "rescue: a short touch is not enough")
+	for i in 60:
+		clown.global_position = acrobat.balloon.global_position + Vector2(0, 70)
+		await get_tree().physics_frame
+	check(not acrobat.player_health.is_downed, "rescue: one second touching the balloon revives")
+
 	await setup({"duo": "turbo_cork"})
 	acrobat.global_position = clown.global_position + Vector2(160, 0)
 	await frames(2)

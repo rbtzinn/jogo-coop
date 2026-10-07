@@ -3,7 +3,9 @@ extends Node
 ## Números de dupla do jogador (docs/shop.md) e a isca da Fumaça do Mágico:
 ## - Catapulta: dar dash encostando no parceiro arremessa você bem alto, invencível na subida;
 ## - Pirâmide Humana: cair na cabeça do parceiro conta como parry (no máximo 1 vez a cada 5 s);
-## - Rede de Segurança: o balão do parceiro caído sobe mais devagar e você revive só encostando;
+## - Resgate (sem item): ficar encostado no balão do parceiro caído por RESCUE_HOLD revive ele (até 06/10/2026
+##   era com parry, como no Cuphead);
+## - Rede de Segurança: o balão do parceiro caído sobe mais devagar e o resgate é na hora, só encostando;
 ## - (Rolha Turbinada fica no Projectile.)
 ## Tudo é decidido no PC do dono deste jogador.
 
@@ -12,6 +14,9 @@ const CATAPULT_SPEED := 1500.0
 const DECOY_TIME := 1.0
 ## Folga (px) para pegar a cabeça do parceiro.
 const HEAD_REACH := 45.0
+## Resgate: quanto tempo encostado no balão (s) e até onde vale "encostado" (do balão até o peito, px).
+const RESCUE_HOLD := 1.0
+const RESCUE_REACH := 110.0
 
 ## Boneco de fumaça que distrai os ataques teleguiados (INF = nenhum).
 var decoy := Vector2.INF
@@ -20,6 +25,9 @@ var _decoy_time := 0.0
 var _flying := false
 var _pyramid_cooldown := 0.0
 var _net_cooldown := 0.0
+## Tempo já encostado no balão do parceiro e de quem é o balão.
+var _rescue := 0.0
+var _rescue_target: Player
 var _prev_feet_y := 0.0
 
 @onready var _player: Player = owner
@@ -37,8 +45,7 @@ func tick(delta: float) -> void:
 	match _player.loadout.duo:
 		"human_pyramid":
 			_check_pyramid()
-		"safety_net":
-			_check_safety_net()
+	_check_rescue(delta)
 	_prev_feet_y = _player.global_position.y
 
 
@@ -94,17 +101,41 @@ func _check_pyramid() -> void:
 			return
 
 
-func _check_safety_net() -> void:
-	if _net_cooldown > 0.0:
+func _check_rescue(delta: float) -> void:
+	if _net_cooldown > 0.0 or _player.player_health.is_downed:
+		_stop_rescue()
 		return
+	var target: Player = null
 	for other in _partners(true):
-		if not other.player_health.can_be_revived():
-			continue
-		if other.balloon.global_position.distance_to(_player.global_position + Vector2(0, -70)) < 110.0:
-			_net_cooldown = 0.5
-			other.sync.request_revive()
-			ParryFlash.spawn_gold(other.balloon.global_position)
-			return
+		if other.player_health.can_be_revived() \
+				and other.balloon.global_position.distance_to(_player.global_position + Vector2(0, -70)) < RESCUE_REACH:
+			target = other
+			break
+	if target != _rescue_target:
+		_stop_rescue()
+		_rescue_target = target
+	if target == null:
+		return
+	var hold := 0.0 if _player.loadout.duo == "safety_net" else RESCUE_HOLD
+	_rescue += delta
+	target.balloon.rescue_progress = _rescue / hold if hold > 0.0 else 1.0
+	if _rescue < hold:
+		return
+	_net_cooldown = 0.5
+	_stop_rescue()
+	target.sync.request_revive()
+	_player.applause.add_stars(1.0)
+	if hold > 0.0:
+		ParryFlash.spawn(target.balloon.global_position)
+	else:
+		ParryFlash.spawn_gold(target.balloon.global_position)
+
+
+func _stop_rescue() -> void:
+	_rescue = 0.0
+	if is_instance_valid(_rescue_target):
+		_rescue_target.balloon.rescue_progress = 0.0
+	_rescue_target = null
 
 
 ## Os outros jogadores (de pé, a não ser que `include_downed`).

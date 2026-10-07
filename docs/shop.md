@@ -72,7 +72,7 @@ Começa com: **Rolha** (pistola) e **Cambalhota** (truque). Adereço e Número d
 | **Catapulta** | 4 | Dar dash **encostando no parceiro** arremessa você bem alto, invencível durante a subida |
 | **Rolha Turbinada** | 4 | Seus tiros que **atravessam o parceiro** saem 50% mais fortes |
 | **Pirâmide Humana** | 4 | Pular **na cabeça do parceiro** conta como parry (quica e ganha estrela), no máximo 1 vez a cada 5 s |
-| **Rede de Segurança** | 3 | Quando o **parceiro** cai, o balão dele sobe 50% mais devagar e você revive só encostando (sem precisar de parry) |
+| **Rede de Segurança** | 3 | Quando o **parceiro** cai, o balão dele sobe 50% mais devagar e o resgate é na hora, só encostando (sem esperar 1 s) |
 
 Total da loja da Área 1: **58 ingressos** (fora os iniciais). Em 04/10/2026 o Coração de Pano e o Nariz de Buzina subiram de 3 para 6 (o usuário achou os dois fortes demais pelo preço, jogando em dupla). Com até 18 por jogador e a possibilidade de doar, a dupla compra uns 6 a 8 itens nessa área.
 
@@ -84,7 +84,7 @@ Total da loja da Área 1: **58 ingressos** (fora os iniciais). Em 04/10/2026 o C
 - **Pistolas:** Rolha (0,12 s entre tiros, 1 de dano). Leque de Confete (0,2 s; 3 confetes de 1 de dano em leque de ±8,6°, somem em 0,55 s ≈ 830 px (até 05/10/2026 eram ±12° e 0,3 s ≈ 450 px: o usuário achou que só acertava de perto); EX: explosão de raio 230 em volta, até 5 × 6). Clave de Malabares (0,4 s; 2 de dano, vai uns 450 px e volta para a mão, acertando na ida e na volta; EX: 5 claves caem à frente, 6 cada). Bolha de Sabão (0,18 s; 1 de dano, teleguiada até 1000 px; EX: Bolhona lenta e teleguiada que estoura em área com 35).
 - **Truques:** Fumaça do Mágico (dash 25% mais curto, some durante o dash e deixa um boneco de fumaça por 1 s; a Patada, a Isca do leão e os alvos do Mágico miram no boneco). Bala de Canhão (o dash dá 8 de dano em quem atravessar, mas não protege). Pirueta (dash na direção que estiver apertando, inclusive para cima; no chão recarrega no dobro do tempo).
 - **Adereços:** Coração de Pano (4 corações; o dano dos tiros cai 5%, acumulando a sobra). Nariz de Buzina (o primeiro golpe de cada fase não tira vida: "Fom-fom!"). Luvas de Mímico (janela do parry 0,33 s em vez de 0,22). Sapatos de Mola (pulo 15% mais alto). Trevo da Cartomante (tudo que enche a barra vale 25% mais).
-- **Números de dupla:** Catapulta (dash encostando no parceiro: arremesso de 1500 px/s para cima, invencível subindo). Rolha Turbinada (tiro que passa pelo corpo do parceiro fica 50% mais forte, uma vez). Pirâmide Humana (cair na cabeça do parceiro quica como um parry e dá estrela; 1 vez a cada 5 s). Rede de Segurança (o balão do parceiro sobe na metade da velocidade e você revive só encostando nele).
+- **Números de dupla:** Catapulta (dash encostando no parceiro: arremesso de 1500 px/s para cima, invencível subindo). Rolha Turbinada (tiro que passa pelo corpo do parceiro fica 50% mais forte, uma vez). Pirâmide Humana (cair na cabeça do parceiro quica como um parry e dá estrela; 1 vez a cada 5 s). Rede de Segurança (o balão do parceiro sobe na metade da velocidade e o resgate é na hora, só encostando nele).
 
 ## Itens de áreas futuras (ideias)
 

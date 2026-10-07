@@ -1,6 +1,6 @@
 extends Node
 ## Sozinho ("Jogar sozinho" e "Testar sozinho"): Tab troca qual personagem você controla. Se o personagem controlado
-## cair, o controle passa sozinho para o outro (para dar parry no balão dele).
+## cair, o controle passa sozinho para o outro (para resgatar o balão dele).
 ## Online não faz nada.
 
 

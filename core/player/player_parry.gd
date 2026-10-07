@@ -1,15 +1,16 @@
 class_name PlayerParry
 extends Node
-## Parry (como no Cuphead): no ar, apertar pulo de novo encostando num objeto rosa.
+## Parry: no ar, apertar pulo de novo encostando num objeto turquesa (ParryStyle; era rosa até 06/10/2026).
 ## Deu certo: o personagem quica para cima, gira, fica protegido um instante, ganha
-## 1 estrela e o objeto estoura. O balão do parceiro caído também aceita parry: revive ele.
+## 1 estrela e o objeto estoura. (O balão do parceiro caído não aceita mais parry: o resgate é encostando, no
+## PlayerDuo.)
 ## Quem decide se o parry acertou é o PC de quem fez (favorável a quem joga).
 ## Logo depois de estourar, o objeto ainda aceita o parry do parceiro por um instante:
 ## os dois juntos fazem o Número Perfeito (ver DuoActs).
 
 signal parried
 
-## Quanto tempo depois de apertar o parry ainda pega um objeto rosa.
+## Quanto tempo depois de apertar o parry ainda pega um objeto de parry.
 const WINDOW := 0.22
 const SPIN_TIME := 0.32
 ## Proteção contra dano logo depois de um parry certo.
@@ -73,9 +74,6 @@ func _find_target() -> Area2D:
 		var hitbox := area as EnemyHitbox
 		if hitbox != null and hitbox.can_parry(String(_player.name)):
 			return hitbox
-		var balloon := area as BalloonArea
-		if balloon != null and balloon.player != _player and balloon.player.player_health.can_be_revived():
-			return balloon
 	return null
 
 
@@ -87,15 +85,12 @@ func _succeed(target: Area2D) -> void:
 	_player.applause.add_stars(1.0)
 	_player.applause.parries += 1
 	ParryFlash.spawn(_area.global_position)
-	if target is BalloonArea:
-		(target as BalloonArea).player.sync.request_revive()
-	else:
-		var hitbox := target as EnemyHitbox
-		hitbox.register_parry(String(_player.name))
-		var parry_id := hitbox.get_parry_id()
-		if not parry_id.is_empty():
-			_player.sync.send_parry(parry_id)
-			var duo := DuoActs.find(get_tree())
-			if duo != null:
-				duo.report_parry(parry_id, _player, hitbox.global_position)
+	var hitbox := target as EnemyHitbox
+	hitbox.register_parry(String(_player.name))
+	var parry_id := hitbox.get_parry_id()
+	if not parry_id.is_empty():
+		_player.sync.send_parry(parry_id)
+		var duo := DuoActs.find(get_tree())
+		if duo != null:
+			duo.report_parry(parry_id, _player, hitbox.global_position)
 	parried.emit()
