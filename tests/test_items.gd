@@ -142,7 +142,7 @@ func _run() -> void:
 	# --- Adereços ---
 	await setup({"prop": "cloth_heart"})
 	check(clown.player_health.health.maximum == 4 and clown.player_health.health.current == 4, "cloth heart: 4 hearts")
-	check(is_equal_approx(clown.gun.damage_scale, 0.95), "cloth heart: 5% less damage")
+	check(is_equal_approx(clown.applause.gain, 0.85) and is_equal_approx(clown.gun.damage_scale, 1.0), "cloth heart: stars fill 15% slower")
 	await setup({"prop": "honk_nose"})
 	var hitbox := EnemyHitbox.new()
 	_scene.add_child(hitbox)

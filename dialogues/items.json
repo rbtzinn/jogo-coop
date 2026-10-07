@@ -59,7 +59,7 @@
 		"slot": "prop",
 		"price": 6,
 		"description": "+1 de vida.",
-		"downside": "Tiro causa 5% menos dano."
+		"downside": "As estrelas de Aplauso enchem 15% mais devagar."
 	},
 	"honk_nose": {
 		"name": "Nariz de Buzina",

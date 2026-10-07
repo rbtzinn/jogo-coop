@@ -33,7 +33,7 @@ Objetos **rosa** (`#ff5fa2`) podem receber parry. Todo chefão tem alguns ataque
 Cada jogador tem uma barra de **5 estrelas de Aplauso**. Ela enche causando dano ao chefão e com parries (+1 estrela cada).
 
 - **Tiro EX (gasta 1 estrela):** versão forte do tiro da pistola equipada, na direção da mira. Cada pistola tem o seu (ver [shop.md](shop.md)).
-- **Grande Número (gasta as 5 estrelas):** golpe máximo, **diferente para cada personagem** (no Cuphead é igual para os dois):
+- **Grande Número (gasta as 5 estrelas):** golpe máximo, **diferente para cada personagem** (no Cuphead base é igual para os dois heróis; a Ms. Chalice do DLC tem os dela; o nosso diferencial é o Grande Número em Dupla):
   - **Palhaço — "Torta na Cara":** arremessa uma torta gigante que atravessa a tela causando muito dano, e o palhaço fica invencível durante a animação.
   - **Acrobata — "Salto Mortal":** salta girando por cima do chefão, invencível, causando dano em tudo que atravessa.
   - **Invencível pelo menos 2 s** desde o começo do Grande Número, nos dois (pedido do usuário em 04/10/2026): o que sobra depois da animação pisca, como depois de levar dano (`PlayerSpecial.GRAND_MIN_INVINCIBLE`).

@@ -42,10 +42,11 @@ static func of(player: Player) -> PlayerLoadout:
 func _apply_prop() -> void:
 	match prop:
 		"cloth_heart":
-			# +1 de vida; o tiro causa 5% menos dano.
+			# +1 de vida; as estrelas de Aplauso enchem 15% mais devagar (até 06/10/2026 era o tiro com 5% menos
+			# dano, igual a um item do Cuphead).
 			_player.player_health.health.maximum += 1
 			_player.player_health.health.current = _player.player_health.health.maximum
-			_player.gun.damage_scale = 0.95
+			_player.applause.gain = 0.85
 		"honk_nose":
 			_player.player_health.shield_hits = 1
 		"mime_gloves":

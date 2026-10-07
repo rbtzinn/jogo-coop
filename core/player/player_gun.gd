@@ -15,7 +15,7 @@ const INTERVALS := {"cork_gun": 0.12, "confetti_fan": 0.2, "juggling_club": 0.4,
 
 ## Pistola equipada (id do item).
 var weapon := "cork_gun"
-## Multiplicador do dano dos tiros (Coração de Pano: 0,95).
+## Multiplicador do dano dos tiros (1 = normal; nenhum item mexe desde 06/10/2026).
 var damage_scale := 1.0
 
 var _cooldown := 0.0
