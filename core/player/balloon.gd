@@ -1,14 +1,14 @@
 class_name PlayerBalloon
 extends Node2D
-## Jogador caído vira um balão de circo rosa com a própria cara, que sobe devagar.
+## Jogador caído vira um balão de circo turquesa (a cor do parry, ParryStyle) com a própria cara, que sobe devagar.
 ## O parceiro revive dando parry no balão. Com balão desenhado (FrameAnimation do personagem),
 ## toca os quadros; sem ele, é desenhado por código e a cara é a cabeça do personagem.
 ## Só muda o desenho: subida, balanço e área do parry ficam no Player e no BalloonArea.
 ## Com a folha de transformação: ao cair, os quadros 1-4 (virando balão) tocam uma vez antes
 ## do loop; no resgate, os 5-8 (estouro) tocam num efeito solto, porque o balão some na hora.
 
-const PINK := Color("ff5fa2")
-const PINK_DARK := Color("c23b78")
+const BODY := ParryStyle.MAIN
+const BODY_DARK := ParryStyle.DARK
 const INK := Color("1b1410")
 const RADIUS := Vector2(66, 78)
 ## Quadros por segundo do loop flutuando (quadros 1 a 6).
@@ -136,15 +136,15 @@ func _draw() -> void:
 	for i in 40:
 		var angle := TAU * i / 40.0
 		body.append(Vector2(cos(angle) * RADIUS.x, sin(angle) * RADIUS.y))
-	draw_colored_polygon(body, PINK)
+	draw_colored_polygon(body, BODY)
 	var outline := body.duplicate()
 	outline.append(body[0])
 	draw_polyline(outline, INK, 5.0, true)
 	# Sombra e brilho.
-	draw_arc(Vector2(8, 10), RADIUS.x * 0.85, 0.2, 1.9, 16, PINK_DARK, 10.0, true)
+	draw_arc(Vector2(8, 10), RADIUS.x * 0.85, 0.2, 1.9, 16, BODY_DARK, 10.0, true)
 	draw_circle(Vector2(-RADIUS.x * 0.45, -RADIUS.y * 0.5), 12.0, Color(1, 1, 1, 0.55))
 	# Nozinho.
 	var knot := PackedVector2Array([Vector2(-9, RADIUS.y + 12), Vector2(9, RADIUS.y + 12), Vector2(0, RADIUS.y - 2)])
-	draw_colored_polygon(knot, PINK_DARK)
+	draw_colored_polygon(knot, BODY_DARK)
 	knot.append(knot[0])
 	draw_polyline(knot, INK, 3.0, true)

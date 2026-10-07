@@ -2,10 +2,9 @@ class_name MagicProp
 extends EnemyHitbox
 ## Objeto de mágica do Zaratan: carta, coelho, serra, pomba ou "tralha" que cai da cartola.
 ## Quem move é o ataque (posição calculada pelo tempo, igual nos dois PCs); este nó só desenha
-## e machuca. Os rosa (ás de copas, por exemplo) aceitam parry.
+## e machuca. Os turquesa (`pink`, ás de copas por exemplo; eram rosa até 06/10/2026) aceitam parry.
 
 const INK := Color("1b1410")
-const PINK := Color("ff5fa2")
 
 ## card, rabbit, saw, dove, junk
 @export var kind := &"card"
@@ -68,7 +67,7 @@ func _draw() -> void:
 			draw_set_transform(Vector2.ZERO, _time * 10.0)
 			var rect := Rect2(-18, -26, 36, 52)
 			draw_rect(rect.grow(3), INK)
-			draw_rect(rect, PINK if pink else Color.WHITE)
+			draw_rect(rect, ParryStyle.MAIN if pink else Color.WHITE)
 			_draw_heart(Vector2.ZERO, 9.0, Color.WHITE if pink else Color("d23a3a"))
 			draw_set_transform(Vector2.ZERO)
 		&"saw":
@@ -84,7 +83,7 @@ func _draw() -> void:
 			draw_set_transform(Vector2.ZERO)
 		&"rabbit":
 			var f := signf(heading.x) if heading.x != 0.0 else -1.0
-			var body := PINK if pink else Color("f2f2f6")
+			var body := ParryStyle.MAIN if pink else Color("f2f2f6")
 			for ear in [-1.0, 1.0]:
 				var base := Vector2(6 * f + ear * 6, -18)
 				var tip := base + Vector2(ear * 6 - 4 * f, -30)
@@ -101,16 +100,19 @@ func _draw() -> void:
 			draw_colored_polygon(PackedVector2Array([Vector2(-6 * f, -4), Vector2(-14 * f, -24 * flap - 6), Vector2(8 * f, -2)]),
 					Color("e8e8ee"))
 			draw_circle(Vector2.ZERO, 18, INK)
-			draw_circle(Vector2.ZERO, 15, PINK if pink else Color.WHITE)
-			draw_circle(Vector2(14 * f, -8), 8, PINK if pink else Color.WHITE)
+			draw_circle(Vector2.ZERO, 15, ParryStyle.MAIN if pink else Color.WHITE)
+			draw_circle(Vector2(14 * f, -8), 8, ParryStyle.MAIN if pink else Color.WHITE)
 			draw_circle(Vector2(17 * f, -10), 2, INK)
 		_:
 			# Tralha da cartola: bola listrada.
 			draw_set_transform(Vector2.ZERO, _time * 6.0)
 			draw_circle(Vector2.ZERO, 23, INK)
-			draw_circle(Vector2.ZERO, 20, PINK if pink else Color("ffc93c"))
-			draw_rect(Rect2(-20, -5, 40, 10), Color.WHITE if pink else Color("5fbfd8"))
+			draw_circle(Vector2.ZERO, 20, ParryStyle.MAIN if pink else Color("ffc93c"))
+			draw_rect(Rect2(-20, -5, 40, 10), Color.WHITE if pink else Color("d23a3a"))
 			draw_set_transform(Vector2.ZERO)
+	# Marca do parry: a estrelinha.
+	if pink:
+		ParryStyle.draw_sparkle(self, Vector2(18, -26), 10.0, _time)
 
 
 func _draw_heart(center: Vector2, r: float, color: Color) -> void:

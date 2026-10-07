@@ -5,8 +5,6 @@ extends EnemyHitbox
 ## desenha, gira e machuca. Os rosa aceitam parry (estouram nos dois PCs).
 
 const INK := Color("1b1410")
-const PINK := Color("ff5fa2")
-const PINK_LIGHT := Color("ffd1e6")
 
 ## ball, club, torch, bowling, heal
 @export var kind := &"ball"
@@ -58,7 +56,7 @@ func on_parried() -> void:
 
 
 func _draw() -> void:
-	var main := PINK if pink else _color()
+	var main := ParryStyle.MAIN if pink else _color()
 	var angle := _time * spin_speed * TAU
 	match kind:
 		&"club", &"torch":
@@ -69,7 +67,7 @@ func _draw() -> void:
 			draw_colored_polygon(body, main)
 			body.append(body[0])
 			draw_polyline(body, INK, 4.0, true)
-			draw_rect(Rect2(-8, 4, 16, 6), PINK_LIGHT if pink else Color.WHITE)
+			draw_rect(Rect2(-8, 4, 16, 6), ParryStyle.LIGHT if pink else Color.WHITE)
 			if kind == &"torch" and not pink:
 				var flicker := 1.0 + sin(_time * 30.0) * 0.15
 				draw_circle(Vector2(0, -42), 14 * flicker, Color("ff7a2a"))
@@ -78,7 +76,7 @@ func _draw() -> void:
 		&"heal":
 			var pulse := 1.0 + sin(_time * 12.0) * 0.08
 			draw_circle(Vector2.ZERO, radius() * pulse + 3, INK)
-			draw_circle(Vector2.ZERO, radius() * pulse, PINK)
+			draw_circle(Vector2.ZERO, radius() * pulse, ParryStyle.MAIN)
 			# Cruz de "cura" no meio.
 			draw_rect(Rect2(-5, -14, 10, 28), Color.WHITE)
 			draw_rect(Rect2(-14, -5, 28, 10), Color.WHITE)
@@ -91,8 +89,13 @@ func _draw() -> void:
 					var hole := Vector2.from_angle(angle + i * 0.7) * r * 0.45
 					draw_circle(hole, 4.5, INK)
 			else:
-				draw_arc(Vector2.ZERO, r * 0.65, angle, angle + PI * 0.8, 10, PINK_LIGHT if pink else Color.WHITE, 4.0)
+				draw_arc(Vector2.ZERO, r * 0.65, angle, angle + PI * 0.8, 10, ParryStyle.LIGHT if pink else Color.WHITE, 4.0)
 			draw_circle(Vector2(-r * 0.35, -r * 0.35), r * 0.22, Color(1, 1, 1, 0.5))
+	# Marca do parry: aro claro nos redondos e a estrelinha.
+	if pink:
+		if kind != &"club" and kind != &"torch":
+			ParryStyle.draw_rim(self, Vector2.ZERO, radius())
+		ParryStyle.draw_sparkle(self, Vector2(radius() * 0.55, -radius() * 0.75), 10.0, _time)
 
 
 func _color() -> Color:
@@ -103,4 +106,5 @@ func _color() -> Color:
 			return Color("f2e6cc")
 		&"torch":
 			return Color("8a5a32")
-	return Color("5fbfd8")
+	# Vermelho (era azul-claro, perto demais do turquesa do parry).
+	return Color("d23a3a")

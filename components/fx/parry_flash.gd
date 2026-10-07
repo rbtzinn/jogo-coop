@@ -2,21 +2,22 @@ class_name ParryFlash
 extends Node2D
 ## Estouro do parry: anel e estrelinhas saindo do ponto. Sempre aparece (mesmo na
 ## qualidade baixa), porque avisa o jogador que o parry deu certo.
-## Rosa por padrão; dourado nos bônus de Aplauso (Número Perfeito, Grande Número em dupla).
+## Turquesa-fantasma por padrão (rosa até 06/10/2026, ver ParryStyle); dourado nos bônus de Aplauso (Número
+## Perfeito, Grande Número em dupla).
 
-const PINK := Color("ff5fa2")
-const LIGHT := Color("ffd1e6")
+const MAIN := ParryStyle.MAIN
+const LIGHT := ParryStyle.LIGHT
 const GOLD := Color("ffc93c")
 const GOLD_LIGHT := Color("fff2b8")
 const DURATION := 0.4
 
 var size := 1.0
-var main_color := PINK
+var main_color := MAIN
 var light_color := LIGHT
 var _time := 0.0
 
 
-static func spawn(at: Vector2, scale_factor := 1.0, main := PINK, light := LIGHT) -> void:
+static func spawn(at: Vector2, scale_factor := 1.0, main := MAIN, light := LIGHT) -> void:
 	var tree := Engine.get_main_loop() as SceneTree
 	if tree == null or tree.current_scene == null:
 		return

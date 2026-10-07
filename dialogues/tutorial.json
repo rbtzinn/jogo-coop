@@ -3,7 +3,7 @@
 	"linhas": [
 		"Andar: {move_left} {move_right}     Pular: {jump}     Atirar: {shoot}",
 		"Dash: {dash}     Abaixar: {move_down}     Travar mira: {lock_aim}",
-		"Parry: no ar, pule de novo encostando no rosa",
+		"Parry: no ar, pule de novo encostando no que brilha turquesa",
 		"Especial: {special}     Entrar na tenda: {shoot}"
 	]
 }
