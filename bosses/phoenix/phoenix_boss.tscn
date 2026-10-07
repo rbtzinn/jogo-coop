@@ -1,0 +1,104 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://bosses/phoenix/phoenix_boss.gd" id="1_boss"]
+[ext_resource type="Script" path="res://components/health/health.gd" id="2_health"]
+[ext_resource type="Script" path="res://core/network/boss_sync.gd" id="3_sync"]
+[ext_resource type="Script" path="res://bosses/phoenix/phoenix.gd" id="4_bird"]
+[ext_resource type="Script" path="res://components/hitbox/hurtbox.gd" id="5_hurtbox"]
+[ext_resource type="Script" path="res://components/hitbox/enemy_hitbox.gd" id="6_hitbox"]
+[ext_resource type="Script" path="res://bosses/phoenix/attacks/dive.gd" id="10_dive"]
+[ext_resource type="Script" path="res://bosses/phoenix/attacks/feather_fan.gd" id="11_fan"]
+[ext_resource type="Script" path="res://bosses/phoenix/attacks/gust.gd" id="12_gust"]
+[ext_resource type="Script" path="res://bosses/phoenix/attacks/intro_perch.gd" id="13_intro_perch"]
+[ext_resource type="Script" path="res://bosses/phoenix/attacks/eggs.gd" id="14_eggs"]
+[ext_resource type="Script" path="res://bosses/phoenix/attacks/spark_rain.gd" id="15_sparks"]
+[ext_resource type="Script" path="res://bosses/phoenix/attacks/intro_egg.gd" id="16_intro_egg"]
+[ext_resource type="Script" path="res://bosses/phoenix/attacks/rings.gd" id="17_rings"]
+[ext_resource type="Script" path="res://bosses/phoenix/attacks/ember_burst.gd" id="18_embers"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(250, 200)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(220, 150)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_crack"]
+size = Vector2(100, 240)
+
+[node name="PhoenixBoss" type="Node2D"]
+script = ExtResource("1_boss")
+max_health = 1200
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+
+[node name="BossSync" type="Node" parent="."]
+script = ExtResource("3_sync")
+
+[node name="Phoenix" type="Node2D" parent="."]
+position = Vector2(1450, 330)
+script = ExtResource("4_bird")
+
+[node name="Hurtbox" type="Area2D" parent="Phoenix"]
+script = ExtResource("5_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Phoenix/Hurtbox"]
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="Hitbox" type="Area2D" parent="Phoenix"]
+script = ExtResource("6_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Phoenix/Hitbox"]
+position = Vector2(0, 10)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="CrackLeft" type="Area2D" parent="Phoenix"]
+script = ExtResource("5_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Phoenix/CrackLeft"]
+position = Vector2(-95, -170)
+shape = SubResource("RectangleShape2D_crack")
+
+[node name="CrackRight" type="Area2D" parent="Phoenix"]
+script = ExtResource("5_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Phoenix/CrackRight"]
+position = Vector2(95, -170)
+shape = SubResource("RectangleShape2D_crack")
+
+[node name="Attacks" type="Node2D" parent="."]
+
+[node name="Dive" type="Node2D" parent="Attacks"]
+script = ExtResource("10_dive")
+
+[node name="FeatherFan" type="Node2D" parent="Attacks"]
+script = ExtResource("11_fan")
+
+[node name="Gust" type="Node2D" parent="Attacks"]
+script = ExtResource("12_gust")
+
+[node name="IntroPerch" type="Node2D" parent="Attacks"]
+script = ExtResource("13_intro_perch")
+
+[node name="Eggs" type="Node2D" parent="Attacks"]
+script = ExtResource("14_eggs")
+
+[node name="SparkRain" type="Node2D" parent="Attacks"]
+script = ExtResource("15_sparks")
+
+[node name="LowDive" type="Node2D" parent="Attacks"]
+script = ExtResource("10_dive")
+perched = true
+
+[node name="IntroEgg" type="Node2D" parent="Attacks"]
+script = ExtResource("16_intro_egg")
+
+[node name="Rings" type="Node2D" parent="Attacks"]
+script = ExtResource("17_rings")
+
+[node name="EmberBurst" type="Node2D" parent="Attacks"]
+script = ExtResource("18_embers")
+
+[node name="FeatherFall" type="Node2D" parent="Attacks"]
+script = ExtResource("11_fan")
+from_sky = true

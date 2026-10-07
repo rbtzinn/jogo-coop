@@ -64,6 +64,7 @@ script = ExtResource("2_door")
 painted_front = Vector2(2720, 260)
 title = "Fênix das Cinzas"
 level_id = "ash_phoenix"
+target_scene = "res://bosses/phoenix/phoenix_fight.tscn"
 
 [node name="DoorAnvil" type="Area3D" parent="."]
 script = ExtResource("2_door")

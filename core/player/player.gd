@@ -65,6 +65,9 @@ var slot := 0
 @export var drop_through_time := 0.25
 
 var crouching := false
+## Vento empurrando (px/s; negativo = para a esquerda), posto por ataques (ex.: a Ventania da Fênix) e zerado
+## por eles no fim. Soma-se à corrida: andar contra o vento fica mais lento, a favor fica mais rápido.
+var wind := 0.0
 
 var _gravity: float
 var _jump_velocity: float
@@ -309,6 +312,7 @@ func _process_run(delta: float) -> void:
 	var locked_on_ground := (input.lock_held or crouching) and is_on_floor()
 	if not locked_on_ground:
 		target = input.get_horizontal() * run_speed
+	target += wind
 	var accel := ground_accel if is_on_floor() else air_accel
 	velocity.x = move_toward(velocity.x, target, accel * delta)
 

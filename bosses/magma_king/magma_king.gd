@@ -18,6 +18,16 @@ const ANIMS := {
 	&"lake": preload("res://bosses/magma_king/art/lake.tres"),
 	&"molten": preload("res://bosses/magma_king/art/molten.tres"),
 	&"defeat": preload("res://bosses/magma_king/art/defeat.tres"),
+	&"jet_high": preload("res://bosses/magma_king/art/jet_high.tres"),
+	&"jet_mid": preload("res://bosses/magma_king/art/jet_mid.tres"),
+	&"jet_low": preload("res://bosses/magma_king/art/jet_low.tres"),
+}
+## Rajada: boca de cada pose de jato (no quadro 3, o que fica enquanto cospe), no espaço do nó. Na altura das
+## jangadas (y 724 no jogo), do peito (859) e do chão (934).
+const JET_MOUTHS := {
+	&"jet_high": Vector2(-182, -276),
+	&"jet_mid": Vector2(-215, -141),
+	&"jet_low": Vector2(-154, -66),
 }
 const IDLE_FPS := 4.0
 ## Quanto tempo o desenho fica claro depois de um tiro.

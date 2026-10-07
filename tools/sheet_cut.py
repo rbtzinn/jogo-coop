@@ -83,7 +83,7 @@ class SheetCutter:
         with open(os.path.join(self.out, name + ".tres"), "w", encoding="utf-8", newline="\n") as fh:
             fh.write("\n".join(lines) + "\n")
 
-    def animation(self, sheet, cols, rows, count, scale, kind, name, first=0):
+    def animation(self, sheet, cols, rows, count, scale, kind, name, first=0, ratio=0.02):
         """Folha em grade (cols x rows), `count` quadros a partir do quadro `first`. `kind`: "feet" ou "center"."""
         image = self.load(sheet)
         alpha = image[:, :, 3] > ALPHA
@@ -93,7 +93,7 @@ class SheetCutter:
         crops = []
         for index in range(first, first + count):
             r, c = divmod(index, cols)
-            cell = keep_main(image[ys[r]:ys[r + 1], xs[c]:xs[c + 1]])
+            cell = keep_main(image[ys[r]:ys[r + 1], xs[c]:xs[c + 1]], ratio)
             mask = cell[:, :, 3] > ALPHA
             yy, xx = np.nonzero(cell[:, :, 3] > 8)
             box = (xx.min(), yy.min(), xx.max() + 1, yy.max() + 1)
@@ -131,7 +131,50 @@ class SheetCutter:
             Image.fromarray(crop).save(os.path.join(self.out, name + ".png"))
         print("%-14s %d desenhos" % (os.path.basename(sheet), len(blobs)))
 
-    def grid_effects(self, sheet, cols, rows, names):
+    def row_effects(self, sheet, row_tops, names, reach=3, min_area=150, near=40):
+        """Desenhos soltos em linhas de alturas diferentes (a grade da folha não é regular). `row_tops`: o y
+        onde cada linha começa; `names`: uma lista de nomes por linha, da esquerda para a direita; `reach`: um
+        número, ou um por linha (o quanto juntar pontinhos vizinhos). Pedaços pequenos (labaredas e faíscas
+        em volta) juntam-se ao desenho grande mais perto, se estiverem a até `near` px dele."""
+        image = self.load(sheet)
+        mask = image[:, :, 3] > ALPHA
+        bounds = list(row_tops) + [image.shape[0]]
+        count = 0
+        for r, row_names in enumerate(names):
+            row_reach = reach[r] if isinstance(reach, (list, tuple)) else reach
+            row_mask = np.zeros_like(mask)
+            row_mask[bounds[r]:bounds[r + 1]] = mask[bounds[r]:bounds[r + 1]]
+            label, n = ndimage.label(ndimage.binary_dilation(row_mask, iterations=row_reach))
+            label[~row_mask] = 0
+            objects = ndimage.find_objects(label)
+            sizes = ndimage.sum(row_mask, label, range(1, n + 1))
+            blobs = [[o[1].start, o[1].stop, o[0].start, o[0].stop, [i + 1], sizes[i]]
+                    for i, o in enumerate(objects) if o is not None and sizes[i] >= min_area]
+            biggest = max(b[5] for b in blobs)
+            big = [b for b in blobs if b[5] >= biggest * 0.1]
+            for blob in [b for b in blobs if b[5] < biggest * 0.1]:
+                def gap(other):
+                    dx = max(other[0] - blob[1], blob[0] - other[1], 0)
+                    dy = max(other[2] - blob[3], blob[2] - other[3], 0)
+                    return max(dx, dy)
+                host = min(big, key=gap)
+                if gap(host) <= near:
+                    host[0], host[1] = min(host[0], blob[0]), max(host[1], blob[1])
+                    host[2], host[3] = min(host[2], blob[2]), max(host[3], blob[3])
+                    host[4] += blob[4]
+                elif blob[5] >= biggest * 0.03:
+                    big.append(blob)
+            big.sort(key=lambda b: b[0])
+            if len(big) != len(row_names):
+                sys.exit("%s linha %d: achei %d desenhos, esperava %d" % (sheet, r + 1, len(big), len(row_names)))
+            for blob, name in zip(big, row_names):
+                crop = image[blob[2]:blob[3], blob[0]:blob[1]].copy()
+                crop[~np.isin(label[blob[2]:blob[3], blob[0]:blob[1]], blob[4])] = 0
+                Image.fromarray(crop).save(os.path.join(self.out, name + ".png"))
+                count += 1
+        print("%-14s %d desenhos" % (os.path.basename(sheet), count))
+
+    def grid_effects(self, sheet, cols, rows, names, ratio=0.02):
         """Um desenho por célula de uma grade regular; `names` em ordem de leitura (None pula a célula)."""
         image = self.load(sheet)
         h, w = image.shape[:2]
@@ -140,7 +183,7 @@ class SheetCutter:
             if name is None:
                 continue
             r, c = divmod(index, cols)
-            cell = keep_main(image[int(r * h / rows):int((r + 1) * h / rows), int(c * w / cols):int((c + 1) * w / cols)])
+            cell = keep_main(image[int(r * h / rows):int((r + 1) * h / rows), int(c * w / cols):int((c + 1) * w / cols)], ratio)
             yy, xx = np.nonzero(cell[:, :, 3] > 8)
             Image.fromarray(cell[yy.min():yy.max() + 1, xx.min():xx.max() + 1]).save(os.path.join(self.out, name + ".png"))
             count += 1

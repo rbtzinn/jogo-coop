@@ -136,8 +136,8 @@ func _run() -> void:
 	check(scene.get_node("BackgroundHot").visible and scene.get_node("LipHot").visible, "phase 3: hot stage")
 	var jet: Node = boss.get_node("Attacks/Jet")
 	boss.sync.start_attack(&"Jet", 31, [])
-	await seconds(jet.SINK + jet.CHARGE + 0.3)
-	var jets := props(jet, &"jet")
+	await seconds(jet.WARN + jet.OPEN + 0.3)
+	var jets := jet.get_children().filter(func(n: Node) -> bool: return n is JetBeam)
 	check(jets.size() == 1, "jet fires")
 	if jets.size() == 1:
 		var y: float = jets[0].global_position.y
