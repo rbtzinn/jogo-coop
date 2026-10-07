@@ -6,12 +6,14 @@ ataques e efeitos, e as arenas (com um fundo diferente para a fase final de cada
 está em [bosses.md](../bosses.md) (seção "Área 2"). A Mina de Brasa (fase de plataforma) fica para depois.
 
 **Como usar:** colar o bloco inteiro abaixo de uma vez. O ChatGPT tem acesso ao projeto e salva as imagens
-direto nos caminhos pedidos. Se ele parar no meio (limite de imagens), responder só **"continue"**: ele
+direto nos caminhos pedidos. O pedido manda fazer tudo sem parar e só chamar no fim. Se mesmo assim ele
+parar no meio (limite de imagens do ChatGPT), responder só **"continue"**: ele
 retoma do próximo arquivo que falta, pela lista do relatório. No fim, mostrar ao Claude, que confere grade,
 linha do chão e tamanhos, normaliza o que precisar (`tools/normalize_sheet.gd`) e liga no jogo.
 
 ```
-IMPORTANT: Only create image files and ONE Markdown report at the exact paths below. Do not modify, move or delete any other file of the project. Do not run any git command. Generate the files ONE AT A TIME, in the order listed. Before starting, read every reference listed in STYLE. If you stop before the end (image limit or time), first update the report with what is done and what is missing; when I say "continue", resume from the first missing file, keeping each boss IDENTICAL to its own model sheet.
+IMPORTANT: Only create image files and ONE Markdown report at the exact paths below. Do not modify, move or delete any other file of the project. Do not run any git command. Generate the files ONE AT A TIME, in the order listed. Before starting, read every reference listed in STYLE.
+WORK UNTIL EVERYTHING IS DONE: make ALL the files of ALL four bosses (every model sheet, every animation, every effect and every arena) without stopping to show partial results, ask for approval or ask questions. Do not end your answer until the last file and the report are finished. Only talk to me when EVERYTHING is done, with a short summary. Only if a hard limit really stops you (image limit or time), first update the report with what is done and what is missing; when I say "continue", resume from the first missing file, keeping each boss IDENTICAL to its own model sheet.
 
 === CONTEXT ===
 "Respeitável Público" is a 2D side-view co-op run-and-gun boss-fight game about a haunted 1930s circus troupe (a clown and an acrobat). After the circus (area 1), the circus train takes them to a VOLCANIC ISLAND (area 2). Look at the island map: docs/referencias/mapas/area2_vulcao/mapa_completo.png. On the island the cursed "Fire Festival" repeats forever, and each boss is one of its attractions, a performer of the festival, theatrical and full of personality. These are FOUR bosses, each fought in its own arena:
