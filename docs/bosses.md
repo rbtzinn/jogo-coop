@@ -86,7 +86,7 @@ Ordem: Domador (fácil) → Irmãos Malabaristas (médio) → Grande Mágico (di
 *Um mágico de capa e cartola, elegante e teatral. Ele parece saber que o circo está amaldiçoado.*
 
 **Fase 1 — "Abracadabra"** (35%)
-- **Cartas voadoras:** leques de cartas atravessam a tela; os ases de copas são **rosa**.
+- **Bilhetes voadores** (eram cartas de baralho até 06/10/2026): leques de bilhetes encantados atravessam a tela; os de parry são **turquesa**.
 - **Coelhos da cartola:** coelhos saltam para fora e correm na direção dos jogadores (atirar ou pular).
 - **Teleporte:** some numa fumaça e reaparece em outro ponto do palco (aviso: uma estrela brilha onde ele vai surgir).
 

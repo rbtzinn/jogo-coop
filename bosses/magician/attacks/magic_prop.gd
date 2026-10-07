@@ -2,9 +2,13 @@ class_name MagicProp
 extends EnemyHitbox
 ## Objeto de mágica do Zaratan: carta, coelho, serra, pomba ou "tralha" que cai da cartola.
 ## Quem move é o ataque (posição calculada pelo tempo, igual nos dois PCs); este nó só desenha
-## e machuca. Os turquesa (`pink`, ás de copas por exemplo; eram rosa até 06/10/2026) aceitam parry.
+## e machuca. Os turquesa (`pink`; eram rosa até 06/10/2026) aceitam parry. As "cartas" (`card`) são desenhadas
+## como bilhetes encantados do circo desde 06/10/2026 (antes, cartas de baralho com ás de copas).
 
 const INK := Color("1b1410")
+## Bilhete (o papel creme e a tinta vermelha dos ingressos do circo).
+const TICKET_PAPER := Color("f2e6cc")
+const TICKET_RED := Color("a3282a")
 
 ## card, rabbit, saw, dove, junk
 @export var kind := &"card"
@@ -64,11 +68,10 @@ func _draw() -> void:
 			if homing:
 				_draw_homing_card()
 				return
+			# Bilhete encantado (era carta de baralho com ás de copas até 06/10/2026: lembrava demais o Cuphead).
 			draw_set_transform(Vector2.ZERO, _time * 10.0)
-			var rect := Rect2(-18, -26, 36, 52)
-			draw_rect(rect.grow(3), INK)
-			draw_rect(rect, ParryStyle.MAIN if pink else Color.WHITE)
-			_draw_heart(Vector2.ZERO, 9.0, Color.WHITE if pink else Color("d23a3a"))
+			_draw_ticket(Rect2(-18, -26, 36, 52), ParryStyle.MAIN if pink else TICKET_PAPER,
+					Color.WHITE if pink else TICKET_RED, INK)
 			draw_set_transform(Vector2.ZERO)
 		&"saw":
 			draw_set_transform(Vector2.ZERO, _time * 20.0)
@@ -115,14 +118,37 @@ func _draw() -> void:
 		ParryStyle.draw_sparkle(self, Vector2(18, -26), 10.0, _time)
 
 
-func _draw_heart(center: Vector2, r: float, color: Color) -> void:
+## Bilhete do circo: papel com um dente de cada lado, picote no meio e um selo de estrela.
+func _draw_ticket(rect: Rect2, paper: Color, mark: Color, outline: Color) -> void:
 	var points := PackedVector2Array()
-	for i in 24:
-		var t := TAU * i / 24.0
-		var x := 16.0 * pow(sin(t), 3)
-		var y := -(13.0 * cos(t) - 5.0 * cos(2 * t) - 2.0 * cos(3 * t) - cos(4 * t))
-		points.append(center + Vector2(x, y) * (r / 16.0))
-	draw_colored_polygon(points, color)
+	var notch := 7.0
+	var mid := rect.get_center().y
+	points.append(rect.position)
+	points.append(Vector2(rect.end.x, rect.position.y))
+	for i in 7:
+		var a := PI * i / 6.0
+		points.append(Vector2(rect.end.x - sin(a) * notch, mid - cos(a) * notch))
+	points.append(rect.end)
+	points.append(Vector2(rect.position.x, rect.end.y))
+	for i in 7:
+		var a := PI * i / 6.0
+		points.append(Vector2(rect.position.x + sin(a) * notch, mid + cos(a) * notch))
+	draw_colored_polygon(points, paper)
+	points.append(points[0])
+	draw_polyline(points, outline, 3.0, true)
+	# Picote.
+	var y := rect.position.y + rect.size.y * 0.3
+	var x := rect.position.x + 4.0
+	while x < rect.end.x - 4.0:
+		draw_line(Vector2(x, y), Vector2(minf(x + 3.0, rect.end.x - 4.0), y), mark, 2.0)
+		x += 6.0
+	# Selo de estrela.
+	var star := PackedVector2Array()
+	var center := Vector2(rect.get_center().x, mid + 6.0)
+	for i in 10:
+		var a := -PI * 0.5 + PI * i / 5.0
+		star.append(center + Vector2.from_angle(a) * (9.0 if i % 2 == 0 else 4.0))
+	draw_colored_polygon(star, mark)
 
 
 func _draw_homing_card() -> void:
@@ -131,9 +157,7 @@ func _draw_homing_card() -> void:
 		var from := back * (30.0 + i * 16.0)
 		draw_line(from, from + back * 10.0, INK, 4.0 - i)
 	draw_set_transform(Vector2.ZERO, heading.angle() + PI / 2.0)
-	var rect := Rect2(-18, -26, 36, 52)
-	draw_rect(rect.grow(3), Color("fff3c4"))
-	draw_rect(rect, INK)
+	_draw_ticket(Rect2(-18, -26, 36, 52), INK, Color("6e1c1b"), Color("fff3c4"))
 	draw_set_transform(Vector2.ZERO)
 	draw_string(ThemeDB.fallback_font, Vector2(-18, 8), homing_label, HORIZONTAL_ALIGNMENT_CENTER, 36, 20,
 			Color("fff3c4"))
