@@ -1,11 +1,11 @@
 class_name CircusBanner
 extends Control
 ## Faixa de circo (fita vermelha com pontas dobradas e bordas douradas) com um texto grande.
-## Usada nos letreiros da luta: abertura, troca de fase e "Nocaute!".
+## Usada nos letreiros da luta: abertura, troca de fase e "Picadeiro conquistado!".
 
 @export var text := ""
 @export var font_size := 96
-## Raios de luz girando atrás (para o "Nocaute!").
+## Raios de luz girando atrás (para o "Picadeiro conquistado!").
 @export var burst := false
 
 var _time := 0.0

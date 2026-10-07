@@ -16,7 +16,7 @@ marcas registradas de outros jogos, nem chamar a atenção para a semelhança.
 
 ## Textos do jogo
 - Não usar as falas e letreiros marcantes do Cuphead: "A Knockout!", "Wallop!", "Bravo!" e parecidos.
-- O letreiro "Nocaute!" do fim da luta será trocado por um texto nosso, de circo (a escolher; "Bravo!" não serve,
+- O letreiro "Nocaute!" do fim da luta virou **"Picadeiro conquistado!"** (06/10/2026; "Bravo!" não servia,
   porque o Cuphead usa).
 
 ## Parry

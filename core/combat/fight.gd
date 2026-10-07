@@ -60,7 +60,8 @@ func _end(victory: bool, result := {}) -> void:
 	if Network.is_online() and Network.is_host():
 		for peer_id in Network.ready_peers:
 			_receive_end.rpc_id(peer_id, victory, result)
-	_show_banner("Nocaute!" if victory else "", victory)
+	# "Nocaute!" até 06/10/2026 (lembrava demais o "A Knockout!" do Cuphead; ver docs/regras_originalidade.md).
+	_show_banner("Picadeiro conquistado!" if victory else "", victory)
 	get_tree().create_timer(2.3 if victory else 1.0).timeout.connect(_show_end_screen.bind(victory, result))
 
 
