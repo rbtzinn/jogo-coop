@@ -109,6 +109,90 @@ Ordem: Domador (fácil) → Irmãos Malabaristas (médio) → Grande Mágico (di
 
 ---
 
+## Área 2 — A Ilha do Vulcão (proposta do Claude, 07/10/2026, revisar)
+
+O ingresso dourado do Zaratan leva o Trem do Circo à ilha. Ali acontece o **Festival do Fogo**, um espetáculo amaldiçoado como o do circo: cada atração da ilha repete o seu número para sempre. Ordem sugerida: Rei Magma (médio) → Fênix das Cinzas (médio) → Mestre Bigorna (difícil), em qualquer ordem no mapa; o **Coração do Vulcão** abre só depois dos três. A **Mina de Brasa** é a fase de plataforma da área (fica para depois).
+
+Cores: o fundo da ilha tem muita lava, então **os fundos ficam escuros e com a lava apagada**, e os ataques dos chefões são **amarelo-claro no miolo com borda laranja/magenta e contorno escuro grosso**, para não se perderem na lava. Parry continua **turquesa** (`ParryStyle`). Arte pedida em [chatgpt_chefoes_vulcao.md](prompts/chatgpt_chefoes_vulcao.md); até ela chegar, desenhos provisórios por código com as mesmas medidas.
+
+### 4. O Rei Magma
+
+*Um rei baixinho e largo de basalto preto rachado, com lava brilhando nas rachaduras, coroa de lascas de obsidiana quebrada e um manto de lava escorrendo devagar. Foi o engolidor de fogo do festival e é vaidoso: quer reverência.* Arena: margem de basalto de um lago de lava, com o trono no fundo e **duas jangadas de basalto** boiando (plataformas).
+
+**Fase 1 — "Audiência Real"** (40%), sentado no trono:
+- **Cuspe Real:** engole uma tocha (bochechas incham, aviso) e cospe 3 bolas de lava em arco; cada uma deixa uma poça no chão por 1 s.
+- **Cetro:** bate o cetro no chão; colunas de basalto sobem em sequência pelo chão, da frente dele para longe (uma rachadura brilha 0,5 s antes de cada uma). Pular ou ficar numa jangada.
+- **Coroa Bumerangue:** atira a coroa, que vai e volta num arco (uma vez alto, uma vez baixo). Uma gema turquesa da coroa se solta e aceita parry.
+
+**Fase 2 — "O Rei Desce do Trono"** (35%), andando pelo lago com a lava pela cintura:
+- **Onda de Lava:** empurra uma onda que cobre o chão inteiro; subir nas jangadas ou pular por cima com dash. Sempre sobra uma jangada livre.
+- **Goteira:** bate no peito, e pingos de lava caem do teto da caverna em lugares marcados por sombra; um pingo turquesa.
+- **Momento de dupla — Coroa Pesada:** a coroa cai e se crava no chão. Enquanto um jogador fica **encostado nela** (segurando), o rei fica de cabeça descoberta, com a rachadura do alto da cabeça aberta, e leva o **dobro de dano**. Quem segura não atira, mas o rei tenta tomar a coroa de volta: o parceiro precisa protegê-lo atirando nas mãos que se aproximam. Sozinho: a coroa dá a mesma janela por 2 s sem segurar.
+
+**Fase 3 — "Coroação Derretida"** (25%): a casca racha e cai; ele vira **magma puro**, mais alto e magro, com a coroa flutuando em volta da cabeça. *Rajada* (cospe um jato contínuo que varre a tela numa altura, alta ou baixa, avisada pela boca brilhando), *Coroa em Órbita* (a coroa gira em volta dele e sai voando em espiral), *Cuspe Real* mais rápido. A lava do lago sobe um pouco: as jangadas ficam mais importantes.
+- Ao vencer: esfria, vira uma estátua de pedra fazendo uma reverência para os jogadores (finalmente ele é quem se curva).
+- Vida: 1200. Tempo-alvo: 2:30.
+
+### 5. A Fênix das Cinzas
+
+*Uma ave enorme de fumaça cinzenta e brasa, com penas longas como fitas de trapezista em chamas e uma máscara de baile de porcelana rachada no rosto. Era o número aéreo do festival; dramática, nunca para de se exibir.* Arena: o ninho no alto do pico, com o chão de galhos queimados e **três rochas flutuantes** em alturas diferentes.
+
+**Fase 1 — "Voo de Abertura"** (35%), voando ao fundo e cruzando a tela:
+- **Rasante:** um rastro de brasa marca a altura (alta ou baixa) e ela atravessa a tela de um lado ao outro. Duas vezes seguidas, alternando a altura.
+- **Leque de Penas:** bate as asas e solta 5 penas de brasa que caem girando, com um buraco; uma pena turquesa.
+- **Ventania:** bate as asas de frente; o vento **empurra** os jogadores para a borda (não machuca; cuidado com o que vem junto: brasas rolando pelo chão).
+
+**Fase 2 — "Tempestade de Cinzas"** (35%), pousada no ninho:
+- O céu escurece de cinzas (sem apagar a tela: dá para ver os ataques, mas o fundo some).
+- **Ovinhos de Brasa:** cospe 3 ovos que caem e chocam pintinhos de brasa que correm pelo chão (atirar ou pular); um ovo turquesa.
+- **Chuva de Fagulhas:** fagulhas caem em colunas marcadas no chão; sempre sobra espaço.
+- **Rasante** mais baixo, rente às rochas.
+
+**Fase 3 — "Renascimento"** (30%): ela se fecha num **ovo gigante incandescente** no ninho.
+- **Anéis de Fogo:** o ovo pulsa e solta anéis que correm pelo chão (pular ou dash).
+- **Momento de dupla — Casca Dupla:** o ovo tem uma rachadura brilhante de cada lado. As duas precisam ser quebradas **com até 3 s de diferença**; se uma quebrar sozinha, ela se fecha de novo e o ovo recupera 30% da vida da fase. Sozinho: a outra rachadura quebra junto.
+- Ao vencer: o ovo racha e sai um pintinho cinzento que espirra uma nuvenzinha de cinza e foge.
+- Vida: 1200. Tempo-alvo: 2:40.
+
+### 6. O Mestre Bigorna
+
+*Um ferreiro gigante de braços enormes e pernas curtas, bigode de pontas enroladas, avental de couro chamuscado e um martelo do tamanho de um barril. Fazia o número de "forjar uma espada em 10 segundos" no festival; impaciente, bufa fumaça pelas orelhas.* Arena: dentro da forja, com a bigorna no meio, **canais de metal derretido** no chão (desligados no começo) e **duas correntes** penduradas do teto (plataformas balançando).
+
+**Fase 1 — "Malhando o Ferro"** (35%), atrás da bigorna:
+- **Martelada:** ergue o martelo (aviso) e bate na bigorna; uma onda de choque corre pelo chão para os dois lados (pular) e faíscas saem em arco.
+- **Ferraduras:** arremessa 3 ferraduras em brasa que quicam pelo chão; uma turquesa.
+- **Fole:** puxa o fole e sopra um leque de brasas na horizontal, na altura da cabeça (abaixar) ou na altura do pulo (ficar no chão).
+
+**Fase 2 — "Forja Aberta"** (35%), andando pela arena:
+- **Canal Derretido:** um terço do chão brilha e se enche de metal derretido por 3 s; a parte muda a cada vez.
+- **Bigorninhas:** forja e arremessa 4 bigornas pequenas que caem em lugares marcados por sombra.
+- **Momento de dupla — Braço de Ferro:** ele agarra um jogador com a mão livre e o ergue (o preso fica sem dano por 3 s). O parceiro precisa acertar a mão 8 vezes para soltar; se não soltar a tempo, o preso perde 1 vida e cai. Com um jogador só de pé, ele não agarra.
+
+**Fase 3 — "Armadura Recém-Forjada"** (30%): veste uma armadura de ferro ainda em brasa e fica enorme e lento.
+- **Martelo Giratório:** gira o martelo em volta do corpo e anda; pular por cima do martelo baixo ou passar por baixo do alto.
+- **Pisão:** salta e cai, a arena treme, pedras caem do teto (sombras).
+- **Peito Aberto:** quando ergue o martelo, a grade do peito abre e mostra a brasa: ali leva o **dobro de dano**.
+- Ao vencer: a armadura desmonta peça por peça e ele fica de ceroulas listradas, envergonhado, tapando-se com o avental.
+- Vida: 1400. Tempo-alvo: 2:50.
+
+### 7. O Coração do Vulcão (fecha a área)
+
+*O coração da ilha: um enorme coração de magma batendo, preso por correntes no fundo da cratera, com uma máscara de teatro de pedra crescida na frente (o rosto). É a atração principal do Festival do Fogo; as três atrações vencidas eram os seus selos.* Arena: o fundo da cratera, chão de basalto, o coração pendurado no alto do fundo. A máscara leva tiro.
+
+**Fase 1 — "Batimento"** (35%):
+- **Pulsação:** cada batida manda um anel de choque pelo chão (pular). O ritmo acelera aos poucos e volta ao normal; a máscara pisca antes de cada batida.
+- **Artérias:** tubos de lava no teto se enchem (incham e brilham) e esguicham jatos na vertical em lugares marcados.
+- **Gotas Turquesa:** de vez em quando uma gota turquesa escapa de uma artéria (parry).
+
+**Fase 2 — "Os Três Selos"** (35%): os três selos da porta brilham e o coração usa **ecos** dos chefões vencidos (as mesmas formas, só que em fogo fantasma): a Coroa Bumerangue do Rei, o Leque de Penas da Fênix e as Ferraduras do Bigorna, um de cada vez, mais rápidos que os originais.
+- **Momento de dupla — Válvulas:** duas válvulas de pressão, uma em cada ponta da arena. Os dois jogadores ficam em cima delas **ao mesmo tempo** (com 1 s de tolerância) por 1 s; a máscara se abre por 5 s e o coração leva o **dobro de dano**. Sozinho: uma válvula só abre a máscara por 3 s.
+
+**Fase 3 — "Erupção"** (30%): as correntes arrebentam e o coração voa pela cratera. A lava sobe e o chão vira **plataformas de basalto que sobem e descem** com a pulsação; cair na lava tira 1 vida e o jogador volta na plataforma mais próxima.
+- **Cuspe de Magma:** bolas de magma em leque.
+- **Investida:** o coração recua, a máscara aperta os olhos e ele atravessa a tela.
+- Ao vencer: esfria e vira um coração de pedra que cai na lava. A porta da cratera se abre e mostra o caminho para a Área 3 (gancho da história).
+- Vida: 1500. Tempo-alvo: 3:00.
+
 ## Ideias para áreas futuras
 
 - **O Homem-Forte** (halteres que tremem a arena), **Os Trapezistas** (luta toda no ar, em trapézios), **O Homem-Bala** (canhões e bombas), **O Engolidor de Espadas**, **A Elefanta Dona Bebel**.
