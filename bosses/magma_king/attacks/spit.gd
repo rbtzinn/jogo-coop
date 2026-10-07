@@ -1,6 +1,6 @@
 extends MagmaAttack
 ## Cuspe Real: engole uma tocha, as bochechas incham e brilham (aviso) e ele cospe bolas de lava em
-## arco; cada uma deixa uma poça no chão por um instante. Às vezes uma das bolas é a gema turquesa
+## arco; cada uma deixa uma poça onde cai (no chão ou em cima de uma jangada) por um instante. Às vezes uma das bolas é a gema turquesa
 ## (parry), que não deixa poça. Na fase 3 (`fast`) é mais rápido e com 4 bolas.
 ## args: [x onde cai cada bola] (o host mira nos jogadores e espalha o resto).
 
@@ -59,7 +59,8 @@ func _tick(t: float) -> void:
 		if since < 0.0:
 			continue
 		var flight := FLIGHT / _speed
-		var target := Vector2(float(args[i]), FLOOR_Y - 30.0)
+		var x := float(args[i])
+		var target := Vector2(x, surface_y(x) - 30.0)
 		if since < flight:
 			if _state[i] == 0:
 				_state[i] = 1
@@ -70,7 +71,7 @@ func _tick(t: float) -> void:
 				_state[i] = 2
 				free_prop(_balls[i])
 				if i != _pink:
-					_puddles[i] = spawn(&"puddle", Vector2(target.x, FLOOR_Y))
+					_puddles[i] = spawn(&"puddle", Vector2(x, surface_y(x)))
 			var puddle := _puddles[i]
 			if puddle != null and is_instance_valid(puddle):
 				var u := (since - flight) / PUDDLE

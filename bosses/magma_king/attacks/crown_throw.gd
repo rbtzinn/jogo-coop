@@ -1,6 +1,7 @@
 extends MagmaAttack
-## Coroa Bumerangue: tira a coroa e atira; ela vai até perto da parede da esquerda e volta. Uma das
-## pernas da viagem vem baixa (pular) e a outra alta (abaixar ou ficar numa jangada), sorteado.
+## Coroa Bumerangue: tira a coroa e atira; ela vai até perto da parede da esquerda e volta. A ida e a
+## volta passam em duas alturas diferentes, sorteadas entre três: rente ao chão (pular), na altura do
+## peito (abaixar) e na altura das jangadas (quem está nelas desce ou pula por cima).
 ## Na virada, a gema turquesa se solta da coroa e cai devagar (parry). Ele espera careca, com a mão
 ## na cabeça, e pega a coroa de volta.
 
@@ -11,12 +12,14 @@ const TURN := 0.2
 const CATCH_HOLD := 0.35
 const FAR_X := 170.0
 const LOW_Y := 945.0
-const HIGH_Y := 812.0
+## Alturas da coroa (y do meio): rente ao chão, peito e jangadas.
+const HEIGHTS := [945.0, 812.0, 700.0]
 const GEM_FALL := 1.5
 ## A coroa sai de cima da cabeça dele.
 const CROWN_FROM := Vector2(-10, -380)
 
-var _low_first := true
+var _out_y := 945.0
+var _back_y := 812.0
 var _from := Vector2.ZERO
 var _crown: MagmaProp
 var _gem: MagmaProp
@@ -24,7 +27,10 @@ var _gem_from := Vector2.ZERO
 
 
 func _start() -> void:
-	_low_first = rng.randf() < 0.5
+	var first := rng.randi_range(0, HEIGHTS.size() - 1)
+	var second := (first + rng.randi_range(1, HEIGHTS.size() - 1)) % HEIGHTS.size()
+	_out_y = HEIGHTS[first]
+	_back_y = HEIGHTS[second]
 	_from = king.global_position + CROWN_FROM
 	_crown = null
 	_gem = null
@@ -62,8 +68,8 @@ func _tick(t: float) -> void:
 
 ## Onde está a coroa `s` segundos depois de atirada.
 func _crown_at(s: float) -> Vector2:
-	var out_y := LOW_Y if _low_first else HIGH_Y
-	var back_y := HIGH_Y if _low_first else LOW_Y
+	var out_y := _out_y
+	var back_y := _back_y
 	if s < LEG:
 		var u := s / LEG
 		var x := lerpf(_from.x, FAR_X, 1.0 - pow(1.0 - u, 2.0))

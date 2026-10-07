@@ -1,15 +1,15 @@
 extends MagmaAttack
 ## Rajada: ele derrete até a altura certa, a boca brilha e uma linha fina mostra por onde o jato vai
-## passar (aviso); depois cospe um jato contínuo de magma que atravessa a tela. Alto (na altura do peito:
-## abaixar, ou ficar numa jangada) ou baixo (rente ao chão: pular).
+## passar (aviso); depois cospe um jato contínuo de magma que atravessa a tela, numa de três alturas:
+## nas jangadas (quem está nelas desce), no peito (abaixar) ou rente ao chão (pular ou subir numa jangada).
 
 const SINK := 0.35
 const CHARGE := 0.8
 const FIRE := 1.3
 const RECOVER := 0.35
-## Mais fundo no chão (atrás da margem) = jato mais baixo: alto passa em y ~ 860, baixo em ~ 950.
-const SINK_HIGH := 190.0
-const SINK_LOW := 280.0
+## Mais fundo no chão (atrás da margem) = jato mais baixo: nas jangadas passa em y ~ 700, no peito em
+## ~ 860 e rente ao chão em ~ 950.
+const SINKS := [30.0, 190.0, 280.0]
 const END_X := -120.0
 
 var _sink := 0.0
@@ -20,7 +20,7 @@ var _warning: Line2D
 
 func _start() -> void:
 	_home = king.global_position
-	_sink = SINK_HIGH if rng.randf() < 0.5 else SINK_LOW
+	_sink = SINKS[rng.randi_range(0, SINKS.size() - 1)]
 	_jet = null
 	_warning = null
 

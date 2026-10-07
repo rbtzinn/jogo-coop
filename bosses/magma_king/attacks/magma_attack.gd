@@ -5,6 +5,18 @@ extends BossAttack
 const FLOOR_Y := 1000.0
 ## Tempo andando no lago antes de cada ataque da fase 2.
 const WADE := 0.8
+## Jangadas da arena (meio em x e tampo em y; batem com RaftLeft/RaftRight de magma_king_fight.tscn)
+## e metade da largura do tampo.
+const RAFTS := [Vector2(620, 760), Vector2(1260, 760)]
+const RAFT_HALF := 160.0
+
+
+## Onde algo que cai em `x` para: no tampo de uma jangada, se tiver uma ali, ou no chão.
+static func surface_y(x: float) -> float:
+	for raft: Vector2 in RAFTS:
+		if absf(x - raft.x) <= RAFT_HALF:
+			return raft.y
+	return FLOOR_Y
 
 var boss: MagmaKingBoss
 var king: MagmaKing

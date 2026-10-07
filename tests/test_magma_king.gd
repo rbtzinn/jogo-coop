@@ -57,6 +57,21 @@ func _run() -> void:
 	for player: Player in get_tree().get_nodes_in_group(&"players"):
 		player.player_health._invincible_timer = 1000.0
 
+	# As jangadas do ataque batem com as da cena (o que cai nelas para no tampo).
+	for raft: Vector2 in MagmaAttack.RAFTS:
+		var node: Node2D = scene.get_node("RaftLeft" if raft.x < 900.0 else "RaftRight")
+		check(is_equal_approx(node.global_position.x, raft.x) and is_equal_approx(node.global_position.y - 12.0, raft.y), "raft at %s matches the scene" % raft)
+	check(MagmaAttack.surface_y(640.0) == 760.0 and MagmaAttack.surface_y(950.0) == 1000.0, "things land on the rafts")
+	# Cuspe mirando em quem está numa jangada: a poça fica no tampo dela.
+	var spit: Node = boss.get_node("Attacks/Spit")
+	boss.sync.start_attack(&"Spit", 5, [1260.0, 1260.0, 1260.0])
+	var on_raft := false
+	while spit.is_running():
+		await get_tree().physics_frame
+		for puddle in props(spit, &"puddle"):
+			on_raft = on_raft or is_equal_approx(puddle.global_position.y, 760.0)
+	check(on_raft, "spit at a raft: puddle on top of the raft")
+
 	# Fase 1, no trono.
 	check(king.mode == MagmaKing.Mode.THRONE and king.hitbox.active, "starts on the throne, body hurts")
 	var seen := await run_attack(boss, &"Spit", 11)
@@ -126,7 +141,7 @@ func _run() -> void:
 	check(jets.size() == 1, "jet fires")
 	if jets.size() == 1:
 		var y: float = jets[0].global_position.y
-		check(y > 830.0 and y < 980.0, "jet at player height (%.0f)" % y)
+		check(y > 680.0 and y < 980.0, "jet at the rafts, chest or floor (%.0f)" % y)
 	while jet.is_running():
 		await get_tree().physics_frame
 	seen = await run_attack(boss, &"CrownOrbit", 32)

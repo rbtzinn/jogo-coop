@@ -1,6 +1,7 @@
 extends MagmaAttack
 ## Goteira: anda pelo lago e bate no peito, bravo; a caverna treme e pingos de lava caem do teto um
-## depois do outro, cada um avisado por uma sombra no chão. Um pingo é turquesa (parry).
+## depois do outro, cada um avisado por uma sombra onde vai cair (no chão ou no tampo de uma jangada).
+## Um pingo é turquesa (parry).
 ## args: [x de onde sai, x para onde anda, x de cada pingo...].
 
 const BEATS := 0.8
@@ -37,6 +38,7 @@ func _tick(t: float) -> void:
 	king.pose(&"lake", 6 if beat < BEATS and int(beat * 5.0) % 2 == 0 else 2)
 	for i in _count:
 		var x := float(args[i + 2])
+		var ground := surface_y(x)
 		var since := t - (WADE + FIRST + i * GAP)
 		if since < 0.0:
 			continue
@@ -46,7 +48,7 @@ func _tick(t: float) -> void:
 				var shadow := LandingShadow.new()
 				shadow.radius = Vector2(46, 11)
 				add_child(shadow)
-				shadow.global_position = Vector2(x, FLOOR_Y - 4.0)
+				shadow.global_position = Vector2(x, ground - 4.0)
 				_shadows[i] = shadow
 			_shadows[i].amount = since / (SHADOW + FALL)
 		elif _shadows[i] != null:
@@ -56,13 +58,13 @@ func _tick(t: float) -> void:
 		if fall >= 0.0 and fall < FALL:
 			if _drops[i] == null:
 				_drops[i] = spawn(&"drop_parry" if i == _pink else &"drop", Vector2(x, TOP_Y), i == _pink, i)
-			_drops[i].global_position = Vector2(x, lerpf(TOP_Y, FLOOR_Y - 20.0, pow(fall / FALL, 1.6)))
+			_drops[i].global_position = Vector2(x, lerpf(TOP_Y, ground - 20.0, pow(fall / FALL, 1.6)))
 		elif fall >= FALL:
 			if _drops[i] != null:
 				free_prop(_drops[i])
 				_drops[i] = null
 				if i != _pink:
-					_splashes[i] = spawn(&"splash", Vector2(x, FLOOR_Y), false, i)
+					_splashes[i] = spawn(&"splash", Vector2(x, ground), false, i)
 			var splash := _splashes[i]
 			if splash != null and is_instance_valid(splash):
 				var u := (fall - FALL) / SPLASH
