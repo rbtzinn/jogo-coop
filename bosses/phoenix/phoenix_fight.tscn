@@ -101,7 +101,7 @@ shape = SubResource("RectangleShape2D_rock_middle")
 one_way_collision = true
 
 [node name="Sprite" type="Sprite2D" parent="RockMiddle"]
-position = Vector2(-159, -14)
+position = Vector2(-176.1, -14)
 scale = Vector2(0.6, 0.6)
 texture = ExtResource("6_rock2")
 centered = false
@@ -117,7 +117,7 @@ shape = SubResource("RectangleShape2D_rock_right")
 one_way_collision = true
 
 [node name="Sprite" type="Sprite2D" parent="RockRight"]
-position = Vector2(-189, -14)
+position = Vector2(-213.08, -14)
 scale = Vector2(0.56, 0.56)
 texture = ExtResource("7_rock3")
 centered = false

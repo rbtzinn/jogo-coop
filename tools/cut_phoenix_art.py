@@ -2,6 +2,7 @@
 Como as folhas são lidas está em tools/sheet_cut.py.
 
 Uso (da raiz do projeto): python -I tools/cut_phoenix_art.py
+Só as plataformas, sem refazer as outras artes: python -I tools/cut_phoenix_art.py --rocks-only
 """
 import os
 import sys
@@ -39,18 +40,27 @@ EFFECTS = [
 ]
 
 
+def cut_rocks():
+    # Os três desenhos têm larguras diferentes: as divisões iguais cortam as pontas das rochas 2 e 3.
+    # Só a rocha (os caquinhos soltos em volta ficavam boiando ao lado).
+    CUT.grid_effects("arenas/rocha_flutuante.png", 3, 1, ["rock_1", "rock_2", "rock_3"],
+            ratio=0.3, adaptive=True)
+
+
 def main():
     CUT.clean()
     for entry in ANIMATIONS:
         CUT.animation(*entry)
     # O rastro (última linha) é feito de pontinhos: junta de mais longe.
     CUT.row_effects("fenix/fenix_efeitos.png", EFFECT_ROWS, EFFECTS, reach=[3, 3, 3, 14])
-    # Só a rocha (os caquinhos soltos em volta ficavam boiando ao lado).
-    CUT.grid_effects("arenas/rocha_flutuante.png", 3, 1, ["rock_1", "rock_2", "rock_3"], ratio=0.3)
+    cut_rocks()
     CUT.single("arenas/arena_fenix.png", "arena.png", False)
     CUT.single("arenas/arena_fenix_fase2.png", "arena_storm.png", False)
     CUT.single("arenas/arena_fenix_fase3.png", "arena_reborn.png", False)
 
 
 if __name__ == "__main__":
-    main()
+    if "--rocks-only" in sys.argv:
+        cut_rocks()
+    else:
+        main()

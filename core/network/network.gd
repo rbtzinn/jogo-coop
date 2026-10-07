@@ -116,7 +116,9 @@ func leave() -> void:
 ## segundos sem resposta).
 func _say_goodbye() -> void:
 	var peer := multiplayer.multiplayer_peer as ENetMultiplayerPeer
-	if peer == null or peer.host == null:
+	if peer == null or peer.get_connection_status() != MultiplayerPeer.CONNECTION_CONNECTED:
+		return
+	if peer.host == null:
 		return
 	for peer_id in multiplayer.get_peers():
 		var connection := peer.get_peer(peer_id)

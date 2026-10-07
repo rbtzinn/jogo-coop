@@ -229,20 +229,21 @@ func _choose_attack() -> void:
 		choice = _last_attack
 	else:
 		choice = _draw_from_bag()
-		# Um ataque que não serve agora volta para o fim do saco e sai o próximo.
-		for i in phase_attacks[phase].size():
-			if _can_choose(choice):
-				break
-			_bag.append(choice)
-			choice = _draw_from_bag()
+	if choice == &"":
+		_wait = 0.15
+		return
 	_repeats = _repeats + 1 if choice == _last_attack else 0
 	_last_attack = choice
 	sync.start_attack(choice, _brain_rng.randi(), _args_for(choice))
 
 
 func _draw_from_bag() -> StringName:
-	var pool: Array = phase_attacks[phase]
+	# Só entram ataques possíveis agora. Recolocar um único ataque proibido no saco vazio
+	# fazia ele ser sorteado de novo até esgotar as tentativas (ex.: agarrada no modo solo).
+	var pool: Array = phase_attacks[phase].filter(func(attack_name: StringName) -> bool: return _can_choose(attack_name))
 	_bag = _bag.filter(func(attack_name: StringName) -> bool: return attack_name in pool)
+	if pool.is_empty():
+		return &""
 	if _bag.is_empty():
 		for attack_name: StringName in pool:
 			_bag.append(attack_name)

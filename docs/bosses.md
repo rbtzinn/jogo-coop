@@ -171,6 +171,10 @@ Cores: o fundo da ilha tem muita lava, então **os fundos ficam escuros e com a 
 
 ### 6. O Mestre Bigorna
 
+**Regra para chefões deste tipo (pedido do usuário, 07/10/2026):** o corpo fica junto à borda direita, com a passagem por trás bloqueada. As plataformas servem para movimentação e evasão; os ataques devem alcançar seus tampos e o chão embaixo delas. Os padrões também alcançam a borda esquerda, com avisos e oportunidades de desviar. Aplicar esta direção às próximas arenas com a mesma organização.
+
+**Coerência dos efeitos (correção do usuário):** quebras de piso, impactos com chão e estruturas de metal derretido precisam de apoio real. No ar, usar brasas ou outros projéteis sem pedaços de chão. O quadro do pisão com chão quebrado só aparece ao aterrissar; o aquecimento das plataformas fica limitado aos tampos existentes.
+
 *Um ferreiro gigante de braços enormes e pernas curtas, bigode de pontas enroladas, avental de couro chamuscado e um martelo do tamanho de um barril. Fazia o número de "forjar uma espada em 10 segundos" no festival; impaciente, bufa fumaça pelas orelhas.* Arena: dentro da forja, com a bigorna no meio, **canais de metal derretido** no chão (desligados no começo) e **duas correntes** penduradas do teto (plataformas balançando).
 
 **Fase 1 — "Malhando o Ferro"** (35%), atrás da bigorna:
@@ -178,17 +182,29 @@ Cores: o fundo da ilha tem muita lava, então **os fundos ficam escuros e com a 
 - **Ferraduras:** arremessa 3 ferraduras em brasa que quicam pelo chão; uma turquesa.
 - **Fole:** puxa o fole e sopra um leque de brasas na horizontal, na altura da cabeça (abaixar) ou na altura do pulo (ficar no chão).
 
-**Fase 2 — "Forja Aberta"** (35%), andando pela arena:
+**Fase 2 — "Forja Aberta"** (35%), trabalhando junto à borda direita:
 - **Canal Derretido:** um terço do chão brilha e se enche de metal derretido por 3 s; a parte muda a cada vez.
 - **Bigorninhas:** forja e arremessa 4 bigornas pequenas que caem em lugares marcados por sombra.
 - **Momento de dupla — Braço de Ferro:** ele agarra um jogador com a mão livre e o ergue (o preso fica sem dano por 3 s). O parceiro precisa acertar a mão 8 vezes para soltar; se não soltar a tempo, o preso perde 1 vida e cai. Com um jogador só de pé, ele não agarra.
 
 **Fase 3 — "Armadura Recém-Forjada"** (30%): veste uma armadura de ferro ainda em brasa e fica enorme e lento.
-- **Martelo Giratório:** gira o martelo em volta do corpo e anda; pular por cima do martelo baixo ou passar por baixo do alto.
+- **Martelo Giratório:** gira o martelo junto ao corpo e manda ondas para a esquerda pelo chão e pelos tampos das plataformas.
 - **Pisão:** salta e cai, a arena treme, pedras caem do teto (sombras).
 - **Peito Aberto:** quando ergue o martelo, a grade do peito abre e mostra a brasa: ali leva o **dobro de dano**.
 - Ao vencer: a armadura desmonta peça por peça e ele fica de ceroulas listradas, envergonhado, tapando-se com o avental.
 - Vida: 1400. Tempo-alvo: 2:50.
+
+**Como ficou no jogo (07/10/2026, integração do Codex a pedido do usuário):** `bosses/anvil_master/`, porta do Mestre Bigorna no mapa do Vulcão. Arte recortada por `tools/cut_volcano_final_art.py`, sem alterar as folhas originais. Três fases com martelada, ferraduras com uma turquesa, fole em duas alturas, canal de metal com aviso de 1 s e perigo por 3 s, quatro bigorninhas com sombras, Braço de Ferro, martelo giratório, pisão com pedras e peito aberto. Duas plataformas penduradas balançam pelo relógio sincronizado do chefão.
+
+- **Braço de Ferro:** aviso de 0,9 s, alcance limitado; pular ou dar dash evita a agarrada. O preso fica imune e sem controle por até 3 s; oito acertos do parceiro na mão o soltam. O prazo vencido tira uma vida no PC do preso. Trocar de fase, vencer ou ficar só um jogador de pé solta sem dano. Com um jogador só não entra no saco de ataques.
+- **Peito aberto:** janela de 1,7 s, caixa própria de tiro e dano dobrado. A grade fecha ao terminar ou cancelar o golpe. Armadura, passos, golpes e derrota usam desenhos distintos, com a armadura maior que a forma inicial.
+- Teste de mecânicas/progressão: `tests/test_volcano_bosses.tscn`; teste em dois processos: `tests/test_volcano_online.tscn` (normal, internet ruim e reconexão). Também entra no teste de fumaça.
+
+**Ajuste após a demonstração (07/10/2026, pedido do usuário):** o ferreiro permanece em x 1710 nas três fases, olhando para a esquerda. A bigorna acompanha a posição da forja à direita. A borda jogável acaba em x 1560: não se pode andar ou dar dash por trás do chefão. Quadros largos permanecem dentro da tela, com as caixas de acerto acompanhando o desenho.
+- Martelada, pisão, peito aberto e martelo giratório soltam ondas pelo chão e pela altura de cada plataforma, até ultrapassar o canto esquerdo. Ferraduras e fole também têm trajetórias nos três níveis, com lançamentos ligeiramente espaçados. O fole baixo permite abaixar; o alto exige observar a posição.
+- Canal Derretido ameaça a mesma faixa horizontal no chão e nos tampos. Bigorninhas e pedras mostram sombras nas duas alturas e continuam caindo através da plataforma até o chão.
+- Braço de Ferro estende uma mão na corrente até o lugar anunciado, inclusive sobre plataformas; o corpo fica na direita. Mantém o aviso, a possibilidade de escapar, oito acertos do parceiro e a liberação em cancelamentos.
+- `tests/test_volcano_arena.tscn` verifica colisões com alvos parados no canto esquerdo, em cima e embaixo das plataformas, além de posição do chefão e bloqueio da passagem por trás.
 
 ### 7. O Coração do Vulcão (fecha a área)
 
@@ -202,11 +218,20 @@ Cores: o fundo da ilha tem muita lava, então **os fundos ficam escuros e com a 
 **Fase 2 — "Os Três Selos"** (35%): os três selos da porta brilham e o coração usa **ecos** dos chefões vencidos (as mesmas formas, só que em fogo fantasma): a Coroa Bumerangue do Rei, o Leque de Penas da Fênix e as Ferraduras do Bigorna, um de cada vez, mais rápidos que os originais.
 - **Momento de dupla — Válvulas:** duas válvulas de pressão, uma em cada ponta da arena. Os dois jogadores ficam em cima delas **ao mesmo tempo** (com 1 s de tolerância) por 1 s; a máscara se abre por 5 s e o coração leva o **dobro de dano**. Sozinho: uma válvula só abre a máscara por 3 s.
 
-**Fase 3 — "Erupção"** (30%): as correntes arrebentam e o coração voa pela cratera. A lava sobe e o chão vira **plataformas de basalto que sobem e descem** com a pulsação; cair na lava tira 1 vida e o jogador volta na plataforma mais próxima.
+**Fase 3 — "Erupção"** (30%): as correntes arrebentam e o coração flutua junto à borda direita. A lava sobe e o chão vira **plataformas de basalto que sobem e descem** com a pulsação; cair na lava tira 1 vida e o jogador volta na plataforma mais próxima.
 - **Cuspe de Magma:** bolas de magma em leque.
-- **Investida:** o coração recua, a máscara aperta os olhos e ele atravessa a tela.
+- **Investida de Magma:** a máscara aperta os olhos e projeta rastros do coração pela altura do chão e de cada plataforma. O corpo permanece na direita.
 - Ao vencer: esfria e vira um coração de pedra que cai na lava. A porta da cratera se abre e mostra o caminho para a Área 3 (gancho da história).
 - Vida: 1500. Tempo-alvo: 3:00.
+
+**Como ficou no jogo (07/10/2026, integração do Codex a pedido do usuário):** `bosses/volcano_heart/`, porta da cratera ligada à luta e fechada até vencer `magma_king`, `ash_phoenix` e `anvil_master`. Três fases: quatro pulsos em ritmo crescente, artérias com avisos no chão e jatos verticais, gotas turquesa, os três ecos de fogo violeta, leques de magma e investida com recuo visível. Os ecos usam arte e código próprios; não dependem dos outros chefões.
+
+- **Válvulas:** na segunda fase, placas em x 400 e 1420, fora dos ingressos do HUD para ficarem visíveis. Dois jogadores mantêm as duas pressionadas por 1 s (tolerância de 1 s entre registros): máscara aberta por 5 s e dano dobrado. Um jogador de pé precisa de uma placa, por 1 s, para abrir por 3 s. O host decide e compartilha pressão, janela e dano. Há 1 s de intervalo depois que fecha.
+- **Erupção:** o chão sólido desliga, muda o cenário e entram três plataformas de basalto, em x 350/960/1350, com bases em y 780/670/800 e pulsação de 35/45/30 px. Cada jogador resolve a própria queda abaixo de y 950: perde uma vida, volta à plataforma mais próxima e recebe proteção. A entrada da fase posiciona os jogadores sem penalidade; reconexão recupera fase, geometria e relógio.
+- A vitória salva `volcano_heart`, esfria o coração e anuncia a libertação do festival. A próxima ilha continua como gancho de história; ainda não há uma Área 3 jogável. A Mina de Brasa é a fase de plataforma prevista separadamente, não um quinto chefão.
+- Testes: os mesmos testes de Vulcão descritos acima e o teste de fumaça. A dificuldade final ainda precisa da avaliação jogando, como nas primeiras versões dos outros chefões.
+
+**Ajuste de arena (07/10/2026):** coração fixo em x 1680, com a passagem por trás bloqueada na mesma borda jogável x 1560 do Bigorna. Pulso, ferraduras e coroa agora alcançam também o canto esquerdo; as artérias e gotas miram jogadores junto às bordas. Na erupção, leques e investidas projetadas percorrem todas as alturas das plataformas, mantendo os avisos antes do disparo. A válvula e a plataforma direitas ficam à frente do chefão, dentro da área acessível.
 
 ## Ideias para áreas futuras
 

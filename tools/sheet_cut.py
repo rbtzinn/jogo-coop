@@ -174,16 +174,24 @@ class SheetCutter:
                 count += 1
         print("%-14s %d desenhos" % (os.path.basename(sheet), count))
 
-    def grid_effects(self, sheet, cols, rows, names, ratio=0.02):
-        """Um desenho por célula de uma grade regular; `names` em ordem de leitura (None pula a célula)."""
+    def grid_effects(self, sheet, cols, rows, names, ratio=0.02, adaptive=False):
+        """Um desenho por célula; `adaptive` divide no vazio entre desenhos de larguras diferentes.
+        `names` em ordem de leitura (None pula a célula)."""
         image = self.load(sheet)
         h, w = image.shape[:2]
+        if adaptive:
+            alpha = image[:, :, 3] > ALPHA
+            xs = split_points(alpha, w, cols, 0)
+            ys = split_points(alpha, h, rows, 1)
+        else:
+            xs = [int(c * w / cols) for c in range(cols + 1)]
+            ys = [int(r * h / rows) for r in range(rows + 1)]
         count = 0
         for index, name in enumerate(names):
             if name is None:
                 continue
             r, c = divmod(index, cols)
-            cell = keep_main(image[int(r * h / rows):int((r + 1) * h / rows), int(c * w / cols):int((c + 1) * w / cols)], ratio)
+            cell = keep_main(image[ys[r]:ys[r + 1], xs[c]:xs[c + 1]], ratio)
             yy, xx = np.nonzero(cell[:, :, 3] > 8)
             Image.fromarray(cell[yy.min():yy.max() + 1, xx.min():xx.max() + 1]).save(os.path.join(self.out, name + ".png"))
             count += 1

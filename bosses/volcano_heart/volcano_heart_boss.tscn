@@ -1,0 +1,68 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://bosses/volcano_heart/volcano_heart_boss.gd" id="1_boss"]
+[ext_resource type="Script" path="res://components/health/health.gd" id="2_health"]
+[ext_resource type="Script" path="res://core/network/boss_sync.gd" id="3_sync"]
+[ext_resource type="Script" path="res://components/boss/painted_boss_actor.gd" id="4_actor"]
+[ext_resource type="Script" path="res://bosses/volcano_heart/heart_attack.gd" id="5_attack"]
+
+[node name="VolcanoHeartBoss" type="Node2D"]
+script = ExtResource("1_boss")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+
+[node name="BossSync" type="Node" parent="."]
+script = ExtResource("3_sync")
+
+[node name="Actor" type="Node2D" parent="."]
+script = ExtResource("4_actor")
+art_folder = "res://bosses/volcano_heart/art/"
+animation_names = PackedStringArray("beat","echo","free","defeat")
+idle_animation = &"beat"
+box_center = Vector2(0, 0)
+hurt_size = Vector2(260, 320)
+contact_size = Vector2(220, 250)
+
+[node name="Attacks" type="Node2D" parent="."]
+
+
+[node name="Pulse" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 0
+
+[node name="Arteries" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 1
+
+[node name="TurquoiseDrops" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 2
+
+[node name="EchoCrown" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 3
+
+[node name="EchoFeathers" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 4
+
+[node name="EchoHorseshoes" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 5
+
+[node name="MagmaFan" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 6
+
+[node name="Charge" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 7
+
+[node name="IntroSeals" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 8
+
+[node name="IntroEruption" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 9

@@ -98,7 +98,7 @@ var _crouch := 0.0
 ## Peças escondidas enquanto um quadro desenhado está na tela (o braço da arma fica).
 @onready var _body_parts: Array[CanvasItem] = [body, back_arm, back_hand, back_leg, back_shoe, front_leg, front_shoe]
 
-var _frame_sprite := Sprite2D.new()
+@onready var _frame_sprite := Sprite2D.new()
 ## Ombro do quadro desenhado atual (vale só enquanto ele está na tela).
 var _frame_shoulder := Vector2.ZERO
 ## O quadro atual traz o ombro (senão vale o ombro das peças, que seguem posicionadas escondidas).

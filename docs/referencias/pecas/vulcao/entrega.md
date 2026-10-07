@@ -1,6 +1,10 @@
 # Entrega de arte — Área 2: Vulcão
 
-Data: 07/10/2026. Estado: produção em andamento. 58 de 58 PNGs gerados.
+Data: 07/10/2026. Estado: geração dos arquivos concluída, com normalização e correções pendentes. **58 de 58 PNGs salvos; nenhum arquivo faltante.**
+
+**Feito** no checklist significa que o PNG foi gerado e salvo. A conformidade de grade, margens, escala e pivôs ainda exige os ajustes descritos em cada item. A ferramenta integrada devolveu dimensões nativas diferentes das pedidas em todos os 58 arquivos; 26 também divergem na proporção do canvas. Os desenhos foram preservados sem esticar ou reamostrar.
+
+Conferência final: **58 PNGs válidos**, **49 com alfa real**, **9 arenas opacas**, **58 cópias com SHA-256 idêntico às fontes**, nenhum PNG extra e apenas este Markdown na pasta. Volume dos PNGs: aproximadamente **95,6 MiB**.
 
 Geração: ferramenta integrada ImageGen; um arquivo de cada vez, na ordem do pedido. Os PNGs são copiados sem reamostragem da saída nativa. Dimensões, transparência e diferenças ficam registradas abaixo. Apenas os PNGs pedidos e este relatório podem ser gravados no projeto; código e demais arquivos ficam fora do escopo.
 
@@ -78,7 +82,7 @@ Referências consultadas: mapa da Área 2, `docs/bosses.md` (Área 2), folhas de
 
 ## Continuidade
 
-Primeiro arquivo faltante: `docs/referencias/pecas/vulcao/arenas/plataforma_erupcao.png`. Retomar na ordem do checklist e usar sempre a folha do próprio chefão como referência de identidade.
+Nenhum PNG faltante. Próxima etapa: conferir/normalizar os recortes, a grade e os pivôs, e corrigir as pendências de desenho/legibilidade indicadas abaixo. A integração no jogo fica para a etapa posterior prevista no pedido.
 
 ## Prompts e validação
 
@@ -842,4 +846,21 @@ Generate ONLY ONE file: plataforma_erupcao.png — 1536 x 256, 3 x 1 cells of 51
 LASTPROPsheet:ONLY3floatingBASALTplatforms, ONErowTHREErectangularcells512x256,target1536x256. Left300pxwide,middle340px,right380px. EachFLATwalkableTOPexactlocaly100 (39.0625%cellheight), blackcooledbasaltstone50-60pxthick, paleHOTLAVAorange/yellowglowingDRIPS fromunderside45-50pxlong. Sideviewthinwalktops,noisometriccamera. NOroots,chains,bossheart,mask,face,egg,bird,background,flooror shadow. Ref1heartbasalt/magmaSTYLEONLY;ref2previousrockplatformGEOMETRYONLY, replaceallrootswithlavadrips. Samepainting/inkpalette asallotherislandassets. Platformsmax75%cellwidthincludingdrips, fullycontainedwith24pxblankmargins, keeptransparentoutsideoutlines.
 ```
 
-<!-- PROXIMO_PROMPT -->
+## Conferência final e pendências prioritárias
+
+- Arquivos: Rei Magma **17/17**, Fênix **13/13**, Bigorna **15/15**, Coração **13/13**.
+- Todos os PNGs foram abertos e verificados com `PIL.Image.verify()`; os 58 arquivos do projeto têm SHA-256 igual às respectivas fontes finais do ImageGen. Os originais continuam no cache da ferramenta.
+- As 49 folhas/personagens/efeitos/plataformas são RGBA com alfa mínimo 0 e máximo 255. As nove arenas são RGB opacas. A presença de alfa real não certifica margens limpas: halos e pixels de baixa opacidade junto às bordas ainda precisam conferência.
+- Não houve comandos Git, integração, edição de código/cenas ou mensagens enviadas a outro agente. O trabalho no projeto se limitou aos 58 PNGs e a este relatório.
+
+### Ajustes antes de usar no jogo
+
+1. **Grade e escala:** normalizar sem distorcer os desenhos; 26 canvases alteraram a proporção pedida. Há invasões entre células e margens estreitas em diversas folhas. Conferir a linha y = 980 dos chefões, y = 1000 das arenas e os tops de todas as plataformas.
+2. **Rei Magma:** revisar a pose sentada/altura do assento nas quatro folhas do trono e aprofundar a reverência da derrota. O trono vazio tem pivô próprio a conferir.
+3. **Fênix:** o sopro desenhado no terceiro quadro de `fenix_asas.png` ficou amarelo/laranja; recolorir para cinza/branco. A folha separada `ventania.png` já utiliza cinza/branco. Redimensionar especialmente as penas da folha de efeitos, que invadem a altura das células.
+4. **Bigorna:** as passadas 2/3 da armadura ainda são semelhantes e merecem redesenho para o ciclo. A bigorna está incluída no terceiro quadro da martelada após corrigir o impacto; evitar sobrepor uma segunda bigorna nesse quadro. As válvulas do Coração também precisam ter largura/pivô consistentes entre estados.
+5. **Coração:** a folha `coracao_ecos.png` mostra correntes rompidas; para a situação presa da fase 2, corrigir essa representação. Os projéteis foram corrigidos para coroa/pena/ferradura sem rostos.
+6. **Jatos verticais:** `coracao_efeitos.png` ainda não tem repetição vertical pronta. O quarto jato se une à artéria acima e deve ser separado. Na comparação das bordas RGBA/alpha do recorte bruto da quarta linha, usando divisões inteiras da grade nativa, os quatro quadros tiveram **126, 127, 113 e 114 pixels divergentes**, respectivamente. Refazer os encaixes superior/inferior depois de normalizar a grade.
+7. **Arenas:** os pisos vieram acima da linha proporcional a y = 1000. Os pares de fases preservam o enquadramento, mas necessitam do mesmo ajuste de piso. Reduzir pontos de brilho do fundo para que os ataques permaneçam mais claros. Na erupção do Coração, a lava ocupou uma faixa maior que os 180 px pedidos.
+
+Os prompts efetivamente usados, fontes finais, medidas reais e observações específicas permanecem registrados neste relatório. O conjunto foi gerado pela ferramenta integrada **ImageGen**, sem uso de API/CLI alternativa.

@@ -68,6 +68,8 @@ var crouching := false
 ## Vento empurrando (px/s; negativo = para a esquerda), posto por ataques (ex.: a Ventania da Fênix) e zerado
 ## por eles no fim. Soma-se à corrida: andar contra o vento fica mais lento, a favor fica mais rápido.
 var wind := 0.0
+## Agarrado por um chefão: o ataque põe o ponto da mão; INF libera o controle.
+var boss_hold := Vector2.INF
 
 var _gravity: float
 var _jump_velocity: float
@@ -147,6 +149,14 @@ func _physics_process(delta: float) -> void:
 	if player_health.is_downed:
 		input.clear()
 		_process_balloon(delta)
+		sync.send_state(self, Vector2(facing, 0))
+		return
+	if boss_hold.is_finite():
+		input.clear()
+		global_position = boss_hold
+		velocity = Vector2.ZERO
+		player_health.tick(delta, false)
+		rig.update_pose(delta, velocity, false, false, Vector2(facing, 0), run_speed, false)
 		sync.send_state(self, Vector2(facing, 0))
 		return
 	var parry_pressed := input.jump_pressed and not is_on_floor() and _coyote_timer <= 0.0 \

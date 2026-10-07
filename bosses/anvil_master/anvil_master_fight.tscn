@@ -1,0 +1,126 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://bosses/anvil_master/art/arena.png" id="1_bg"]
+[ext_resource type="Texture2D" path="res://bosses/anvil_master/art/arena_hot.png" id="2_hot"]
+[ext_resource type="PackedScene" path="res://bosses/anvil_master/anvil_master_boss.tscn" id="3_boss"]
+[ext_resource type="Script" path="res://core/network/player_spawner.gd" id="4_spawner"]
+[ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="5_clown"]
+[ext_resource type="PackedScene" path="res://core/player/characters/acrobat/acrobat_rig.tscn" id="6_acrobat"]
+[ext_resource type="Script" path="res://core/combat/fight.gd" id="7_fight"]
+[ext_resource type="Script" path="res://core/ui/fight_hud.gd" id="8_hud"]
+[ext_resource type="Script" path="res://core/debug/solo_character_switch.gd" id="9_switch"]
+[ext_resource type="Script" path="res://core/debug/applause_cheat.gd" id="10_cheat"]
+[ext_resource type="Script" path="res://components/stage/clock_platform.gd" id="11_platform"]
+[ext_resource type="Texture2D" path="res://bosses/anvil_master/art/platform_1.png" id="p1"]
+[ext_resource type="Texture2D" path="res://bosses/anvil_master/art/platform_2.png" id="p2"]
+[ext_resource type="Texture2D" path="res://bosses/anvil_master/art/anvil.png" id="anvil"]
+
+[sub_resource type="RectangleShape2D" id="floor"]
+size = Vector2(2000, 160)
+
+[sub_resource type="RectangleShape2D" id="wall"]
+size = Vector2(80, 1400)
+
+[node name="AnvilMasterFight" type="Node2D"]
+
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(960, 592.83)
+scale = Vector2(1.26, 1.26)
+texture = ExtResource("1_bg")
+
+[node name="BackgroundHot" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(960, 592.83)
+scale = Vector2(1.26, 1.26)
+texture = ExtResource("2_hot")
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(960, 1080)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("floor")
+
+[node name="WallLeft" type="StaticBody2D" parent="."]
+position = Vector2(-40, 540)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallLeft"]
+shape = SubResource("wall")
+
+[node name="WallRight" type="StaticBody2D" parent="."]
+position = Vector2(1600, 540)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallRight"]
+shape = SubResource("wall")
+
+[node name="Platform1" type="AnimatableBody2D" parent="."]
+position = Vector2(400, 740)
+script = ExtResource("11_platform")
+clock_path = NodePath("../AnvilMasterBoss")
+texture = ExtResource("p1")
+width = 280.0
+amplitude = Vector2(45, 0)
+offset = 0
+art_top = 696.0
+hanging = true
+
+[node name="Platform2" type="AnimatableBody2D" parent="."]
+position = Vector2(850, 670)
+script = ExtResource("11_platform")
+clock_path = NodePath("../AnvilMasterBoss")
+texture = ExtResource("p2")
+width = 280.0
+amplitude = Vector2(45, 0)
+offset = 3.14
+art_top = 696.0
+hanging = true
+
+[node name="AnvilMasterBoss" parent="." instance=ExtResource("3_boss")]
+
+[node name="Anvil" type="Sprite2D" parent="."]
+z_index = 3
+position = Vector2(1540, 1000)
+texture = ExtResource("anvil")
+centered = false
+offset = Vector2(-601.5, -867)
+scale = Vector2(0.28, 0.28)
+
+[node name="PlayerSpawner" type="Node2D" parent="."]
+z_index = 3
+script = ExtResource("4_spawner")
+characters = Array[PackedScene]([ExtResource("5_clown"), ExtResource("6_acrobat")])
+facings = Array[int]([1, 1])
+
+[node name="SpawnClown" type="Marker2D" parent="PlayerSpawner"]
+position = Vector2(250, 1000)
+
+[node name="SpawnAcrobat" type="Marker2D" parent="PlayerSpawner"]
+position = Vector2(440, 1000)
+
+[node name="Fight" type="Node" parent="."]
+script = ExtResource("7_fight")
+boss_path = NodePath("../AnvilMasterBoss")
+boss_id = "anvil_master"
+intro_text = "O Mestre Bigorna"
+target_time = 170.0
+
+[node name="SoloCharacterSwitch" type="Node" parent="."]
+script = ExtResource("9_switch")
+
+[node name="ApplauseCheat" type="Node" parent="."]
+script = ExtResource("10_cheat")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="FightHud" type="Control" parent="Hud"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_hud")
+boss_path = NodePath("../../AnvilMasterBoss")
+boss_name = "O Mestre Bigorna"

@@ -25,6 +25,8 @@ var hold_frame := -1
 var flip := false
 ## Giro do desenho (radianos), sem girar a área que machuca.
 var spin := 0.0
+## Tamanho visual opcional; permite encaixar um efeito na superfície atingida.
+var draw_size := Vector2.ZERO
 
 var _time := 0.0
 var _sprite := Sprite2D.new()
@@ -49,6 +51,10 @@ func _ready() -> void:
 		_shape.position = _info.get("at", Vector2.ZERO)
 	add_child(_shape)
 	_sprite.scale = Vector2.ONE * float(_info.scale)
+	draw_size = _info.get("draw_size", Vector2.ZERO)
+	if _info.has("region"):
+		_sprite.region_enabled = true
+		_sprite.region_rect = _info.region
 	add_child(_sprite)
 	_show(0)
 
@@ -70,7 +76,9 @@ func _show(index: int) -> void:
 	_sprite.texture = texture
 	_sprite.flip_h = flip
 	_sprite.rotation = spin
-	var size := texture.get_size()
+	var size: Vector2 = _info.region.size if _info.has("region") else texture.get_size()
+	if draw_size.x > 0.0 and draw_size.y > 0.0:
+		_sprite.scale = draw_size / size
 	match _info.anchor:
 		"bottom":
 			_sprite.centered = false

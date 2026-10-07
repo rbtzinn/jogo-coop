@@ -4,9 +4,10 @@
 # "ruim" liga o simulador de internet ruim nos dois (ping 160, oscilando, perdendo pacotes).
 GODOT="${GODOT:-/c/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe}"
 NET="$1"
-"$GODOT" --headless --path . res://tests/test_online.tscn -- host $NET > /tmp/online_host.log 2>&1 &
+TEST_SCENE="${TEST_SCENE:-res://tests/test_online.tscn}"
+"$GODOT" --headless --path . "$TEST_SCENE" -- host $NET > /tmp/online_host.log 2>&1 &
 HOST=$!
-"$GODOT" --headless --path . res://tests/test_online.tscn -- client $NET > /tmp/online_client.log 2>&1
+"$GODOT" --headless --path . "$TEST_SCENE" -- client $NET > /tmp/online_client.log 2>&1
 CLIENT_CODE=$?
 wait $HOST
 HOST_CODE=$?

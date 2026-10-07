@@ -64,7 +64,9 @@ static func display_name(event: InputEvent) -> String:
 	if event == null:
 		return "—"
 	if event is InputEventKey:
-		var keycode := DisplayServer.keyboard_get_keycode_from_physical(event.physical_keycode)
+		var keycode: int = event.physical_keycode
+		if DisplayServer.get_name() != "headless":
+			keycode = DisplayServer.keyboard_get_keycode_from_physical(keycode)
 		return KEY_NAMES.get(keycode, OS.get_keycode_string(keycode))
 	if event is InputEventJoypadButton:
 		return JOYPAD_BUTTON_NAMES.get(event.button_index, "Botão %d" % event.button_index)

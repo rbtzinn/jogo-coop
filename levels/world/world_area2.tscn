@@ -71,6 +71,7 @@ script = ExtResource("2_door")
 painted_front = Vector2(2600, 1340)
 title = "Mestre Bigorna"
 level_id = "anvil_master"
+target_scene = "res://bosses/anvil_master/anvil_master_fight.tscn"
 
 [node name="DoorMine" type="Area3D" parent="."]
 script = ExtResource("2_door")
@@ -84,6 +85,7 @@ script = ExtResource("2_door")
 painted_front = Vector2(1620, 390)
 title = "Coração do Vulcão"
 level_id = "volcano_heart"
+target_scene = "res://bosses/volcano_heart/volcano_heart_fight.tscn"
 requires = Array[String](["magma_king", "ash_phoenix", "anvil_master"])
 landmark = "big_top"
 
