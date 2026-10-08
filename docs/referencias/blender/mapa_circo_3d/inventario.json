@@ -1,0 +1,13 @@
+{
+  "objects": 11031,
+  "mesh_objects": 10512,
+  "base_polygons": 653408,
+  "unique_meshes": 1302,
+  "materials": 42,
+  "lights": 12,
+  "cameras": 7,
+  "blend": "C:/jogo-coop/docs/referencias/blender/mapa_circo_3d\\mapa_circo_3d.blend",
+  "integrated": false,
+  "external_dependencies": [],
+  "ground_path_mask_pixels": 290319
+}

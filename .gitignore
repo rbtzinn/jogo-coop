@@ -11,3 +11,6 @@
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Cache do Python (ferramentas)
+__pycache__/

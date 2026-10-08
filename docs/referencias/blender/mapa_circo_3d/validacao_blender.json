@@ -1,0 +1,90 @@
+{
+  "reopened_successfully": true,
+  "path_mask_packed": true,
+  "path_mask_coverage_pixels": 290319,
+  "unpacked_images": [],
+  "unpacked_fonts": [],
+  "physics_objects": [],
+  "linked_libraries": 0,
+  "active_camera": "01_Mapa_completo",
+  "cameras": 7,
+  "guide_surfaces_hidden": true,
+  "asset_world_dimensions_m": {
+    "00_Terreno_Caminhos": {
+      "x": 83.0,
+      "y": 70.0,
+      "z": 0.58
+    },
+    "05_Jardins_Vegetacao": {
+      "x": 82.68,
+      "y": 71.61,
+      "z": 8.97
+    },
+    "Banco praca 1": {
+      "x": 2.33,
+      "y": 1.08,
+      "z": 1.4
+    },
+    "Banco praca 2": {
+      "x": 2.33,
+      "y": 1.08,
+      "z": 1.4
+    },
+    "Banco norte": {
+      "x": 2.25,
+      "y": 0.65,
+      "z": 1.4
+    },
+    "06_Lampioes_Decorativos": {
+      "x": 67.02,
+      "y": 44.12,
+      "z": 3.71
+    },
+    "07_Festonamento": {
+      "x": 70.37,
+      "y": 49.15,
+      "z": 7.0
+    },
+    "04_Praca_Monumento": {
+      "x": 8.87,
+      "y": 7.92,
+      "z": 4.11
+    },
+    "Tenda do Domador": {
+      "x": 14.97,
+      "y": 16.13,
+      "z": 10.35
+    },
+    "Tenda dos Malabaristas": {
+      "x": 13.97,
+      "y": 15.13,
+      "z": 9.85
+    },
+    "Tenda do Mago": {
+      "x": 14.97,
+      "y": 16.13,
+      "z": 10.9
+    },
+    "ESTAÇÃO_E_LOCOMOTIVA_ARTESANAL": {
+      "x": 36.18,
+      "y": 11.78,
+      "z": 7.63
+    },
+    "PORTAO • entrada monumental": {
+      "x": 16.32,
+      "y": 4.26,
+      "z": 6.64
+    },
+    "CAMARIM • caravana teatral": {
+      "x": 10.89,
+      "y": 6.39,
+      "z": 5.92
+    },
+    "LOJA • curiosidades e ingressos": {
+      "x": 11.45,
+      "y": 10.4,
+      "z": 5.92
+    }
+  },
+  "game_integration": false
+}
