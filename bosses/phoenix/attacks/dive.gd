@@ -1,5 +1,5 @@
 extends PhoenixAttack
-## Rasante: ela sai pela direita e atravessa a tela duas vezes (uma para cada lado), cada vez numa altura
+## Rasante: ela sai pela direita e atravessa a tela de um lado para o outro, alternando, cada vez numa altura
 ## sorteada: rente ao chão (subir numa rocha ou pular), na altura das rochas dos lados (descer ou ir para a
 ## do meio) ou na altura da rocha do meio. Antes de cada passada, um rastro de brasas marca a altura e ela
 ## aparece na beira da tela se encolhendo (aviso). Na fase 1 faz três passadas, uma em cada altura; o desafio
@@ -50,7 +50,8 @@ func _tick(t: float) -> void:
 		var start := TAKEOFF + k * (WARN + CROSS)
 		if t >= start + WARN + CROSS:
 			continue
-		var going_left := k == 0
+		# Alterna os lados: cada passada começa onde a anterior terminou (antes a terceira reaparecia na esquerda).
+		var going_left := k % 2 == 0
 		var edge := RIGHT_X if going_left else LEFT_X
 		var other := LEFT_X if going_left else RIGHT_X
 		bird.facing = -1 if going_left else 1
@@ -69,9 +70,11 @@ func _tick(t: float) -> void:
 	_clear_trails()
 	var u: float = clampf((t - TAKEOFF - _heights.size() * (WARN + CROSS)) / RETURN, 0.0, 1.0)
 	var home := PERCH + Vector2(0, -170) if perched else HOME
-	bird.facing = -1
+	var last := _heights.size() - 1
+	var end_x := LEFT_X if last % 2 == 0 else RIGHT_X
+	bird.facing = 1 if end_x < home.x else -1
 	bird.pose(&"fly", 1)
-	bird.global_position = Vector2(RIGHT_X, _heights[1]).lerp(home, smoothstep(0.0, 1.0, u))
+	bird.global_position = Vector2(end_x, _heights[last]).lerp(home, smoothstep(0.0, 1.0, u))
 
 
 func _show_trails(height: float, since: float) -> void:

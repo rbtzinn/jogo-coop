@@ -31,3 +31,11 @@ func _kinds() -> Dictionary:
 func _art() -> String:
 	return "res://bosses/magma_king/art/"
 
+
+## Ataques maiores e com contorno claro: no cenário de lava eles sumiam (pedido do usuário, 08/10/2026).
+func _look() -> float:
+	return 1.0 if String(kind).contains("crown") else 1.15
+
+
+func _outline() -> bool:
+	return true

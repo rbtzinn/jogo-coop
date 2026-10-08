@@ -34,3 +34,8 @@ func _kinds() -> Dictionary:
 
 func _art() -> String:
 	return "res://bosses/phoenix/art/"
+
+
+## Ataques maiores e com contorno claro: no cenário de lava eles sumiam (pedido do usuário, 08/10/2026).
+func _look() -> float:
+	return 1.15

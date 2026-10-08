@@ -43,7 +43,9 @@ func _tick(t: float) -> void:
 	elif t < THROW + 0.15:
 		king.pose(&"crown_throw", 1)
 	elif t < back_end:
-		king.pose(&"crown_throw", 2)
+		# Enquanto a coroa voa ele não fica travado numa pose: alterna o braço comandando a coroa e a mão na
+		# cabeça sem coroa (antes ficava 2,8 s parado no mesmo quadro).
+		king.pose(&"crown_throw", 1 if int((t - THROW) / 0.4) % 2 == 0 else 2)
 	else:
 		king.pose(&"crown_throw", 3)
 	if t >= THROW and t < back_end:

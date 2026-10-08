@@ -225,6 +225,8 @@ func _on_defeated() -> void:
 
 func prop_kinds() -> Dictionary:
 	return {
+		# Ataques maiores e com contorno claro: no cenário de lava eles sumiam (pedido do usuário, 08/10/2026).
+		&"_look": 1.15,
 		&"ring": {"frames": ["ring_1", "ring_2", "ring_3", "ring_4"], "scale": 0.55, "fps": 12.0, "rect": Vector2(185, 58), "at": Vector2(0, -29), "anchor": "bottom"},
 		&"ball": {"frames": ["ball_1", "ball_2", "ball_3", "ball_4"], "scale": 0.48, "fps": 12.0, "circle": 32.0, "anchor": "center"},
 		&"drop_parry": {"frames": ["drop_parry_1", "drop_parry_2", "drop_parry_3", "drop_parry_4"], "scale": 0.48, "fps": 10.0, "circle": 28.0, "anchor": "center"},
