@@ -1,7 +1,8 @@
 extends PhoenixAttack
 ## Chuva de Fagulhas: ela solta uma nuvem de cinzas das penas (aviso) e fagulhas caem do céu em colunas, em
-## três levas; cada coluna é marcada antes por uma sombra onde vai cair (no chão ou no tampo de uma rocha) e
-## cada leva deixa uma coluna livre.
+## três levas; cada coluna é marcada antes por uma sombra no chão com o facho da queda (e outra no tampo da
+## rocha, se tiver uma no caminho) e cada leva deixa uma coluna livre. As fagulhas atravessam as rochas e caem
+## do céu até o chão (pedido do usuário, 08/10/2026): ficar em cima ou embaixo de uma rocha não protege.
 
 const BURST := 0.5
 const WAVES := [0.6, 1.6, 2.6]
@@ -35,7 +36,6 @@ func _tick(t: float) -> void:
 			if c == _gaps[w]:
 				continue
 			var x := FIRST_X + c * SPACING + (SPACING * 0.5 if w == 1 else 0.0)
-			var ground := surface_y(x)
 			var key := w * COLUMNS + c
 			var since: float = t - WAVES[w]
 			if since < 0.0:
@@ -44,15 +44,15 @@ func _tick(t: float) -> void:
 			var landed := MARK + FALL + STREAK_GAP * (STREAK - 1)
 			if since < landed:
 				if not _marks.has(key):
-					var shadow := LandingShadow.new()
-					shadow.radius = Vector2(44, 10)
-					add_child(shadow)
-					shadow.global_position = Vector2(x, ground - 4.0)
-					_marks[key] = shadow
-				_marks[key].amount = since / landed
-			elif _marks.has(key) and _marks[key] != null:
-				_marks[key].queue_free()
-				_marks[key] = null
+					_marks[key] = [_mark(Vector2(x, FLOOR_Y - 4.0), true)]
+					if surface_y(x) < FLOOR_Y:
+						_marks[key].append(_mark(Vector2(x, surface_y(x) - 4.0), false))
+				for shadow: LandingShadow in _marks[key]:
+					shadow.amount = since / landed
+			elif _marks.has(key) and not _marks[key].is_empty():
+				for shadow: LandingShadow in _marks[key]:
+					shadow.queue_free()
+				_marks[key] = []
 			for s in STREAK:
 				var fall: float = since - MARK - s * STREAK_GAP
 				var spark_key := key * 10 + s
@@ -67,7 +67,17 @@ func _tick(t: float) -> void:
 					_sparks[spark_key] = spawn(&"spark", Vector2(x, TOP_Y), false, spark_key)
 				var spark: PhoenixProp = _sparks[spark_key]
 				if spark != null:
-					spark.global_position = Vector2(x, lerpf(TOP_Y, ground - 18.0, pow(fall / FALL, 1.5)))
+					spark.global_position = Vector2(x, lerpf(TOP_Y, FLOOR_Y - 18.0, pow(fall / FALL, 1.5)))
+
+
+func _mark(at: Vector2, column: bool) -> LandingShadow:
+	var shadow := LandingShadow.new()
+	shadow.radius = Vector2(44, 10)
+	shadow.column = column
+	add_child(shadow)
+	shadow.global_position = at
+	shadow.reset_physics_interpolation()
+	return shadow
 
 
 func _is_done() -> bool:

@@ -1,7 +1,8 @@
 extends PhoenixAttack
 ## Explosão de Brasas: o ovo pulsa (aviso) e cospe brasas para o alto que caem em arco onde estão os jogadores
-## (no chão ou numa rocha) e espalhadas; cada uma estoura onde cai. Uma é o ovinho turquesa (parry).
-## args: [x onde cai cada brasa].
+## (no chão ou numa rocha) e espalhadas; cada uma estoura onde cai. Uma é o ovinho turquesa (parry). Logo
+## depois vem uma segunda leva, um passo para cada lado de cada jogador (onde quem desviou costuma parar).
+## args: [x onde cai cada brasa]; de VOLLEY em VOLLEY, uma leva.
 
 const PULSE := 0.6
 const GAP := 0.12
@@ -9,6 +10,8 @@ const FLIGHT := 1.0
 const ARC := 320.0
 const SPLASH := 0.35
 const FROM := Vector2(0, -300)
+const VOLLEY := 5
+const VOLLEY_GAP := 0.9
 
 var _pink := 0
 var _embers: Array[PhoenixProp] = []
@@ -17,7 +20,7 @@ var _state: Array[int] = []
 
 
 func _start() -> void:
-	_pink = rng.randi_range(0, args.size() - 1)
+	_pink = rng.randi_range(0, mini(args.size(), VOLLEY) - 1)
 	_embers.clear()
 	_splashes.clear()
 	_state.clear()
@@ -32,7 +35,7 @@ func _tick(t: float) -> void:
 	bird.shake = 0.35 if t < PULSE else 0.0
 	var from := bird.global_position + FROM
 	for i in args.size():
-		var since: float = t - PULSE - i * GAP
+		var since: float = t - PULSE - (i / VOLLEY) * VOLLEY_GAP - (i % VOLLEY) * GAP
 		if since < 0.0:
 			continue
 		var x := float(args[i])
@@ -59,4 +62,5 @@ func _tick(t: float) -> void:
 
 
 func _is_done() -> bool:
-	return elapsed > PULSE + (args.size() - 1) * GAP + FLIGHT + SPLASH + 0.05
+	var last := args.size() - 1
+	return elapsed > PULSE + (last / VOLLEY) * VOLLEY_GAP + (last % VOLLEY) * GAP + FLIGHT + SPLASH + 0.05

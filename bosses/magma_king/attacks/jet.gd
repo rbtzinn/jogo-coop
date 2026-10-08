@@ -2,24 +2,33 @@ extends MagmaAttack
 ## Rajada: ele toma a pose da altura do jato (esticado = jangadas; cabeça para a frente = peito; curvado com a
 ## cara no chão = rente ao chão), as bochechas brilham e uma linha fina mostra por onde o jato vai passar
 ## (aviso); depois cospe um jato contínuo de magma até a parede (JetBeam). Jangadas: quem está nelas desce;
-## peito: abaixar; chão: pular ou subir numa jangada. Poses em docs/prompts/chatgpt_rei_magma_jato.md.
+## peito: abaixar; chão: pular ou subir numa jangada. São duas rajadas seguidas em alturas diferentes, a segunda
+## com aviso mais curto (fase 3 mais difícil, 08/10/2026). Poses em docs/prompts/chatgpt_rei_magma_jato.md.
 
 const WARN := 0.75
 const OPEN := 0.3
 const FIRE := 1.3
 const RECOVER := 0.35
+const SECOND_WARN := 0.45
+const SECOND_FIRE := 1.0
 const POSES := [&"jet_high", &"jet_mid", &"jet_low"]
 ## O clarão do jato começa um pouco para dentro dos lábios.
 const LIPS := Vector2(40, 0)
 const WALL_X := -10.0
 
+var _poses: Array[StringName] = []
 var _pose := &"jet_mid"
+var _shot := -1
 var _beam: JetBeam
 var _warning: Line2D
 
 
 func _start() -> void:
-	_pose = POSES[rng.randi_range(0, POSES.size() - 1)]
+	var first := rng.randi_range(0, POSES.size() - 1)
+	var second := (first + rng.randi_range(1, POSES.size() - 1)) % POSES.size()
+	_poses = [POSES[first], POSES[second]]
+	_pose = _poses[0]
+	_shot = -1
 	_beam = null
 	_warning = null
 
@@ -29,22 +38,36 @@ func _mouth() -> Vector2:
 
 
 func _tick(t: float) -> void:
+	var first := WARN + OPEN + FIRE
+	if t < first:
+		_shot_tick(0, t, WARN, FIRE)
+	elif t < first + SECOND_WARN + OPEN + SECOND_FIRE:
+		_shot_tick(1, t - first, SECOND_WARN, SECOND_FIRE)
+	else:
+		_shot_tick(1, SECOND_WARN + OPEN + SECOND_FIRE, SECOND_WARN, SECOND_FIRE)
+
+
+func _shot_tick(shot: int, t: float, warn: float, fire: float) -> void:
+	if shot != _shot:
+		_shot = shot
+		_pose = _poses[shot]
+		_stop()
 	var mouth := _mouth()
-	if t < WARN + OPEN:
-		king.pose(_pose, 0 if t < WARN else 1)
-		king.shake = 0.35 if t < WARN else 0.0
+	if t < warn + OPEN:
+		king.pose(_pose, 0 if t < warn else 1)
+		king.shake = 0.35 if t < warn else 0.0
 		if _warning == null:
 			_warning = Line2D.new()
 			_warning.width = 6.0
 			add_child(_warning)
 		_warning.points = PackedVector2Array([to_local(mouth), to_local(Vector2(WALL_X, mouth.y))])
 		# Pisca cada vez mais forte.
-		_warning.default_color = Color(1.0, 0.85, 0.4, 0.25 + 0.5 * absf(sin(t * 18.0)) * minf(t / WARN, 1.0))
+		_warning.default_color = Color(1.0, 0.85, 0.4, 0.25 + 0.5 * absf(sin(t * 18.0)) * minf(t / warn, 1.0))
 		return
 	if _warning != null:
 		_warning.queue_free()
 		_warning = null
-	if t < WARN + OPEN + FIRE:
+	if t < warn + OPEN + fire:
 		king.pose(_pose, 2)
 		king.shake = 0.15
 		if _beam == null:
@@ -61,7 +84,7 @@ func _tick(t: float) -> void:
 
 
 func _is_done() -> bool:
-	return elapsed > WARN + OPEN + FIRE + RECOVER
+	return elapsed > WARN + OPEN + FIRE + SECOND_WARN + OPEN + SECOND_FIRE + RECOVER
 
 
 func _stop() -> void:

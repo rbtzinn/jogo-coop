@@ -32,7 +32,7 @@ shape = SubResource("CircleShape2D_body")
 
 [node name="DamageArea" type="Area2D" parent="."]
 script = ExtResource("2_damage")
-damage = 14
+damage = 11
 interval = 0.05
 max_hits = 10
 

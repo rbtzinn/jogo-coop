@@ -3,27 +3,29 @@ extends Control
 ## Placar da luta em estilo de circo, desenhado por código:
 ## - no topo, o letreiro do chefão com lâmpadas correndo, barra de vida listrada,
 ##   rastro do dano e estrelas marcando onde cada fase começa;
-## - nos cantos de baixo, um "ingresso" pequeno para cada jogador com os corações e as estrelas
-##   de Aplauso (a estrela que está enchendo cresce aos poucos).
+## - nos cantos de baixo, um "ingresso" comprido e baixo para cada jogador com os corações e as estrelas
+##   de Aplauso numa fileira só (a estrela que está enchendo cresce aos poucos). Ele cabe inteiro na faixa
+##   abaixo da linha do chão (y = 1000 em todas as lutas), então nunca tapa aviso nem golpe no chão.
 
 const BAR_PANEL := Vector2(820, 100)
 const BAR_SIZE := Vector2(720, 26)
-## Ingresso de cada jogador (05/10/2026, pedido do usuário: corações e estrelas maiores, fáceis de ler).
-const TICKET := Vector2(500, 140)
-## O ingresso é desenhado menor que isso (06/10/2026, pedido do usuário: corações e estrelas grandes tapavam os
-## golpes no canto da tela).
+## Ingresso de cada jogador, numa fileira só (08/10/2026, pedido do usuário: o ingresso de duas fileiras subia
+## acima do chão e tapava os avisos de golpe nos cantos). Desenhado em TICKET_SCALE: 420 x 46 na tela, entre
+## y = 1026 e 1072, abaixo do chão.
+const TICKET := Vector2(700, 76)
 const TICKET_SCALE := 0.6
-## Onde ficam o picote, a fileira de corações e a de estrelas no ingresso, e o tamanho de cada um.
+## Onde ficam o picote, a fileira de corações e a de estrelas no ingresso, e o tamanho de cada um (cabem
+## até 6 corações antes das estrelas).
 const CUT_X := 140.0
-const HEART_ROW := Vector2(182, 46)
-const HEART_STEP := 54.0
+const HEART_ROW := Vector2(172, 38)
+const HEART_STEP := 50.0
 const HEART_R := 22.0
-const STAR_ROW := Vector2(178, 104)
-const STAR_STEP := 50.0
+const STAR_ROW := Vector2(480, 38)
+const STAR_STEP := 48.0
 const STAR_R := 20.0
 ## Dourado forte das estrelas cheias (o dourado da interface é claro demais no papel do ingresso).
 const STAR_GOLD := Color("ffb627")
-const MARGIN := 12.0
+const MARGIN := 8.0
 const HEART_RED := Color("d23a3a")
 const HEART_EMPTY := Color("4a3b31")
 const STAR_EMPTY := Color("5a4a36")

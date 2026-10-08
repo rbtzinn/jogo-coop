@@ -12,7 +12,7 @@ extends BossBrain
 
 const CRACK_HP := 45
 const OPEN_TIME := 3.0
-const STUN_TIME := 4.0
+const STUN_TIME := 3.0
 const STUN_DAMAGE := 2
 const HEAL_SHARE := 0.3
 
@@ -77,8 +77,17 @@ func _args_for(attack_name: StringName) -> Array:
 		&"Eggs":
 			return _targets(3)
 		&"EmberBurst":
-			return _targets(5)
+			return _targets(5) + _dodge_targets(5)
+		&"Rings":
+			return _targets(2)
 	return []
+
+
+## Fase 3 quase sem respiro entre os ataques (antes era a fase mais fácil: o ovo parado com pausas longas).
+func _on_attack_finished() -> void:
+	super()
+	if phase == 2:
+		_wait *= 0.4
 
 
 ## Tiro numa rachadura do ovo (no cérebro; o dano do cliente chega aqui pela rede).
@@ -196,6 +205,18 @@ func _on_defeated() -> void:
 		tween.tween_callback(bird.pose.bind(&"defeat", i))
 		tween.tween_interval(0.6)
 	tween.tween_property(bird, "global_position:x", 1250.0, 1.2)
+
+
+## Para onde quem desviou da primeira leva vai: um passo para um lado ou para o outro de cada jogador.
+func _dodge_targets(count: int) -> Array:
+	var targets: Array = []
+	for player in alive_players():
+		for side in [-1.0, 1.0]:
+			if targets.size() < count:
+				targets.append(clampf(player.global_position.x + side * _brain_rng.randf_range(150.0, 220.0), 90.0, 1420.0))
+	while targets.size() < count:
+		targets.append(_brain_rng.randf_range(120.0, 1400.0))
+	return targets
 
 
 func _targets(count: int) -> Array:

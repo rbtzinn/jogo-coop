@@ -57,6 +57,13 @@ func _args_for(attack_name: StringName) -> Array:
 	return []
 
 
+## Fase 3 quase sem respiro entre os ataques (era a fase mais fácil).
+func _on_attack_finished() -> void:
+	super()
+	if phase == 2:
+		_wait *= 0.45
+
+
 func _can_choose(attack_name: StringName) -> bool:
 	return attack_name != &"IronGrip" or alive_players().size() >= 2
 
@@ -116,6 +123,8 @@ func prop_kinds() -> Dictionary:
 		&"spark": {"frames": ["spark_1", "spark_2", "spark_3", "spark_4"], "scale": 0.28, "fps": 10.0, "circle": 20.0, "anchor": "center"},
 		&"ember": {"frames": ["ember_1", "ember_2", "ember_3", "ember_4"], "scale": 0.32, "fps": 10.0, "circle": 24.0, "anchor": "center"},
 		&"wave": {"frames": ["wave_1", "wave_2", "wave_3", "wave_4"], "scale": 0.5, "fps": 10.0, "rect": Vector2(170, 64), "at": Vector2(0, -32), "anchor": "bottom"},
+		# Um estouro da fissura que corre pelo chão (o mesmo desenho da onda, menor e tocado uma vez no lugar).
+		&"pop": {"frames": ["wave_1", "wave_2", "wave_3", "wave_4"], "scale": 0.34, "fps": 0.0, "rect": Vector2(110, 60), "at": Vector2(0, -30), "anchor": "bottom"},
 		&"air_wave": {"frames": ["ember_1", "ember_2", "ember_3", "ember_4"], "scale": 0.72, "draw_size": Vector2(170, 64), "fps": 10.0, "rect": Vector2(170, 64), "anchor": "center"},
 		&"channel": {"frames": ["channel_1", "channel_2"], "scale": 0.42, "fps": 0.0, "rect": Vector2(590, 38), "at": Vector2(0, -19), "anchor": "bottom"},
 		&"platform_heat": {"frames": ["ember_1", "ember_2", "ember_3", "ember_4"], "scale": 0.32, "fps": 10.0, "rect": Vector2(280, 38), "at": Vector2(0, -19), "anchor": "bottom"},

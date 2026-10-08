@@ -145,7 +145,7 @@ func _run() -> void:
 	while jet.is_running():
 		await get_tree().physics_frame
 	seen = await run_attack(boss, &"CrownOrbit", 32)
-	check(seen.get(&"orbit_crown", 0) == 1, "crown orbit spirals out")
+	check(seen.get(&"orbit_crown", 0) == 2, "crown orbit spirals out (two crowns)")
 	seen = await run_attack(boss, &"SpitFast", 33)
 	check(seen.get(&"ball", 0) + seen.get(&"gem", 0) >= 1, "fast spit in phase 3")
 

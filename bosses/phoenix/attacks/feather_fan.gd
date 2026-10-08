@@ -1,11 +1,13 @@
 extends PhoenixAttack
 ## Leque de Penas: ela ergue as asas (aviso) e bate; penas de brasa caem girando do alto em duas levas, cada
 ## uma com um buraco sorteado. Caem em cima das rochas também (param no tampo). Uma pena é turquesa (parry).
-## Na fase 3 (`from_sky`) as penas caem sozinhas do céu de cinzas, sem a ave.
+## Na fase 3 (`from_sky`) as penas caem sozinhas do céu de cinzas, sem a ave, em três levas e mais rápidas.
 
 const RAISE := 0.6
 const FLAP := 0.25
 const WAVES := [0.7, 1.6]
+const SKY_WAVES := [0.4, 1.05, 1.7]
+const SKY_FALL := 1.3
 const SHIFT := 145.0
 const COLUMNS := 6
 const SPACING := 290.0
@@ -16,16 +18,20 @@ const SWAY := 45.0
 
 @export var from_sky := false
 
+var _waves: Array = []
+var _fall := FALL
 var _gaps: Array[int] = []
 var _pink := Vector2i(-1, -1)
 var _feathers := {}
 
 
 func _start() -> void:
+	_waves = SKY_WAVES if from_sky else WAVES
+	_fall = SKY_FALL if from_sky else FALL
 	_gaps.clear()
-	for w in WAVES.size():
+	for w in _waves.size():
 		_gaps.append(rng.randi_range(0, COLUMNS - 1))
-	var wave := rng.randi_range(0, WAVES.size() - 1)
+	var wave := rng.randi_range(0, _waves.size() - 1)
 	var column := (_gaps[wave] + rng.randi_range(1, COLUMNS - 1)) % COLUMNS
 	_pink = Vector2i(wave, column)
 	_feathers.clear()
@@ -41,17 +47,17 @@ func _tick(t: float) -> void:
 			bird.shake = 0.0
 		else:
 			bird.pose(&"wings", 3)
-	for w in WAVES.size():
+	for w in _waves.size():
 		for c in COLUMNS:
 			if c == _gaps[w]:
 				continue
 			var key := w * COLUMNS + c
-			var since: float = t - WAVES[w] - c * 0.05
+			var since: float = t - _waves[w] - c * 0.05
 			if since < 0.0:
 				continue
-			var x := FIRST_X + c * SPACING + (SHIFT if w == 1 else 0.0)
+			var x := FIRST_X + c * SPACING + (SHIFT if w % 2 == 1 else 0.0)
 			var ground := surface_y(x)
-			if since >= FALL:
+			if since >= _fall:
 				if _feathers.has(key):
 					free_prop(_feathers[key])
 					_feathers[key] = null
@@ -62,10 +68,10 @@ func _tick(t: float) -> void:
 			var feather: PhoenixProp = _feathers[key]
 			if feather == null:
 				continue
-			var u: float = since / FALL
+			var u: float = since / _fall
 			feather.global_position = Vector2(x + sin(u * TAU * 1.5 + c) * SWAY, lerpf(TOP_Y, ground - 24.0, u))
 			feather.spin = sin(u * TAU * 1.5 + c) * 0.6
 
 
 func _is_done() -> bool:
-	return elapsed > WAVES[-1] + COLUMNS * 0.05 + FALL + 0.05
+	return elapsed > _waves[-1] + COLUMNS * 0.05 + _fall + 0.05

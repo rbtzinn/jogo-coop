@@ -4,8 +4,10 @@ enum Pattern { HAMMER, SHOES, BELLOWS, CHANNEL, ANVILS, GRIP, SPIN, STOMP, CHEST
 @export var pattern := Pattern.HAMMER
 
 const GRIP_WINDUP_END := 0.34
-## Giro e pisão: a partir daqui ele fica cansado com o peito aberto até o fim do ataque.
-const TIRED_FROM := 3.5
+## Fissura: distância entre os estouros, velocidade com que ela corre e quanto dura cada estouro.
+const POP_STEP := 115.0
+const POP_SPEED := 640.0
+const POP_TIME := 0.42
 const GRIP_CAST_END := 0.95
 ## Segurando: puxa o boneco (REEL), gira ele no alto da corrente (WHIRL) e bate no chão (SLAM).
 const GRIP_REEL := 0.45
@@ -113,8 +115,6 @@ func _tick(t: float) -> void:
 				var since := t - 0.4
 				if since >= 0.0 and since < 4 * 0.45:
 					actor.pose(&"throw", int(fposmod(since, 0.45) / 0.45 * 4.0))
-			elif t >= TIRED_FROM:
-				_tired()
 			else:
 				# O quadro com chão quebrado só aparece depois da aterrissagem.
 				actor.pose(&"armor", 4 if t < 0.8 else (1 if t < 1.6 else 5))
@@ -137,17 +137,16 @@ func _tick(t: float) -> void:
 		Pattern.SPIN:
 			_forge_pose(t, true)
 			actor.pose(&"armor", 1 if t < 0.9 else 3)
-			if t >= TIRED_FROM:
-				hide_prop("hammer")
-				_tired()
-			elif t >= 0.9:
+			if t >= 0.9:
 				var angle := (t - 0.9) * TAU * 0.75
 				var head := prop("hammer", &"hammer", actor.global_position + Vector2(-140 + cos(angle) * 180, -180 + sin(angle) * 130) * actor.scale.x)
 				head.spin = angle
 				# O desenho do giro já traz o martelo e o rastro de fogo: o martelo solto só machuca (sem aparecer
 				# por cima, que dava três martelos na tela).
 				head.visible = false
+			# Duas fissuras seguidas: pular uma e já se preparar para a outra.
 			_waves(t, 1.2, actor.global_position.x - 140)
+			_waves(t, 2.4, actor.global_position.x - 140, "b")
 		Pattern.CHEST:
 			actor.pose(&"armor", 6 if t < 2.2 else 2)
 			boss.set_chest(t >= 0.5 and t < 2.2)
@@ -171,26 +170,37 @@ func _forge_pose(t: float, armored := false) -> void:
 		actor.idle()
 
 
-## Fase 3: cansado depois do giro e do pisão, ele abre o peito por um instante (a hora de atacar). Antes o peito
-## só abria no ataque próprio e a armadura parecia não levar dano nenhum.
-func _tired() -> void:
-	actor.pose(&"armor", 6)
-	boss.set_chest(true)
-
-
-func _waves(t: float, start: float, x: float) -> void:
-	var levels := surface_levels()
-	for lane in levels.size():
-		var s := t - start - lane * 0.12
-		var key := "wave%d" % lane
-		if s >= 0 and s < 3.0:
-			if lane == 0:
-				prop(key, &"wave", Vector2(x - s * 640, 1000))
-			else:
-				# Sem apoio contínuo: brasas no ar, sem pedras ou pedaços de piso.
-				prop(key, &"air_wave", Vector2(x - s * 640, levels[lane] - 32))
-		elif s >= 3.0:
+## Fissura no chão: a partir de `x`, o chão estoura em sequência para a esquerda (um estouro a cada POP_STEP, na
+## velocidade da antiga onda), e também no tampo das plataformas que estiverem em cima de cada ponto. Cada estouro
+## toca o desenho uma vez no lugar e só machuca no começo. Substitui a onda que deslizava e as brasas soltas no ar
+## das plataformas (o usuário achou feio, 08/10/2026).
+func _waves(t: float, start: float, x: float, tag := "") -> void:
+	var k := 0
+	while x - k * POP_STEP > -60.0:
+		var at := x - k * POP_STEP
+		var u := (t - start - k * POP_STEP / POP_SPEED) / POP_TIME
+		k += 1
+		var key := "pop%s%d" % [tag, k]
+		if u < 0.0:
+			continue
+		if u >= 1.0:
 			hide_prop(key)
+			for platform in boss.get_parent().get_children():
+				if platform is ClockPlatform:
+					hide_prop("%s:%s" % [key, platform.name])
+			continue
+		var pop := prop(key, &"pop", Vector2(at, 1000))
+		pop.frame = mini(int(u * 4.0), 3)
+		pop.active = u < 0.5
+		for platform in boss.get_parent().get_children():
+			if not platform is ClockPlatform or not platform.visible:
+				continue
+			var on_key := "%s:%s" % [key, platform.name]
+			if absf(at - platform.global_position.x) > platform.width * 0.5 and not _props.has(on_key):
+				continue
+			var top := prop(on_key, &"pop", Vector2(at, platform.global_position.y), false, platform)
+			top.frame = pop.frame
+			top.active = pop.active and absf(at - platform.global_position.x) <= platform.width * 0.5
 
 
 func _grab_tick(t: float) -> void:
@@ -306,7 +316,7 @@ func _stop() -> void:
 
 
 func _is_done() -> bool:
-	var durations := [4.4, 5.9, 5.3, 4.2, 3.7, 4.7, 4.6, 5.1, 5.8, 1.5, 1.5]
+	var durations := [4.4, 5.9, 5.3, 4.2, 3.7, 4.7, 4.9, 4.4, 5.8, 1.5, 1.5]
 	return elapsed >= durations[pattern]
 
 

@@ -105,6 +105,10 @@ func use_test() -> void:
 	test_mode = true
 	for key in PLAYER_KEYS:
 		data.players[key].tickets = maxi(int(data.players[key].tickets), TEST_TICKETS)
+		# Tudo no máximo: todos os itens da loja já comprados (só escolher no camarim).
+		for item_id: String in Catalog.items():
+			if not data.players[key].items.has(item_id):
+				data.players[key].items.append(item_id)
 	save_game()
 
 

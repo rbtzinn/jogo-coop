@@ -1,7 +1,7 @@
 extends MagmaAttack
 ## Cuspe Real: engole uma tocha, as bochechas incham e brilham (aviso) e ele cospe bolas de lava em
 ## arco; cada uma deixa uma poça onde cai (no chão ou em cima de uma jangada) por um instante. Às vezes uma das bolas é a gema turquesa
-## (parry), que não deixa poça. Na fase 3 (`fast`) é mais rápido e com 4 bolas.
+## (parry), que não deixa poça. Na fase 3 (`fast`) é mais rápido e com 6 bolas.
 ## args: [x onde cai cada bola] (o host mira nos jogadores e espalha o resto).
 
 const SWALLOW := 0.45

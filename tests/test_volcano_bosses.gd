@@ -106,7 +106,7 @@ func _forge() -> void:
 	check(scene.get_node("Anvil").visible and scene.get_node("Anvil").z_index > boss.z_index,
 			"the work anvil stays in front of Bigorna during the hammer phase")
 	var seen := await run_attack(boss, &"Hammer")
-	check(seen.has(&"wave") and seen.has(&"spark"), "hammer creates floor waves and sparks")
+	check(seen.has(&"pop") and seen.has(&"spark"), "hammer creates floor waves and sparks")
 	seen = await run_attack(boss, &"Horseshoes")
 	check(seen.has(&"shoe") and seen.has(&"shoe_parry"), "horseshoes include a turquoise parry")
 	seen = await run_attack(boss, &"Bellows")

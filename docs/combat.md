@@ -46,7 +46,7 @@ Decisões tomadas pelo Claude enquanto o usuário estava fora (revisar):
 
 - **Botão Especial** em Configurações > Controles. O aperto fica guardado 0,2 s (apertado no meio do dash, sai quando o dash acaba). Caído, nada acontece.
 - **Tiro EX "Rolhão"** (pistola Rolha): rolha gigante na direção da mira que atravessa o chefão, "afunda" nele (fica mais lenta enquanto encosta) e acerta até **6 vezes x 5 de dano = 30** (o tiro normal dá 1 por rolha). Recuo de 0,25 s: empurra para trás, sem atirar; **no ar, fica pairando**; o dash corta o recuo. Não é invencível.
-- **Torta na Cara**: o palhaço para (até no ar), ergue a torta (0,38 s) e arremessa na direção da mira; a torta cruza a tela, afunda no chefão e acerta até **10 x 14 = 140**. Invencível por 0,75 s + 0,2 s.
+- **Torta na Cara**: o palhaço para (até no ar), ergue a torta (0,38 s) e arremessa na direção da mira; a torta cruza a tela, afunda no chefão e acerta até **10 x 11 = 110** (era 14; diminuído em 08/10/2026 a pedido do usuário). Invencível por 0,75 s + 0,2 s.
 - **Salto Mortal**: a acrobata agacha (0,12 s) e salta em arco de 760 px para o lado em que olha, 400 px de altura, girando 2 voltas; acerta até **7 x 20 = 140** (mais nas costas do leão, que levam dano dobrado). Invencível o salto inteiro + 0,3 s. Se pousar antes (num pedestal), acaba ali.
 - **O especial não enche a barra** (como no Cuphead): só os tiros normais e os parries dão estrelas.
 - **Número Perfeito**: depois que um jogador estoura o objeto rosa, o parceiro ainda consegue dar parry nele por 0,3 s (o objeto já sumiu, mas a área continua). Cada um ganha 2 estrelas; flash dourado, letreiro "Número Perfeito!". Online: se em qualquer um dos PCs a diferença couber em 0,3 s, conta para os dois (favorável a quem joga).

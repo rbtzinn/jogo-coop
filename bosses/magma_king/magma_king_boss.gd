@@ -38,12 +38,19 @@ func _ready() -> void:
 
 
 ## Dados que só o host sabe (onde estão os jogadores, para onde ele anda) e os dois PCs precisam.
+## Fase 3 quase sem respiro entre os ataques (era a fase mais fácil, com menos vida).
+func _on_attack_finished() -> void:
+	super()
+	if phase == 2:
+		_wait *= 0.45
+
+
 func _args_for(attack_name: StringName) -> Array:
 	match attack_name:
 		&"Spit":
 			return _spit_targets(3)
 		&"SpitFast":
-			return _spit_targets(4)
+			return _spit_targets(6)
 		&"LavaWave":
 			return _wade()
 		&"Drip":
