@@ -217,6 +217,11 @@ func _heart() -> void:
 	check(seen.has(&"drop_parry"), "Heart drops turquoise parry targets")
 	await advance(boss)
 	check(boss.phase == 1, "Heart enters the three seals phase")
+	# Longe das válvulas e com a máscara fechada (fora do online uma válvula já abre).
+	for player: Player in get_tree().get_nodes_in_group(&"players"):
+		player.position = Vector2(900, 1000)
+	boss._open_until = -1.0
+	await frames(2)
 	var closed_health := boss.health.current
 	boss.apply_damage(4, "test", "mask")
 	check(boss.health.current == closed_health, "closed stone mask blocks damage until the valves open")
@@ -230,11 +235,9 @@ func _heart() -> void:
 	right.position = Vector2(900, 1000)
 	left.velocity = Vector2.ZERO
 	right.velocity = Vector2.ZERO
-	await frames(80)
-	check(not boss.is_mask_open(), "duo: one valve alone does not open the mask")
-	right.position = Vector2(VolcanoHeartBoss.VALVES[1], 1000)
 	await frames(85)
-	check(boss.is_mask_open(), "duo: holding both valves opens the mask")
+	# Fora do online (Testar sozinho: dois personagens, um controlado) uma válvula basta.
+	check(boss.is_mask_open(), "offline with two characters: one valve opens the mask")
 	var before := boss.health.current
 	boss.apply_damage(4, "test", "mask")
 	check(before - boss.health.current == 8, "open mask doubles shot damage")

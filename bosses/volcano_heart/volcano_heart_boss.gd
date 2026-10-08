@@ -45,8 +45,10 @@ func _ready() -> void:
 	_mask_anim = load(actor.art_folder + "mask.tres")
 	for x in VALVES:
 		var sprite := Sprite2D.new()
-		sprite.position = Vector2(x, 1072)
-		sprite.z_index = 1
+		# Em pé no chão, atrás dos jogadores (antes ficava em y = 1072, quase toda abaixo da tela e embaixo do
+		# ingresso dos jogadores: não dava para ver que era para pisar nela).
+		sprite.position = Vector2(x, 942)
+		sprite.z_index = -1
 		get_parent().add_child.call_deferred(sprite)
 		_valve_sprites.append(sprite)
 	for i in 3:
@@ -111,7 +113,9 @@ func _tick_valves(delta: float) -> void:
 	if is_mask_open() or _clock < _cooldown_until:
 		valve_charge = 0.0
 		return
-	var duo := alive.size() >= 2
+	# Duas válvulas só no online com os dois de pé. No Testar sozinho os dois personagens existem, mas só um
+	# é controlado: pedia as duas e a máscara nunca abria (a vida não descia).
+	var duo := Network.is_online() and alive.size() >= 2
 	var ready: bool = (_pressed_until[0] > _clock and _pressed_until[1] > _clock) if duo else (valve_pressed[0] or valve_pressed[1])
 	valve_charge = minf(VALVE_HOLD, valve_charge + delta) if ready else 0.0
 	if valve_charge >= VALVE_HOLD:
