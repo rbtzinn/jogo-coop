@@ -3,7 +3,8 @@ extends Node
 ## Números de dupla do jogador (docs/shop.md) e a isca da Fumaça do Mágico:
 ## - Catapulta: dar dash encostando no parceiro arremessa você bem alto, invencível na subida;
 ## - Pirâmide Humana: cair na cabeça do parceiro conta como parry (no máximo 1 vez a cada 5 s);
-## - Resgate (sem item): ficar encostado no balão do parceiro caído por RESCUE_HOLD revive ele (até 06/10/2026
+## - Resgate (sem item): somar RESCUE_HOLD encostado no balão do parceiro caído revive ele (o progresso cai devagar
+##   longe do balão, em vez de zerar; até 06/10/2026
 ##   era com parry, como no Cuphead);
 ## - Rede de Segurança: o balão do parceiro caído sobe mais devagar e o resgate é na hora, só encostando;
 ## - (Rolha Turbinada fica no Projectile.)
@@ -15,8 +16,11 @@ const DECOY_TIME := 1.0
 ## Folga (px) para pegar a cabeça do parceiro.
 const HEAD_REACH := 45.0
 ## Resgate: quanto tempo encostado no balão (s) e até onde vale "encostado" (do balão até o peito, px).
-const RESCUE_HOLD := 1.0
-const RESCUE_REACH := 110.0
+## Até 08/10/2026 eram 1 s e 110 px, zerando ao se afastar: o balão sobe 190 px/s e quase nunca dava.
+const RESCUE_HOLD := 0.6
+const RESCUE_REACH := 140.0
+## Quanto o progresso cai por segundo longe do balão (fração do tempo encostado).
+const RESCUE_DECAY := 0.25
 
 ## Boneco de fumaça que distrai os ataques teleguiados (INF = nenhum).
 var decoy := Vector2.INF
@@ -106,10 +110,11 @@ func _check_rescue(delta: float) -> void:
 		_stop_rescue()
 		return
 	var target: Player = null
+	var touching := false
 	for other in _partners(true):
-		if other.player_health.can_be_revived() \
-				and other.balloon.global_position.distance_to(_player.global_position + Vector2(0, -70)) < RESCUE_REACH:
+		if other.player_health.can_be_revived():
 			target = other
+			touching = other.balloon.global_position.distance_to(_player.global_position + Vector2(0, -70)) < RESCUE_REACH
 			break
 	if target != _rescue_target:
 		_stop_rescue()
@@ -117,7 +122,8 @@ func _check_rescue(delta: float) -> void:
 	if target == null:
 		return
 	var hold := 0.0 if _player.loadout.duo == "safety_net" else RESCUE_HOLD
-	_rescue += delta
+	# Longe do balão o progresso cai devagar em vez de zerar: dá para resgatar em vários pulos.
+	_rescue = _rescue + delta if touching else maxf(_rescue - delta * RESCUE_DECAY, 0.0)
 	target.balloon.rescue_progress = _rescue / hold if hold > 0.0 else 1.0
 	if _rescue < hold:
 		return
