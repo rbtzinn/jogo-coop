@@ -50,7 +50,7 @@ def main():
         ("arremesso", 4, 1, 4, 0.78, "throw"),
         ("fole", 4, 1, 4, 0.78, "bellows"),
         ("andando", 4, 2, 8, 1.0, "walk"),
-        ("armadura", 4, 2, 8, 1.22, "armor"),
+        ("armadura", 4, 2, 8, 1.38, "armor"),  # v2 (08/10/2026): sem martelo nas costas, desenho menor na célula
         ("derrota", 4, 1, 4, 0.78, "defeat"),
     ]
     for sheet, cols, rows, n, scale, name in forge_animations:
