@@ -204,7 +204,7 @@ func update_pose(delta: float, velocity: Vector2, on_floor: bool, dashing: bool,
 		_phase = 0.0
 
 	if puppet != null:
-		puppet.update_pose(delta, velocity, on_floor, aim, run_speed)
+		puppet.update_pose(delta, velocity, on_floor and not dashing, aim, run_speed, ease(_crouch, -2.0))
 	_update_body(delta, velocity, on_floor, dashing, running, crouching)
 	_update_legs(velocity, on_floor, dashing, running)
 	_update_frames(velocity, running, on_floor and not dashing and not running and not crouching,
@@ -437,7 +437,7 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 	if ending_drawn:
 		_idle_since = _time
 	_show_puppet(_puppet_enabled() and not (captured_drawn or parrying or special_drawn or hurt_drawn or dashing
-			or crouch_drawn or ending_drawn))
+			or ending_drawn))
 	if _puppet_shown:
 		return
 	var use_frames := captured_drawn or parrying or special_drawn or hurt_drawn or dash_drawn or crouch_drawn or jump_drawn or run_drawn or idle_drawn

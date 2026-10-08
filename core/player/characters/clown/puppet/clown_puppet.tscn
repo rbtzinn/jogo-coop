@@ -13,11 +13,18 @@
 [ext_resource type="Texture2D" path="res://core/player/characters/clown/puppet/art/hat.png" id="11_hat"]
 [ext_resource type="Texture2D" path="res://core/player/characters/clown/puppet/art/flower.png" id="12_flower"]
 [ext_resource type="Texture2D" path="res://core/player/characters/shared/guns/glove_cork_gun.png" id="13_gun"]
+[ext_resource type="Texture2D" path="res://core/player/characters/clown/puppet/art/head_surprise.png" id="14_surprise"]
+[ext_resource type="Texture2D" path="res://core/player/characters/clown/puppet/art/head_effort.png" id="15_effort"]
+[ext_resource type="Texture2D" path="res://core/player/characters/clown/puppet/art/glove_open.png" id="16_open"]
 
 [node name="ClownPuppet" type="Node2D"]
 script = ExtResource("1_puppet")
 face_happy = ExtResource("9_happy")
 face_blink = ExtResource("10_blink")
+face_surprise = ExtResource("14_surprise")
+face_effort = ExtResource("15_effort")
+hand_fist = ExtResource("5_fist")
+hand_open = ExtResource("16_open")
 
 [node name="BackArm" type="Node2D" parent="."]
 texture_repeat = 2
