@@ -11,6 +11,8 @@ var idle_frames := PackedInt32Array()
 @export var contact_size := Vector2(210, 300)
 ## Mantém os desenhos largos dentro da borda, sem recortar os golpes.
 @export var right_edge := INF
+## Igual ao `right_edge`, do lado esquerdo (chefão que troca de lado).
+@export var left_edge := -INF
 
 var facing := -1
 var pose_animation := &""
@@ -78,6 +80,11 @@ func _process(delta: float) -> void:
 		var right := maxf(rect.position.x * _sprite.scale.x * _holder.scale.x,
 			rect.end.x * _sprite.scale.x * _holder.scale.x)
 		_holder.position.x = minf(0.0, (right_edge - global_position.x) / absf(global_scale.x) - right)
+	if is_finite(left_edge):
+		var rect := _sprite.get_rect()
+		var left := minf(rect.position.x * _sprite.scale.x * _holder.scale.x,
+			rect.end.x * _sprite.scale.x * _holder.scale.x)
+		_holder.position.x = maxf(_holder.position.x, (left_edge - global_position.x) / absf(global_scale.x) - left)
 	_sprite.modulate = Color(1.8, 1.6, 1.4) if _flash > 0.0 else Color.WHITE
 
 

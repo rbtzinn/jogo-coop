@@ -213,7 +213,7 @@ func _run() -> void:
 	if role == "client":
 		heart.actor.hurtbox.take_hit(3, String(me().name))
 	await wait(0.6)
-	check(hp - heart.health.current == 6, "client shot benefits from the host valve window")
+	check(hp - heart.health.current == 9, "client shot benefits from the host valve window")
 	await meet("eruption")
 	if role == "host":
 		heart.health.damage(heart.health.current - heart.phase_end_health())

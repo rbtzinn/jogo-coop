@@ -193,8 +193,12 @@ func _solo() -> void:
 			var player: Player = boss.alive_players()[0]
 			player.position = Vector2(VolcanoHeartBoss.VALVES[0], 1000)
 			player.velocity = Vector2.ZERO
-			await frames(75)
-			check((boss as VolcanoHeartBoss).is_mask_open(), "solo Heart opens with one pressure valve")
+			await frames(20)
+			check(not (boss as VolcanoHeartBoss).is_mask_open(), "solo: one lit valve is not enough")
+			player.position = Vector2(VolcanoHeartBoss.VALVES[1], 1000)
+			player.velocity = Vector2.ZERO
+			await frames(20)
+			check((boss as VolcanoHeartBoss).is_mask_open(), "solo Heart opens by lighting one valve and running to the other")
 		scene.queue_free()
 		await frames(5)
 	PlayerSpawner.solo_slot = -1
@@ -235,12 +239,19 @@ func _heart() -> void:
 	right.position = Vector2(900, 1000)
 	left.velocity = Vector2.ZERO
 	right.velocity = Vector2.ZERO
-	await frames(85)
-	# Fora do online (Testar sozinho: dois personagens, um controlado) uma válvula basta.
-	check(boss.is_mask_open(), "offline with two characters: one valve opens the mask")
+	await frames(20)
+	check(not boss.is_mask_open(), "one lit valve alone does not open the mask")
+	right.position = Vector2(VolcanoHeartBoss.VALVES[1], 1000)
+	await frames(20)
+	check(boss.is_mask_open(), "both valves lit at the same time open the mask")
 	var before := boss.health.current
 	boss.apply_damage(4, "test", "mask")
-	check(before - boss.health.current == 8, "open mask doubles shot damage")
+	check(before - boss.health.current == 12, "open mask triples shot damage")
+	seen = await run_attack(boss, &"Cross", [300.0, 900.0, 600.0, 1200.0])
+	check(seen.has(&"ball"), "cross drops lava balls")
+	check(boss.side == -1 and boss.actor.position == VolcanoHeartBoss.HOME_LEFT, "cross moves the heart to the left")
+	seen = await run_attack(boss, &"Cross", [300.0, 900.0, 600.0, 1200.0])
+	check(boss.side == 1 and boss.actor.position == VolcanoHeartBoss.HOME, "cross back to the right")
 	await photo("coracao_valvulas")
 	left.position.x = 750
 	right.position.x = 1100
@@ -249,8 +260,11 @@ func _heart() -> void:
 	right.player_health.is_downed = true
 	left.position = Vector2(VolcanoHeartBoss.VALVES[0], 1000)
 	left.velocity = Vector2.ZERO
-	await frames(75)
-	check(boss.is_mask_open() and boss._open_until - boss._clock <= 3.0, "one survivor opens one valve for 3 seconds")
+	await frames(20)
+	left.position = Vector2(VolcanoHeartBoss.VALVES[1], 1000)
+	left.velocity = Vector2.ZERO
+	await frames(20)
+	check(boss.is_mask_open(), "one survivor lights both valves alone")
 	right.player_health.is_downed = false
 	await advance(boss)
 	check(boss.phase == 2 and scene.get_node("Floor/CollisionShape2D").disabled, "eruption removes the solid floor")

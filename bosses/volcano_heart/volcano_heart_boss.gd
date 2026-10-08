@@ -2,13 +2,20 @@ class_name VolcanoHeartBoss
 extends BossBrain
 ## Final do Vulcão. O host arbitra as válvulas; cada PC resolve a queda do seu jogador na lava.
 const HOME := Vector2(1680, 540)
+## Onde ele fica depois da Travessia para a esquerda.
+const HOME_LEFT := Vector2(240, 540)
+## Dano dos tiros com a máscara aberta (só aí ele leva dano na fase dos selos).
+const OPEN_DAMAGE := 3
 const VALVES := [400.0, 1420.0]
-const VALVE_HOLD := 1.0
-const VALVE_GRACE := 1.0
-const OPEN_DUO := 5.0
-const OPEN_SOLO := 3.0
+## Válvulas (ideia do usuário, 08/10/2026): pisou, ela trava acesa por VALVE_LATCH; com as duas acesas ao mesmo
+## tempo a máscara abre por OPEN_TIME, depois fecha sozinha e as duas apagam (pisar de novo). Sozinho dá tempo de
+## acender uma e correr até a outra.
+const VALVE_LATCH := 4.0
+const OPEN_TIME := 5.0
 
 var stage_clock := 0.0
+## Lado da arena em que ele está: 1 direita, -1 esquerda (troca na Travessia, nos dois PCs).
+var side := 1
 var _clock := 0.0
 var _open_until := -1.0
 var _cooldown_until := -1.0
@@ -30,7 +37,7 @@ func _init() -> void:
 	phase_shares = [0.35, 0.35, 0.3]
 	phase_titles = ["Batimento", "Os Três Selos!", "Erupção!"]
 	phase_attacks = [[&"Pulse", &"Arteries", &"TurquoiseDrops"],
-		[&"EchoCrown", &"EchoFeathers", &"EchoHorseshoes"], [&"MagmaFan", &"Charge"]]
+		[&"EchoCrown", &"EchoFeathers", &"EchoHorseshoes", &"Cross"], [&"MagmaFan", &"Charge", &"Cross"]]
 	phase_intros = [&"", &"IntroSeals", &"IntroEruption"]
 
 
@@ -39,16 +46,17 @@ func _ready() -> void:
 	z_index = 2
 	actor.position = HOME
 	actor.right_edge = 1908.0
+	actor.left_edge = 12.0
 	actor.hitbox.active = false
 	connect_hurtbox(actor.hurtbox, actor, "mask")
 	_valve_anim = load(actor.art_folder + "valve.tres")
 	_mask_anim = load(actor.art_folder + "mask.tres")
 	for x in VALVES:
 		var sprite := Sprite2D.new()
-		# Em pé no chão, atrás dos jogadores (antes ficava em y = 1072, quase toda abaixo da tela e embaixo do
-		# ingresso dos jogadores: não dava para ver que era para pisar nela).
+		# Em pé no chão, na frente do fundo e atrás dos jogadores (que ficam em z 3). Antes ficava em y = 1072,
+		# quase toda abaixo da tela e embaixo do ingresso: não dava para ver que era para pisar nela.
 		sprite.position = Vector2(x, 942)
-		sprite.z_index = -1
+		sprite.z_index = 1
 		get_parent().add_child.call_deferred(sprite)
 		_valve_sprites.append(sprite)
 	for i in 3:
@@ -100,26 +108,21 @@ func _process(_delta: float) -> void:
 		_open_mask.scale = Vector2.ONE * _mask_anim.frame_scale
 
 
-func _tick_valves(delta: float) -> void:
-	var alive := alive_players()
-	valve_pressed = [false, false]
-	for player in alive:
-		if absf(player.global_position.y - 1000) > 14 or absf(player.velocity.y) > 30:
+func _tick_valves(_delta: float) -> void:
+	var waiting := not is_mask_open() and _clock >= _cooldown_until
+	for player in alive_players():
+		if not waiting or absf(player.global_position.y - 1000) > 14 or absf(player.velocity.y) > 30:
 			continue
 		for i in 2:
 			if absf(player.global_position.x - VALVES[i]) < 90:
-				valve_pressed[i] = true
-				_pressed_until[i] = _clock + VALVE_GRACE
-	if is_mask_open() or _clock < _cooldown_until:
-		valve_charge = 0.0
-		return
-	# Duas válvulas só no online com os dois de pé. No Testar sozinho os dois personagens existem, mas só um
-	# é controlado: pedia as duas e a máscara nunca abria (a vida não descia).
-	var duo := Network.is_online() and alive.size() >= 2
-	var ready: bool = (_pressed_until[0] > _clock and _pressed_until[1] > _clock) if duo else (valve_pressed[0] or valve_pressed[1])
-	valve_charge = minf(VALVE_HOLD, valve_charge + delta) if ready else 0.0
-	if valve_charge >= VALVE_HOLD:
-		_open_until = _clock + (OPEN_DUO if duo else OPEN_SOLO)
+				_pressed_until[i] = _clock + VALVE_LATCH
+	# Acesa = pisada há menos de VALVE_LATCH (ou a máscara está aberta).
+	for i in 2:
+		valve_pressed[i] = is_mask_open() or _pressed_until[i] > _clock
+	# Quanto falta para a última acesa apagar (vai para o cliente junto).
+	valve_charge = maxf(maxf(_pressed_until[0], _pressed_until[1]) - _clock, 0.0)
+	if waiting and _pressed_until[0] > _clock and _pressed_until[1] > _clock:
+		_open_until = _clock + OPEN_TIME
 		_cooldown_until = _open_until + 1.0
 		_pressed_until = [-1.0, -1.0]
 		valve_charge = 0.0
@@ -135,12 +138,21 @@ func apply_damage(amount: int, source := "", part := "") -> void:
 	# clara de dano dobrado; insistir em tiros contra a máscara fechada não substitui a mecânica.
 	if phase == 1 and not is_mask_open():
 		return
-	super(amount * (2 if phase == 1 else 1), source, part)
+	super(amount * (OPEN_DAMAGE if phase == 1 else 1), source, part)
+
+
+## Onde ele fica agora e para que lado os ataques dele correm (-1 para a esquerda quando está na direita).
+func home() -> Vector2:
+	return HOME if side > 0 else HOME_LEFT
+
+
+func toward() -> float:
+	return -float(side)
 
 
 func _args_for(attack_name: StringName) -> Array:
-	if attack_name in [&"Arteries", &"TurquoiseDrops"]:
-		var count := 3 if attack_name == &"Arteries" else 5
+	if attack_name in [&"Arteries", &"TurquoiseDrops", &"Cross"]:
+		var count := 3 if attack_name == &"Arteries" else (4 if attack_name == &"Cross" else 5)
 		var result: Array = []
 		for player in alive_players():
 			result.append(clampf(player.global_position.x, 24, 1520))
@@ -191,12 +203,13 @@ func set_stage(index: int) -> void:
 
 func _send_stage(peer_id: int) -> void:
 	if Network.is_host():
-		_receive_stage.rpc_id(peer_id, phase, stage_clock)
+		_receive_stage.rpc_id(peer_id, phase, stage_clock, side)
 
 
 @rpc("authority", "call_remote", "reliable")
-func _receive_stage(index: int, clock: float) -> void:
+func _receive_stage(index: int, clock: float, from_side: int) -> void:
 	Network.deliver(func() -> void:
+		side = from_side
 		catch_up(index)
 		stage_clock = clock + sync._one_way_delay()
 		set_stage(phase), false)
@@ -211,7 +224,8 @@ func _receive_valves(pressed: Array, charge: float, remaining: float) -> void:
 
 
 func _on_catch_up() -> void:
-	actor.position = HOME
+	actor.position = home()
+	actor.facing = int(toward())
 	set_stage(phase)
 	actor.reset_physics_interpolation()
 

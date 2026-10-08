@@ -59,6 +59,10 @@ pattern = 6
 script = ExtResource("5_attack")
 pattern = 7
 
+[node name="Cross" type="Node2D" parent="Attacks"]
+script = ExtResource("5_attack")
+pattern = 10
+
 [node name="IntroSeals" type="Node2D" parent="Attacks"]
 script = ExtResource("5_attack")
 pattern = 8
