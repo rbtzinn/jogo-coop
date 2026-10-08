@@ -116,6 +116,29 @@ const ANIMATIONS := [
 		"ground_y": 486, "center_x": 256,
 		"cell_height": 406.0, "rig_height": 198.0,
 	},
+	# Tiro EX (08/10/2026, docs/prompts/chatgpt_tiro_ex.md): 1-4 no chão (sola em 486), 5-8 pairando no ar (meio
+	# do corpo por volta de (256, 280), como no pulo). Veio um pouco maior que a corrida: 446 px no palhaço e
+	# 479 na acrobata. Nos quadros jogados para trás a regra do nariz erra: ombro medido à mão.
+	{
+		"sheet": "palhaco_tiro_ex.png",
+		"columns": 4, "rows": 2, "count": 8,
+		"out_dir": "res://core/player/characters/clown/ex/",
+		"name": "ex",
+		"ground_y": 486, "center_x": 290,
+		"cell_height": 446.0, "rig_height": 198.0,
+		"shoulder_from_nose": Vector2(-64, 60),
+		"shoulders": {1: Vector2(335, 285), 2: Vector2(300, 305), 5: Vector2(345, 258)},
+	},
+	{
+		"sheet": "acrobata_tiro_ex.png",
+		"columns": 4, "rows": 2, "count": 8,
+		"out_dir": "res://core/player/characters/acrobat/ex/",
+		"name": "ex",
+		"ground_y": 486, "center_x": 313,
+		"cell_height": 479.0, "rig_height": 268.0,
+		"shoulder_from_nose": Vector2(-45, 55),
+		"shoulders": {1: Vector2(285, 195), 2: Vector2(258, 190), 5: Vector2(275, 205)},
+	},
 	# Dano do palhaço (A15): 4 quadros no ar, o meio do tronco em (256, 332), como no pulo e no dash.
 	{
 		"sheet": "palhaco_dano.png",

@@ -22,6 +22,8 @@
 [ext_resource type="Resource" path="res://core/player/characters/clown/special/pie_throw.tres" id="20_special"]
 [ext_resource type="Resource" path="res://core/player/characters/clown/capture/capture.tres" id="21_capture"]
 
+[ext_resource type="Resource" path="res://core/player/characters/clown/ex/ex.tres" id="30_ex"]
+
 [node name="ClownRig" type="Node2D"]
 scale = Vector2(0.92, 0.92)
 script = ExtResource("1_rig")
@@ -34,6 +36,7 @@ jump_animation = ExtResource("14_jump")
 dash_animation = ExtResource("17_dash")
 crouch_animation = ExtResource("18_crouch")
 hurt_animation = ExtResource("19_hurt")
+ex_animation = ExtResource("30_ex")
 capture_animation = ExtResource("21_capture")
 special_animation = ExtResource("20_special")
 balloon_animation = ExtResource("15_balloon")

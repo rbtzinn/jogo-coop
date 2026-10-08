@@ -30,6 +30,9 @@ extends Node2D
 ## Dano desenhado (4 quadros no ar: golpe, jogado para trás, susto, recompondo), tocado uma vez
 ## pela duração do atordoamento (`play_hurt`).
 @export var hurt_animation: FrameAnimation
+## Tiro EX desenhado (8 quadros: 1-4 no chão, 5-8 pairando no ar): o corpo levando o coice, tocado uma vez a
+## partir do disparo (`play_fire` com coice de EX). Só desenho: o tiro já saiu e o recuo é o de sempre.
+@export var ex_animation: FrameAnimation
 ## Reação em loop quando um chefão captura o personagem. O grab controla a posição; esta
 ## animação mostra o susto e a tentativa de escapar, sem deixar o boneco congelado no ar.
 @export var capture_animation: FrameAnimation
@@ -131,6 +134,9 @@ var _dash_elapsed := 0.0
 ## Dano: quanto falta e quanto dura o quadro a quadro do golpe (0 = fora dele).
 var _hurt_left := 0.0
 var _hurt_length := 0.22
+## Tiro EX desenhado: quanto falta (0 = fora dele). Dura o recuo do EX (0,25 s) e um tiquinho para assentar.
+const EX_TIME := 0.32
+var _ex_left := 0.0
 var _boss_captured := false
 var _boss_capture_time := 0.0
 ## Quando o parado desenhado começou (para ele sempre entrar pelo quadro 1).
@@ -179,6 +185,7 @@ func update_pose(delta: float, velocity: Vector2, on_floor: bool, dashing: bool,
 	_boss_capture_time = _boss_capture_time + delta if _boss_captured else 0.0
 	_dash_elapsed = _dash_elapsed + delta if dashing else 0.0
 	_hurt_left = maxf(_hurt_left - delta, 0.0)
+	_ex_left = maxf(_ex_left - delta, 0.0)
 	_ending_wait = maxf(_ending_wait - delta, 0.0)
 	_ending_left = maxf(_ending_left - delta, 0.0)
 	var speed_ratio := clampf(absf(velocity.x) / run_speed, 0.0, 1.0)
@@ -206,6 +213,8 @@ func play_fire(kick := 1.0) -> void:
 	_ending_wait = 0.0
 	_ending_left = 0.0
 	_recoil = 7.0 * kick
+	if kick > 1.0 and ex_animation != null:
+		_ex_left = EX_TIME
 	_flash_timer = 0.05 * kick
 	muzzle_flash.show()
 	# O clarão sai da boca para a frente; só o tamanho varia um pouco a cada tiro.
@@ -383,6 +392,7 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 	var parrying := _parry_progress >= 0.0 and parry_animation != null and parry_animation.frame_count() > 0
 	var special_drawn := special_frame >= 0 and special_animation != null
 	var hurt_drawn := _hurt_left > 0.0 and hurt_animation != null and hurt_animation.frame_count() >= 4
+	var ex_drawn := _ex_left > 0.0 and not dashing and ex_animation != null and ex_animation.frame_count() >= 8
 	var dash_drawn := dashing and dash_animation != null and dash_animation.frame_count() > 0
 	var has_crouch := crouch_animation != null and crouch_animation.frame_count() >= 4
 	var crouch_drawn := crouch_shown and has_crouch and ease(_crouch, -2.0) >= CROUCH_FRAME_FROM
@@ -402,7 +412,7 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 	var ending_drawn := idle and _ending_left > 0.0 and special_animation != null
 	if ending_drawn:
 		_idle_since = _time
-	var use_frames := captured_drawn or parrying or special_drawn or hurt_drawn or dash_drawn or crouch_drawn or jump_drawn or run_drawn or idle_drawn
+	var use_frames := captured_drawn or parrying or special_drawn or hurt_drawn or ex_drawn or dash_drawn or crouch_drawn or jump_drawn or run_drawn or idle_drawn
 	if use_frames != _showing_frames:
 		_showing_frames = use_frames
 		_frame_sprite.visible = use_frames
@@ -425,6 +435,8 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 		animation = special_animation
 	elif hurt_drawn:
 		animation = hurt_animation
+	elif ex_drawn:
+		animation = ex_animation
 	elif dash_drawn:
 		animation = dash_animation
 	elif crouch_drawn:
@@ -445,6 +457,8 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 		index = mini(special_frame, count - 1)
 	elif hurt_drawn:
 		index = mini(int((1.0 - _hurt_left / _hurt_length) * count), count - 1)
+	elif ex_drawn:
+		index = mini(int((1.0 - _ex_left / EX_TIME) * 4.0), 3) + (4 if airborne else 0)
 	elif dash_drawn:
 		index = 0
 		for step in DASH_FRAME_STEPS:
