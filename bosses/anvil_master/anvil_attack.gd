@@ -4,6 +4,8 @@ enum Pattern { HAMMER, SHOES, BELLOWS, CHANNEL, ANVILS, GRIP, SPIN, STOMP, CHEST
 @export var pattern := Pattern.HAMMER
 
 const GRIP_WINDUP_END := 0.34
+## Giro e pisão: a partir daqui ele fica cansado com o peito aberto até o fim do ataque.
+const TIRED_FROM := 3.5
 const GRIP_CAST_END := 0.95
 ## Segurando: puxa o boneco (REEL), gira ele no alto da corrente (WHIRL) e bate no chão (SLAM).
 const GRIP_REEL := 0.45
@@ -106,8 +108,12 @@ func _tick(t: float) -> void:
 		Pattern.ANVILS, Pattern.STOMP:
 			if pattern == Pattern.ANVILS:
 				_forge_pose(t)
-				# Arremessa uma bigorna a cada 0,45 s: o arremesso desenhado acompanha cada uma.
-				actor.pose(&"throw", int(fposmod((t - 0.45) / 0.45, 1.0) * 4.0))
+				# Um arremesso desenhado para cada uma das 4 bigorninhas (0,45 s cada); depois volta a ficar parado.
+				var since := t - 0.4
+				if since >= 0.0 and since < 4 * 0.45:
+					actor.pose(&"throw", int(fposmod(since, 0.45) / 0.45 * 4.0))
+			elif t >= TIRED_FROM:
+				_tired()
 			else:
 				# O quadro com chão quebrado só aparece depois da aterrissagem.
 				actor.pose(&"armor", 4 if t < 0.8 else (1 if t < 1.6 else 5))
@@ -130,7 +136,10 @@ func _tick(t: float) -> void:
 		Pattern.SPIN:
 			_forge_pose(t, true)
 			actor.pose(&"armor", 1 if t < 0.9 else 3)
-			if t >= 0.9:
+			if t >= TIRED_FROM:
+				hide_prop("hammer")
+				_tired()
+			elif t >= 0.9:
 				var angle := (t - 0.9) * TAU * 0.75
 				var head := prop("hammer", &"hammer", actor.global_position + Vector2(-140 + cos(angle) * 180, -180 + sin(angle) * 130) * actor.scale.x)
 				head.spin = angle
@@ -152,10 +161,20 @@ func _tick(t: float) -> void:
 			actor.pose(&"armor", 0 if t < 0.9 else 1)
 
 
-## Parado no lugar trabalhando: respira no quadro parado (antes era o "andar" no lugar).
+## Parado no lugar trabalhando: o parado de sempre, no ritmo calmo (antes era o "andar" no lugar).
 func _forge_pose(t: float, armored := false) -> void:
 	actor.position = AnvilMasterBoss.HOME
-	actor.pose(&"armor" if armored else &"idle", (1 + int(t * 3) % 2) if armored else int(t * 5) % 4)
+	if armored:
+		actor.pose(&"armor", 1 + int(t * 3) % 2)
+	else:
+		actor.idle()
+
+
+## Fase 3: cansado depois do giro e do pisão, ele abre o peito por um instante (a hora de atacar). Antes o peito
+## só abria no ataque próprio e a armadura parecia não levar dano nenhum.
+func _tired() -> void:
+	actor.pose(&"armor", 6)
+	boss.set_chest(true)
 
 
 func _waves(t: float, start: float, x: float) -> void:
