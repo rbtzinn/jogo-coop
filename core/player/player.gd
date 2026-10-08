@@ -146,12 +146,14 @@ func _physics_process(delta: float) -> void:
 		return
 
 	input.update()
+	var captured := boss_hold.is_finite() and not player_health.is_downed
+	rig.set_boss_captured(captured)
 	if player_health.is_downed:
 		input.clear()
 		_process_balloon(delta)
 		sync.send_state(self, Vector2(facing, 0))
 		return
-	if boss_hold.is_finite():
+	if captured:
 		input.clear()
 		global_position = boss_hold
 		velocity = Vector2.ZERO
@@ -209,12 +211,14 @@ func _follow_remote_state(delta: float) -> void:
 	var state := sync.sample_state()
 	if state.is_empty():
 		return
-	global_position = state.position
+	var captured := boss_hold.is_finite() and not player_health.is_downed
+	rig.set_boss_captured(captured)
+	global_position = boss_hold if captured else state.position
 	if not _has_remote_state:
 		# Primeiro estado: aparece direto no lugar, sem "deslizar" desde o ponto de nascimento.
 		reset_physics_interpolation()
 		_has_remote_state = true
-	velocity = state.velocity
+	velocity = Vector2.ZERO if captured else state.velocity
 	facing = state.facing
 	visual.scale.x = facing
 	if state.on_floor and not _remote_on_floor:
@@ -244,7 +248,8 @@ func _follow_remote_state(delta: float) -> void:
 		player_health.mark_out()
 	var aim := special.pose_aim(state.aim)
 	rig.special_frame = special.drawn_frame(rig.special_animation)
-	rig.update_pose(delta, velocity, state.on_floor, state.dashing, Vector2(aim.x * facing, aim.y), run_speed,
+	rig.update_pose(delta, velocity, false if captured else state.on_floor, false if captured else state.dashing,
+			Vector2(aim.x * facing, aim.y), run_speed,
 			state.get("crouching", false) or special.crouch_pose())
 	_show_parry_spin()
 	for action in sync.take_due_actions():

@@ -153,14 +153,17 @@ func _run() -> void:
 		forge.sync.start_attack(&"IronGrip", 441, [String(victim.name), 850.0])
 	await wait(1.5)
 	if role == "client":
-		check(me().boss_hold.is_finite(), "remote-selected client is held")
+		check(me().boss_hold.is_finite() and me().rig.is_boss_captured(),
+				"remote-selected client is held with the captured animation")
 	await meet("held")
 	if role == "host":
 		for i in 8:
 			forge.grip.take_hit(1, String(me().name))
 	await wait(0.7)
 	if role == "client":
-		check(not me().boss_hold.is_finite() and me().player_health.health.current == 3, "partner releases client without damage")
+		check(not me().boss_hold.is_finite() and not me().rig.is_boss_captured() \
+				and me().player_health.health.current == 3,
+				"partner releases client animation without damage")
 	await meet("released")
 	if role == "host":
 		forge.health.damage(forge.health.current - forge.phase_end_health())

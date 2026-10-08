@@ -18,7 +18,7 @@ script = ExtResource("3_sync")
 [node name="Actor" type="Node2D" parent="."]
 script = ExtResource("4_actor")
 art_folder = "res://bosses/anvil_master/art/"
-animation_names = Array[String](["idle", "hammer", "throw", "bellows", "walk", "armor", "defeat"])
+animation_names = Array[String](["idle", "hammer", "throw", "bellows", "walk", "grip", "armor", "defeat"])
 idle_animation = &"idle"
 
 [node name="Attacks" type="Node2D" parent="."]
@@ -45,6 +45,7 @@ script = ExtResource("5_attack")
 pattern = 4
 
 [node name="IronGrip" type="Node2D" parent="Attacks"]
+z_index = 2
 script = ExtResource("5_attack")
 pattern = 5
 

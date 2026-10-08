@@ -2,8 +2,8 @@ extends PhoenixAttack
 ## Rasante: ela sai pela direita e atravessa a tela duas vezes (uma para cada lado), cada vez numa altura
 ## sorteada: rente ao chão (subir numa rocha ou pular), na altura das rochas dos lados (descer ou ir para a
 ## do meio) ou na altura da rocha do meio. Antes de cada passada, um rastro de brasas marca a altura e ela
-## aparece na beira da tela se encolhendo (aviso). Na fase 2 (`perched`) sai do ninho e volta para ele, e só
-## passa rente ao chão ou nas rochas dos lados.
+## aparece na beira da tela se encolhendo (aviso). Na fase 1 faz três passadas, uma em cada altura; o desafio
+## vem de ler a sequência, não de esconder o corpo. Na fase 2 (`perched`) faz duas e volta para o ninho.
 
 const TAKEOFF := 0.5
 const WARN := 0.8
@@ -24,9 +24,17 @@ var _trails: Array[PhoenixProp] = []
 
 func _start() -> void:
 	var pool := 2 if perched else HEIGHTS.size()
-	var first := rng.randi_range(0, pool - 1)
-	var second := (first + rng.randi_range(1, pool - 1)) % pool
-	_heights = [HEIGHTS[first], HEIGHTS[second]]
+	var order: Array[int] = []
+	for i in pool:
+		order.append(i)
+	for i in range(order.size() - 1, 0, -1):
+		var other := rng.randi_range(0, i)
+		var swap := order[i]
+		order[i] = order[other]
+		order[other] = swap
+	_heights.clear()
+	for i in pool:
+		_heights.append(HEIGHTS[order[i]])
 	bird.set_mode(Phoenix.Mode.FLY)
 	_from = PERCH + Vector2(0, -170) if perched else bird.global_position
 	_trails.clear()
@@ -38,7 +46,7 @@ func _tick(t: float) -> void:
 		bird.pose(&"fly", 1)
 		bird.global_position = _from.lerp(Vector2(RIGHT_X, _heights[0]), smoothstep(0.0, 1.0, t / TAKEOFF))
 		return
-	for k in 2:
+	for k in _heights.size():
 		var start := TAKEOFF + k * (WARN + CROSS)
 		if t >= start + WARN + CROSS:
 			continue
@@ -59,7 +67,7 @@ func _tick(t: float) -> void:
 		return
 	# Volta para onde estava (o ninho na fase 2).
 	_clear_trails()
-	var u: float = clampf((t - TAKEOFF - 2.0 * (WARN + CROSS)) / RETURN, 0.0, 1.0)
+	var u: float = clampf((t - TAKEOFF - _heights.size() * (WARN + CROSS)) / RETURN, 0.0, 1.0)
 	var home := PERCH + Vector2(0, -170) if perched else HOME
 	bird.facing = -1
 	bird.pose(&"fly", 1)
@@ -84,7 +92,7 @@ func _clear_trails() -> void:
 
 
 func _is_done() -> bool:
-	return elapsed > TAKEOFF + 2.0 * (WARN + CROSS) + RETURN
+	return elapsed > TAKEOFF + _heights.size() * (WARN + CROSS) + RETURN
 
 
 func _stop() -> void:

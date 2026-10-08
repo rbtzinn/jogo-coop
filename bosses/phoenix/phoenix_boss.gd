@@ -29,6 +29,8 @@ var _stun_until := -1.0
 
 
 func _init() -> void:
+	max_health = 1350
+	pause_between_attacks = Vector2(0.22, 0.48)
 	phase_shares = [0.35, 0.35, 0.3]
 	phase_titles = ["Voo de Abertura", "Tempestade de Cinzas!", "Renascimento!"]
 	phase_attacks = [

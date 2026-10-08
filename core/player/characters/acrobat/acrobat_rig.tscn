@@ -20,6 +20,7 @@
 [ext_resource type="Resource" path="res://core/player/characters/acrobat/crouch/crouch.tres" id="18_crouch"]
 [ext_resource type="Resource" path="res://core/player/characters/acrobat/hurt/hurt.tres" id="19_hurt"]
 [ext_resource type="Resource" path="res://core/player/characters/acrobat/special/somersault.tres" id="20_special"]
+[ext_resource type="Resource" path="res://core/player/characters/acrobat/capture/capture.tres" id="21_capture"]
 
 [node name="AcrobatRig" type="Node2D"]
 scale = Vector2(0.86, 0.86)
@@ -33,6 +34,7 @@ jump_animation = ExtResource("14_jump")
 dash_animation = ExtResource("17_dash")
 crouch_animation = ExtResource("18_crouch")
 hurt_animation = ExtResource("19_hurt")
+capture_animation = ExtResource("21_capture")
 special_animation = ExtResource("20_special")
 balloon_animation = ExtResource("15_balloon")
 balloon_turn_animation = ExtResource("16_turn")

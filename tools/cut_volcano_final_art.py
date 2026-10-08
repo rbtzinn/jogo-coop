@@ -44,7 +44,7 @@ def frames(prefix, n):
 
 def main():
     forge = cutter("anvil_master")
-    for sheet, cols, rows, n, scale, name in [
+    forge_animations = [
         ("parado", 4, 1, 4, 0.78, "idle"),
         ("martelada", 4, 1, 4, 0.78, "hammer"),
         ("arremesso", 4, 1, 4, 0.78, "throw"),
@@ -52,8 +52,17 @@ def main():
         ("andando", 4, 2, 8, 1.0, "walk"),
         ("armadura", 4, 2, 8, 1.22, "armor"),
         ("derrota", 4, 1, 4, 0.78, "defeat"),
-    ]:
-        forge.animation("bigorna/bigorna_%s.png" % sheet, cols, rows, n, scale, "feet", name, ratio=0.2)
+    ]
+    for sheet, cols, rows, n, scale, name in forge_animations:
+        source = "bigorna/bigorna_%s.png" % sheet
+        if rows == 1:
+            # Nestes desenhos, martelo, ferradura, chama e fole invadem a célula vizinha da folha.
+            reach = 8 if name == "defeat" else 2
+            forge.animation_components(source, cols, rows, n, scale, "feet", name, reach=reach,
+                    seed_ratio=0.05, near=130, padding=24)
+        else:
+            # As duas linhas têm divisões horizontais diferentes; SheetCutter mede cada uma separadamente.
+            forge.animation(source, cols, rows, n, scale, "feet", name, ratio=0.2, padding=24)
     forge.animation("bigorna/onda_choque.png", 4, 1, 4, 0.65, "feet", "wave")
     forge.animation("bigorna/canal_derretido.png", 1, 2, 2, 0.42, "feet", "channel")
     # Cabeça do martelo já desenhada na pose de aviso; contorno segue o ferro, excluindo a mão.
@@ -84,9 +93,12 @@ def main():
         ("derrota", 4, 1, 4, 0.85, "defeat"),
         ("mascara", 4, 1, 4, 0.44, "mask"),
     ]:
-        heart.animation("coracao/coracao_%s.png" % sheet, cols, rows, n, scale, "center", name, ratio=0.2)
-    heart.animation("coracao/anel_choque.png", 4, 1, 4, 0.6, "feet", "ring")
-    heart.animation("coracao/valvula.png", 2, 1, 2, 0.28, "feet", "valve")
+        heart.animation("coracao/coracao_%s.png" % sheet, cols, rows, n, scale, "center", name,
+                ratio=0.2, padding=0, row_specific=False)
+    heart.animation("coracao/anel_choque.png", 4, 1, 4, 0.6, "feet", "ring", padding=0,
+            row_specific=False)
+    heart.animation("coracao/valvula.png", 2, 1, 2, 0.28, "feet", "valve", padding=0,
+            row_specific=False)
     heart.grid_effects("coracao/selos.png", 3, 1, frames("seal", 3), adaptive=True)
     heart.grid_effects("arenas/plataforma_erupcao.png", 3, 1, frames("platform", 3), adaptive=True)
     effect_rows(heart, "coracao/coracao_efeitos.png", [

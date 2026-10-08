@@ -19,6 +19,14 @@
 [ext_resource type="FontFile" path="res://core/ui/fonts/Oswald.ttf" id="17_font"]
 [ext_resource type="Script" path="res://core/debug/solo_character_switch.gd" id="99_switch"]
 [ext_resource type="Script" path="res://core/debug/applause_cheat.gd" id="98_cheat"]
+[ext_resource type="Shader" path="res://shaders/arena_readability.gdshader" id="readability"]
+
+[sub_resource type="ShaderMaterial" id="BackgroundReadability"]
+shader = ExtResource("readability")
+shader_parameter/saturation = 0.52
+shader_parameter/contrast = 0.74
+shader_parameter/brightness = 0.72
+shader_parameter/cool_tint = Vector3(0.92, 0.94, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(2000, 160)
@@ -38,17 +46,20 @@ size = Vector2(350, 24)
 [node name="PhoenixFight" type="Node2D"]
 
 [node name="Background" type="Sprite2D" parent="."]
+material = SubResource("BackgroundReadability")
 position = Vector2(960, 623)
 scale = Vector2(1.325, 1.325)
 texture = ExtResource("1_bg")
 
 [node name="BackgroundStorm" type="Sprite2D" parent="."]
+material = SubResource("BackgroundReadability")
 visible = false
 position = Vector2(960, 623)
 scale = Vector2(1.325, 1.325)
 texture = ExtResource("2_bg_storm")
 
 [node name="BackgroundReborn" type="Sprite2D" parent="."]
+material = SubResource("BackgroundReadability")
 visible = false
 position = Vector2(960, 623)
 scale = Vector2(1.325, 1.325)

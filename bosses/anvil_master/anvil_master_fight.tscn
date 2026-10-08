@@ -14,6 +14,14 @@
 [ext_resource type="Texture2D" path="res://bosses/anvil_master/art/platform_1.png" id="p1"]
 [ext_resource type="Texture2D" path="res://bosses/anvil_master/art/platform_2.png" id="p2"]
 [ext_resource type="Texture2D" path="res://bosses/anvil_master/art/anvil.png" id="anvil"]
+[ext_resource type="Shader" path="res://shaders/arena_readability.gdshader" id="readability"]
+
+[sub_resource type="ShaderMaterial" id="BackgroundReadability"]
+shader = ExtResource("readability")
+shader_parameter/saturation = 0.5
+shader_parameter/contrast = 0.72
+shader_parameter/brightness = 0.68
+shader_parameter/cool_tint = Vector3(0.92, 0.94, 1)
 
 [sub_resource type="RectangleShape2D" id="floor"]
 size = Vector2(2000, 160)
@@ -25,11 +33,13 @@ size = Vector2(80, 1400)
 
 
 [node name="Background" type="Sprite2D" parent="."]
+material = SubResource("BackgroundReadability")
 position = Vector2(960, 592.83)
 scale = Vector2(1.26, 1.26)
 texture = ExtResource("1_bg")
 
 [node name="BackgroundHot" type="Sprite2D" parent="."]
+material = SubResource("BackgroundReadability")
 visible = false
 position = Vector2(960, 592.83)
 scale = Vector2(1.26, 1.26)

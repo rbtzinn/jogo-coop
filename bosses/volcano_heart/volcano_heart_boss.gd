@@ -25,7 +25,8 @@ var _mask_anim: FrameAnimation
 
 
 func _init() -> void:
-	max_health = 1500
+	max_health = 1650
+	pause_between_attacks = Vector2(0.2, 0.44)
 	phase_shares = [0.35, 0.35, 0.3]
 	phase_titles = ["Batimento", "Os Três Selos!", "Erupção!"]
 	phase_attacks = [[&"Pulse", &"Arteries", &"TurquoiseDrops"],
@@ -126,7 +127,11 @@ func is_mask_open() -> bool:
 
 
 func apply_damage(amount: int, source := "", part := "") -> void:
-	super(amount * (2 if phase == 1 and is_mask_open() else 1), source, part)
+	# Na fase dos selos, a máscara de pedra realmente protege o coração. Abrir as válvulas cria uma janela
+	# clara de dano dobrado; insistir em tiros contra a máscara fechada não substitui a mecânica.
+	if phase == 1 and not is_mask_open():
+		return
+	super(amount * (2 if phase == 1 else 1), source, part)
 
 
 func _args_for(attack_name: StringName) -> Array:

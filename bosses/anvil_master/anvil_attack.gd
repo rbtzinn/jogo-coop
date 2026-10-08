@@ -3,6 +3,14 @@ extends PaintedAttack
 enum Pattern { HAMMER, SHOES, BELLOWS, CHANNEL, ANVILS, GRIP, SPIN, STOMP, CHEST, INTRO_FORGE, INTRO_ARMOR }
 @export var pattern := Pattern.HAMMER
 
+const GRIP_WINDUP_END := 0.34
+const GRIP_CAST_END := 0.95
+const GRIP_PULL_TIME := 0.42
+const GRIP_RELEASE_AT := 4.15
+const GRIP_RETRACT_TIME := 0.45
+const GRIP_CUFF_OFFSET := Vector2(0, -90)
+const GRIP_LIFT := Vector2(0, -170)
+
 var _from := Vector2.ZERO
 var _side := 0
 var _channel := 0
@@ -11,6 +19,10 @@ var _hits := 0
 var _decided := false
 var _released := false
 var _hand := Vector2.ZERO
+var _held_from := Vector2.ZERO
+var _hold_at := INF
+var _release_at := INF
+var _release_from := Vector2.ZERO
 
 
 func _start() -> void:
@@ -21,6 +33,11 @@ func _start() -> void:
 	_hits = 0
 	_decided = false
 	_released = false
+	_hand = _grip_origin()
+	_held_from = Vector2.ZERO
+	_hold_at = INF
+	_release_at = INF
+	_release_from = Vector2.ZERO
 
 
 func _tick(t: float) -> void:
@@ -152,32 +169,55 @@ func _grab_tick(t: float) -> void:
 	if args.size() < 2:
 		return
 	var target_y := float(args[2]) if args.size() > 2 else 1000.0
-	var goal := Vector2(clampf(float(args[1]), 24, 1520), target_y - 230)
-	_hand = (AnvilMasterBoss.HOME + Vector2(-150, -300)).lerp(goal, clampf(t / 0.8, 0, 1))
-	var hand := prop("grip_hand", &"grip_hand", _hand)
-	hand.active = false
-	boss.grip.global_position = _hand - Vector2(-150, -300)
-	warning("grab", Vector2(goal.x, target_y), minf(t / 0.9, 1.0), 140)
-	queue_redraw()
-	actor.pose(&"walk", 5 if t < 0.9 else (7 if _released else 6))
-	if t >= 0.9 and not _decided and boss.is_brain():
+	var target_origin := Vector2(clampf(float(args[1]), 24, 1520), target_y)
+	var catch_point := target_origin + GRIP_CUFF_OFFSET
+	var chain_start := _grip_origin()
+	if t < GRIP_WINDUP_END:
+		_hand = chain_start
+	elif t < GRIP_CAST_END:
+		var cast := ease(clampf((t - GRIP_WINDUP_END) / (GRIP_CAST_END - GRIP_WINDUP_END), 0, 1), -1.8)
+		_hand = arc_point(chain_start, catch_point, 115, cast)
+	elif _held.is_empty() and not _released:
+		_hand = catch_point
+
+	if t >= GRIP_CAST_END and not _decided and boss.is_brain():
 		_decided = true
 		var target := _player(String(args[0]))
 		if target != null and not target.player_health.is_downed and not target.is_dashing() \
 				and absf(target.global_position.x - float(args[1])) < 150 and absf(target.global_position.y - target_y) < 80:
-			_event(["hold", String(target.name)])
+			_event(["hold", String(target.name), t])
 		else:
-			_event(["release", false])
+			_event(["release", false, t])
 	if not _held.is_empty() and not _released:
 		var target := _player(_held)
 		if target != null:
-			target.boss_hold = _hand + Vector2(0, 60)
-		boss.grip.set_deferred("monitorable", true)
-		if boss.is_brain():
-			if boss.alive_players().size() < 2:
-				_event(["release", false])
-			elif t >= 3.9:
-				_event(["release", true])
+			# Em vez de teletransportar o boneco, a corrente o laça pela cintura e o puxa em arco.
+			var pull := ease(clampf((t - _hold_at) / GRIP_PULL_TIME, 0, 1), -1.8)
+			var held_goal := target_origin + GRIP_LIFT
+			target.boss_hold = arc_point(_held_from, held_goal, 45, pull)
+			_hand = target.boss_hold + GRIP_CUFF_OFFSET
+			boss.grip.set_deferred("monitorable", true)
+			if boss.is_brain():
+				if boss.alive_players().size() < 2:
+					_event(["release", false, t])
+				elif t >= GRIP_RELEASE_AT:
+					_event(["release", true, t])
+	if _released:
+		var retract := ease(clampf((t - _release_at) / GRIP_RETRACT_TIME, 0, 1), -1.8)
+		_hand = _release_from.lerp(chain_start, retract)
+
+	# Sequência própria: prepara a corrente, arremessa, fecha a mão e faz força enquanto segura.
+	if t < GRIP_WINDUP_END:
+		actor.pose(&"grip", 0)
+	elif t < GRIP_CAST_END:
+		actor.pose(&"grip", 1 if t < 0.55 else 2)
+	elif not _held.is_empty() and not _released:
+		actor.pose(&"grip", 3 + int((t - _hold_at) * 4.5) % 2)
+	else:
+		actor.pose(&"grip", 4)
+	boss.grip.global_position = _hand - Vector2(-150, -300)
+	warning("grab", target_origin, minf(t / GRIP_CAST_END, 1.0), 140)
+	queue_redraw()
 
 
 func hit_grip(source: String) -> void:
@@ -185,7 +225,7 @@ func hit_grip(source: String) -> void:
 		return
 	_hits += 1
 	if _hits >= 8:
-		_event(["release", false])
+		_event(["release", false, elapsed])
 
 
 func _event(data: Array) -> void:
@@ -196,11 +236,19 @@ func _event(data: Array) -> void:
 func _on_event(data: Array) -> void:
 	if data[0] == "hold" and not _released:
 		_held = data[1]
+		_hold_at = float(data[2]) if data.size() > 2 else elapsed
+		var target := _player(_held)
+		if target != null:
+			_held_from = target.global_position
+			target.rig.set_boss_captured(true)
 	elif data[0] == "release" and not _released:
 		var target := _player(_held)
 		_released = true
+		_release_at = float(data[2]) if data.size() > 2 else elapsed
+		_release_from = _hand
 		if target != null:
 			target.boss_hold = Vector2.INF
+			target.rig.set_boss_captured(false)
 			target.player_health.protect(0.5)
 			if data[1] and target.is_multiplayer_authority():
 				target.player_health.hurt_by(1, actor.global_position)
@@ -222,12 +270,13 @@ func _stop() -> void:
 	var target := _player(_held)
 	if target != null:
 		target.boss_hold = Vector2.INF
+		target.rig.set_boss_captured(false)
 	if pattern == Pattern.HAMMER and not boss.is_defeated:
 		boss.get_parent().get_node("Anvil").show()
 
 
 func _is_done() -> bool:
-	var durations := [4.4, 5.9, 5.3, 4.2, 3.7, 4.3, 4.6, 5.1, 5.8, 1.5, 1.5]
+	var durations := [4.4, 5.9, 5.3, 4.2, 3.7, 4.7, 4.6, 5.1, 5.8, 1.5, 1.5]
 	return elapsed >= durations[pattern]
 
 
@@ -239,12 +288,35 @@ func _draw() -> void:
 		draw_line(hand, tip, Color("1b1410"), 14, true)
 		draw_line(hand, tip, Color("785030"), 8, true)
 	elif pattern == Pattern.GRIP and is_running():
-		var start := to_local(actor.global_position + Vector2(-150, -300))
+		var start := to_local(_grip_origin())
 		var tip := to_local(_hand)
-		var length := start.distance_to(tip)
-		for i in int(length / 26):
-			var at := start.lerp(tip, float(i) * 26 / maxf(length, 1))
-			draw_ellipse_link(at)
+		_draw_chain(start, tip)
+		_draw_cuff(tip)
+
+
+func _grip_origin() -> Vector2:
+	return actor.global_position + Vector2(-150, -300)
+
+
+func _draw_chain(start: Vector2, tip: Vector2) -> void:
+	var length := start.distance_to(tip)
+	if length < 3:
+		return
+	var links := maxi(int(length / 25), 1)
+	var sag := minf(length * (0.025 if not _held.is_empty() and not _released else 0.07), 52.0)
+	for i in links + 1:
+		var u := float(i) / links
+		var at := start.lerp(tip, u) + Vector2(0, sin(u * PI) * sag)
+		draw_ellipse_link(at)
+
+
+func _draw_cuff(at: Vector2) -> void:
+	# A algema fica por cima do personagem (IronGrip tem z_index maior), deixando claro o acerto.
+	draw_circle(at, 22, Color("171713"))
+	draw_arc(at, 20, 0, TAU, 20, Color("a09070"), 7, true)
+	draw_arc(at, 15, 0, TAU, 20, Color("3f3428"), 3, true)
+	draw_line(at + Vector2(-25, -8), at + Vector2(-13, -17), Color("d8c39a"), 5, true)
+	draw_line(at + Vector2(25, -8), at + Vector2(13, -17), Color("d8c39a"), 5, true)
 
 
 func draw_ellipse_link(at: Vector2) -> void:

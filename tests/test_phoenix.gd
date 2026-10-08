@@ -5,6 +5,7 @@ extends Node
 ## rachaduras estilhaça; uma só fecha e cura) e a vitória.
 
 var failures := 0
+var _capture := ""
 
 
 func check(ok: bool, label: String) -> void:
@@ -19,10 +20,24 @@ func seconds(value: float) -> void:
 
 
 func _ready() -> void:
+	var args := OS.get_cmdline_user_args()
+	if args.size() >= 2 and args[0] == "capture":
+		_capture = args[1]
+		DirAccess.make_dir_recursive_absolute(_capture)
 	get_tree().create_timer(240.0, true, false, true).timeout.connect(func() -> void:
 		print("FAIL timeout")
 		get_tree().quit(99))
 	_run()
+
+
+func photo(name: String) -> void:
+	if _capture.is_empty():
+		return
+	for player: Player in get_tree().get_nodes_in_group(&"players"):
+		player.visual.show()
+		player.player_health._blink_timer = 1000.0
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_png(_capture.path_join(name + ".png"))
 
 
 ## Roda o ataque até o fim e devolve o maior número de objetos de cada tipo vistos ao mesmo tempo.
@@ -56,6 +71,7 @@ func _run() -> void:
 	var players := get_tree().get_nodes_in_group(&"players")
 	for player: Player in players:
 		player.player_health._invincible_timer = 1000.0
+	await photo("fenix_fase1_maior")
 
 	# As rochas do ataque batem com as da cena.
 	var names := ["RockLeft", "RockMiddle", "RockRight"]
@@ -73,7 +89,7 @@ func _run() -> void:
 		if bird.pose_anim == &"fly" and bird.pose_frame == 5:
 			heights[roundi(bird.global_position.y)] = true
 	await run_attack(boss, &"Dive", 11, dive_watch)
-	check(heights.size() == 2, "dive: two passes at two heights %s" % [heights.keys()])
+	check(heights.size() == 3, "dive: three readable passes at three heights %s" % [heights.keys()])
 	check(bird.global_position.distance_to(PhoenixAttack.HOME) < 1.0, "dive: back home")
 	var on_rock := [false]
 	var fan_watch := func(attack: Node) -> void:
@@ -97,6 +113,7 @@ func _run() -> void:
 	await seconds(2.2)
 	check(boss.phase == 1 and bird.mode == Phoenix.Mode.PERCH, "phase 2: perched on the nest")
 	check(scene.get_node("BackgroundStorm").visible, "phase 2: ash storm sky")
+	await photo("fenix_fase2_legivel")
 	# Ovinho numa rocha: o pintinho corre e cai da beira.
 	var eggs: Node = boss.get_node("Attacks/Eggs")
 	boss.sync.start_attack(&"Eggs", 21, [1330.0, 1330.0, 1330.0])
@@ -120,6 +137,7 @@ func _run() -> void:
 	check(boss.phase == 2 and bird.mode == Phoenix.Mode.EGG, "phase 3: the egg")
 	check(scene.get_node("BackgroundReborn").visible, "phase 3: burning nest")
 	check(not bird.hurtbox.monitorable and bird.crack_left.monitorable and bird.crack_right.monitorable, "egg: only the cracks take shots")
+	await photo("fenix_fase3_ovo")
 	seen = await run_attack(boss, &"Rings", 31)
 	check(seen.get(&"ring", 0) >= 2, "rings run both ways %s" % seen)
 	seen = await run_attack(boss, &"EmberBurst", 32)

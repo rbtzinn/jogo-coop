@@ -10,7 +10,8 @@ var grip: Hurtbox
 
 
 func _init() -> void:
-	max_health = 1400
+	max_health = 1550
+	pause_between_attacks = Vector2(0.2, 0.44)
 	phase_shares = [0.35, 0.35, 0.3]
 	phase_titles = ["Malhando o Ferro", "Forja Aberta!", "Armadura Recém-Forjada!"]
 	phase_attacks = [[&"Hammer", &"Horseshoes", &"Bellows"],
@@ -71,15 +72,20 @@ func apply_damage(amount: int, source := "", part := "") -> void:
 func set_chest(open: bool) -> void:
 	actor.chest_open = open
 	chest.set_deferred("monitorable", open)
-	actor.hurtbox.set_deferred("monitorable", not open and not is_defeated)
+	# A armadura da fase final é uma regra, não ruído: o corpo fechado não recebe tiro. A janela do peito
+	# é grande, muito luminosa e leva dano dobrado, então a dificuldade vem de atacar na hora certa.
+	actor.hurtbox.set_deferred("monitorable", not open and phase < 2 and not is_defeated)
 
 
 func set_stage(index: int) -> void:
 	get_parent().get_node("BackgroundHot").visible = index == 2
 	get_parent().get_node("Anvil").visible = index == 0
-	actor.idle_animation = &"idle" if index == 0 else (&"walk" if index == 1 else &"armor")
+	# Ele fica parado entre ataques. A caminhada só aparece quando uma ação realmente a usa;
+	# repetir o ciclo andando no mesmo ponto fazia o personagem parecer travado.
+	actor.idle_animation = &"idle" if index < 2 else &"armor"
 	actor.idle_frames = PackedInt32Array([0, 1, 2, 3] if index < 2 else [1, 2])
 	actor.idle()
+	actor.hurtbox.set_deferred("monitorable", index < 2 and not is_defeated)
 
 
 func _on_catch_up() -> void:

@@ -8,4 +8,4 @@
 script = ExtResource("1_script")
 frames = Array[Texture2D]([ExtResource("2_frame"), ExtResource("3_frame")])
 frame_scale = 0.42
-origin = Vector2(-305.62, -98.70)
+origin = Vector2(-312.34, -105.42)

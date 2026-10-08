@@ -23,11 +23,10 @@ size = Vector2(250, 200)
 size = Vector2(220, 150)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_crack"]
-size = Vector2(100, 240)
+size = Vector2(116, 270)
 
 [node name="PhoenixBoss" type="Node2D"]
 script = ExtResource("1_boss")
-max_health = 1200
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("2_health")
@@ -56,14 +55,14 @@ shape = SubResource("RectangleShape2D_body")
 script = ExtResource("5_hurtbox")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Phoenix/CrackLeft"]
-position = Vector2(-95, -170)
+position = Vector2(-110, -190)
 shape = SubResource("RectangleShape2D_crack")
 
 [node name="CrackRight" type="Area2D" parent="Phoenix"]
 script = ExtResource("5_hurtbox")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Phoenix/CrackRight"]
-position = Vector2(95, -170)
+position = Vector2(110, -190)
 shape = SubResource("RectangleShape2D_crack")
 
 [node name="Attacks" type="Node2D" parent="."]

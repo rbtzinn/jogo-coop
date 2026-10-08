@@ -58,11 +58,19 @@ func _smoke(path: String) -> void:
 				seen[boss._current.name] = true
 		# Próxima fase (ou vitória na última).
 		# Chefões com várias vidas (sub_bars) levam o dano em cada parte.
+		# O Coração exige as válvulas na fase da máscara. O teste específico valida
+		# a pressão pelos jogadores; aqui abrimos a janela para o smoke poder avançar.
+		if boss is VolcanoHeartBoss and boss.phase == 1:
+			(boss as VolcanoHeartBoss)._open_until = (boss as VolcanoHeartBoss)._clock + 1.0
 		var parts: Array = [""]
 		if boss.has_method(&"sub_bars"):
 			parts = boss.sub_bars().map(func(entry: Array) -> String: return entry[0])
 		for part: String in parts:
-			boss.apply_damage(boss.health.current - boss.phase_end_health() if part.is_empty() else boss.health.current, "", part)
+			var damage: int = boss.health.current - boss.phase_end_health() if part.is_empty() else boss.health.current
+			# A máscara aberta dobra dano; compensa aqui para não pular a fase final.
+			if boss is VolcanoHeartBoss and boss.phase == 1:
+				damage = ceili(damage / 2.0)
+			boss.apply_damage(damage, "", part)
 		await get_tree().create_timer(0.1).timeout
 	var expected := {}
 	for list: Array in boss.phase_attacks:

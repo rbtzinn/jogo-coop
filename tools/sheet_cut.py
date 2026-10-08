@@ -83,26 +83,12 @@ class SheetCutter:
         with open(os.path.join(self.out, name + ".tres"), "w", encoding="utf-8", newline="\n") as fh:
             fh.write("\n".join(lines) + "\n")
 
-    def animation(self, sheet, cols, rows, count, scale, kind, name, first=0, ratio=0.02):
-        """Folha em grade (cols x rows), `count` quadros a partir do quadro `first`. `kind`: "feet" ou "center"."""
-        image = self.load(sheet)
-        alpha = image[:, :, 3] > ALPHA
-        h, w = alpha.shape
-        xs = split_points(alpha, w, cols, 0)
-        ys = split_points(alpha, h, rows, 1)
-        crops = []
-        for index in range(first, first + count):
-            r, c = divmod(index, cols)
-            cell = keep_main(image[ys[r]:ys[r + 1], xs[c]:xs[c + 1]], ratio)
-            mask = cell[:, :, 3] > ALPHA
-            yy, xx = np.nonzero(cell[:, :, 3] > 8)
-            box = (xx.min(), yy.min(), xx.max() + 1, yy.max() + 1)
-            ax, ay = anchor_of(mask, kind)
-            crops.append((cell[box[1]:box[3], box[0]:box[2]], ax - box[0], ay - box[1]))
-        left = max(ax for _, ax, _ in crops)
-        top = max(ay for _, _, ay in crops)
-        right = max(c.shape[1] - ax for c, ax, _ in crops)
-        bottom = max(c.shape[0] - ay for c, _, ay in crops)
+    def _pack_animation(self, name, crops, scale, padding):
+        """Normaliza quadros já isolados numa tela comum, com margem transparente de segurança."""
+        left = max(ax for _, ax, _ in crops) + padding
+        top = max(ay for _, _, ay in crops) + padding
+        right = max(c.shape[1] - ax for c, ax, _ in crops) + padding
+        bottom = max(c.shape[0] - ay for c, _, ay in crops) + padding
         width, height = int(np.ceil(left + right)), int(np.ceil(top + bottom))
         files = []
         for i, (crop, ax, ay) in enumerate(crops):
@@ -112,7 +98,93 @@ class SheetCutter:
             canvas.save(os.path.join(self.out, file))
             files.append(file)
         self.write_tres(name, files, scale, (-left * scale, -top * scale))
-        print("%-14s %d quadros, tela %dx%d, escala %.2f" % (name, len(files), width, height, scale))
+        print("%-14s %d quadros, tela %dx%d, escala %.2f, margem %d" %
+                (name, len(files), width, height, scale, padding))
+
+    def animation(self, sheet, cols, rows, count, scale, kind, name, first=0, ratio=0.02,
+            padding=16, row_specific=True):
+        """Folha em grade (cols x rows), `count` quadros a partir do quadro `first`. `kind`: "feet" ou "center"."""
+        image = self.load(sheet)
+        alpha = image[:, :, 3] > ALPHA
+        h, w = alpha.shape
+        ys = split_points(alpha, h, rows, 1)
+        global_xs = split_points(alpha, w, cols, 0)
+        crops = []
+        for index in range(first, first + count):
+            r, c = divmod(index, cols)
+            # Cada linha das folhas geradas pode ter uma grade horizontal diferente. Usar uma única divisão
+            # para a folha inteira cortava, por exemplo, a mão do Bigorna e trazia a cabeça da Fênix vizinha.
+            row_alpha = alpha[ys[r]:ys[r + 1]]
+            xs = split_points(row_alpha, w, cols, 0) if row_specific else global_xs
+            cell = keep_main(image[ys[r]:ys[r + 1], xs[c]:xs[c + 1]], ratio)
+            mask = cell[:, :, 3] > ALPHA
+            yy, xx = np.nonzero(cell[:, :, 3] > 8)
+            box = (xx.min(), yy.min(), xx.max() + 1, yy.max() + 1)
+            ax, ay = anchor_of(mask, kind)
+            crops.append((cell[box[1]:box[3], box[0]:box[2]], ax - box[0], ay - box[1]))
+        self._pack_animation(name, crops, scale, padding)
+
+    def animation_components(self, sheet, cols, rows, count, scale, kind, name, reach=6,
+            seed_ratio=0.05, near=150, padding=24):
+        """Recorta poses que se sobrepõem à grade sem misturar quadros vizinhos.
+
+        As silhuetas principais são separadas pelo alfa da folha inteira. Penas, fumaça e outros pedaços
+        soltos são anexados à pose mais próxima. Depois cada pose recebe a mesma tela e uma margem transparente,
+        impedindo vazamento de um quadro no outro e recorte pela filtragem da textura.
+        """
+        image = self.load(sheet)
+        mask = image[:, :, 3] > ALPHA
+        joined = ndimage.binary_dilation(mask, iterations=reach) if reach > 0 else mask
+        label, n = ndimage.label(joined)
+        objects = ndimage.find_objects(label)
+        sizes = np.asarray(ndimage.sum(mask, label, range(1, n + 1)))
+        if not sizes.size:
+            raise ValueError("Animação vazia: " + sheet)
+        seeds = [i + 1 for i, size in enumerate(sizes) if size > sizes.max() * seed_ratio]
+        if len(seeds) != count:
+            raise ValueError("%s: achei %d poses principais, esperava %d" % (sheet, len(seeds), count))
+
+        def bounds(component):
+            obj = objects[component - 1]
+            return (obj[1].start, obj[0].start, obj[1].stop, obj[0].stop)
+
+        def center(component):
+            box = bounds(component)
+            return ((box[0] + box[2]) * 0.5, (box[1] + box[3]) * 0.5)
+
+        # Organiza por linha de leitura, mesmo quando uma asa ou martelo invade a linha geométrica vizinha.
+        by_y = sorted(seeds, key=lambda component: center(component)[1])
+        ordered = []
+        for row in range(rows):
+            row_seeds = by_y[row * cols:min((row + 1) * cols, count)]
+            ordered.extend(sorted(row_seeds, key=lambda component: center(component)[0]))
+
+        assigned = {component: [component] for component in ordered}
+
+        def gap(a, b):
+            aa, bb = bounds(a), bounds(b)
+            dx = max(aa[0] - bb[2], bb[0] - aa[2], 0)
+            dy = max(aa[1] - bb[3], bb[1] - aa[3], 0)
+            return max(dx, dy)
+
+        for component in range(1, n + 1):
+            if component in assigned or objects[component - 1] is None or sizes[component - 1] < 8:
+                continue
+            host = min(ordered, key=lambda seed: gap(component, seed))
+            if gap(component, host) <= near:
+                assigned[host].append(component)
+
+        crops = []
+        for seed in ordered:
+            frame_mask = np.isin(label, assigned[seed]) & mask
+            seed_mask = (label == seed) & mask
+            yy, xx = np.nonzero(frame_mask)
+            box = (xx.min(), yy.min(), xx.max() + 1, yy.max() + 1)
+            ax, ay = anchor_of(seed_mask, kind)
+            crop = image[box[1]:box[3], box[0]:box[2]].copy()
+            crop[~frame_mask[box[1]:box[3], box[0]:box[2]]] = 0
+            crops.append((crop, ax - box[0], ay - box[1]))
+        self._pack_animation(name, crops, scale, padding)
 
     def loose_effects(self, sheet, names, reach=6, min_area=1500, row_band=200):
         """Desenhos soltos, em ordem de leitura (linha por faixa de `row_band` px, depois da esquerda)."""

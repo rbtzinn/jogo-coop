@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="FrameAnimation" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/player/characters/frame_animation.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://bosses/anvil_master/art/walk_8.png" id="2_open"]
+[ext_resource type="Texture2D" path="res://bosses/anvil_master/art/walk_7.png" id="3_fist"]
+[ext_resource type="Texture2D" path="res://bosses/anvil_master/art/walk_6.png" id="4_cast"]
+
+[resource]
+script = ExtResource("1_script")
+frames = Array[Texture2D]([ExtResource("2_open"), ExtResource("3_fist"), ExtResource("4_cast"), ExtResource("3_fist"), ExtResource("2_open")])
+frame_scale = 1.0
+origin = Vector2(-265.96, -459.0)

@@ -131,7 +131,7 @@ Cores: o fundo da ilha tem muita lava, então **os fundos ficam escuros e com a 
 
 **Fase 3 — "Coroação Derretida"** (25%): a casca racha e cai; ele vira **magma puro**, mais alto e magro, com a coroa flutuando em volta da cabeça. *Rajada* (cospe um jato contínuo que varre a tela numa altura, alta ou baixa, avisada pela boca brilhando), *Coroa em Órbita* (a coroa gira em volta dele e sai voando em espiral), *Cuspe Real* mais rápido. A lava do lago sobe um pouco: as jangadas ficam mais importantes.
 - Ao vencer: esfria, vira uma estátua de pedra fazendo uma reverência para os jogadores (finalmente ele é quem se curva).
-- Vida: 1200. Tempo-alvo: 2:30.
+- Vida: 1350. Tempo-alvo: 2:30.
 
 **Como ficou no jogo (07/10/2026, primeira versão, decidido pelo Claude; números a calibrar):** `bosses/magma_king/`, entrada pela porta do Rei Magma no mapa da Área 2. Arte do pedido do Vulcão recortada por `tools/cut_magma_king_art.py` (as folhas vieram fora da grade; cada quadro é ancorado no apoio do desenho).
 - Arena: a caverna do pedido, com o chão (beira da margem) em y 1000; duas jangadas de basalto (tampo em y 760, x 620 e 1260) e o trono à direita. Uma faixa da beira da margem é desenhada por cima do rei, para ele afundar no lago (fase 2) e derreter até a altura do jato (fase 3). Na fase 3 o fundo e a beira trocam pela versão "quente".
@@ -160,13 +160,14 @@ Cores: o fundo da ilha tem muita lava, então **os fundos ficam escuros e com a 
 - **Anéis de Fogo:** o ovo pulsa e solta anéis que correm pelo chão (pular ou dash).
 - **Momento de dupla — Casca Dupla:** o ovo tem uma rachadura brilhante de cada lado. As duas precisam ser quebradas **com até 3 s de diferença**; se uma quebrar sozinha, ela se fecha de novo e o ovo recupera 30% da vida da fase. Sozinho: a outra rachadura quebra junto.
 - Ao vencer: o ovo racha e sai um pintinho cinzento que espirra uma nuvenzinha de cinza e foge.
-- Vida: 1200. Tempo-alvo: 2:40.
+- Vida: 1350. Tempo-alvo: 2:40.
 
 **Como ficou no jogo (07/10/2026, primeira versão, decidido pelo Claude; números a calibrar):** `bosses/phoenix/`, porta da Fênix no mapa da Área 2. Arte recortada por `tools/cut_phoenix_art.py`. Arena: o ninho no pico, com três rochas flutuantes (tampos em y 780, 620 e 780; x 380, 820 e 1250). Lição do Rei Magma: os golpes também pegam quem está nas rochas.
-- **Fase 1 (voando):** *Rasante* (duas passadas em alturas sorteadas: chão, rochas dos lados ou rocha do meio; rastro de brasas 0,8 s antes), *Leque de Penas* (duas levas de penas caindo, cada uma com um buraco; caem nas rochas também; uma turquesa), *Ventania* (empurra os jogadores para a esquerda a 300 px/s por 2,6 s, sem machucar; fagulhas rolam pelo chão e pelo tampo de cada rocha).
+- **Fase 1 (voando):** *Rasante* (três passadas legíveis, uma em cada altura: chão, rochas dos lados e rocha do meio; rastro de brasas 0,8 s antes), *Leque de Penas* (duas levas de penas caindo, cada uma com um buraco; caem nas rochas também; uma turquesa), *Ventania* (empurra os jogadores para a esquerda a 300 px/s por 2,6 s, sem machucar; fagulhas rolam pelo chão e pelo tampo de cada rocha).
 - **Fase 2 (pousada, céu de cinzas):** *Ovinhos* (3, mirando em quem está de pé; o pintinho corre para a esquerda e cai da beira da rocha; um turquesa), *Chuva de Fagulhas* (três levas em colunas com sombra antes, uma coluna livre por leva), *Rasante* baixo (chão ou rochas dos lados).
 - **Fase 3 (ovo, ninho em brasa):** *Anéis de Fogo* (para os dois lados, três levas), *Explosão de Brasas* (5 em arco nos jogadores; uma turquesa), *Penas do Céu*. **Casca Dupla:** só as rachaduras levam tiro; cada uma abre com 45 de dano por 3 s; as duas abertas estilhaçam o ovo (para de atacar e leva o dobro por 4 s); uma só que fecha cura 30% da vida da fase. Sozinho, abrir uma já estilhaça.
 - **Ajuste do 1º teste (07/10/2026, pedido do usuário: animações horríveis, pedaços cortados):** os efeitos passaram a ser recortados pelo contorno de cada desenho (a folha não tinha grade regular), as rochas sem os caquinhos soltos, e o "parado" voando/pousada deixou de piscar entre poses diferentes (fica numa pose, balançando, e troca de vez em quando).
+- **Revisão de legibilidade (08/10/2026):** todas as poses foram reconstruídas por componente visual em vez de célula fixa, com 28 px de margem transparente em volta do maior alcance. Isso remove cabeça/penas do quadro vizinho e preserva as extremidades. A ave ficou cerca de 15–20% maior e as caixas acompanharam o novo desenho. O fundo recebeu tratamento de menor saturação, contraste e brilho; o primeiro plano continua vivo. O Rasante da fase 1 agora percorre as três alturas, sempre com aviso, e o intervalo entre padrões diminuiu.
 - Teste: `tests/test_phoenix.tscn`.
 
 ### 6. O Mestre Bigorna
@@ -192,18 +193,19 @@ Cores: o fundo da ilha tem muita lava, então **os fundos ficam escuros e com a 
 - **Pisão:** salta e cai, a arena treme, pedras caem do teto (sombras).
 - **Peito Aberto:** quando ergue o martelo, a grade do peito abre e mostra a brasa: ali leva o **dobro de dano**.
 - Ao vencer: a armadura desmonta peça por peça e ele fica de ceroulas listradas, envergonhado, tapando-se com o avental.
-- Vida: 1400. Tempo-alvo: 2:50.
+- Vida: 1550. Tempo-alvo: 2:50.
 
 **Como ficou no jogo (07/10/2026, integração do Codex a pedido do usuário):** `bosses/anvil_master/`, porta do Mestre Bigorna no mapa do Vulcão. Arte recortada por `tools/cut_volcano_final_art.py`, sem alterar as folhas originais. Três fases com martelada, ferraduras com uma turquesa, fole em duas alturas, canal de metal com aviso de 1 s e perigo por 3 s, quatro bigorninhas com sombras, Braço de Ferro, martelo giratório, pisão com pedras e peito aberto. Duas plataformas penduradas balançam pelo relógio sincronizado do chefão.
 
-- **Braço de Ferro:** aviso de 0,9 s, alcance limitado; pular ou dar dash evita a agarrada. O preso fica imune e sem controle por até 3 s; oito acertos do parceiro na mão o soltam. O prazo vencido tira uma vida no PC do preso. Trocar de fase, vencer ou ficar só um jogador de pé solta sem dano. Com um jogador só não entra no saco de ataques.
+- **Braço de Ferro:** o Bigorna prepara o braço, arremessa a corrente em arco e só decide o acerto quando a algema chega ao aviso. Pular ou dar dash evita a agarrada. No acerto, a corrente puxa o personagem gradualmente; Palhaço e Acrobata têm loops próprios de susto/esforço enquanto presos. O preso fica imune e sem controle por cerca de 3 s; oito acertos do parceiro na algema o soltam. O prazo vencido tira uma vida no PC do preso. Trocar de fase, vencer ou ficar só um jogador de pé solta sem dano. Com um jogador só não entra no saco de ataques.
 - **Peito aberto:** janela de 1,7 s, caixa própria de tiro e dano dobrado. A grade fecha ao terminar ou cancelar o golpe. Armadura, passos, golpes e derrota usam desenhos distintos, com a armadura maior que a forma inicial.
+- Na fase da armadura, o corpo fechado bloqueia tiros: é preciso sobreviver aos padrões e aproveitar a janela grande e luminosa do peito. Assim a dificuldade final vem do ritmo e da janela de ataque, não de esconder perigos. Na primeira fase, a bigorna de trabalho fica na frente do ferreiro e alinhada ao quadro de impacto da martelada; ela sai quando a luta abandona a bancada.
 - Teste de mecânicas/progressão: `tests/test_volcano_bosses.tscn`; teste em dois processos: `tests/test_volcano_online.tscn` (normal, internet ruim e reconexão). Também entra no teste de fumaça.
 
 **Ajuste após a demonstração (07/10/2026, pedido do usuário):** o ferreiro permanece em x 1710 nas três fases, olhando para a esquerda. A bigorna acompanha a posição da forja à direita. A borda jogável acaba em x 1560: não se pode andar ou dar dash por trás do chefão. Quadros largos permanecem dentro da tela, com as caixas de acerto acompanhando o desenho.
 - Martelada, pisão, peito aberto e martelo giratório soltam ondas pelo chão e pela altura de cada plataforma, até ultrapassar o canto esquerdo. Ferraduras e fole também têm trajetórias nos três níveis, com lançamentos ligeiramente espaçados. O fole baixo permite abaixar; o alto exige observar a posição.
 - Canal Derretido ameaça a mesma faixa horizontal no chão e nos tampos. Bigorninhas e pedras mostram sombras nas duas alturas e continuam caindo através da plataforma até o chão.
-- Braço de Ferro estende uma mão na corrente até o lugar anunciado, inclusive sobre plataformas; o corpo fica na direita. Mantém o aviso, a possibilidade de escapar, oito acertos do parceiro e a liberação em cancelamentos.
+- Braço de Ferro mantém o corpo na direita e usa uma animação exclusiva de lançamento/esforço. A corrente e a algema percorrem o caminho até o lugar anunciado, inclusive sobre plataformas; no acerto, o boneco é puxado em arco e se debate em vez de congelar. Mantém o aviso, a possibilidade de escapar, oito acertos do parceiro e a liberação em cancelamentos.
 - `tests/test_volcano_arena.tscn` verifica colisões com alvos parados no canto esquerdo, em cima e embaixo das plataformas, além de posição do chefão e bloqueio da passagem por trás.
 
 ### 7. O Coração do Vulcão (fecha a área)
@@ -222,11 +224,12 @@ Cores: o fundo da ilha tem muita lava, então **os fundos ficam escuros e com a 
 - **Cuspe de Magma:** bolas de magma em leque.
 - **Investida de Magma:** a máscara aperta os olhos e projeta rastros do coração pela altura do chão e de cada plataforma. O corpo permanece na direita.
 - Ao vencer: esfria e vira um coração de pedra que cai na lava. A porta da cratera se abre e mostra o caminho para a Área 3 (gancho da história).
-- Vida: 1500. Tempo-alvo: 3:00.
+- Vida: 1650. Tempo-alvo: 3:00.
 
 **Como ficou no jogo (07/10/2026, integração do Codex a pedido do usuário):** `bosses/volcano_heart/`, porta da cratera ligada à luta e fechada até vencer `magma_king`, `ash_phoenix` e `anvil_master`. Três fases: quatro pulsos em ritmo crescente, artérias com avisos no chão e jatos verticais, gotas turquesa, os três ecos de fogo violeta, leques de magma e investida com recuo visível. Os ecos usam arte e código próprios; não dependem dos outros chefões.
 
 - **Válvulas:** na segunda fase, placas em x 400 e 1420, fora dos ingressos do HUD para ficarem visíveis. Dois jogadores mantêm as duas pressionadas por 1 s (tolerância de 1 s entre registros): máscara aberta por 5 s e dano dobrado. Um jogador de pé precisa de uma placa, por 1 s, para abrir por 3 s. O host decide e compartilha pressão, janela e dano. Há 1 s de intervalo depois que fecha.
+- A máscara fechada agora bloqueia o dano nessa fase; as válvulas são obrigatórias, e a abertura continua dando dano dobrado. Isso torna a coordenação a fonte da dificuldade sem acrescentar projéteis nem efeitos simultâneos.
 - **Erupção:** o chão sólido desliga, muda o cenário e entram três plataformas de basalto, em x 350/960/1350, com bases em y 780/670/800 e pulsação de 35/45/30 px. Cada jogador resolve a própria queda abaixo de y 950: perde uma vida, volta à plataforma mais próxima e recebe proteção. A entrada da fase posiciona os jogadores sem penalidade; reconexão recupera fase, geometria e relógio.
 - A vitória salva `volcano_heart`, esfria o coração e anuncia a libertação do festival. A próxima ilha continua como gancho de história; ainda não há uma Área 3 jogável. A Mina de Brasa é a fase de plataforma prevista separadamente, não um quinto chefão.
 - Testes: os mesmos testes de Vulcão descritos acima e o teste de fumaça. A dificuldade final ainda precisa da avaliação jogando, como nas primeiras versões dos outros chefões.

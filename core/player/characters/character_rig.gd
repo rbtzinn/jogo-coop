@@ -30,6 +30,9 @@ extends Node2D
 ## Dano desenhado (4 quadros no ar: golpe, jogado para trás, susto, recompondo), tocado uma vez
 ## pela duração do atordoamento (`play_hurt`).
 @export var hurt_animation: FrameAnimation
+## Reação em loop quando um chefão captura o personagem. O grab controla a posição; esta
+## animação mostra o susto e a tentativa de escapar, sem deixar o boneco congelado no ar.
+@export var capture_animation: FrameAnimation
 ## Balão desenhado (quem cai): 1-6 flutuando em loop, 7 e 8 inclinado nos extremos do
 ## balanço. Origem no meio do oval. Vazio = balão desenhado por código com a cabeça.
 @export var balloon_animation: FrameAnimation
@@ -128,6 +131,8 @@ var _dash_elapsed := 0.0
 ## Dano: quanto falta e quanto dura o quadro a quadro do golpe (0 = fora dele).
 var _hurt_left := 0.0
 var _hurt_length := 0.22
+var _boss_captured := false
+var _boss_capture_time := 0.0
 ## Quando o parado desenhado começou (para ele sempre entrar pelo quadro 1).
 var _idle_since := 0.0
 ## Pose final do Grande Número: quanto tempo ainda pode começar (esperando o pouso) e quanto falta.
@@ -171,6 +176,7 @@ func set_weapon(weapon: String) -> void:
 func update_pose(delta: float, velocity: Vector2, on_floor: bool, dashing: bool,
 		aim: Vector2, run_speed: float, crouching := false) -> void:
 	_time += delta
+	_boss_capture_time = _boss_capture_time + delta if _boss_captured else 0.0
 	_dash_elapsed = _dash_elapsed + delta if dashing else 0.0
 	_hurt_left = maxf(_hurt_left - delta, 0.0)
 	_ending_wait = maxf(_ending_wait - delta, 0.0)
@@ -212,6 +218,16 @@ func play_hurt(duration: float) -> void:
 	_hurt_left = _hurt_length
 
 
+func set_boss_captured(active: bool) -> void:
+	if active and not _boss_captured:
+		_boss_capture_time = 0.0
+	_boss_captured = active
+
+
+func is_boss_captured() -> bool:
+	return _boss_captured
+
+
 ## Fim do Grande Número desenhado: no primeiro momento parado no chão logo depois, mostra o último
 ## quadro do número (a pose final, ex.: o "ta-dá" do Salto Mortal) por um instante. Só desenho: andar,
 ## pular ou atirar corta na hora.
@@ -234,7 +250,11 @@ func _update_body(delta: float, velocity: Vector2, on_floor: bool, dashing: bool
 	var offset := Vector2.ZERO
 	var lean := 0.0
 	var stretch := Vector2.ONE
-	if dashing:
+	if _boss_captured:
+		offset = Vector2(sin(_boss_capture_time * 9.0) * 4.0, cos(_boss_capture_time * 12.0) * 5.0)
+		lean = sin(_boss_capture_time * 7.0) * 0.1
+		stretch = Vector2(0.97, 1.03)
+	elif dashing:
 		lean = 0.3
 		stretch = Vector2(1.15, 0.9)
 	elif running:
@@ -272,7 +292,13 @@ func _update_legs(velocity: Vector2, on_floor: bool, dashing: bool, running: boo
 
 	# Poses no ar medidas em "pernas": funcionam para perna curta (palhaço) e longa (acrobata).
 	var leg := maxf(_leg_length(), 24.0)
-	if dashing:
+	if _boss_captured:
+		var kick := sin(_boss_capture_time * 13.0)
+		foot_f = hip_f + Vector2(11 + kick * 8, -6 + absf(kick) * 10)
+		foot_b = hip_b + Vector2(-13 - kick * 7, -2 + absf(kick) * 7)
+		shoe_tilt_f = 0.55 + kick * 0.2
+		shoe_tilt_b = -0.4 - kick * 0.16
+	elif dashing:
 		foot_f = hip_f + Vector2(-0.3, 0.8) * leg
 		foot_b = hip_b + Vector2(-0.9, 0.5) * leg
 		shoe_tilt_f = 0.5
@@ -328,7 +354,9 @@ func _update_arms(delta: float, on_floor: bool, dashing: bool, running: bool, ai
 
 	var shoulder_b := to_local(shoulder_back.global_position)
 	var hand_b: Vector2
-	if dashing:
+	if _boss_captured:
+		hand_b = shoulder_b + Vector2(-arm_length * 0.65, -arm_length * 0.75 + sin(_boss_capture_time * 11.0) * 5)
+	elif dashing:
 		hand_b = shoulder_b + Vector2(-arm_length, 6)
 	elif not on_floor:
 		hand_b = shoulder_b + Vector2(-14, -arm_length * 0.7)
@@ -350,6 +378,8 @@ func _update_arms(delta: float, on_floor: bool, dashing: bool, running: bool, ai
 ## parado, se houver) no lugar das peças.
 func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool, dashing: bool,
 		crouch_shown: bool, crouching: bool) -> void:
+	var captured_animation: FrameAnimation = capture_animation if capture_animation != null else hurt_animation
+	var captured_drawn := _boss_captured and captured_animation != null and captured_animation.frame_count() > 0
 	var parrying := _parry_progress >= 0.0 and parry_animation != null and parry_animation.frame_count() > 0
 	var special_drawn := special_frame >= 0 and special_animation != null
 	var hurt_drawn := _hurt_left > 0.0 and hurt_animation != null and hurt_animation.frame_count() >= 4
@@ -372,14 +402,14 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 	var ending_drawn := idle and _ending_left > 0.0 and special_animation != null
 	if ending_drawn:
 		_idle_since = _time
-	var use_frames := parrying or special_drawn or hurt_drawn or dash_drawn or crouch_drawn or jump_drawn or run_drawn or idle_drawn
+	var use_frames := captured_drawn or parrying or special_drawn or hurt_drawn or dash_drawn or crouch_drawn or jump_drawn or run_drawn or idle_drawn
 	if use_frames != _showing_frames:
 		_showing_frames = use_frames
 		_frame_sprite.visible = use_frames
 		for part in _body_parts:
 			part.visible = not use_frames
 	# Parry e Grande Número desenhados são sem pistola: o braço da arma some enquanto tocam.
-	var hide_gun := parrying or special_drawn or ending_drawn
+	var hide_gun := captured_drawn or parrying or special_drawn or ending_drawn
 	if hide_gun != _hiding_gun:
 		_hiding_gun = hide_gun
 		front_arm.visible = not hide_gun
@@ -387,7 +417,9 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 	if not use_frames:
 		return
 	var animation: FrameAnimation = idle_animation
-	if parrying:
+	if captured_drawn:
+		animation = captured_animation
+	elif parrying:
 		animation = parry_animation
 	elif special_drawn:
 		animation = special_animation
@@ -405,7 +437,9 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 		animation = special_animation
 	var count := animation.frame_count()
 	var index: int
-	if parrying:
+	if captured_drawn:
+		index = int(_boss_capture_time * 7.0) % count
+	elif parrying:
 		index = mini(int(_parry_progress * count), count - 1)
 	elif special_drawn:
 		index = mini(special_frame, count - 1)
@@ -440,12 +474,15 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 	# Dash para cima ou na diagonal (Pirueta): o desenho gira na direção do dash, em volta do
 	# meio do tronco. Dash reto fica sem giro, e a freada (último quadro) também: ela é o
 	# endireitar antes de voltar ao pulo.
-	var angle := 0.0
-	if dash_drawn and index < count - 1 and velocity.length() > 1.0:
+	var angle := sin(_boss_capture_time * 8.0) * 0.07 if captured_drawn else 0.0
+	if not captured_drawn and dash_drawn and index < count - 1 and velocity.length() > 1.0:
 		angle = atan2(velocity.y, absf(velocity.x))
 	var pivot := animation.pivot
 	_frame_sprite.rotation = angle
 	_frame_sprite.position = pivot + (animation.origin_of(index) - pivot).rotated(angle)
+	if captured_drawn:
+		_frame_sprite.position += Vector2(sin(_boss_capture_time * 11.0) * 4.0,
+				cos(_boss_capture_time * 13.0) * 4.0)
 	_frame_has_shoulder = index < animation.shoulders.size()
 	if _frame_has_shoulder:
 		_frame_shoulder = pivot + (animation.shoulders[index] - pivot).rotated(angle)

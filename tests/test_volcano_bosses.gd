@@ -102,7 +102,9 @@ func _forge() -> void:
 	freeze(boss)
 	await frames(120)
 	await photo("bigorna_fase1")
-	check(boss.health.current == 1400, "Bigorna has 1400 HP")
+	check(boss.health.current == 1550, "Bigorna has 1550 HP")
+	check(scene.get_node("Anvil").visible and scene.get_node("Anvil").z_index > boss.z_index,
+			"the work anvil stays in front of Bigorna during the hammer phase")
 	var seen := await run_attack(boss, &"Hammer")
 	check(seen.has(&"wave") and seen.has(&"spark"), "hammer creates floor waves and sparks")
 	seen = await run_attack(boss, &"Horseshoes")
@@ -111,6 +113,7 @@ func _forge() -> void:
 	check(seen.has(&"ember"), "bellows creates its embers")
 	await advance(boss)
 	check(boss.phase == 1 and not scene.get_node("Anvil").visible, "phase 2 leaves the anvil")
+	check(boss.actor.idle_animation == &"idle", "stationary Bigorna idles instead of walking in place")
 	await photo("bigorna_fase2")
 	var hot_frames := [0]
 	var channel_watch := func(attack: Node) -> void:
@@ -126,14 +129,21 @@ func _forge() -> void:
 	var partner: Player = players[1]
 	victim.position = Vector2(600, 1000)
 	boss.sync.start_attack(&"IronGrip", 31, [String(victim.name), 600.0])
-	await frames(70)
+	await frames(38)
+	check(boss.actor.pose_animation == &"grip" and boss.actor.pose_frame == 2,
+			"Iron Grip visibly throws the chain before deciding the hit")
+	await photo("bigorna_corrente_lancada")
+	await frames(32)
 	check(victim.boss_hold.is_finite(), "Iron Grip holds the chosen player")
+	check(victim.rig.is_boss_captured(), "captured player loops a dedicated struggle animation")
 	await photo("bigorna_braco_de_ferro")
 	for i in 7:
 		boss.grip.take_hit(1, String(partner.name))
 	check(victim.boss_hold.is_finite(), "seven partner hits still hold the player")
 	boss.grip.take_hit(1, String(partner.name))
 	check(not victim.boss_hold.is_finite(), "eight partner hits release the player")
+	await frames(1)
+	check(not victim.rig.is_boss_captured(), "rescue immediately ends the captured animation")
 	boss._current.cancel()
 	victim.position = Vector2(600, 1000)
 	var hp := victim.player_health.health.current
@@ -197,7 +207,7 @@ func _heart() -> void:
 	await frames(5)
 	freeze(boss)
 	await frames(120)
-	check(boss.health.current == 1500, "Heart has 1500 HP")
+	check(boss.health.current == 1650, "Heart has 1650 HP")
 	await photo("coracao_fase1")
 	var seen := await run_attack(boss, &"Pulse")
 	check(seen.has(&"ring"), "heartbeats create jumpable shock rings")
@@ -207,6 +217,9 @@ func _heart() -> void:
 	check(seen.has(&"drop_parry"), "Heart drops turquoise parry targets")
 	await advance(boss)
 	check(boss.phase == 1, "Heart enters the three seals phase")
+	var closed_health := boss.health.current
+	boss.apply_damage(4, "test", "mask")
+	check(boss.health.current == closed_health, "closed stone mask blocks damage until the valves open")
 	for attack in [&"EchoCrown", &"EchoFeathers", &"EchoHorseshoes"]:
 		seen = await run_attack(boss, attack)
 		check(not seen.is_empty(), "ghost-fire echo %s creates projectiles" % attack)

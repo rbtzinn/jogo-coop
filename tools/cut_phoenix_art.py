@@ -15,13 +15,14 @@ CUT = SheetCutter(os.path.join(ROOT, "docs", "referencias", "pecas", "vulcao"),
         os.path.join(ROOT, "bosses", "phoenix", "art"), "res://bosses/phoenix/art")
 
 # Animações: folha, colunas, linhas, quadros, escala no jogo (px do jogo por px da folha), âncora, nome.
-# As escalas igualam o tamanho da ave entre folhas (~330 px de altura no jogo; o ovo também).
+# Cada pose é separada pelo contorno, pois várias asas/cabeças atravessam a grade desenhada da folha.
+# A margem transparente acrescentada pelo recortador impede que a filtragem corte as pontas no jogo.
 ANIMATIONS = [
-    ("fenix/fenix_voo.png", 4, 2, 8, 0.7, "center", "fly"),
-    ("fenix/fenix_asas.png", 4, 1, 4, 0.55, "center", "wings"),
-    ("fenix/fenix_ninho.png", 4, 2, 8, 0.85, "feet", "perch"),
-    ("fenix/fenix_ovo.png", 4, 2, 8, 0.92, "feet", "egg"),
-    ("fenix/fenix_derrota.png", 4, 1, 4, 0.66, "feet", "defeat"),
+    ("fenix/fenix_voo.png", 4, 2, 8, 0.84, "center", "fly"),
+    ("fenix/fenix_asas.png", 4, 1, 4, 0.66, "center", "wings"),
+    ("fenix/fenix_ninho.png", 4, 2, 8, 0.98, "feet", "perch"),
+    ("fenix/fenix_ovo.png", 4, 2, 8, 1.04, "feet", "egg"),
+    ("fenix/fenix_derrota.png", 4, 1, 4, 0.78, "feet", "defeat"),
     ("fenix/anel_fogo.png", 4, 1, 4, 0.56, "feet", "ring"),
     ("fenix/ventania.png", 4, 1, 4, 0.8, "center", "wind"),
 ]
@@ -50,7 +51,7 @@ def cut_rocks():
 def main():
     CUT.clean()
     for entry in ANIMATIONS:
-        CUT.animation(*entry)
+        CUT.animation_components(*entry, reach=8, seed_ratio=0.05, near=170, padding=28)
     # O rastro (última linha) é feito de pontinhos: junta de mais longe.
     CUT.row_effects("fenix/fenix_efeitos.png", EFFECT_ROWS, EFFECTS, reach=[3, 3, 3, 14])
     cut_rocks()

@@ -21,15 +21,15 @@ const FLASH_TIME := 0.08
 
 ## Caixa que leva tiro e caixa que machuca quem encosta, por jeito: [meio, tamanho].
 const HURT := {
-	Mode.FLY: [Vector2(0, 0), Vector2(250, 200)],
-	Mode.PERCH: [Vector2(10, -170), Vector2(230, 300)],
+	Mode.FLY: [Vector2(0, 0), Vector2(300, 240)],
+	Mode.PERCH: [Vector2(10, -195), Vector2(270, 345)],
 }
 const BODY := {
-	Mode.FLY: [Vector2(0, 10), Vector2(220, 150)],
-	Mode.PERCH: [Vector2(10, -150), Vector2(200, 260)],
+	Mode.FLY: [Vector2(0, 10), Vector2(265, 180)],
+	Mode.PERCH: [Vector2(10, -175), Vector2(230, 300)],
 }
 ## Bico (de onde saem os ovinhos), no espaço do nó.
-const BEAK := Vector2(-150, -240)
+const BEAK := Vector2(-175, -270)
 
 var mode := Mode.FLY
 var facing := -1
