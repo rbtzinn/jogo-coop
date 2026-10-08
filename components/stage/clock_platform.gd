@@ -14,7 +14,8 @@ var _rest := Vector2.ZERO
 var _clock: Node
 var _sprite := Sprite2D.new()
 var _chain_x: Array[float] = []
-const CHAIN_TINT := Color(1.7, 1.55, 1.35)
+## Dois elos da corrente na textura das plataformas penduradas (pixels da textura, medido no desenho).
+const CHAIN_PERIOD := 155.0
 
 
 func _ready() -> void:
@@ -38,9 +39,17 @@ func _ready() -> void:
 	if hanging:
 		var image := texture.get_image()
 		var half := image.get_width() / 2
+		# Meio de cada corrente pelos pixels bem opacos (o brilho fraco em volta puxava o meio para o lado e a
+		# corrente esticada saía quase toda transparente).
 		for i in 2:
-			var part := image.get_region(Rect2i(half * i, 0, half, 120)).get_used_rect()
-			_chain_x.append(half * i + part.get_center().x)
+			var left := INF
+			var right := -INF
+			for y in range(20, 120, 10):
+				for x in range(half * i, half * (i + 1)):
+					if image.get_pixel(x, y).a > 0.6:
+						left = minf(left, x)
+						right = maxf(right, x)
+			_chain_x.append((left + right) * 0.5)
 
 
 func _physics_process(_delta: float) -> void:
@@ -59,11 +68,13 @@ func _draw() -> void:
 	if not hanging:
 		return
 	var ratio := _sprite.scale.x
+	var top := -global_position.y - 10.0
 	for center in _chain_x:
-		var y := -global_position.y
-		while y < _sprite.position.y:
-			var h := minf(160 * ratio, _sprite.position.y - y)
-			var target := Rect2(_sprite.position.x + (center - 40) * ratio, y, 80 * ratio, h)
-			# Mais clara que a textura: no fundo escuro da forja a corrente sumia.
-			draw_texture_rect_region(texture, target, Rect2(center - 40, 0, 80, h / ratio), CHAIN_TINT)
-			y += h
+		# Do topo do desenho para cima, de dois em dois elos: cada pedaço termina no mesmo ponto do elo em que o
+		# desenho começa, então a corrente continua sem emenda até o alto da tela.
+		var y := _sprite.position.y
+		while y > top:
+			var h := minf(CHAIN_PERIOD * ratio, y - top)
+			var target := Rect2(_sprite.position.x + (center - 40) * ratio, y - h, 80 * ratio, h)
+			draw_texture_rect_region(texture, target, Rect2(center - 40, CHAIN_PERIOD - h / ratio, 80, h / ratio))
+			y -= h
