@@ -6,7 +6,8 @@ extends BossBrain
 ##
 ## Casca Dupla (momento de dupla): no ovo só as rachaduras levam tiro, uma de cada lado (o tiro da esquerda
 ## acerta a da esquerda). Cada rachadura que leva CRACK_HP de dano se ABRE por OPEN_TIME. Se a outra abrir
-## nesse tempo, o ovo se ESTILHAÇA: para de atacar e leva o dobro de dano por STUN_TIME. Se o tempo acabar
+## nesse tempo, o ovo se ESTILHAÇA: termina o ataque em andamento, não começa outro e leva o dobro de dano
+## por STUN_TIME. Se o tempo acabar
 ## com uma só aberta, ela fecha e o ovo recupera HEAL_SHARE da vida da fase. Sozinho: abrir uma já estilhaça.
 ## Quem decide é o host (o dano chega nele); o estado vai para o cliente por `_receive_shell`.
 
@@ -142,8 +143,8 @@ func _shatter() -> void:
 	_stun_until = _clock + STUN_TIME
 	_open_until = [-1.0, -1.0]
 	_crack_damage = [0, 0]
-	if _current != null and _current.is_running():
-		_current.cancel()
+	# O ataque em andamento termina sozinho (o que já caía chega ao chão; antes era cortado e as penas
+	# ficavam paradas no ar); só não começa outro enquanto o ovo treme.
 	_wait = STUN_TIME + 0.3
 
 
@@ -165,10 +166,7 @@ func _receive_shell(left: float, right: float, stun: float) -> void:
 
 func _apply_shell(left: float, right: float, stun: float) -> void:
 	_open_until = [_clock + left if left >= 0.0 else -1.0, _clock + right if right >= 0.0 else -1.0]
-	var was_stunned := is_stunned()
 	_stun_until = _clock + stun if stun >= 0.0 else -1.0
-	if is_stunned() and not was_stunned and _current != null and _current.is_running():
-		_current.cancel()
 
 
 func _on_catch_up() -> void:
