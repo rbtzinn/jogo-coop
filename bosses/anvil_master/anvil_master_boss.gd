@@ -72,9 +72,9 @@ func apply_damage(amount: int, source := "", part := "") -> void:
 func set_chest(open: bool) -> void:
 	actor.chest_open = open
 	chest.set_deferred("monitorable", open)
-	# A armadura da fase final é uma regra, não ruído: o corpo fechado não recebe tiro. A janela do peito
-	# é grande, muito luminosa e leva dano dobrado, então a dificuldade vem de atacar na hora certa.
-	actor.hurtbox.set_deferred("monitorable", not open and phase < 2 and not is_defeated)
+	# A armadura leva tiro normal (até 08/10/2026 só o peito aberto levava, e parecia que ele não tomava dano);
+	# o peito aberto, grande e luminoso, leva dano dobrado: atacar na hora certa acelera a luta.
+	actor.hurtbox.set_deferred("monitorable", not open and not is_defeated)
 
 
 func set_stage(index: int) -> void:
@@ -85,7 +85,7 @@ func set_stage(index: int) -> void:
 	actor.idle_animation = &"idle" if index < 2 else &"armor"
 	actor.idle_frames = PackedInt32Array([0, 1, 2, 3] if index < 2 else [1, 2])
 	actor.idle()
-	actor.hurtbox.set_deferred("monitorable", index < 2 and not is_defeated)
+	actor.hurtbox.set_deferred("monitorable", not is_defeated)
 
 
 func _on_catch_up() -> void:

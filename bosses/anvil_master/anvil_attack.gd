@@ -53,11 +53,11 @@ func _tick(t: float) -> void:
 		Pattern.HAMMER:
 			actor.pose(&"hammer", 0 if t < 0.8 else (1 if t < 0.95 else (2 if t < 1.25 else 3)))
 			boss.get_parent().get_node("Anvil").visible = not (t >= 0.95 and t < 1.25)
-			_waves(t, 0.95, actor.global_position.x - 160)
+			_waves(t, 0.95, actor.global_position.x - 235)
 			for i in 5:
 				var s := t - 0.95
 				if s >= 0 and s < 1.4:
-					prop("spark%d" % i, &"spark", Vector2(actor.global_position.x - 160 + (i - 2) * s * 210, 850 - 450 * s + 450 * s * s))
+					prop("spark%d" % i, &"spark", Vector2(actor.global_position.x - 235 + (i - 2) * s * 210, 850 - 450 * s + 450 * s * s))
 		Pattern.SHOES:
 			actor.pose(&"throw", 0 if t < 0.5 else (1 if t < 0.9 else (2 if t < 1.65 else 3)))
 			var levels := surface_levels()
@@ -85,7 +85,8 @@ func _tick(t: float) -> void:
 		Pattern.CHANNEL:
 			_forge_pose(t)
 			var hot := t >= 1.0 and t < 4.0
-			var x := 320.0 + _channel * 640
+			# Três canais na área de luta (antes o terceiro caía em x = 1600, nos pés dele, longe de todo mundo).
+			var x: float = [320.0, 800.0, 1280.0][_channel]
 			var channel := prop("channel0", &"channel", Vector2(x, 1000))
 			channel.frame = 1 if hot else 0
 			channel.active = hot
@@ -123,7 +124,7 @@ func _tick(t: float) -> void:
 				var launch := 0.7 + i * 0.45 if pattern == Pattern.ANVILS else 1.7 + i * 0.2
 				var x: float = float(args[i]) if args.size() > i else 250 + i * 400
 				var amount := clampf((t - launch + 0.65) / 0.65, 0, 1)
-				warning("fall%d" % i, Vector2(x, 1000), amount, 72)
+				warning("fall%d" % i, Vector2(x, 1000), amount, 72, true)
 				for platform in boss.get_parent().get_children():
 					if platform is ClockPlatform and absf(x - platform.global_position.x) < platform.width * 0.5 + 50:
 						warning("fall%d:%s" % [i, platform.name], Vector2(x, platform.global_position.y), amount, 72)

@@ -33,17 +33,24 @@ func prop(key: String, kind: StringName, at: Vector2, pink := false, container: 
 		node.parry_id = "%s:%d:%s" % [name, run_seed, key]
 		(container if container != null else self).add_child(node)
 		_props[key] = node
+		node.global_position = at
+		# Nasce direto no lugar: com a interpolação da física ele deslizava do canto de cima da tela (0, 0).
+		node.reset_physics_interpolation()
 	var result: PaintedProp = _props[key]
 	result.global_position = at
 	return result
 
 
-func warning(key: String, at: Vector2, amount: float, width := 90.0) -> void:
+## Aviso no chão; `column` desenha o facho da queda (o que cai do céu).
+func warning(key: String, at: Vector2, amount: float, width := 90.0, column := false) -> void:
 	if not _marks.has(key):
 		var marker := LandingShadow.new()
 		marker.radius = Vector2(width, 20)
+		marker.column = column
 		add_child(marker)
 		_marks[key] = marker
+		marker.global_position = at
+		marker.reset_physics_interpolation()
 	var node: LandingShadow = _marks[key]
 	node.global_position = at
 	node.amount = amount
