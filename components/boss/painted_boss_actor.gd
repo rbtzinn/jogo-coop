@@ -77,7 +77,7 @@ func _process(delta: float) -> void:
 		var rect := _sprite.get_rect()
 		var right := maxf(rect.position.x * _sprite.scale.x * _holder.scale.x,
 			rect.end.x * _sprite.scale.x * _holder.scale.x)
-		_holder.position.x = minf(0.0, right_edge - global_position.x - right)
+		_holder.position.x = minf(0.0, (right_edge - global_position.x) / absf(global_scale.x) - right)
 	_sprite.modulate = Color(1.8, 1.6, 1.4) if _flash > 0.0 else Color.WHITE
 
 

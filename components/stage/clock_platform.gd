@@ -14,6 +14,7 @@ var _rest := Vector2.ZERO
 var _clock: Node
 var _sprite := Sprite2D.new()
 var _chain_x: Array[float] = []
+const CHAIN_TINT := Color(1.7, 1.55, 1.35)
 
 
 func _ready() -> void:
@@ -63,5 +64,6 @@ func _draw() -> void:
 		while y < _sprite.position.y:
 			var h := minf(160 * ratio, _sprite.position.y - y)
 			var target := Rect2(_sprite.position.x + (center - 40) * ratio, y, 80 * ratio, h)
-			draw_texture_rect_region(texture, target, Rect2(center - 40, 0, 80, h / ratio))
+			# Mais clara que a textura: no fundo escuro da forja a corrente sumia.
+			draw_texture_rect_region(texture, target, Rect2(center - 40, 0, 80, h / ratio), CHAIN_TINT)
 			y += h

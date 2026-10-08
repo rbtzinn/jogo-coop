@@ -5,11 +5,15 @@ enum Pattern { HAMMER, SHOES, BELLOWS, CHANNEL, ANVILS, GRIP, SPIN, STOMP, CHEST
 
 const GRIP_WINDUP_END := 0.34
 const GRIP_CAST_END := 0.95
-const GRIP_PULL_TIME := 0.42
-const GRIP_RELEASE_AT := 4.15
+## Segurando: puxa o boneco (REEL), gira ele no alto da corrente (WHIRL) e bate no chão (SLAM).
+const GRIP_REEL := 0.45
+const GRIP_WHIRL := 1.2
+const GRIP_SLAM := 0.22
+const GRIP_RADIUS := 170.0
+## Golpes do parceiro na mão que soltam o preso.
+const GRIP_FREE_HITS := 6
 const GRIP_RETRACT_TIME := 0.45
 const GRIP_CUFF_OFFSET := Vector2(0, -90)
-const GRIP_LIFT := Vector2(0, -170)
 
 var _from := Vector2.ZERO
 var _side := 0
@@ -102,7 +106,8 @@ func _tick(t: float) -> void:
 		Pattern.ANVILS, Pattern.STOMP:
 			if pattern == Pattern.ANVILS:
 				_forge_pose(t)
-				actor.pose(&"walk", 4)
+				# Arremessa uma bigorna a cada 0,45 s: o arremesso desenhado acompanha cada uma.
+				actor.pose(&"throw", int(fposmod((t - 0.45) / 0.45, 1.0) * 4.0))
 			else:
 				# O quadro com chão quebrado só aparece depois da aterrissagem.
 				actor.pose(&"armor", 4 if t < 0.8 else (1 if t < 1.6 else 5))
@@ -127,9 +132,11 @@ func _tick(t: float) -> void:
 			actor.pose(&"armor", 1 if t < 0.9 else 3)
 			if t >= 0.9:
 				var angle := (t - 0.9) * TAU * 0.75
-				var head := prop("hammer", &"hammer", actor.global_position + Vector2(-140 + cos(angle) * 180, -180 + sin(angle) * 130))
+				var head := prop("hammer", &"hammer", actor.global_position + Vector2(-140 + cos(angle) * 180, -180 + sin(angle) * 130) * actor.scale.x)
 				head.spin = angle
-				queue_redraw()
+				# O desenho do giro já traz o martelo e o rastro de fogo: o martelo solto só machuca (sem aparecer
+				# por cima, que dava três martelos na tela).
+				head.visible = false
 			_waves(t, 1.2, actor.global_position.x - 140)
 		Pattern.CHEST:
 			actor.pose(&"armor", 6 if t < 2.2 else 2)
@@ -139,15 +146,16 @@ func _tick(t: float) -> void:
 			_grab_tick(t)
 		Pattern.INTRO_FORGE:
 			boss.set_stage(1)
-			actor.pose(&"walk", mini(int(t * 4), 3))
+			actor.pose(&"idle", int(t * 5) % 4)
 		Pattern.INTRO_ARMOR:
 			boss.set_stage(2)
 			actor.pose(&"armor", 0 if t < 0.9 else 1)
 
 
+## Parado no lugar trabalhando: respira no quadro parado (antes era o "andar" no lugar).
 func _forge_pose(t: float, armored := false) -> void:
 	actor.position = AnvilMasterBoss.HOME
-	actor.pose(&"armor" if armored else &"walk", (1 + int(t * 3) % 2) if armored else int(t * 6) % 4)
+	actor.pose(&"armor" if armored else &"idle", (1 + int(t * 3) % 2) if armored else int(t * 5) % 4)
 
 
 func _waves(t: float, start: float, x: float) -> void:
@@ -191,16 +199,13 @@ func _grab_tick(t: float) -> void:
 	if not _held.is_empty() and not _released:
 		var target := _player(_held)
 		if target != null:
-			# Em vez de teletransportar o boneco, a corrente o laça pela cintura e o puxa em arco.
-			var pull := ease(clampf((t - _hold_at) / GRIP_PULL_TIME, 0, 1), -1.8)
-			var held_goal := target_origin + GRIP_LIFT
-			target.boss_hold = arc_point(_held_from, held_goal, 45, pull)
+			target.boss_hold = _held_point(t - _hold_at)
 			_hand = target.boss_hold + GRIP_CUFF_OFFSET
 			boss.grip.set_deferred("monitorable", true)
 			if boss.is_brain():
 				if boss.alive_players().size() < 2:
 					_event(["release", false, t])
-				elif t >= GRIP_RELEASE_AT:
+				elif t >= _hold_at + GRIP_REEL + GRIP_WHIRL + GRIP_SLAM:
 					_event(["release", true, t])
 	if _released:
 		var retract := ease(clampf((t - _release_at) / GRIP_RETRACT_TIME, 0, 1), -1.8)
@@ -212,7 +217,9 @@ func _grab_tick(t: float) -> void:
 	elif t < GRIP_CAST_END:
 		actor.pose(&"grip", 1 if t < 0.55 else 2)
 	elif not _held.is_empty() and not _released:
-		actor.pose(&"grip", 3 + int((t - _hold_at) * 4.5) % 2)
+		# Fazendo força enquanto gira; no arremesso, o braço desce (quadro do lançamento).
+		var slam := t - _hold_at >= GRIP_REEL + GRIP_WHIRL
+		actor.pose(&"grip", 1 if slam else 3 + int((t - _hold_at) * 6.0) % 2)
 	else:
 		actor.pose(&"grip", 4)
 	boss.grip.global_position = _hand - Vector2(-150, -300)
@@ -224,7 +231,7 @@ func hit_grip(source: String) -> void:
 	if _held.is_empty() or _released or source == _held:
 		return
 	_hits += 1
-	if _hits >= 8:
+	if _hits >= GRIP_FREE_HITS:
 		_event(["release", false, elapsed])
 
 
@@ -250,8 +257,11 @@ func _on_event(data: Array) -> void:
 			target.boss_hold = Vector2.INF
 			target.rig.set_boss_captured(false)
 			target.player_health.protect(0.5)
-			if data[1] and target.is_multiplayer_authority():
-				target.player_health.hurt_by(1, actor.global_position)
+			if data[1]:
+				# Esborrachado no chão: poeira e tremor no lugar da batida.
+				Fx.spawn(preload("res://components/fx/dust_puff.tscn"), target.global_position)
+				if target.is_multiplayer_authority():
+					target.player_health.hurt_by(1, actor.global_position)
 		boss.grip.set_deferred("monitorable", false)
 
 
@@ -283,7 +293,7 @@ func _is_done() -> bool:
 func _draw() -> void:
 	if pattern == Pattern.SPIN and is_running() and _props.has("hammer"):
 		var head: PaintedProp = _props["hammer"]
-		var hand := to_local(actor.global_position + Vector2(0, -180))
+		var hand := to_local(actor.global_position + Vector2(0, -180) * actor.scale.x)
 		var tip := to_local(head.global_position)
 		draw_line(hand, tip, Color("1b1410"), 14, true)
 		draw_line(hand, tip, Color("785030"), 8, true)
@@ -295,7 +305,25 @@ func _draw() -> void:
 
 
 func _grip_origin() -> Vector2:
-	return actor.global_position + Vector2(-150, -300)
+	return actor.global_position + Vector2(-150, -300) * actor.scale.x
+
+
+## Onde o preso está `s` segundos depois de laçado: puxado em arco até a frente do Bigorna, girado no alto
+## (a corrente esticada) e jogado no chão. Mesma conta nos dois PCs (sai só do tempo).
+func _held_point(s: float) -> Vector2:
+	var center := actor.global_position + Vector2(-430, -430)
+	var start := center + Vector2(-GRIP_RADIUS, 0)
+	if s < GRIP_REEL:
+		return arc_point(_held_from, start, 90, ease(s / GRIP_REEL, -1.8))
+	var turns := 1.5
+	if s < GRIP_REEL + GRIP_WHIRL:
+		# Acelera o giro (começa devagar, termina rápido).
+		var u := pow((s - GRIP_REEL) / GRIP_WHIRL, 1.4)
+		var angle := PI + u * TAU * turns
+		return center + Vector2(cos(angle), sin(angle)) * GRIP_RADIUS
+	var top := center + Vector2(cos(PI + TAU * turns), sin(PI + TAU * turns)) * GRIP_RADIUS
+	var floor_at := Vector2(clampf(center.x - 260, 60, 1500), 1000)
+	return top.lerp(floor_at, pow(clampf((s - GRIP_REEL - GRIP_WHIRL) / GRIP_SLAM, 0, 1), 2))
 
 
 func _draw_chain(start: Vector2, tip: Vector2) -> void:

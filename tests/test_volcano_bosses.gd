@@ -137,11 +137,11 @@ func _forge() -> void:
 	check(victim.boss_hold.is_finite(), "Iron Grip holds the chosen player")
 	check(victim.rig.is_boss_captured(), "captured player loops a dedicated struggle animation")
 	await photo("bigorna_braco_de_ferro")
-	for i in 7:
+	for i in 5:
 		boss.grip.take_hit(1, String(partner.name))
-	check(victim.boss_hold.is_finite(), "seven partner hits still hold the player")
+	check(victim.boss_hold.is_finite(), "five partner hits still hold the player")
 	boss.grip.take_hit(1, String(partner.name))
-	check(not victim.boss_hold.is_finite(), "eight partner hits release the player")
+	check(not victim.boss_hold.is_finite(), "six partner hits release the player")
 	await frames(1)
 	check(not victim.rig.is_boss_captured(), "rescue immediately ends the captured animation")
 	boss._current.cancel()

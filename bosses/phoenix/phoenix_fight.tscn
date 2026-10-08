@@ -23,10 +23,11 @@
 
 [sub_resource type="ShaderMaterial" id="BackgroundReadability"]
 shader = ExtResource("readability")
-shader_parameter/saturation = 0.52
-shader_parameter/contrast = 0.74
-shader_parameter/brightness = 0.72
+shader_parameter/saturation = 0.4
+shader_parameter/contrast = 0.6
+shader_parameter/brightness = 0.55
 shader_parameter/cool_tint = Vector3(0.92, 0.94, 1)
+shader_parameter/blur = 2.5
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(2000, 160)

@@ -6,9 +6,20 @@ uniform float saturation : hint_range(0.0, 1.0) = 0.58;
 uniform float contrast : hint_range(0.0, 1.5) = 0.78;
 uniform float brightness : hint_range(0.0, 1.2) = 0.76;
 uniform vec3 cool_tint = vec3(0.92, 0.94, 1.0);
+// Desfoque (pixels da textura; 0 = nenhum): o cenário vira fundo e para de disputar o olho com a luta.
+uniform float blur : hint_range(0.0, 8.0) = 0.0;
 
 void fragment() {
 	vec4 source = texture(TEXTURE, UV);
+	if (blur > 0.0) {
+		vec2 step_uv = TEXTURE_PIXEL_SIZE * blur;
+		vec4 sum = source * 4.0;
+		sum += texture(TEXTURE, UV + vec2(step_uv.x, 0.0)) * 2.0 + texture(TEXTURE, UV - vec2(step_uv.x, 0.0)) * 2.0;
+		sum += texture(TEXTURE, UV + vec2(0.0, step_uv.y)) * 2.0 + texture(TEXTURE, UV - vec2(0.0, step_uv.y)) * 2.0;
+		sum += texture(TEXTURE, UV + step_uv) + texture(TEXTURE, UV - step_uv);
+		sum += texture(TEXTURE, UV + vec2(step_uv.x, -step_uv.y)) + texture(TEXTURE, UV + vec2(-step_uv.x, step_uv.y));
+		source = sum / 16.0;
+	}
 	float lightness = dot(source.rgb, vec3(0.299, 0.587, 0.114));
 	vec3 color = mix(vec3(lightness), source.rgb, saturation);
 	color = (color - vec3(0.5)) * contrast + vec3(0.5);
