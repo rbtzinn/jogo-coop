@@ -39,6 +39,11 @@ extends Node2D
 ## Virando balão (1-4, ao cair) e estouro do resgate (5-8), mesma origem do balão.
 @export var balloon_turn_animation: FrameAnimation
 
+## Boneco montado em peças (CharacterPuppet, piloto do docs/animacao_rig.md): quando ligado, desenha o parado,
+## a corrida e o pulo no lugar dos quadros; o resto (dash, parry, dano, abaixado...) continua nos quadros.
+@export var puppet_scene: PackedScene
+@export var use_puppet := false
+
 ## Grande Número deste personagem (cena com um script GrandNumber).
 @export var grand_number: PackedScene
 ## Grande Número desenhado (opcional): o número escolhe o quadro (`GrandNumber.drawn_frame`), e o
@@ -140,6 +145,10 @@ const ENDING_WAIT := 0.6
 const ENDING_TIME := 0.35
 var _ending_wait := 0.0
 var _ending_left := 0.0
+## Troca do boneco em teste (F3, só na versão de desenvolvimento): 0 = o que a cena diz, 1 = ligado, -1 = desligado.
+static var puppet_override := 0
+var puppet: CharacterPuppet
+var _puppet_shown := false
 
 
 func _ready() -> void:
@@ -152,6 +161,10 @@ func _ready() -> void:
 	_frame_sprite.hide()
 	add_child(_frame_sprite)
 	move_child(_frame_sprite, front_arm.get_index())
+	if puppet_scene != null:
+		puppet = puppet_scene.instantiate()
+		puppet.hide()
+		add_child(puppet)
 	set_weapon("cork_gun")
 	update_pose(0.0, Vector2.ZERO, true, false, Vector2.RIGHT, 1.0, false)
 
@@ -162,6 +175,8 @@ func set_weapon(weapon: String) -> void:
 	sprite.texture = GunLooks.glove(weapon)
 	sprite.offset = GunLooks.HAND_OFFSET
 	muzzle.position = GunLooks.muzzle(weapon)
+	if puppet != null:
+		puppet.set_weapon(weapon)
 	var flash := muzzle_flash as Sprite2D
 	_flash_frames = GunLooks.flash(weapon)
 	flash.centered = false
@@ -188,6 +203,8 @@ func update_pose(delta: float, velocity: Vector2, on_floor: bool, dashing: bool,
 	else:
 		_phase = 0.0
 
+	if puppet != null:
+		puppet.update_pose(delta, velocity, on_floor, aim, run_speed)
 	_update_body(delta, velocity, on_floor, dashing, running, crouching)
 	_update_legs(velocity, on_floor, dashing, running)
 	_update_frames(velocity, running, on_floor and not dashing and not running and not crouching,
@@ -198,13 +215,28 @@ func update_pose(delta: float, velocity: Vector2, on_floor: bool, dashing: bool,
 
 
 func get_muzzle_position() -> Vector2:
-	return muzzle.global_position
+	return puppet.get_muzzle_position() if _puppet_shown else muzzle.global_position
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not OS.is_debug_build() or puppet == null:
+		return
+	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_F3:
+		puppet_override = -1 if _puppet_enabled() else 1
+		# Um aperto vale para todos os rigs (o primeiro que recebe troca e para a tecla aqui).
+		get_viewport().set_input_as_handled()
+
+
+func _puppet_enabled() -> bool:
+	return puppet != null and (puppet_override > 0 or (puppet_override == 0 and use_puppet))
 
 
 ## `kick`: força do coice (o Tiro EX usa mais que 1: braço vai mais para trás e o clarão é maior).
 func play_fire(kick := 1.0) -> void:
 	_ending_wait = 0.0
 	_ending_left = 0.0
+	if puppet != null:
+		puppet.play_fire(kick)
 	_recoil = 7.0 * kick
 	_flash_timer = 0.05 * kick
 	muzzle_flash.show()
@@ -242,6 +274,8 @@ func set_parry_progress(progress: float) -> void:
 
 
 func play_land() -> void:
+	if puppet != null:
+		puppet.play_land()
 	_squash = Vector2(1.2, 0.8)
 
 
@@ -402,6 +436,10 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 	var ending_drawn := idle and _ending_left > 0.0 and special_animation != null
 	if ending_drawn:
 		_idle_since = _time
+	_show_puppet(_puppet_enabled() and not (captured_drawn or parrying or special_drawn or hurt_drawn or dashing
+			or crouch_drawn or ending_drawn))
+	if _puppet_shown:
+		return
 	var use_frames := captured_drawn or parrying or special_drawn or hurt_drawn or dash_drawn or crouch_drawn or jump_drawn or run_drawn or idle_drawn
 	if use_frames != _showing_frames:
 		_showing_frames = use_frames
@@ -486,6 +524,19 @@ func _update_frames(velocity: Vector2, running: bool, idle: bool, airborne: bool
 	_frame_has_shoulder = index < animation.shoulders.size()
 	if _frame_has_shoulder:
 		_frame_shoulder = pivot + (animation.shoulders[index] - pivot).rotated(angle)
+
+
+## Boneco no lugar das peças e dos quadros (ou de volta, restaurando o que estava na tela).
+func _show_puppet(on: bool) -> void:
+	if on == _puppet_shown:
+		return
+	_puppet_shown = on
+	puppet.visible = on
+	_frame_sprite.visible = _showing_frames and not on
+	for part in _body_parts:
+		part.visible = not _showing_frames and not on
+	front_arm.visible = not _hiding_gun and not on
+	gun_hand.visible = not _hiding_gun and not on
 
 
 func _update_face(delta: float, aim: Vector2, dashing: bool) -> void:

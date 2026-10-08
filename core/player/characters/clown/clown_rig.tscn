@@ -21,6 +21,7 @@
 [ext_resource type="Resource" path="res://core/player/characters/clown/hurt/hurt.tres" id="19_hurt"]
 [ext_resource type="Resource" path="res://core/player/characters/clown/special/pie_throw.tres" id="20_special"]
 [ext_resource type="Resource" path="res://core/player/characters/clown/capture/capture.tres" id="21_capture"]
+[ext_resource type="PackedScene" path="res://core/player/characters/clown/puppet/clown_puppet.tscn" id="22_puppet"]
 
 [node name="ClownRig" type="Node2D"]
 scale = Vector2(0.92, 0.92)
@@ -35,6 +36,7 @@ dash_animation = ExtResource("17_dash")
 crouch_animation = ExtResource("18_crouch")
 hurt_animation = ExtResource("19_hurt")
 capture_animation = ExtResource("21_capture")
+puppet_scene = ExtResource("22_puppet")
 special_animation = ExtResource("20_special")
 balloon_animation = ExtResource("15_balloon")
 balloon_turn_animation = ExtResource("16_turn")

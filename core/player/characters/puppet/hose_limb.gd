@@ -10,6 +10,9 @@ extends Node2D
 ## Largura no fim em relação ao começo.
 @export var taper := 1.0
 @export var segments := 12
+## Comprimento (pixels do rig) que uma volta da textura cobre; 0 = a textura estica no membro inteiro. Com valor,
+## o desenho (ex.: o xadrez) fica do mesmo tamanho em membro curto ou comprido (ligar texture_repeat no nó).
+@export var tile_length := 0.0
 
 var start := Vector2.ZERO
 var end := Vector2(0, 30)
@@ -40,9 +43,13 @@ func _draw() -> void:
 		var normal := Vector2(-tangent.y, tangent.x) * half
 		left.append(points[i] + normal)
 		right.append(points[i] - normal)
+	# Altura na textura (v) de cada ponto: pela distância ao longo da curva quando a textura se repete.
+	var vs := PackedFloat32Array([0.0])
+	for i in segments:
+		vs.append(vs[i] + (points[i].distance_to(points[i + 1]) / tile_length if tile_length > 0.0 else 1.0 / segments))
 	var white := PackedColorArray([Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE])
 	for i in segments:
-		var v0 := float(i) / segments
-		var v1 := float(i + 1) / segments
+		var v0 := vs[i]
+		var v1 := vs[i + 1]
 		draw_primitive(PackedVector2Array([left[i], left[i + 1], right[i + 1], right[i]]), white,
 				PackedVector2Array([Vector2(0, v0), Vector2(0, v1), Vector2(1, v1), Vector2(1, v0)]), texture)
