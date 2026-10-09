@@ -1,6 +1,8 @@
 extends Node
 
 func _ready() -> void:
+	# Never contact a production service from this input-validation test.
+	OS.set_environment("GAME_RELAY_URL", "")
 	var failures := 0
 	# Valid room codes can begin with digits, and player entry accepts lowercase and spaces.
 	for code in ["2ABC9D", "  9abcde  ", "ABCDEF"]:
