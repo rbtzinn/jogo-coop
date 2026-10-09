@@ -35,17 +35,17 @@ func _ready() -> void:
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
 	margin.add_theme_constant_override("margin_left", 120)
 	margin.add_theme_constant_override("margin_right", 1050)
-	margin.add_theme_constant_override("margin_top", 112)
+	margin.add_theme_constant_override("margin_top", 65 if OS.has_feature("mobile") else 112)
 	margin.add_theme_constant_override("margin_bottom", 90)
 	add_child(margin)
 
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 22)
+	layout.add_theme_constant_override("separation", 16 if OS.has_feature("mobile") else 22)
 	margin.add_child(layout)
 
 	var eyebrow := UiTheme.section_label("O GRANDE PICADEIRO", 23)
 	layout.add_child(eyebrow)
-	var title := UiTheme.title_label("Respeitável\nPúblico", 90, true)
+	var title := UiTheme.title_label("Respeitável\nPúblico", 74 if OS.has_feature("mobile") else 90, true)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	layout.add_child(title)
 	var subtitle := Label.new()
@@ -232,7 +232,7 @@ func _start_slot(slot: int, fresh: bool) -> void:
 func _add_button(parent: Control, text: String, callback: Callable) -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(580, 58)
+	button.custom_minimum_size = Vector2(580, 76 if OS.has_feature("mobile") else 58)
 	if callback.is_valid():
 		button.pressed.connect(callback)
 	parent.add_child(button)
@@ -302,3 +302,4 @@ func _on_join_timeout(timer: SceneTreeTimer) -> void:
 ## Cena aberta ao começar: o mapa da área onde o save parou (ou outra, se a cena do menu escolher).
 func _first_scene() -> String:
 	return Levels.current_map() if first_level == Levels.MAP else first_level
+

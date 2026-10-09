@@ -57,6 +57,10 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_default_bindings = _read_bindings_from_input_map()
 	_bindings = _duplicate_bindings(_default_bindings)
+	if OS.has_feature("mobile"):
+		quality = Quality.MEDIUM
+		fps_limit_index = 1
+		vsync = true
 	_load()
 	_apply_bindings()
 	apply_video()
@@ -147,6 +151,9 @@ func set_option(property: StringName, value: Variant) -> void:
 
 
 func apply_video() -> void:
+	if OS.has_feature("mobile"):
+		Engine.max_fps = FPS_LIMITS[fps_limit_index]
+		return
 	var window := get_window()
 	match window_mode:
 		WindowMode.WINDOWED:
@@ -202,3 +209,4 @@ func _load() -> void:
 			continue
 		for slot in SLOT_COUNT:
 			_bindings[action][slot] = InputSerializer.from_dict(saved[slot])
+
