@@ -28,7 +28,7 @@ func _ready() -> void:
 	var tabs := TabContainer.new()
 	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(tabs)
-	tabs.add_child(_build_controls_tab())
+	tabs.add_child(_build_touch_tab() if OS.has_feature("mobile") else _build_controls_tab())
 	tabs.add_child(_build_video_tab())
 	tabs.add_child(_build_network_tab())
 
@@ -67,6 +67,18 @@ func _input(event: InputEvent) -> void:
 
 
 # --- Aba Controles ---------------------------------------------------------
+
+func _build_touch_tab() -> Control:
+	var tab := VBoxContainer.new()
+	tab.name = "Controles"
+	tab.add_theme_constant_override("separation", 28)
+	var note := Label.new()
+	note.text = "Direcional à esquerda: andar e mirar.\nO personagem atira automaticamente durante as fases.\nÀ direita: PULAR, DASH, EX e MIRA.\n\nSegure EX para o especial.\nNo mapa, toque em ENTRAR para acessar os lugares\ne em TROCAR para mudar de personagem.\nToque em PAUSA para abrir o intervalo.\n\nVocê também pode conectar um controle Bluetooth."
+	note.add_theme_font_size_override("font_size", 34)
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	tab.add_child(note)
+	return tab
+
 
 func _build_controls_tab() -> Control:
 	var tab := VBoxContainer.new()
@@ -137,6 +149,8 @@ func _build_controls_tab() -> Control:
 
 
 func _refresh_bindings() -> void:
+	if _binding_buttons.is_empty():
+		return
 	for action in Settings.REBINDABLE_ACTIONS:
 		for slot in Settings.SLOT_COUNT:
 			var button: Button = _binding_buttons["%s:%d" % [action, slot]]
@@ -203,9 +217,10 @@ func _build_video_tab() -> Control:
 	grid.add_theme_constant_override("v_separation", 18)
 
 	_add_option(grid, "Qualidade gráfica", Settings.QUALITY_NAMES, Settings.quality, &"quality")
-	_add_option(grid, "Modo de tela", Settings.WINDOW_MODE_NAMES, Settings.window_mode, &"window_mode")
-	var sizes: Array = Settings.WINDOW_SIZES.map(func(s: Vector2i) -> String: return "%d × %d" % [s.x, s.y])
-	_add_option(grid, "Tamanho da janela", sizes, Settings.window_size_index, &"window_size_index")
+	if not OS.has_feature("mobile"):
+		_add_option(grid, "Modo de tela", Settings.WINDOW_MODE_NAMES, Settings.window_mode, &"window_mode")
+		var sizes: Array = Settings.WINDOW_SIZES.map(func(s: Vector2i) -> String: return "%d × %d" % [s.x, s.y])
+		_add_option(grid, "Tamanho da janela", sizes, Settings.window_size_index, &"window_size_index")
 	var limits: Array = Settings.FPS_LIMITS.map(func(f: int) -> String: return "Sem limite" if f == 0 else str(f))
 	_add_option(grid, "Limite de FPS", limits, Settings.fps_limit_index, &"fps_limit_index")
 	_add_toggle(grid, "VSync (evita imagem rasgada)", Settings.vsync, &"vsync")
@@ -300,3 +315,4 @@ func _missing_text() -> String:
 	if parts.is_empty():
 		return ""
 	return "Atenção: %s (\"Restaurar padrão\" devolve as teclas)." % "; ".join(parts)
+

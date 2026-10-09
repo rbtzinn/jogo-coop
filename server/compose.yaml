@@ -1,0 +1,43 @@
+services:
+  relay:
+    build: .
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      MAX_ROOMS: 200
+      RELEASE_DIR: /releases
+    volumes:
+      - ./releases:/releases:ro
+    expose:
+      - "8080"
+    mem_limit: 256m
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+  https:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      GAME_HOST: ${GAME_HOST:?Configure GAME_HOST in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - relay
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+volumes:
+  caddy_data:
+  caddy_config:

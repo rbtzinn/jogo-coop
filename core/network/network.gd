@@ -4,6 +4,7 @@ extends Node
 ## sem mexer no resto do jogo.
 
 signal joined
+signal room_created(code: String)
 signal join_failed
 signal partner_connected(peer_id: int)
 signal partner_disconnected(peer_id: int)
@@ -30,6 +31,7 @@ var _resolve_port := DEFAULT_PORT
 
 ## Mensagem para mostrar no menu ao voltar para ele (ex.: "o host fechou a partida").
 var last_message := ""
+var room_code := ""
 ## Parceiros que já carregaram a fase e podem receber o estado dos jogadores.
 var ready_peers: Array[int] = []
 
@@ -58,6 +60,42 @@ func host(port := DEFAULT_PORT, bind_ip := "*") -> Error:
 		return error
 	multiplayer.multiplayer_peer = peer
 	return OK
+
+
+func host_room() -> Error:
+	return _open_room(true)
+
+
+func join_room(code: String) -> Error:
+	code = code.strip_edges().to_upper()
+	var valid := code.length() == 6
+	for character in code:
+		if character not in "ABCDEFGHJKLMNPQRSTUVWXYZ23456789":
+			valid = false
+	if not valid:
+		last_message = "Digite os 6 caracteres do código da sala."
+		return ERR_INVALID_PARAMETER
+	return _open_room(false, code)
+
+
+func _open_room(as_host: bool, code := "") -> Error:
+	leave()
+	last_message = ""
+	var url := OnlineConfig.relay_url()
+	if url.is_empty():
+		last_message = "O servidor online ainda não foi configurado nesta versão."
+		return ERR_UNCONFIGURED
+	var peer := RoomRelayPeer.new()
+	peer.room_created.connect(func(new_code: String) -> void:
+		room_code = new_code
+		room_created.emit(new_code))
+	peer.failed.connect(func(message: String) -> void: last_message = message)
+	var error := peer.connect_room(url, as_host, code)
+	if error == OK:
+		multiplayer.multiplayer_peer = peer
+	else:
+		last_message = "Não consegui abrir a conexão com o servidor."
+	return error
 
 
 ## Começa a entrar numa partida. `address` pode ser só o IP ("100.1.2.3") ou "endereço:porta"
@@ -102,6 +140,7 @@ func _connect_to(ip: String, port: int) -> Error:
 
 
 func leave() -> void:
+	room_code = ""
 	if _resolve_id != IP.RESOLVER_INVALID_ID:
 		IP.erase_resolve_item(_resolve_id)
 		_resolve_id = IP.RESOLVER_INVALID_ID
@@ -142,6 +181,10 @@ func deliver(callback: Callable, can_drop: bool) -> void:
 
 ## Tempo de ida e volta até o parceiro, em ms (sem contar o simulador). -1 se offline.
 func get_ping_ms() -> int:
+	var relay := multiplayer.multiplayer_peer as RoomRelayPeer
+	if relay != null:
+		# This is RTT to the relay, not the full journey to the partner.
+		return relay.ping_ms
 	var peer := multiplayer.multiplayer_peer as ENetMultiplayerPeer
 	if peer == null:
 		return -1
@@ -214,6 +257,7 @@ func _on_connection_failed() -> void:
 
 
 func _on_server_disconnected() -> void:
+	var message := last_message
 	leave()
-	last_message = "O host fechou a partida ou a conexão caiu."
+	last_message = message if not message.is_empty() else "O host fechou a partida ou a conexão caiu."
 	host_lost.emit()

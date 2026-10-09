@@ -15,6 +15,7 @@ var _marquee: MarqueeLights
 
 
 func _ready() -> void:
+	add_to_group(&"blocking_ui")
 	layer = 18
 	var root := Control.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -190,3 +191,4 @@ func _build_level_summary(data: Dictionary) -> Control:
 		label.add_theme_font_size_override("font_size", 30)
 		stats.add_child(label)
 	return stats
+
