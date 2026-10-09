@@ -1,0 +1,159 @@
+name: Android online beta
+on:
+  push:
+    branches: [codex/android-online-2026-10-09]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: android-online
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/docs/
+            !/tools/
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar servidor
+        working-directory: server
+        run: npm ci --ignore-scripts && npm test
+      - name: Instalar Godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot"
+          cd "$RUNNER_TEMP/godot"
+          curl --fail --location --retry 3 -o engine.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q engine.zip
+          chmod +x Godot_v4.7.2-stable_linux.x86_64
+          echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
+      - name: Importar e verificar multitoque
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          for directory in server scripts docs tools; do
+            if [ -d "$directory" ]; then touch "$directory/.gdignore"; fi
+          done
+          Godot_v4.7.2-stable_linux.x86_64 --headless --editor --path . --import 2>&1 | tee build/import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' build/import.log; then exit 1; fi
+          Godot_v4.7.2-stable_linux.x86_64 --headless --path . --fixed-fps 60 res://tests/test_mobile_controls.tscn 2>&1 | tee build/mobile-tests.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|^FAIL ' build/mobile-tests.log; then exit 1; fi
+          Godot_v4.7.2-stable_linux.x86_64 --headless --path . res://tests/test_android_updates.tscn 2>&1 | tee build/update-tests.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|^FAIL ' build/update-tests.log; then exit 1; fi
+      - name: Verificar partida completa via relay
+        env:
+          GODOT: Godot_v4.7.2-stable_linux.x86_64
+        run: python3 tests/run_relay.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Android-online-verificacoes
+          path: build/*.log
+          retention-days: 14
+  release:
+    needs: verify
+    if: vars.ANDROID_SERVICE_HOST != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/docs/
+            !/tools/
+      - name: Preparar assinatura permanente
+        env:
+          RELEASE_KEY: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
+          RELEASE_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
+          RELEASE_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+          SERVICE_HOST: ${{ vars.ANDROID_SERVICE_HOST }}
+        run: |
+          set -euo pipefail
+          test -n "$RELEASE_KEY" && test -n "$RELEASE_ALIAS" && test -n "$RELEASE_PASSWORD"
+          python3 - <<'PY'
+          import os, pathlib, base64, re, subprocess
+          path = pathlib.Path(os.environ['RUNNER_TEMP']) / 'android-release.keystore'
+          path.write_bytes(base64.b64decode(os.environ['RELEASE_KEY'], validate=True))
+          path.chmod(0o600)
+          config = pathlib.Path('core/network/online_config.gd').read_text()
+          code = re.search(r'^const VERSION_CODE := (\d+)$', config, re.M).group(1)
+          name = re.search(r'^const VERSION_NAME := "([^"]+)"$', config, re.M).group(1)
+          subprocess.run(['python3', 'scripts/configure_android_release.py', '--host', os.environ['SERVICE_HOST'], '--code', code, '--name', name], check=True)
+          PY
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          log-accepted-android-sdk-licenses: false
+          packages: platform-tools
+      - name: Instalar engine e templates
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot"
+          cd "$RUNNER_TEMP/godot"
+          curl --fail --location --retry 3 -o engine.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          curl --fail --location --retry 3 -o templates.tpz https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz
+          unzip -q engine.zip
+          chmod +x Godot_v4.7.2-stable_linux.x86_64
+          echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
+          unzip -q templates.tpz 'templates/android_release.apk' 'templates/version.txt'
+          mkdir -p "$HOME/.local/share/godot/export_templates/4.7.2.stable"
+          cp templates/* "$HOME/.local/share/godot/export_templates/4.7.2.stable/"
+          sdkmanager --install 'platform-tools' 'build-tools;35.0.1' 'platforms;android-35'
+      - name: Configurar exportador e importar
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, pathlib, json
+          folder = pathlib.Path.home() / '.config/godot'
+          folder.mkdir(parents=True, exist_ok=True)
+          text = '[gd_resource type="EditorSettings" format=3]\n\n[resource]\n'
+          for key, value in {'export/android/android_sdk_path': os.environ['ANDROID_HOME'], 'export/android/java_sdk_path': os.environ['JAVA_HOME']}.items():
+              text += key + '=' + json.dumps(value) + '\n'
+          (folder / 'editor_settings-4.7.tres').write_text(text)
+          PY
+          mkdir -p build
+          for directory in server scripts docs tools; do
+            if [ -d "$directory" ]; then touch "$directory/.gdignore"; fi
+          done
+          Godot_v4.7.2-stable_linux.x86_64 --headless --editor --path . --import 2>&1 | tee build/import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' build/import.log; then exit 1; fi
+      - name: Exportar e verificar APK
+        env:
+          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: ${{ runner.temp }}/android-release.keystore
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          Godot_v4.7.2-stable_linux.x86_64 --headless --path . --export-release 'Android Preview' build/RespeitavelPublico-Android.apk 2>&1 | tee build/android-export.log
+          "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify --verbose build/RespeitavelPublico-Android.apk
+          "$ANDROID_HOME/build-tools/35.0.1/aapt" dump badging build/RespeitavelPublico-Android.apk | tee build/apk-info.txt
+          python3 scripts/publish_android_release.py build/RespeitavelPublico-Android.apk --releases build/publish
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RespeitavelPublico-Android-online
+          path: build/publish/*
+          retention-days: 14
+      - name: Limpar chave
+        if: always()
+        run: rm -f "$RUNNER_TEMP/android-release.keystore"

@@ -3,7 +3,7 @@ extends Control
 ## continuar ou começar do zero), configurações e sair (e o
 ## "Testar sozinho", guardado e escondido: SHOW_TEST_MODE).
 
-const JOIN_TIMEOUT := 8.0
+const JOIN_TIMEOUT := 15.0
 ## Botão "Testar sozinho" (modo de teste: tudo aberto, ingressos e vida de sobra). Guardado e escondido desde
 ## 06/10/2026 a pedido do usuário; trocar para true para usar de novo durante o desenvolvimento.
 const SHOW_TEST_MODE := false
@@ -21,6 +21,7 @@ var _address_edit: LineEdit
 var _status: Label
 var _settings_menu: SettingsMenu
 var _join_timer: SceneTreeTimer
+var _waiting_host := false
 
 
 func _ready() -> void:
@@ -68,8 +69,8 @@ func _ready() -> void:
 	_main_buttons.add_theme_constant_override("separation", 10)
 	_main_buttons.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	poster_layout.add_child(_main_buttons)
-	var host_button := _add_button(_main_buttons, "Hospedar partida", _show_slot_panel.bind("coop"))
-	_add_button(_main_buttons, "Entrar na partida", _show_join_panel)
+	var host_button := _add_button(_main_buttons, "Criar sala online", _show_slot_panel.bind("coop"))
+	_add_button(_main_buttons, "Entrar com código", _show_join_panel)
 	_add_button(_main_buttons, "Jogar sozinho", _show_slot_panel.bind("solo"))
 	if SHOW_TEST_MODE:
 		_add_button(_main_buttons, "Testar sozinho", _on_test_pressed)
@@ -101,6 +102,18 @@ func _ready() -> void:
 
 	Network.joined.connect(_on_joined)
 	Network.join_failed.connect(_on_join_failed)
+	Network.room_created.connect(_on_room_created)
+	if OS.has_feature("Android"):
+		var update_button := Button.new()
+		update_button.text = "Verificar atualização"
+		update_button.position = Vector2(1070, 975)
+		update_button.custom_minimum_size = Vector2(690, 76)
+		update_button.pressed.connect(AndroidUpdates.open_download)
+		AndroidUpdates.status_changed.connect(func(message: String) -> void: _status.text = message)
+		AndroidUpdates.update_available.connect(func(_version: String) -> void: update_button.text = "Baixar atualização")
+		if not AndroidUpdates.download_url.is_empty():
+			update_button.text = "Baixar atualização"
+		add_child(update_button)
 	host_button.grab_focus()
 
 
@@ -118,8 +131,8 @@ func _build_background() -> void:
 	background_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var footer := Label.new()
-	footer.text = "PALHAÇO  &  ACROBATA                 UMA NOITE. DOIS ARTISTAS."
-	footer.position = Vector2(1070, 997)
+	footer.text = "Versão " + OnlineConfig.VERSION_NAME if OS.has_feature("Android") else "PALHAÇO  &  ACROBATA                 UMA NOITE. DOIS ARTISTAS."
+	footer.position = Vector2(1070, 1054 if OS.has_feature("Android") else 997)
 	footer.add_theme_font_size_override("font_size", 20)
 	footer.add_theme_color_override("font_color", UiTheme.GOLD)
 	add_child(footer)
@@ -143,7 +156,7 @@ func _build_join_panel(parent: Control) -> void:
 	parent.add_child(_join_panel)
 
 	var label := Label.new()
-	label.text = "Endereço de quem está hospedando (IP ou endereço:porta):"
+	label.text = "Digite o código de 6 caracteres do seu parceiro:"
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.custom_minimum_size.x = 590
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -152,8 +165,8 @@ func _build_join_panel(parent: Control) -> void:
 	_address_edit = LineEdit.new()
 	_address_edit.custom_minimum_size = Vector2(590, 0)
 	_address_edit.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_address_edit.placeholder_text = "ex.: 100.101.102.103  ou  jogo.at.ply.gg:12345"
-	_address_edit.text = Settings.last_join_address
+	_address_edit.placeholder_text = "ex.: A7BC9D"
+	_address_edit.max_length = 6
 	_address_edit.text_submitted.connect(func(_text: String) -> void: _on_connect_pressed())
 	_join_panel.add_child(_address_edit)
 
@@ -175,7 +188,7 @@ func _show_slot_panel(mode: String) -> void:
 	for child in _slot_panel.get_children():
 		child.queue_free()
 	var label := Label.new()
-	label.text = "Jogar sozinho: escolha o save" if mode == "solo" else "Hospedar: escolha o save da dupla"
+	label.text = "Jogar sozinho: escolha o save" if mode == "solo" else "Criar sala: escolha o save da dupla"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_slot_panel.add_child(label)
 	var first: Button = null
@@ -217,10 +230,15 @@ func _confirm_fresh(button: Button, slot: int) -> void:
 func _start_slot(slot: int, fresh: bool) -> void:
 	if _slot_mode == "coop":
 		SaveGame.use_slot("coop", slot, fresh)
-		var error: Error = Network.host()
+		var error: Error = Network.host_room()
 		if error != OK:
-			_status.text = "Não consegui abrir a partida (erro %d). A porta %d pode estar em uso." % [error, Network.DEFAULT_PORT]
+			_status.text = Network.last_message
 			return
+		_waiting_host = true
+		_status.text = "Criando sala..."
+		_join_timer = get_tree().create_timer(JOIN_TIMEOUT)
+		_join_timer.timeout.connect(_on_join_timeout.bind(_join_timer))
+		return
 	else:
 		Network.leave()
 		SaveGame.use_slot("solo", slot, fresh)
@@ -248,6 +266,8 @@ func _show_join_panel() -> void:
 
 
 func _show_main_buttons() -> void:
+	_waiting_host = false
+	_join_timer = null
 	Network.leave()
 	_join_panel.hide()
 	_slot_panel.hide()
@@ -267,16 +287,16 @@ func _on_test_pressed() -> void:
 func _on_connect_pressed() -> void:
 	var address := _address_edit.text.strip_edges()
 	if address.is_empty():
-		_status.text = "Digite o endereço de quem está hospedando."
+		_status.text = "Digite o código da sala."
 		return
-	Settings.set_option(&"last_join_address", address)
+	_waiting_host = false
 	Network.leave()
 	# O cliente joga com a cópia do save do host; aqui só sai do save de sozinho ou de teste.
 	SaveGame.use_slot("coop", 0)
-	if Network.join(address) != OK:
-		_status.text = "Esse endereço não parece válido."
+	if Network.join_room(address) != OK:
+		_status.text = Network.last_message
 		return
-	_status.text = "Conectando a %s..." % address
+	_status.text = "Entrando na sala %s..." % address.to_upper()
 	_join_timer = get_tree().create_timer(JOIN_TIMEOUT)
 	_join_timer.timeout.connect(_on_join_timeout.bind(_join_timer))
 
@@ -289,14 +309,25 @@ func _on_joined() -> void:
 
 func _on_join_failed() -> void:
 	_join_timer = null
-	_status.text = "Não consegui conectar. Confira o IP e se a partida já foi aberta."
+	_waiting_host = false
+	_status.text = Network.last_message if not Network.last_message.is_empty() else "Não consegui conectar. Confira o código e tente novamente."
+
+
+func _on_room_created(_code: String) -> void:
+	if not _waiting_host:
+		return
+	_waiting_host = false
+	_join_timer = null
+	get_tree().change_scene_to_file(_first_scene())
 
 
 func _on_join_timeout(timer: SceneTreeTimer) -> void:
 	if timer != _join_timer:
 		return
 	Network.leave()
-	_status.text = "Demorou demais para conectar. Confira o IP e se o parceiro já hospedou."
+	_join_timer = null
+	_waiting_host = false
+	_status.text = "Demorou demais para conectar. Confira a internet e tente novamente."
 
 
 ## Cena aberta ao começar: o mapa da área onde o save parou (ou outra, se a cena do menu escolher).

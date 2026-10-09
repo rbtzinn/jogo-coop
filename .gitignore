@@ -6,6 +6,9 @@
 /build/
 *.exe
 *.pck
+*.apk
+*.keystore
+*.jks
 
 # Sistema
 Thumbs.db

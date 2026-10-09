@@ -12,10 +12,15 @@ const TrainLevel := preload("res://levels/train/train_level.gd")
 var failures := 0
 var role := ""
 var _arrived := {}
+var relay_mode := false
+var relay_code := ""
+var relay_code_file := ""
 
 
 func _ready() -> void:
 	role = "host" if "host" in OS.get_cmdline_user_args() else "client"
+	relay_mode = "relay" in OS.get_cmdline_user_args()
+	relay_code_file = OS.get_environment("GAME_TEST_ROOM_FILE")
 	# "ruim": liga o simulador de internet ruim (ping 160, oscilando, perdendo pacotes).
 	if "ruim" in OS.get_cmdline_user_args():
 		Network.simulation_index = Network.SIMULATIONS.size() - 1
@@ -88,11 +93,18 @@ func _run() -> void:
 		SaveGame.data.players.acrobat.items.append("spring_shoes")
 		SaveGame.data.players.acrobat.equipped.prop = "spring_shoes"
 	if role == "host":
-		check(Network.host(PORT) == OK, "host opened")
+		if relay_mode:
+			check(Network.host_room() == OK, "relay host started")
+			check(await until(func() -> bool: return not Network.room_code.is_empty()), "relay room created")
+			var file := FileAccess.open(relay_code_file, FileAccess.WRITE)
+			file.store_string(Network.room_code)
+			file.close()
+		else:
+			check(Network.host(PORT) == OK, "host opened")
 		get_tree().change_scene_to_file(Levels.MAP)
 	else:
 		await wait(1.0)
-		check(Network.join("127.0.0.1:%d" % PORT) == OK, "join started")
+		check(_join_test_room() == OK, "join started")
 		await Network.joined
 		# O host manda o cliente para a fase em que está (o mapa).
 	await until(func() -> bool: return not Network.ready_peers.is_empty())
@@ -242,7 +254,7 @@ func _run() -> void:
 		check(get_tree().get_nodes_in_group(&"players").size() == 2, "partner back on host")
 	else:
 		await wait(7.0)
-		check(Network.join("127.0.0.1:%d" % PORT) == OK, "rejoin started")
+		check(_join_test_room() == OK, "rejoin started")
 		await Network.joined
 		# O host manda o cliente para a fase em que está.
 		while Network.ready_peers.is_empty():
@@ -678,7 +690,7 @@ func _rejoin(label: String) -> bool:
 		var on_fail := func() -> void: result[0] = "falhou"
 		Network.joined.connect(on_ok)
 		Network.join_failed.connect(on_fail)
-		if Network.join("127.0.0.1:%d" % PORT) != OK:
+		if _join_test_room() != OK:
 			result[0] = "falhou"
 		await until(func() -> bool: return result[0] != "", 10.0)
 		Network.joined.disconnect(on_ok)
@@ -688,3 +700,11 @@ func _rejoin(label: String) -> bool:
 		print("[%s] %s: join %s on attempt %d, trying again" % [role, label, result[0] if result[0] != "" else "timed out", attempt + 1])
 		await wait(2.0)
 	return false
+
+
+func _join_test_room() -> Error:
+	if not relay_mode:
+		return Network.join("127.0.0.1:%d" % PORT)
+	if relay_code.is_empty():
+		relay_code = FileAccess.get_file_as_string(relay_code_file).strip_edges()
+	return Network.join_room(relay_code)

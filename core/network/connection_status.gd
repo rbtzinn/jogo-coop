@@ -24,6 +24,9 @@ func _refresh() -> void:
 	if not Network.is_online() or not Network.is_host() or not multiplayer.get_peers().is_empty():
 		text = ""
 		return
+	if not Network.room_code.is_empty():
+		text = "Sala: %s\nPasse este código para o parceiro entrar." % Network.room_code
+		return
 	var addresses := Network.local_addresses()
 	text = "Esperando o parceiro entrar...\nPasse um destes IPs para ele (porta %d):  %s" % [
 		Network.DEFAULT_PORT, "   ".join(addresses) if not addresses.is_empty() else "127.0.0.1"]
