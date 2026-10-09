@@ -1,0 +1,66 @@
+name: Exportar jogo para Windows
+
+on:
+  push:
+    branches:
+      - codex/export-windows-2026-10-09
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export-windows:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          persist-credentials: false
+
+      - name: Instalar Godot 4.7.2 e templates Windows
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot"
+          cd "$RUNNER_TEMP/godot"
+          curl --fail --location --retry 3 -o engine.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          curl --fail --location --retry 3 -o templates.tpz https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz
+          unzip -q engine.zip
+          chmod +x Godot_v4.7.2-stable_linux.x86_64
+          echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
+          unzip -q templates.tpz 'templates/windows_*x86_64*' 'templates/version.txt'
+          mkdir -p "$HOME/.local/share/godot/export_templates/4.7.2.stable"
+          cp templates/* "$HOME/.local/share/godot/export_templates/4.7.2.stable/"
+
+      - name: Importar recursos do jogo
+        shell: bash
+        run: |
+          set -euo pipefail
+          for directory in docs tools tests; do
+            if [ -d "$directory" ]; then touch "$directory/.gdignore"; fi
+          done
+          Godot_v4.7.2-stable_linux.x86_64 --headless --editor --path . --import
+
+      - name: Exportar executavel Windows
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          Godot_v4.7.2-stable_linux.x86_64 --headless --path . --export-release "Windows Desktop" build/RespeitavelPublico.exe
+          test -s build/RespeitavelPublico.exe
+          printf '%s\n' 'Respeitável Público — Windows 64 bits' '' 'Extraia todos os arquivos do ZIP e abra RespeitavelPublico.exe.' 'Não é necessário instalar a Godot.' '' 'Versão do projeto: b39f70cff597a5193fe7efd2ff37e1d32a4fe1ef' > build/LEIA-ME.txt
+
+      - name: Disponibilizar jogo
+        uses: actions/upload-artifact@v4
+        with:
+          name: RespeitavelPublico-Windows-b39f70c
+          path: |
+            build/RespeitavelPublico.exe
+            build/*.dll
+            build/*.pck
+            build/LEIA-ME.txt
+          if-no-files-found: error
+          retention-days: 14
