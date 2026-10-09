@@ -119,6 +119,8 @@ func _run() -> void:
 	input.update()
 	check(not input.shoot_held, "map does not fire or enter automatically")
 	var enter: Vector2 = controls._buttons[&"shoot"].at
+	# Simula o evento na janela de entrada, antes da próxima física do mapa.
+	await tree.process_frame
 	touch(1, enter)
 	input.update()
 	check(input.shoot_held and input.shoot_pressed, "entering still requires a deliberate touch")

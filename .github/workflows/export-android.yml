@@ -126,6 +126,8 @@ jobs:
         run: |
           set -euo pipefail
           sdkmanager --install 'emulator' 'system-images;android-35;google_apis;x86_64'
+          export ANDROID_AVD_HOME="$RUNNER_TEMP/android-avd"
+          mkdir -p "$ANDROID_AVD_HOME"
           printf 'no\n' | avdmanager create avd --name mobile-preview --package 'system-images;android-35;google_apis;x86_64' --device pixel_6 --force
           if [ -e /dev/kvm ]; then sudo chmod 666 /dev/kvm; fi
           "$ANDROID_HOME/emulator/emulator" -avd mobile-preview -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect > build/emulator.log 2>&1 &
