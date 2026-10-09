@@ -6,6 +6,7 @@ services:
     name: respeitavel-publico-relay
     runtime: docker
     plan: free
+    region: virginia
     rootDir: server
     dockerfilePath: ./Dockerfile
     dockerContext: .

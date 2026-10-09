@@ -12,7 +12,7 @@ conexão por IP. Jogar sozinho funciona sempre.
 ## Publicar o relay no Render
 
 1. Criar conta em https://render.com (entrar com o GitHub; o plano gratuito não pede cartão).
-2. **New > Blueprint** e escolher este repositório. O `render.yaml` cria o serviço
+2. **New > Blueprint** e escolher este repositório. O `render.yaml` cria o serviço na Virgínia (EUA, a região mais perto do Brasil),
    `respeitavel-publico-relay` (Docker, plano free, pasta `server/`).
 3. Quando ficar "Live", abrir `https://<endereço>.onrender.com/health`; deve responder `{"ok":true}`.
 4. Gravar o endereço no jogo:
