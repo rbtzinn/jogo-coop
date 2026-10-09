@@ -22,10 +22,12 @@ var _status: Label
 var _settings_menu: SettingsMenu
 var _join_timer: SceneTreeTimer
 var _waiting_host := false
+var _uses_rooms := false
 
 
 func _ready() -> void:
 	add_to_group(&"menu_screen")
+	_uses_rooms = not OnlineConfig.relay_url().is_empty()
 	# Volta a usar o save deste PC (online como cliente, a cópia era do host).
 	SaveGame.load_game()
 	theme = UiTheme.build()
@@ -69,8 +71,8 @@ func _ready() -> void:
 	_main_buttons.add_theme_constant_override("separation", 10)
 	_main_buttons.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	poster_layout.add_child(_main_buttons)
-	var host_button := _add_button(_main_buttons, "Criar sala online", _show_slot_panel.bind("coop"))
-	_add_button(_main_buttons, "Entrar com código", _show_join_panel)
+	var host_button := _add_button(_main_buttons, "Criar sala online" if _uses_rooms else "Hospedar partida", _show_slot_panel.bind("coop"))
+	_add_button(_main_buttons, "Entrar com código" if _uses_rooms else "Entrar na partida", _show_join_panel)
 	_add_button(_main_buttons, "Jogar sozinho", _show_slot_panel.bind("solo"))
 	if SHOW_TEST_MODE:
 		_add_button(_main_buttons, "Testar sozinho", _on_test_pressed)
@@ -156,7 +158,7 @@ func _build_join_panel(parent: Control) -> void:
 	parent.add_child(_join_panel)
 
 	var label := Label.new()
-	label.text = "Digite o código de 6 caracteres do seu parceiro:"
+	label.text = "Digite o código de 6 caracteres do seu parceiro:" if _uses_rooms else "Endereço de quem está hospedando (IP ou endereço:porta):"
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.custom_minimum_size.x = 590
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -165,8 +167,10 @@ func _build_join_panel(parent: Control) -> void:
 	_address_edit = LineEdit.new()
 	_address_edit.custom_minimum_size = Vector2(590, 0)
 	_address_edit.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_address_edit.placeholder_text = "ex.: A7BC9D"
-	_address_edit.max_length = 6
+	_address_edit.placeholder_text = "ex.: A7BC9D" if _uses_rooms else "ex.: 100.101.102.103 ou endereço:porta"
+	_address_edit.max_length = 6 if _uses_rooms else 0
+	if not _uses_rooms:
+		_address_edit.text = Settings.last_join_address
 	_address_edit.text_submitted.connect(func(_text: String) -> void: _on_connect_pressed())
 	_join_panel.add_child(_address_edit)
 
@@ -188,7 +192,7 @@ func _show_slot_panel(mode: String) -> void:
 	for child in _slot_panel.get_children():
 		child.queue_free()
 	var label := Label.new()
-	label.text = "Jogar sozinho: escolha o save" if mode == "solo" else "Criar sala: escolha o save da dupla"
+	label.text = "Jogar sozinho: escolha o save" if mode == "solo" else ("Criar sala: escolha o save da dupla" if _uses_rooms else "Hospedar: escolha o save da dupla")
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_slot_panel.add_child(label)
 	var first: Button = null
@@ -230,15 +234,17 @@ func _confirm_fresh(button: Button, slot: int) -> void:
 func _start_slot(slot: int, fresh: bool) -> void:
 	if _slot_mode == "coop":
 		SaveGame.use_slot("coop", slot, fresh)
-		var error: Error = Network.host_room()
+		Network.leave()
+		var error: Error = Network.host_room() if _uses_rooms else Network.host()
 		if error != OK:
-			_status.text = Network.last_message
+			_status.text = Network.last_message if _uses_rooms else "Não consegui abrir a partida (erro %d). A porta %d pode estar em uso." % [error, Network.DEFAULT_PORT]
 			return
-		_waiting_host = true
-		_status.text = "Criando sala..."
-		_join_timer = get_tree().create_timer(JOIN_TIMEOUT)
-		_join_timer.timeout.connect(_on_join_timeout.bind(_join_timer))
-		return
+		if _uses_rooms:
+			_waiting_host = true
+			_status.text = "Criando sala..."
+			_join_timer = get_tree().create_timer(JOIN_TIMEOUT)
+			_join_timer.timeout.connect(_on_join_timeout.bind(_join_timer))
+			return
 	else:
 		Network.leave()
 		SaveGame.use_slot("solo", slot, fresh)
@@ -287,16 +293,19 @@ func _on_test_pressed() -> void:
 func _on_connect_pressed() -> void:
 	var address := _address_edit.text.strip_edges()
 	if address.is_empty():
-		_status.text = "Digite o código da sala."
+		_status.text = "Digite o código da sala." if _uses_rooms else "Digite o endereço de quem está hospedando."
 		return
 	_waiting_host = false
 	Network.leave()
 	# O cliente joga com a cópia do save do host; aqui só sai do save de sozinho ou de teste.
 	SaveGame.use_slot("coop", 0)
-	if Network.join_room(address) != OK:
-		_status.text = Network.last_message
+	if not _uses_rooms:
+		Settings.set_option(&"last_join_address", address)
+	var error := Network.join_room(address) if _uses_rooms else Network.join(address)
+	if error != OK:
+		_status.text = Network.last_message if _uses_rooms else "Esse endereço não parece válido."
 		return
-	_status.text = "Entrando na sala %s..." % address.to_upper()
+	_status.text = "Entrando na sala %s..." % address.to_upper() if _uses_rooms else "Conectando a %s..." % address
 	_join_timer = get_tree().create_timer(JOIN_TIMEOUT)
 	_join_timer.timeout.connect(_on_join_timeout.bind(_join_timer))
 
@@ -310,7 +319,7 @@ func _on_joined() -> void:
 func _on_join_failed() -> void:
 	_join_timer = null
 	_waiting_host = false
-	_status.text = Network.last_message if not Network.last_message.is_empty() else "Não consegui conectar. Confira o código e tente novamente."
+	_status.text = Network.last_message if not Network.last_message.is_empty() else ("Não consegui conectar. Confira o código e tente novamente." if _uses_rooms else "Não consegui conectar. Confira o IP e se a partida já foi aberta.")
 
 
 func _on_room_created(_code: String) -> void:

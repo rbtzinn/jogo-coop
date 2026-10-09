@@ -6,8 +6,10 @@ O tiro automático permanece ativo no combate mobile; `SHOW_TEST_MODE` permanece
 ## Estado
 
 O relay funciona localmente. **Nenhum servidor público foi publicado.** Os endpoints em
-`core/network/online_config.gd` estão vazios intencionalmente. A interface explica isso ao tentar
-criar/entrar em uma sala ou consultar atualização. Jogar sozinho continua funcionando.
+`core/network/online_config.gd` estão vazios intencionalmente. Sem um endpoint de salas configurado, o menu mantém
+a conexão por IP (LAN/VPN), para preservar o online existente. Ao configurar o endpoint,
+o menu passa a criar/entrar por código. O botão de atualização informa quando ainda não há
+servidor configurado. Jogar sozinho continua funcionando.
 
 Para publicar falta uma máquina acessível na internet, um hostname HTTPS apontando para ela e
 uma chave permanente de assinatura Android. O pacote da beta é

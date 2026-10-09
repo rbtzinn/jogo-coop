@@ -1,12 +1,12 @@
 name: Android online beta
 on:
   push:
-    branches: [codex/android-online-2026-10-09]
+    branches: [main, codex/android-online-2026-10-09]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: android-online
+  group: android-online-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   verify:
