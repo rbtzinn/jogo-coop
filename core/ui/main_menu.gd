@@ -6,7 +6,7 @@ extends Control
 const JOIN_TIMEOUT := 8.0
 ## Botão "Testar sozinho" (modo de teste: tudo aberto, ingressos e vida de sobra). Guardado e escondido desde
 ## 06/10/2026 a pedido do usuário; trocar para true para usar de novo durante o desenvolvimento.
-const SHOW_TEST_MODE := true
+const SHOW_TEST_MODE := false
 
 ## Fase que abre ao começar (o mapa do parque do circo).
 @export_file("*.tscn") var first_level := Levels.MAP
