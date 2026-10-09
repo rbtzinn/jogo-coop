@@ -120,6 +120,7 @@ jobs:
           retention-days: 14
 
       - name: Testar abertura no emulador Android
+        timeout-minutes: 8
         continue-on-error: true
         shell: bash
         run: |
@@ -128,7 +129,7 @@ jobs:
           printf 'no\n' | avdmanager create avd --name mobile-preview --package 'system-images;android-35;google_apis;x86_64' --device pixel_6 --force
           if [ -e /dev/kvm ]; then sudo chmod 666 /dev/kvm; fi
           "$ANDROID_HOME/emulator/emulator" -avd mobile-preview -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect > build/emulator.log 2>&1 &
-          adb wait-for-device
+          timeout 180 adb wait-for-device
           timeout 240 bash -c 'until [ "$(adb shell getprop sys.boot_completed | tr -d "\r")" = 1 ]; do sleep 2; done'
           adb shell wm size 1080x1920
           adb shell wm density 240
@@ -136,9 +137,9 @@ jobs:
           adb shell settings put system user_rotation 1
           adb install build/RespeitavelPublico-Android.apk
           adb logcat -c
-          adb shell monkey -p com.rbtzinn.respeitavelpublico.preview -c android.intent.category.LAUNCHER 1
+          adb shell monkey -p com.rbtzinn.respeitavelpublico.preview.autofire -c android.intent.category.LAUNCHER 1
           sleep 35
-          adb shell pidof com.rbtzinn.respeitavelpublico.preview
+          adb shell pidof com.rbtzinn.respeitavelpublico.preview.autofire
           adb exec-out screencap -p > build/Android-Menu.png
           adb shell input tap 430 570
           sleep 2

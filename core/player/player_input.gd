@@ -38,7 +38,7 @@ func update() -> void:
 		clear()
 		return
 	move = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	shoot_held = Input.is_action_pressed("shoot")
+	shoot_held = Input.is_action_pressed("shoot") or (up_can_jump and MobileControls.wants_auto_shoot())
 	shoot_pressed = Input.is_action_just_pressed("shoot")
 	dash_pressed = Input.is_action_just_pressed("dash")
 	lock_held = Input.is_action_pressed("lock_aim")
@@ -100,3 +100,4 @@ static func _digital(value: float, deadzone: float) -> int:
 	if absf(value) < deadzone:
 		return 0
 	return int(signf(value))
+

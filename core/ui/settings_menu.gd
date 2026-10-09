@@ -73,7 +73,7 @@ func _build_touch_tab() -> Control:
 	tab.name = "Controles"
 	tab.add_theme_constant_override("separation", 28)
 	var note := Label.new()
-	note.text = "Direcional à esquerda: andar e mirar.\nÀ direita: PULAR, TIRO, DASH, EX e MIRA.\n\nSegure TIRO para atirar e EX para o especial.\nNo mapa, use TROCAR para mudar de personagem.\nToque em PAUSA para abrir o intervalo.\n\nVocê também pode conectar um controle Bluetooth."
+	note.text = "Direcional à esquerda: andar e mirar.\nO personagem atira automaticamente durante as fases.\nÀ direita: PULAR, DASH, EX e MIRA.\n\nSegure EX para o especial.\nNo mapa, toque em ENTRAR para acessar os lugares\ne em TROCAR para mudar de personagem.\nToque em PAUSA para abrir o intervalo.\n\nVocê também pode conectar um controle Bluetooth."
 	note.add_theme_font_size_override("font_size", 34)
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tab.add_child(note)

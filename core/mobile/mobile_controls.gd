@@ -13,8 +13,9 @@ class Surface extends Control:
 	func _draw() -> void:
 		controls.draw_surface(self)
 
-var force_enabled := false
 var _surface: Surface
+var _focused := true
+var _application_paused := false
 var _active := false
 var _map_mode := false
 var _scene: Node
@@ -32,10 +33,18 @@ var _viewport_size := Vector2.ZERO
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 15
-	if not force_enabled and not OS.has_feature("mobile"):
+	if not OS.has_feature("mobile"):
 		set_process(false)
 		set_process_input(false)
 		return
+	enable()
+
+
+func enable() -> void:
+	if _surface != null:
+		return
+	set_process(true)
+	set_process_input(true)
 	_surface = Surface.new()
 	_surface.controls = self
 	_surface.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -69,11 +78,20 @@ func _process(_delta: float) -> void:
 
 
 func _can_control() -> bool:
-	return get_tree().current_scene != null and not get_tree().paused \
+	return _focused and not _application_paused \
+			and get_tree().current_scene != null and not get_tree().paused \
 			and not PauseMenu.is_open() \
 			and get_tree().get_first_node_in_group(&"blocking_ui") == null \
 			and (get_tree().get_first_node_in_group(&"players") != null \
 			or get_tree().get_first_node_in_group(&"walkers") != null)
+
+
+func wants_auto_shoot() -> bool:
+	# Só o PlayerInput local usa este sinal; nenhuma ação global de tiro fica presa.
+	var scene := get_tree().current_scene
+	return _surface != null and _can_control() \
+			and scene != null and not Levels.is_map(scene.scene_file_path) \
+			and get_tree().get_first_node_in_group(&"players") != null
 
 
 func _layout() -> void:
@@ -88,8 +106,8 @@ func _layout() -> void:
 	_joystick_center = Vector2(220.0 * _scale, h - 210.0 * _scale)
 	_buttons.clear()
 	_buttons[&"pause"] = {"at": Vector2(w - 110.0 * _scale, 90.0 * _scale), "r": 65.0 * _scale, "text": "PAUSA"}
-	_buttons[&"shoot"] = {"at": Vector2(w - 150.0 * _scale, h - 280.0 * _scale), "r": 76.0 * _scale, "text": "ENTRAR" if _map_mode else "TIRO"}
 	if _map_mode:
+		_buttons[&"shoot"] = {"at": Vector2(w - 150.0 * _scale, h - 280.0 * _scale), "r": 76.0 * _scale, "text": "ENTRAR"}
 		if not Network.is_online():
 			_buttons[&"swap"] = {"at": Vector2(w - 310.0 * _scale, h - 130.0 * _scale), "r": 76.0 * _scale, "text": "TROCAR"}
 	else:
@@ -195,8 +213,16 @@ func release_all() -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_focused = false
 		release_all()
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		_focused = true
+	elif what == NOTIFICATION_APPLICATION_PAUSED:
+		_application_paused = true
+		release_all()
+	elif what == NOTIFICATION_APPLICATION_RESUMED:
+		_application_paused = false
 	elif what == NOTIFICATION_WM_GO_BACK_REQUEST and _surface != null:
 		release_all()
 		if PauseMenu.is_open():
