@@ -68,7 +68,11 @@ func host_room() -> Error:
 
 func join_room(code: String) -> Error:
 	code = code.strip_edges().to_upper()
-	if code.length() != 6 or not code.is_valid_ascii_identifier():
+	var valid := code.length() == 6
+	for character in code:
+		if character not in "ABCDEFGHJKLMNPQRSTUVWXYZ23456789":
+			valid = false
+	if not valid:
 		last_message = "Digite os 6 caracteres do código da sala."
 		return ERR_INVALID_PARAMETER
 	return _open_room(false, code)
