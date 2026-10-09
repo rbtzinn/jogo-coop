@@ -139,7 +139,11 @@ func _touch_down(finger: int, at: Vector2) -> void:
 			release_all()
 			var scene := get_tree().current_scene
 			if scene != null and scene.has_method("swap_solo_character"):
-				scene.swap_solo_character()
+				if PlayerSpawner.solo_slot >= 0:
+					scene.swap_solo_character()
+				else:
+					for walker: WorldWalker in get_tree().get_nodes_in_group(&"walkers"):
+						walker.input.local_control = not walker.input.local_control
 		else:
 			_button_fingers[finger] = action
 			_set_action(action, 1.0)
