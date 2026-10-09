@@ -1,0 +1,19 @@
+# Relay de salas por código no plano gratuito do Render (sem cartão).
+# No Render: New > Blueprint, apontar para este repositório. O endereço sai como
+# https://<nome>.onrender.com; colocar wss://<nome>.onrender.com/relay em OnlineConfig.RELAY_URL.
+services:
+  - type: web
+    name: respeitavel-publico-relay
+    runtime: docker
+    plan: free
+    rootDir: server
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - server/**
+    envVars:
+      - key: MAX_ROOMS
+        value: "200"

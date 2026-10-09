@@ -3,9 +3,6 @@ import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import { WebSocket } from 'ws';
 import { createRelay } from '../server.mjs';
-import { mkdtemp, writeFile, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 
 async function fixture(t, options) {
   const relay = createRelay(options);
@@ -59,18 +56,10 @@ test('room isolation, missing/full rooms, protocol and bounded capacity', async 
   await new Promise(resolve => setTimeout(resolve, 30)); assert.equal(leak, false);
   const response = await fetch(`http://127.0.0.1:${f.relay.server.address().port}/health`); assert.equal((await response.json()).ok, true);
 });
-test('published Android version and APK download stay separate from private source', async t => {
-  const releases = await mkdtemp(join(tmpdir(), 'android-release-'));
-  t.after(() => rm(releases, { recursive: true, force: true }));
-  await writeFile(join(releases, 'latest.json'), JSON.stringify({ version_code: 4, package: 'test.app' }));
-  await writeFile(join(releases, 'game-4.apk'), 'apk fixture');
-  const { relay } = await fixture(t, { releaseDir: releases });
+test('the relay serves only health and rooms', async t => {
+  const { relay } = await fixture(t);
   const base = `http://127.0.0.1:${relay.server.address().port}`;
-  assert.equal((await (await fetch(base + '/api/android/latest')).json()).version_code, 4);
-  const apk = await fetch(base + '/downloads/game-4.apk');
-  assert.equal(apk.headers.get('content-type'), 'application/vnd.android.package-archive');
-  assert.equal(await apk.text(), 'apk fixture');
-  for (const path of ['/downloads/latest.json', '/downloads/..%2flatest.json.apk', '/server.mjs', '/downloads/missing.apk']) {
+  for (const path of ['/api/android/latest', '/downloads/game-4.apk', '/server.mjs']) {
     assert.equal((await fetch(base + path)).status, 404);
   }
   assert.equal((await fetch(base + '/health', { method: 'POST' })).status, 405);

@@ -1,7 +1,5 @@
 import http from 'node:http';
 import { randomInt } from 'node:crypto';
-import { readFile, stat } from 'node:fs/promises';
-import { createReadStream } from 'node:fs';
 import { resolve } from 'node:path';
 import { WebSocketServer, WebSocket } from 'ws';
 import { pathToFileURL } from 'node:url';
@@ -10,27 +8,12 @@ const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const PACKET_LIMIT = 1024 * 1024;
 const send = (ws, data) => { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(data)); };
 
-export function createRelay({ maxRooms = 200, maxConnections = 500, releaseDir = './releases' } = {}) {
+export function createRelay({ maxRooms = 200, maxConnections = 500 } = {}) {
   const rooms = new Map();
-  const releases = resolve(releaseDir);
-  const server = http.createServer(async (req, res) => {
+  const server = http.createServer((req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     if (req.method !== 'GET') { res.writeHead(405); res.end(); return; }
     if (req.url === '/health') { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify({ ok: true })); return; }
-    try {
-      if (req.url === '/api/android/latest') {
-        const manifest = JSON.parse(await readFile(resolve(releases, 'latest.json'), 'utf8'));
-        res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(manifest)); return;
-      }
-      const match = /^\/downloads\/([A-Za-z0-9_.-]+\.apk)$/.exec(req.url || '');
-      if (match) {
-        const file = resolve(releases, match[1]);
-        const info = await stat(file);
-        res.writeHead(200, { 'Content-Type': 'application/vnd.android.package-archive', 'Content-Length': info.size,
-          'Content-Disposition': `attachment; filename="${match[1]}"`, 'Cache-Control': 'public, max-age=3600' });
-        createReadStream(file).on('error', () => res.destroy()).pipe(res); return;
-      }
-    } catch { /* No published release yet, or invalid release: fail closed. */ }
     res.writeHead(404); res.end('Not found');
   });
   const wss = new WebSocketServer({ noServer: true, maxPayload: PACKET_LIMIT, perMessageDeflate: false });
@@ -121,7 +104,7 @@ export function createRelay({ maxRooms = 200, maxConnections = 500, releaseDir =
   } };
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  const relay = createRelay({ maxRooms: Number(process.env.MAX_ROOMS || 200), releaseDir: process.env.RELEASE_DIR || './releases' });
+  const relay = createRelay({ maxRooms: Number(process.env.MAX_ROOMS || 200) });
   relay.server.listen(Number(process.env.PORT || 8080), '0.0.0.0', () => console.log('Relay listening'));
   for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, async () => { await relay.close(); process.exit(0); });
 }

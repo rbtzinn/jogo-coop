@@ -5,9 +5,6 @@ services:
     environment:
       PORT: 8080
       MAX_ROOMS: 200
-      RELEASE_DIR: /releases
-    volumes:
-      - ./releases:/releases:ro
     expose:
       - "8080"
     mem_limit: 256m
