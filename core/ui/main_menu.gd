@@ -105,15 +105,15 @@ func _ready() -> void:
 	Network.joined.connect(_on_joined)
 	Network.join_failed.connect(_on_join_failed)
 	Network.room_created.connect(_on_room_created)
-	if OS.has_feature("Android"):
+	if not GameUpdates.platform().is_empty():
 		var update_button := Button.new()
 		update_button.text = "Verificar atualização"
 		update_button.position = Vector2(1070, 975)
 		update_button.custom_minimum_size = Vector2(690, 76)
-		update_button.pressed.connect(AndroidUpdates.open_download)
-		AndroidUpdates.status_changed.connect(func(message: String) -> void: _status.text = message)
-		AndroidUpdates.update_available.connect(func(_version: String) -> void: update_button.text = "Baixar atualização")
-		if not AndroidUpdates.download_url.is_empty():
+		update_button.pressed.connect(GameUpdates.open_download)
+		GameUpdates.status_changed.connect(func(message: String) -> void: _status.text = message)
+		GameUpdates.update_available.connect(func(_version: String) -> void: update_button.text = "Baixar atualização")
+		if not GameUpdates.download_url.is_empty():
 			update_button.text = "Baixar atualização"
 		add_child(update_button)
 	host_button.grab_focus()
@@ -133,8 +133,10 @@ func _build_background() -> void:
 	background_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var footer := Label.new()
-	footer.text = "Versão " + OnlineConfig.VERSION_NAME if OS.has_feature("Android") else "PALHAÇO  &  ACROBATA                 UMA NOITE. DOIS ARTISTAS."
-	footer.position = Vector2(1070, 1054 if OS.has_feature("Android") else 997)
+	# Com o botão de atualização no canto, o rodapé desce e mostra a versão.
+	var shows_version := not GameUpdates.platform().is_empty()
+	footer.text = "Versão " + OnlineConfig.VERSION_NAME if shows_version else "PALHAÇO  &  ACROBATA                 UMA NOITE. DOIS ARTISTAS."
+	footer.position = Vector2(1070, 1054 if shows_version else 997)
 	footer.add_theme_font_size_override("font_size", 20)
 	footer.add_theme_color_override("font_color", UiTheme.GOLD)
 	add_child(footer)

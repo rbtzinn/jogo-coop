@@ -25,7 +25,7 @@ DevWindows="*res://core/debug/dev_windows.gd"
 FilmOverlay="*res://components/fx/film_overlay.gd"
 PauseMenu="*res://core/ui/pause_menu.gd"
 MobileControls="*res://core/mobile/mobile_controls.gd"
-AndroidUpdates="*res://core/mobile/android_updates.gd"
+GameUpdates="*res://core/update/game_updates.gd"
 
 [display]
 

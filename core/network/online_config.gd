@@ -1,9 +1,10 @@
 class_name OnlineConfig
 extends RefCounted
-## Set these to the same HTTPS host before building the public Android release.
-## Empty endpoints keep the beta honest: it never connects to an invented server.
+## RELAY_URL points at the room relay (server/, hosted on Render). Empty keeps the IP connection.
+## Updates come from the GitHub releases published by .github/workflows/android-online.yml.
 const RELAY_URL := ""
-const UPDATE_URL := ""
+const RELEASES_URL := "https://github.com/rbtzinn/jogo-coop/releases"
+const UPDATE_URL := RELEASES_URL + "/latest/download/version.json"
 const ANDROID_PACKAGE := "com.rbtzinn.respeitavelpublico.beta"
 const VERSION_CODE := 3
 const VERSION_NAME := "0.3-android-online"
