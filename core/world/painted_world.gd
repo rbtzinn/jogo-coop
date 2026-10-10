@@ -13,6 +13,8 @@ extends Node3D
 ## Ao chegar aqui, o host salva o jogo (com a área atual).
 
 const FRONT_SHADER := preload("res://shaders/painted_front.gdshader")
+const CONNECTION_STATUS := preload("res://core/network/connection_status.gd")
+const STATUS_FONT := preload("res://core/ui/fonts/Oswald.ttf")
 
 ## Número da área (fica no save: é para onde "Voltar ao mapa" e o menu levam).
 @export var area := 1
@@ -528,6 +530,22 @@ func _build_hud() -> void:
 		column.add_child(tickets)
 		lives.add_child(plate)
 		_lives[kind] = [count, tickets]
+	# Código da sala (ou IPs) enquanto o host espera o parceiro; some quando ele entra.
+	var status := Label.new()
+	status.set_script(CONNECTION_STATUS)
+	status.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	status.offset_left = -800.0
+	status.offset_right = 800.0
+	status.offset_top = 110.0
+	status.offset_bottom = 230.0
+	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	status.add_theme_font_override("font", STATUS_FONT)
+	status.add_theme_font_size_override("font_size", 32)
+	status.add_theme_color_override("font_color", Color(0.98, 0.92, 0.75))
+	status.add_theme_color_override("font_outline_color", Color(0.1, 0.08, 0.06))
+	status.add_theme_constant_override("outline_size", 10)
+	hud.add_child(status)
 
 
 ## Plaquinha escura com moldura dourada e um fio de latão por dentro.
