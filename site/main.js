@@ -72,6 +72,11 @@
   const acts = document.querySelector(".acts");
   const track = document.querySelector(".acts-track");
   const cards = [...track.children];
+  const flight = document.querySelector(".flight");
+  const plane = flight.querySelector(".plane");
+  const trail = flight.querySelector(".smoke-trail");
+  let lastPuff = 0;
+  let lastFly = 0;
   const online = document.querySelector(".online");
   const onlineSteps = [...document.querySelectorAll(".steps li")];
   const nav = document.querySelector(".nav");
@@ -119,6 +124,31 @@
         if (card.dataset.area === "2") area = Math.max(area, lift);
       });
       acts.style.setProperty("--area", area.toFixed(3));
+
+      // Voo: o avião entra pela esquerda, sobe e desce num arco e sai pela direita; solta fumaça
+      // enquanto anda (só quando a rolagem move o avião).
+      const f = progressOf(flight);
+      flight.style.setProperty("--fly", f.toFixed(4));
+      if (f > 0 && f < 1) {
+        const w = plane.offsetWidth;
+        const x = -w + f * (innerWidth + w * 2);
+        const y = innerHeight * 0.66 - Math.sin(f * Math.PI) * innerHeight * 0.12 + Math.sin(f * Math.PI * 6) * 14 - w / 3;
+        const tilt = -Math.cos(f * Math.PI) * 8 + Math.cos(f * Math.PI * 6) * 3;
+        plane.style.setProperty("--px", x.toFixed(1) + "px");
+        plane.style.setProperty("--py", y.toFixed(1) + "px");
+        plane.style.setProperty("--pr", (-tilt).toFixed(2) + "deg");
+        const now = performance.now();
+        if (Math.abs(f - lastFly) > 0.002 && now - lastPuff > 70) {
+          lastPuff = now;
+          const puff = document.createElement("i");
+          puff.className = "puff";
+          puff.style.left = (x + w * 0.12) + "px";
+          puff.style.top = (y + w * 0.36) + "px";
+          trail.appendChild(puff);
+          puff.addEventListener("animationend", () => puff.remove());
+        }
+        lastFly = f;
+      }
 
       // Online: a linha desenha e os passos acendem; no último, o código vira.
       if (innerWidth > 900) {

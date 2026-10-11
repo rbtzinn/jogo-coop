@@ -304,6 +304,65 @@ body::after {
 .acts-progress { margin: 26px var(--gutter) 0; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .08); max-width: 1272px; align-self: center; width: calc(100% - 2 * var(--gutter)); }
 .acts-progress span { display: block; height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--gold), var(--lava)); transform-origin: 0 50%; transform: scaleX(var(--acts, 0)); }
 
+/* Voo do avião */
+.flight { height: 320vh; }
+.flight-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.flight-sky {
+  position: absolute; inset: -6% -10%; background: url("assets/art/sky.webp") center / cover;
+  transform: translateX(calc(var(--fly, 0) * -6%)) scale(1.05);
+}
+.flight-stage::after { /* escurece o alto para o texto */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(20, 13, 20, .85), transparent 38%, transparent 80%, var(--night));
+}
+.flight-text { position: absolute; z-index: 3; top: 96px; left: 0; right: 0; text-align: center; padding: 0 var(--gutter); }
+.flight-text h2 { font-size: clamp(28px, 3.6vw, 52px); text-shadow: 0 3px 0 var(--ink); }
+.flight-text .lede { margin: 12px auto 0; color: var(--cream); text-shadow: 0 2px 8px rgba(0, 0, 0, .6); }
+.flight-labels { position: absolute; z-index: 3; left: 0; right: 0; top: 72%; display: flex; justify-content: space-between; padding: 0 3vw; }
+.flight-labels span {
+  font-family: var(--label); text-transform: uppercase; letter-spacing: .18em; font-size: clamp(10px, 1vw, 13px);
+  color: var(--cream); background: rgba(20, 13, 20, .7); border: 1px solid var(--brass); padding: 6px 12px; border-radius: 999px;
+  transition: opacity .4s, box-shadow .4s;
+}
+.flight-labels .from { opacity: calc(1 - var(--fly, 0) * .6); }
+.flight-labels .to { opacity: calc(.4 + var(--fly, 0) * .6); box-shadow: 0 0 calc(var(--fly, 0) * 24px) rgba(255, 122, 47, .7); }
+.plane {
+  position: absolute; z-index: 4; left: 0; top: 0; width: clamp(240px, 30vw, 460px); aspect-ratio: 3 / 2;
+  transform: translate(var(--px, -40vw), var(--py, 40vh)) rotate(var(--pr, 0deg));
+  will-change: transform; filter: drop-shadow(0 20px 18px rgba(0, 0, 0, .35));
+}
+.plane-sprite {
+  width: 100%; height: 100%; background: url("assets/art/plane.webp") 0 0 / 400% 200% no-repeat;
+  animation: propeller .8s steps(1) infinite;
+}
+@keyframes propeller {
+  0% { background-position: 0 0; } 12.5% { background-position: 33.333% 0; } 25% { background-position: 66.666% 0; }
+  37.5% { background-position: 100% 0; } 50% { background-position: 0 100%; } 62.5% { background-position: 33.333% 100%; }
+  75% { background-position: 66.666% 100%; } 87.5% { background-position: 100% 100%; } 100% { background-position: 0 0; }
+}
+.smoke-trail { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.puff {
+  position: absolute; width: 84px; height: 84px; margin: -42px 0 0 -42px; background: url("assets/art/smoke.webp") 0 0 / 400% 100%;
+  animation: puff 1.4s ease-out forwards;
+}
+@keyframes puff {
+  0% { background-position: 0 0; transform: scale(.6); opacity: .9; }
+  35% { background-position: 33.333% 0; }
+  70% { background-position: 66.666% 0; }
+  100% { background-position: 100% 0; transform: scale(1.6) translateX(-40px); opacity: 0; }
+}
+.flight-clouds {
+  position: absolute; z-index: 5; left: 0; width: calc(100% + 1920px); bottom: -2%; height: clamp(120px, 20vw, 300px);
+  background: url("assets/art/clouds.webp") 0 100% / auto 100% repeat-x;
+  background-position-x: calc(var(--fly, 0) * -1600px);
+  animation: drift 30s linear infinite;
+}
+@keyframes drift { to { translate: -1920px 0; } }
+@media (max-width: 760px) {
+  .flight-text { top: 80px; }
+  .flight-labels { top: 78%; }
+}
+
 /* 4. Online */
 .online { height: 360vh; }
 .online-stage {
@@ -477,7 +536,9 @@ details p { color: var(--cream-dim); margin-top: 10px; max-width: 62ch; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .grain, .marquee .bulbs, .valance .bulbs { animation: none; }
-  .hero, .show, .acts, .online { height: auto; }
+  .hero, .show, .acts, .online, .flight { height: auto; }
+  .flight-stage { position: relative; height: 80vh; }
+  .plane { transform: translate(35vw, 38vh); }
   .hero-stage { position: relative; }
   .curtain, .scroll-hint { display: none; }
   .hero-char { opacity: 1; transform: none; }
