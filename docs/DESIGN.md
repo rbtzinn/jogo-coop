@@ -28,6 +28,7 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 
 | Tema | Decisão |
 |---|---|
+| Site do jogo (11/10/2026) | **Pedido do usuário:** melhorar PC e celular com geração de imagens, preservando a essência do jogo. Artes novas para cortina, papel dos cartazes, circo e viagem; protagonistas, chefões, capturas e sprite do avião originais. Cortina abre automaticamente, sem exigir rolagem; seções no fluxo normal, cartazes por área com galeria nativa no celular, voo suave com oito quadros e profundidade. Sem mouse animado, setas de scroll ou textos mandando rolar. Português e inglês, controles e downloads mantidos. |
 | Nome | **Respeitável Público** (frase do apresentador de circo) |
 | Gênero | Plataforma 2D run-and-gun + boss rush (estilo Cuphead) |
 | Engine | **Godot 4** (gratuita; 2D excelente; código em texto via GDScript) |
