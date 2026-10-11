@@ -13,15 +13,33 @@ Página estática (HTML, CSS e JS puros, sem build) em português e inglês. Fic
 
 ## Downloads
 
-Os botões apontam para `releases/latest/download/RespeitavelPublico-Windows.zip` e `...-Android.apk`
-(os nomes que o workflow de versões publica). Enquanto não houver nenhum Release, a página leva os botões
-para a lista de versões e mostra os botões apagados; sem o APK no Release, o botão do Android também.
+Os botões usam a API de Releases para localizar os arquivos reais da versão mais recente.
+Sem um arquivo disponível para a plataforma (ou sem resposta da API), o botão passa a dizer
+“Ver versões para Windows/Android” e abre a página de versões, sem prometer um download ausente.
 
 ## Arquivos
 
 - `index.html`: a estrutura; os textos vêm de `i18n.js` (`data-i18n`).
-- `styles.css`: visual e as cenas presas à rolagem (`position: sticky` e variáveis CSS).
-- `main.js`: idioma, progresso das cenas pela rolagem, letreiro do código, controles interativos e
-  a versão mais recente (API do GitHub).
+- `styles.css`: layout responsivo, cortina automática, cartazes e animação em oito quadros do avião.
+- `main.js`: idioma, menu acessível, seleção de imagens e áreas, percurso do avião com suavização,
+  letreiro ilustrativo, controles interativos e downloads (API do GitHub).
 - `assets/shots/`: fotos do jogo, tiradas com `tests/screenshots.tscn -- landing <pasta>`.
 - `assets/fonts/`: Limelight e Oswald (as fontes do jogo, licença OFL).
+
+## Visual e interação (11/10/2026)
+
+- Cortina pintada abre uma vez quando sua imagem carrega; texto e botões ficam legíveis na frente.
+- Sem seções `sticky`, scroll artificial, mouse animado ou instruções mandando rolar.
+- Espetáculo selecionável por botões; atrações por área, com grid no PC e scroll horizontal nativo no celular.
+- Voo suave no cenário gerado; sprite original de oito quadros, fumaça limitada a 16 elementos,
+  animação pausada fora da tela e em abas ocultas.
+- `prefers-reduced-motion` retira entrada, voo animado e transições. Sem JavaScript o conteúdo continua visível.
+- Menu com Escape, abas de controles com setas/Home/End, foco visível e link para pular o cabeçalho.
+- Os quatro novos WebP somam aproximadamente 983 KiB. Referências e prompts completos estão em
+  [assets/art/README-v2.md](assets/art/README-v2.md).
+
+### Verificação
+
+Abrir no PC e no celular; conferir os dois idiomas, menu, seleção do espetáculo, duas áreas de cartazes,
+controles e links de versão. Rolar em ambos os sentidos pela viagem e ativar redução de movimento
+no sistema: a página deve continuar natural e legível.
