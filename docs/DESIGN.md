@@ -79,6 +79,7 @@ A ideia anterior (3D em primeira pessoa no estilo It Takes Two) foi trocada por 
 | Hardware | Jogador 1 (desenvolve e joga no mesmo PC): **Intel UHD Graphics 630 integrada**, i5-8500T, 16 GB RAM. Jogador 2: placa de vídeo dedicada (modelo a confirmar). O PC mais fraco é a referência |
 | Renderizador | **Compatibility (OpenGL)** da Godot 4: roda bem em vídeo integrado e cobre tudo que o 2D precisa (shaders, pós-processamento). Meta: **60 FPS estáveis no PC do jogador 1**. Efeitos pesados (muitas partículas, blur grande) devem ter opção de desligar. **FPS ilimitado e VSync desligado por padrão** (pedido do usuário); limite de FPS e VSync ajustáveis em Configurações > Vídeo. Física a 60 Hz com **interpolação de física** ligada, para o movimento ficar liso em qualquer FPS |
 | Online e versões | **Decidido em 09/10/2026 (pedido do Kawa):** salas por código num relay gratuito no Render (sem cartão; dorme após 15 min sem uso) e atualização pelos Releases do GitHub, no Android (APK) e no Windows (ZIP), com o jogo avisando ao abrir. Detalhes em [ONLINE_E_VERSOES.md](ONLINE_E_VERSOES.md). |
+| Online no PC (11/10/2026) | **Pedido do usuário:** a sala por código continua em todas as plataformas; no PC, o menu ganhou **Online por IP (avançado)** (playit.gg, Tailscale ou IP direto), sem o relay. Landing page em `site/` (Vercel: https://jogo-coop-site.vercel.app/). |
 
 ### Mecânicas do jogador
 

@@ -9,6 +9,12 @@ O relay (`server/`) e o atualizador funcionam, mas o jogo só usa salas por cód
 `OnlineConfig.RELAY_URL` (`core/network/online_config.gd`) estiver preenchido. Vazio, o menu mantém a
 conexão por IP. Jogar sozinho funciona sempre.
 
+## Sala por código e IP (decidido em 11/10/2026, pedido do usuário)
+
+Sala por código em todas as plataformas (PC e celular jogam juntos). No PC, o menu também tem
+**Online por IP (avançado)**: hospedar ou entrar por IP (playit.gg, Tailscale ou IP direto, porta 24680),
+sem passar pelo relay, para quem quiser menos atraso ou se o relay gratuito estiver fora do ar. Só PC com PC.
+
 ## Publicar o relay no Render
 
 1. Criar conta em https://render.com (entrar com o GitHub; o plano gratuito não pede cartão).
@@ -46,7 +52,9 @@ Os APKs de preview antigos usam chaves temporárias e precisam ser desinstalados
 
 1. `python scripts/configure_release.py --code 4 --name 0.4` (o código sempre aumenta).
 2. Commit e push no `main`.
-3. `git tag v0.4 && git push origin v0.4` (a tag é `v` + o nome).
+3. `git tag v0.4 && git push origin v0.4` (a tag é `v` + o nome). Sem poder enviar tags (ex.: sessão na
+   nuvem), em **Actions > Testes e versões > Run workflow** preencher a versão (`v0.4`): o workflow testa,
+   publica e cria a tag no commit testado. A 0.4 saiu assim em 11/10/2026, só com o Windows.
 
 O workflow `Testes e versões` (`.github/workflows/android-online.yml`) roda os testes, exporta o ZIP do
 Windows e, com a chave configurada, o APK, e cria o Release com `version.json` e `SHA256SUMS.txt`.
