@@ -15,6 +15,9 @@ func _ready() -> void:
 		return
 	_out = args[1]
 	DirAccess.make_dir_recursive_absolute(_out)
+	if args[0] == "landing":
+		_landing_shots()
+		return
 	if args[0] == "loja":
 		_shop_shots()
 		return
@@ -138,6 +141,90 @@ func shot(label: String) -> void:
 	var image := get_viewport().get_texture().get_image()
 	image.resize(960, 540)
 	image.save_png(_out.path_join(label + ".png"))
+	print("foto: ", label)
+
+
+## Fotos para a landing page (site/): tela cheia em WebP. As lutas com a dupla atirando em cada ataque
+## de cada fase; os mapas das duas áreas, o avião, o trem e o menu.
+func _landing_shots() -> void:
+	SaveGame.path = "user://test_save_shots.json"
+	SaveGame.reset()
+	var menu: Node = load(Levels.MENU).instantiate()
+	add_child(menu)
+	await seconds(1.5)
+	await _landing_shot("menu")
+	menu.queue_free()
+	for area in [1, 2]:
+		SaveGame.data.area = area
+		var map: Node = load(Levels.MAPS[area]).instantiate()
+		add_child(map)
+		await seconds(2.5)
+		await _landing_shot("mapa_area%d" % area)
+		map.queue_free()
+		await seconds(0.3)
+	var travel: Node = load(Levels.TRAVEL).instantiate()
+	add_child(travel)
+	for i in 3:
+		await seconds(0.9)
+		await _landing_shot("aviao_%d" % i)
+	travel.queue_free()
+	var train: Node = load("res://levels/train/train_level.tscn").instantiate()
+	add_child(train)
+	await seconds(1.0)
+	var camera := train.get_node("Camera") as Camera2D
+	for x in [2300.0, 6300.0]:
+		camera.global_position.x = x
+		_place_players(Vector2(x - 300.0, 600.0), true)
+		await seconds(1.2)
+		await _landing_shot("trem_%d" % int(x))
+	train.queue_free()
+	for boss_name in ["tamer", "jugglers", "magician", "magma_king", "phoenix", "anvil_master", "volcano_heart"]:
+		var scene: Node = load("res://bosses/%s/%s_fight.tscn" % [boss_name, boss_name]).instantiate()
+		add_child(scene)
+		var boss: BossBrain = (scene.get_node("Fight") as Fight).boss
+		boss.pause_between_attacks = Vector2(100000.0, 100000.0)
+		boss._wait = 100000.0
+		await seconds(3.5)
+		_place_players(Vector2.INF, true)
+		for phase in boss.phase_shares.size():
+			if phase > 0:
+				var parts: Array = [""]
+				if boss.has_method(&"sub_bars"):
+					parts = boss.sub_bars().map(func(entry: Array) -> String: return entry[0])
+				for part: String in parts:
+					boss.apply_damage(boss.health.current - boss.phase_end_health() if part.is_empty() else boss.health.current, "", part)
+				await seconds(3.4)
+			for attack_name: StringName in boss.phase_attacks[phase]:
+				_place_players(Vector2.INF, true)
+				boss.sync.start_attack(attack_name, randi(), boss._args_for(attack_name))
+				await seconds(1.1)
+				await _landing_shot("%s_%d_%s" % [boss_name, phase, attack_name])
+				while boss._current != null and boss._current.is_running():
+					await seconds(0.1)
+		scene.queue_free()
+		await seconds(0.3)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.path))
+	get_tree().quit()
+
+
+## Dupla invencível e atirando para a frente; com `at`, os dois ficam lado a lado ali.
+func _place_players(at: Vector2, shooting: bool) -> void:
+	var players := get_tree().get_nodes_in_group(&"players")
+	for i in players.size():
+		var player: Player = players[i]
+		player.player_health._invincible_timer = 100000.0
+		player.input.scripted = true
+		player.input.clear()
+		player.input.shoot_held = shooting
+		if at != Vector2.INF:
+			player.global_position = at + Vector2(i * 150.0, 0)
+			player.reset_physics_interpolation()
+
+
+func _landing_shot(label: String) -> void:
+	await RenderingServer.frame_post_draw
+	var image := get_viewport().get_texture().get_image()
+	image.save_webp(_out.path_join(label + ".webp"), true, 0.82)
 	print("foto: ", label)
 
 

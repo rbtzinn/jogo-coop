@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="meta.title">Respeitável Público — um circo assombrado para dois</title>
+  <meta name="description" data-i18n-attr="content:meta.description" content="Jogo de ação com chefões para jogar sozinho ou em dupla online, no PC e no celular. Grátis.">
+  <meta name="theme-color" content="#170f17">
+  <link rel="icon" type="image/png" href="assets/art/favicon.png">
+  <!-- Prévia ao compartilhar (LinkedIn, WhatsApp). Trocar SITE_URL pelo endereço final da Vercel. -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Respeitável Público — um circo assombrado para dois">
+  <meta property="og:description" content="Ação com chefões gigantes no traço dos desenhos animados dos anos 30. Sozinho ou em dupla online, no PC e no celular. Grátis.">
+  <meta property="og:image" content="SITE_URL/assets/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="assets/fonts/Limelight-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="fuse" aria-hidden="true"><span></span></div>
+
+  <header class="nav">
+    <a class="brand" href="#top" aria-label="Respeitável Público">
+      <img src="assets/art/favicon.png" alt="" width="32" height="32">
+      <span>Respeitável Público</span>
+    </a>
+    <nav aria-label="Seções">
+      <a href="#show" data-i18n="nav.show">O espetáculo</a>
+      <a href="#acts" data-i18n="nav.acts">Atrações</a>
+      <a href="#online" data-i18n="nav.online">Online</a>
+      <a href="#controls" data-i18n="nav.controls">Controles</a>
+      <a href="#download" class="nav-cta" data-i18n="nav.download">Baixar</a>
+    </nav>
+    <button class="lang" type="button" data-lang-toggle aria-label="Mudar idioma / Change language"><span data-i18n="lang.switch">EN</span></button>
+  </header>
+
+  <main id="top">
+    <!-- 1. Cortina: a página abre como um espetáculo -->
+    <section class="hero" data-scene="hero">
+      <div class="hero-stage">
+        <div class="hero-backdrop" style="background-image:url('assets/shots/hero.webp')"></div>
+        <div class="hero-shade"></div>
+
+        <div class="hero-sign">
+          <p class="eyebrow" data-i18n="hero.eyebrow">Senhoras e senhores, o grande picadeiro apresenta</p>
+          <div class="marquee">
+            <span class="bulbs" aria-hidden="true"></span>
+            <h1>Respeitável<br>Público</h1>
+          </div>
+          <p class="tagline" data-i18n="hero.tagline">Um circo assombrado para dois.</p>
+          <p class="lede" data-i18n="hero.lede">Ação de plataforma com chefões gigantes, no traço dos desenhos animados dos anos 30.</p>
+          <div class="ctas">
+            <a class="btn btn-gold" data-download="windows" href="https://github.com/rbtzinn/jogo-coop/releases/latest/download/RespeitavelPublico-Windows.zip">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5 10.5 4.4v7.1H3zM11.5 4.3 21 3v8.5h-9.5zM3 12.5h7.5v7.1L3 18.5zM11.5 12.5H21V21l-9.5-1.3z"/></svg>
+              <span data-i18n="cta.windows">Baixar para Windows</span>
+            </a>
+            <a class="btn btn-red" data-download="android" href="https://github.com/rbtzinn/jogo-coop/releases/latest/download/RespeitavelPublico-Android.apk">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.6 9.5 19.4 6.4a.4.4 0 0 0-.7-.4L16.9 9.1A10.8 10.8 0 0 0 12 8a10.8 10.8 0 0 0-4.9 1.1L5.3 6a.4.4 0 0 0-.7.4l1.8 3.1A9.9 9.9 0 0 0 1.5 17h21a9.9 9.9 0 0 0-4.9-7.5zM7 14.3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm10 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+              <span data-i18n="cta.android">Baixar para Android</span>
+            </a>
+            <a class="btn btn-ghost" href="#online" data-i18n="cta.online">Como jogar online</a>
+          </div>
+          <p class="free"><span data-i18n="hero.free">Grátis · Windows e Android · Português</span> <span class="version" data-version></span></p>
+        </div>
+
+        <img class="hero-char hero-clown" src="assets/art/clown.webp" alt="" width="420" height="420">
+        <img class="hero-char hero-acrobat" src="assets/art/acrobat.webp" alt="" width="420" height="420">
+
+        <div class="curtain curtain-left" aria-hidden="true"></div>
+        <div class="curtain curtain-right" aria-hidden="true"></div>
+        <div class="valance" aria-hidden="true"><span class="bulbs"></span></div>
+
+        <p class="scroll-hint"><span data-i18n="hero.scroll">Role para abrir a cortina</span><i aria-hidden="true"></i></p>
+      </div>
+    </section>
+
+    <!-- 2. O espetáculo: quatro cartazes que trocam com o scroll -->
+    <section class="show" id="show" data-scene="show">
+      <div class="show-stage">
+        <div class="show-text">
+          <p class="kicker" data-i18n="show.kicker">O espetáculo</p>
+          <h2 data-i18n="show.title">Uma noite. Dois artistas. Um circo que não deixa ninguém ir embora.</h2>
+          <ol class="show-steps">
+            <li class="is-on"><span class="num">I</span><div><h3 data-i18n="show.1.title">Palhaço &amp; Acrobata</h3><p data-i18n="show.1.text"></p></div></li>
+            <li><span class="num">II</span><div><h3 data-i18n="show.2.title">Chefões em três atos</h3><p data-i18n="show.2.text"></p></div></li>
+            <li><span class="num">III</span><div><h3 data-i18n="show.3.title">Dois mundos para atravessar</h3><p data-i18n="show.3.text"></p></div></li>
+            <li><span class="num">IV</span><div><h3 data-i18n="show.4.title">Juntos ou sozinho</h3><p data-i18n="show.4.text"></p></div></li>
+          </ol>
+        </div>
+        <div class="show-frame">
+          <div class="frame-inner">
+            <img class="is-on" src="assets/shots/show-1.webp" alt="" loading="lazy">
+            <img src="assets/shots/show-2.webp" alt="" loading="lazy">
+            <img src="assets/shots/show-3.webp" alt="" loading="lazy">
+            <img src="assets/shots/show-4.webp" alt="" loading="lazy">
+          </div>
+          <div class="frame-ticks" aria-hidden="true"><i class="is-on"></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. As atrações: a galeria corre de lado enquanto se rola para baixo -->
+    <section class="acts" id="acts" data-scene="acts">
+      <div class="acts-stage">
+        <header class="acts-head">
+          <p class="kicker" data-i18n="acts.kicker">As atrações</p>
+          <h2 data-i18n="acts.title">Sete chefões e um trem desgovernado</h2>
+          <p class="hint" data-i18n="acts.hint">Role para ver o próximo número</p>
+        </header>
+        <div class="acts-track">
+          <article class="act" data-area="1"><figure><img src="assets/shots/act-tamer.webp" alt="" loading="lazy"></figure><div class="act-body"><p class="tag" data-i18n="acts.area1"></p><h3><b>Nº 1</b> <span data-i18n="acts.tamer.name"></span></h3><p data-i18n="acts.tamer.text"></p></div></article>
+          <article class="act" data-area="1"><figure><img src="assets/shots/act-jugglers.webp" alt="" loading="lazy"></figure><div class="act-body"><p class="tag" data-i18n="acts.area1"></p><h3><b>Nº 2</b> <span data-i18n="acts.jugglers.name"></span></h3><p data-i18n="acts.jugglers.text"></p></div></article>
+          <article class="act" data-area="1"><figure><img src="assets/shots/act-train.webp" alt="" loading="lazy"></figure><div class="act-body"><p class="tag" data-i18n="acts.area1"></p><h3><b>Nº 3</b> <span data-i18n="acts.train.name"></span></h3><p data-i18n="acts.train.text"></p></div></article>
+          <article class="act" data-area="1"><figure><img src="assets/shots/act-magician.webp" alt="" loading="lazy"></figure><div class="act-body"><p class="tag" data-i18n="acts.area1"></p><h3><b>Nº 4</b> <span data-i18n="acts.magician.name"></span></h3><p data-i18n="acts.magician.text"></p></div></article>
+          <article class="act" data-area="2"><figure><img src="assets/shots/act-magma.webp" alt="" loading="lazy"></figure><div class="act-body"><p class="tag" data-i18n="acts.area2"></p><h3><b>Nº 5</b> <span data-i18n="acts.magma.name"></span></h3><p data-i18n="acts.magma.text"></p></div></article>
+          <article class="act" data-area="2"><figure><img src="assets/shots/act-phoenix.webp" alt="" loading="lazy"></figure><div class="act-body"><p class="tag" data-i18n="acts.area2"></p><h3><b>Nº 6</b> <span data-i18n="acts.phoenix.name"></span></h3><p data-i18n="acts.phoenix.text"></p></div></article>
+          <article class="act" data-area="2"><figure><img src="assets/shots/act-anvil.webp" alt="" loading="lazy"></figure><div class="act-body"><p class="tag" data-i18n="acts.area2"></p><h3><b>Nº 7</b> <span data-i18n="acts.anvil.name"></span></h3><p data-i18n="acts.anvil.text"></p></div></article>
+          <article class="act" data-area="2"><figure><img src="assets/shots/act-heart.webp" alt="" loading="lazy"></figure><div class="act-body"><p class="tag" data-i18n="acts.area2"></p><h3><b>Nº 8</b> <span data-i18n="acts.heart.name"></span></h3><p data-i18n="acts.heart.text"></p></div></article>
+        </div>
+        <div class="acts-progress" aria-hidden="true"><span></span></div>
+      </div>
+    </section>
+
+    <!-- 4. Online: os passos acendem e o código vira como um letreiro de estação -->
+    <section class="online" id="online" data-scene="online">
+      <div class="online-stage">
+        <div class="online-text">
+          <p class="kicker" data-i18n="online.kicker">Jogar online</p>
+          <h2 data-i18n="online.title">Chame alguém em quatro passos</h2>
+          <p class="lede" data-i18n="online.lede"></p>
+          <ol class="steps">
+            <svg class="steps-line" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 10 100"><path d="M5 0 V100" pathLength="100"/></svg>
+            <li><span class="dot">1</span><div><h3 data-i18n="online.1.title"></h3><p data-i18n="online.1.text"></p></div></li>
+            <li><span class="dot">2</span><div><h3 data-i18n="online.2.title"></h3><p data-i18n="online.2.text"></p></div></li>
+            <li><span class="dot">3</span><div><h3 data-i18n="online.3.title"></h3><p data-i18n="online.3.text"></p></div></li>
+            <li><span class="dot">4</span><div><h3 data-i18n="online.4.title"></h3><p data-i18n="online.4.text"></p></div></li>
+          </ol>
+        </div>
+        <div class="online-visual">
+          <div class="devices">
+            <div class="device pc"><img src="assets/shots/online-menu.webp" alt="" loading="lazy"></div>
+            <div class="device phone"><img src="assets/shots/online-map.webp" alt="" loading="lazy"></div>
+            <div class="link-wave" aria-hidden="true"><i></i><i></i><i></i></div>
+          </div>
+          <div class="room-code">
+            <p data-i18n="online.code">Código da sala</p>
+            <div class="flaps" data-code="CIRCO7" aria-label="CIRCO7">
+              <span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span>
+            </div>
+          </div>
+          <aside class="note">
+            <h3 data-i18n="online.note.title"></h3>
+            <p data-i18n="online.note.text"></p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Controles interativos -->
+    <section class="controls" id="controls">
+      <div class="wrap">
+        <p class="kicker" data-reveal data-i18n="controls.kicker">Controles</p>
+        <h2 data-reveal data-i18n="controls.title">Teste os controles aqui mesmo</h2>
+        <p class="lede" data-reveal data-i18n="controls.lede"></p>
+
+        <div class="tabs" role="tablist" data-reveal>
+          <button role="tab" aria-selected="true" data-tab="keyboard" data-i18n="controls.tab.keyboard">Teclado</button>
+          <button role="tab" aria-selected="false" data-tab="touch" data-i18n="controls.tab.touch">Celular</button>
+          <button role="tab" aria-selected="false" data-tab="pad" data-i18n="controls.tab.pad">Controle</button>
+        </div>
+
+        <div class="controls-grid" data-reveal>
+          <ul class="actions">
+            <li data-action="move"><b data-i18n="action.move"></b><span data-i18n="action.move.d"></span></li>
+            <li data-action="jump"><b data-i18n="action.jump"></b><span data-i18n="action.jump.d"></span></li>
+            <li data-action="shoot"><b data-i18n="action.shoot"></b><span data-i18n="action.shoot.d"></span></li>
+            <li data-action="dash"><b data-i18n="action.dash"></b><span data-i18n="action.dash.d"></span></li>
+            <li data-action="lock"><b data-i18n="action.lock"></b><span data-i18n="action.lock.d"></span></li>
+            <li data-action="special"><b data-i18n="action.special"></b><span data-i18n="action.special.d"></span></li>
+            <li data-action="pause"><b data-i18n="action.pause"></b><span data-i18n="action.pause.d"></span></li>
+          </ul>
+
+          <div class="panel" data-panel="keyboard">
+            <div class="keyboard" aria-label="Teclado">
+              <div class="krow">
+                <kbd data-key="Escape" data-action="pause">Esc</kbd>
+              </div>
+              <div class="krow">
+                <kbd data-key="KeyW" data-action="move jump">W</kbd>
+                <kbd class="gap"></kbd>
+                <kbd data-key="KeyI" data-action="special">I</kbd>
+              </div>
+              <div class="krow">
+                <kbd data-key="KeyA" data-action="move">A</kbd>
+                <kbd data-key="KeyS" data-action="move">S</kbd>
+                <kbd data-key="KeyD" data-action="move">D</kbd>
+                <kbd class="gap"></kbd>
+                <kbd data-key="KeyJ" data-action="shoot">J</kbd>
+                <kbd data-key="KeyK" data-action="dash">K</kbd>
+                <kbd data-key="KeyL" data-action="lock">L</kbd>
+              </div>
+              <div class="krow">
+                <kbd class="wide" data-key="ShiftLeft" data-action="dash">Shift</kbd>
+                <kbd data-key="KeyZ" data-action="jump">Z</kbd>
+                <kbd data-key="KeyX" data-action="shoot">X</kbd>
+                <kbd data-key="KeyC" data-action="lock">C</kbd>
+                <kbd data-key="KeyV" data-action="special">V</kbd>
+                <kbd class="gap"></kbd>
+                <kbd data-key="ArrowUp" data-action="move jump">↑</kbd>
+              </div>
+              <div class="krow">
+                <kbd class="space" data-key="Space" data-action="jump" data-i18n="key.space">Espaço</kbd>
+                <kbd class="gap"></kbd>
+                <kbd data-key="ArrowLeft" data-action="move">←</kbd>
+                <kbd data-key="ArrowDown" data-action="move">↓</kbd>
+                <kbd data-key="ArrowRight" data-action="move">→</kbd>
+              </div>
+            </div>
+            <p class="small" data-i18n="controls.layout2"></p>
+          </div>
+
+          <div class="panel" data-panel="touch" hidden>
+            <div class="phone-pad">
+              <img src="assets/shots/phone-bg.webp" alt="" loading="lazy">
+              <div class="stick" data-action="move" aria-label="Joystick"><span></span><em data-i18n="touch.joystick">Mover</em></div>
+              <button class="tbtn t-pause" data-action="pause" data-i18n="touch.pause">PAUSA</button>
+              <button class="tbtn t-aim" data-action="lock" data-i18n="touch.aim">MIRA</button>
+              <button class="tbtn t-ex" data-action="special" data-i18n="touch.ex">EX</button>
+              <button class="tbtn t-jump big" data-action="jump" data-i18n="touch.jump">PULAR</button>
+              <button class="tbtn t-dash" data-action="dash" data-i18n="touch.dash">DASH</button>
+            </div>
+            <p class="small" data-i18n="controls.touch.note"></p>
+          </div>
+
+          <div class="panel" data-panel="pad" hidden>
+            <div class="gamepad">
+              <svg viewBox="0 0 400 240" aria-hidden="true"><path class="pad-body" d="M88 40h224c40 0 64 30 74 76l12 56c8 40-20 62-48 50l-44-20c-14-6-28-10-44-10H138c-16 0-30 4-44 10l-44 20c-28 12-56-10-48-50l12-56c10-46 34-76 74-76z"/></svg>
+              <button class="pbtn p-stick" data-action="move" aria-label="Analógico">L</button>
+              <button class="pbtn p-rb" data-action="lock">RB</button>
+              <button class="pbtn p-a" data-action="jump">A</button>
+              <button class="pbtn p-b" data-action="dash">B</button>
+              <button class="pbtn p-x" data-action="shoot">X</button>
+              <button class="pbtn p-y" data-action="special">Y</button>
+              <button class="pbtn p-start" data-action="pause">Start</button>
+            </div>
+            <p class="small" data-i18n="controls.pad.note"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Baixar e instalar -->
+    <section class="download" id="download">
+      <div class="wrap">
+        <p class="kicker" data-reveal data-i18n="download.kicker">Baixar</p>
+        <h2 data-reveal data-i18n="download.title">Grátis. Instale e chame a dupla.</h2>
+        <div class="tickets">
+          <article class="ticket" data-reveal>
+            <header><h3 data-i18n="download.windows.title">Windows</h3><p data-i18n="download.windows.size"></p></header>
+            <ol>
+              <li data-i18n="download.windows.1"></li>
+              <li data-i18n="download.windows.2"></li>
+              <li data-i18n="download.windows.3"></li>
+            </ol>
+            <a class="btn btn-gold" data-download="windows" href="https://github.com/rbtzinn/jogo-coop/releases/latest/download/RespeitavelPublico-Windows.zip"><span data-i18n="cta.windows">Baixar para Windows</span></a>
+          </article>
+          <article class="ticket" data-reveal>
+            <header><h3 data-i18n="download.android.title">Android</h3><p data-i18n="download.android.size"></p></header>
+            <ol>
+              <li data-i18n="download.android.1"></li>
+              <li data-i18n="download.android.2"></li>
+              <li data-i18n="download.android.3"></li>
+            </ol>
+            <a class="btn btn-red" data-download="android" href="https://github.com/rbtzinn/jogo-coop/releases/latest/download/RespeitavelPublico-Android.apk"><span data-i18n="cta.android">Baixar para Android</span></a>
+          </article>
+        </div>
+        <p class="small center" data-reveal><span data-i18n="download.latest"></span> <span class="version" data-version></span></p>
+      </div>
+    </section>
+
+    <section class="faq">
+      <div class="wrap narrow">
+        <p class="kicker" data-reveal data-i18n="faq.kicker">Perguntas</p>
+        <details data-reveal><summary data-i18n="faq.1.q"></summary><p data-i18n="faq.1.a"></p></details>
+        <details data-reveal><summary data-i18n="faq.2.q"></summary><p data-i18n="faq.2.a"></p></details>
+        <details data-reveal><summary data-i18n="faq.3.q"></summary><p data-i18n="faq.3.a"></p></details>
+        <details data-reveal><summary data-i18n="faq.4.q"></summary><p data-i18n="faq.4.a"></p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="valance small" aria-hidden="true"><span class="bulbs"></span></div>
+    <p class="footer-title">Respeitável Público</p>
+    <p data-i18n="footer.made">Um jogo independente feito no Brasil, com Godot.</p>
+    <p class="footer-links">
+      <a href="https://github.com/rbtzinn/jogo-coop" data-i18n="footer.repo">Código no GitHub</a>
+      <a href="#top" data-i18n="footer.top">Voltar ao topo</a>
+    </p>
+  </footer>
+
+  <script src="i18n.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
