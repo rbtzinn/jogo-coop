@@ -8,8 +8,8 @@ Página estática (HTML, CSS e JS puros, sem build) em português e inglês. Fic
 1. Em https://vercel.com, **Add New > Project** e importar o repositório `rbtzinn/jogo-coop`.
 2. Em **Root Directory**, escolher `site`. Framework: **Other**. Sem comando de build.
 3. **Deploy**. Cada push na `main` publica de novo.
-4. Com o endereço final (ex.: `respeitavel-publico.vercel.app`), trocar `SITE_URL` em `index.html`
-   (a linha `og:image`) pelo endereço com `https://`. Sem isso, a prévia do link no LinkedIn sai sem imagem.
+4. Endereço atual: https://jogo-coop-site.vercel.app/ (está no `og:image`, `og:url` e `canonical` do
+   `index.html`; se mudar de domínio, trocar nos três, senão a prévia do link sai sem imagem).
 
 ## Downloads
 
