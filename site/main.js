@@ -14,13 +14,18 @@
       el.textContent = release && release.tag ? "· " + release.tag : "";
     });
     if (release === null) return;
+    // Sem APK publicado, o Android aparece como "em breve" e o Windows passa a ser o botão principal.
+    const noAndroid = !(release && release.android);
+    root.classList.toggle("no-android", noAndroid);
     document.querySelectorAll("[data-download]").forEach((a) => {
       const platform = a.dataset.download;
       const asset = release && release[platform];
-      a.href = asset || (release && release.url) || releasePage;
+      const soon = platform === "android" && noAndroid;
+      a.href = soon ? "#download" : asset || (release && release.url) || releasePage;
       a.classList.toggle("is-soon", !asset);
       const label = a.querySelector("[data-i18n]");
-      if (label) label.textContent = I18N[lang][asset ? "cta." + platform : "cta." + platform + ".versions"];
+      const key = asset ? "cta." + platform : soon ? "cta.android.soon" : "cta." + platform + ".versions";
+      if (label) { label.dataset.i18n = key; label.textContent = I18N[lang][key]; }
     });
   }
   function applyLang(next) {
