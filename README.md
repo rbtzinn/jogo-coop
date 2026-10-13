@@ -2,7 +2,7 @@
 
 Jogo 2D de ação e plataforma com chefões, ambientado num circo assombrado, para um jogador ou dois em cooperativo online.
 
-Site do jogo: https://jogo-coop-site.vercel.app/
+Site do jogo: https://respeitavelpublico.vercel.app/
 
 ## Como jogar
 
