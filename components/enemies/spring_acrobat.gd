@@ -3,7 +3,7 @@ extends Enemy
 ## Saltimbanco de Mola (Trem, vagão ACROBATAS): fantasma de acrobata num pula-pula de mola que salta por cima
 ## do vagão parando em três pontos (esquerda, meio, direita, meio...). No alto dá para passar por baixo dele;
 ## ao cair, solta uma onda rente ao teto para os dois lados (pular por cima). 10 tiros derrubam.
-## Desenho do pedido de arte D1 (docs/prompts/chatgpt_trem_desafiantes.md), recortado por
+## Desenho recortado por
 ## tools/cut_train_challengers.gd.
 
 ## Duração de cada salto (voo + tempo no chão) e a parte dele no ar.

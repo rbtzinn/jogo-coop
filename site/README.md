@@ -35,8 +35,7 @@ Sem um arquivo disponível para a plataforma (ou sem resposta da API), o botão 
   animação pausada fora da tela e em abas ocultas.
 - `prefers-reduced-motion` retira entrada, voo animado e transições. Sem JavaScript o conteúdo continua visível.
 - Menu com Escape, abas de controles com setas/Home/End, foco visível e link para pular o cabeçalho.
-- Os quatro novos WebP somam aproximadamente 983 KiB. Referências e prompts completos estão em
-  [assets/art/README-v2.md](assets/art/README-v2.md).
+- Os quatro novos WebP somam aproximadamente 983 KiB.
 
 ### Verificação
 

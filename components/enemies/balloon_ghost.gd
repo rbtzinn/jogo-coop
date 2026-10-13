@@ -2,8 +2,8 @@ class_name BalloonGhost
 extends Enemy
 ## Baloeiro Assombrado (Trem, vagão BALÕES): fantasma gorducho pendurado num cacho de balões, flutuando por cima
 ## do vagão e soltando bexigas d'água que caem no teto (a cada quatro, uma rosa para o parry). Tudo segue o
-## relógio da fase, igual nos dois PCs. 10 tiros derrubam. Desenho do pedido de arte D4
-## (docs/prompts/chatgpt_trem_desafiantes.md), recortado por tools/cut_train_challengers.gd.
+## relógio da fase, igual nos dois PCs. 10 tiros derrubam. Desenho recortado por
+## tools/cut_train_challengers.gd.
 
 const FALL_GRAVITY := 1500.0
 ## Quanto tempo a bexiga estourada no teto ainda machuca.

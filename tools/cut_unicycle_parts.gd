@@ -1,5 +1,5 @@
 extends SceneTree
-## Recorta o monociclo em peças (Pedido 2 de docs/prompts/chatgpt_monociclo.md) para o Unicycle dos
+## Recorta o monociclo em peças para o Unicycle dos
 ## Malabaristas: a roda (gira pelo código) e a armação (garfo, haste, pedais e selim).
 ## Uso: Godot --headless --script res://tools/cut_unicycle_parts.gd
 ##

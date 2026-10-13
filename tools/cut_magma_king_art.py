@@ -1,4 +1,4 @@
-"""Recorta a arte do Rei Magma (pedido do Vulcão, docs/prompts/chatgpt_chefoes_vulcao.md) para o jogo.
+"""Recorta a arte do Rei Magma para o jogo.
 Como as folhas são lidas está em tools/sheet_cut.py.
 
 Uso (da raiz do projeto): python -I tools/cut_magma_king_art.py
@@ -27,7 +27,7 @@ ANIMATIONS = [
     ("rei_magma/rei_mao.png", 2, 1, 2, 0.2, "feet", "hand"),
     ("rei_magma/coluna_basalto.png", 4, 1, 4, 0.36, "feet", "column"),
     ("rei_magma/onda_lava.png", 4, 1, 4, 0.4, "feet", "wave"),
-    # Rajada refeita (docs/prompts/chatgpt_rei_magma_jato.md): uma pose para cada altura do jato.
+    # Rajada refeita: uma pose para cada altura do jato.
     # (os desenhos encostam uns nos outros: só o pedaço grande de cada célula fica)
     ("rei_magma/rei_jato_alto.png", 4, 1, 4, 0.72, "feet", "jet_high", 0, 0.2),
     ("rei_magma/rei_jato_medio.png", 4, 1, 4, 0.72, "feet", "jet_mid", 0, 0.2),

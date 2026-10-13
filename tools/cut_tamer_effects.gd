@@ -1,5 +1,5 @@
 extends SceneTree
-## Recorta as folhas dos efeitos do Domador (Pedido D, docs/prompts/chatgpt_efeitos_domador.md) para
+## Recorta as folhas dos efeitos do Domador para
 ## bosses/tamer/art/effects/.
 ## Uso: Godot --headless --script res://tools/cut_tamer_effects.gd
 ##

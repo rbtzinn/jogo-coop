@@ -1,6 +1,6 @@
 class_name TamerLion
 extends Node2D
-## Leopoldo, o leão. Desenhado quadro a quadro (folhas em docs/referencias/pecas/leao/,
+## Leopoldo, o leão. Desenhado quadro a quadro (folhas
 ## recortadas por tools/cut_animation_sheet.gd). Os ataques movem o nó (pulos, corridas)
 ## e escolhem a pose: parado, rugindo, correndo, agachado, no ar ou aterrissando.
 ## Na fase 3 a juba pega fogo (tom alaranjado); todas as poses em pé têm a juba de fogo desenhada.

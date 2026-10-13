@@ -1,5 +1,5 @@
 extends SceneTree
-## Recorta as folhas da fase do Trem (Pedido B, docs/prompts/chatgpt_armas_trem_itens.md).
+## Recorta as folhas da fase do Trem.
 ## Uso: Godot --headless --script res://tools/cut_train_art.gd
 ##
 ## - Peças inteiras (vagões, locomotiva, fundos, ponte, placa) são copiadas como estão: o jogo

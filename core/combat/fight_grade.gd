@@ -1,5 +1,5 @@
 class_name FightGrade
-## Crítica da plateia no fim da luta (docs/combat.md): tempo, vida restante, números em dupla (Número
+## Crítica da plateia no fim da luta: tempo, vida restante, números em dupla (Número
 ## Perfeito, Grande Número em Dupla e resgates) e truques (parries e estrelas usadas) viram pontos (de 0 a 100),
 ## e os pontos viram a nota C, B, A ou S. No cartaz, a nota aparece como a reação da plateia (`verdict`).
 ## Desde 06/10/2026 (pedido do usuário): antes eram só tempo, vida, parries e estrelas, o mesmo conjunto do

@@ -1,4 +1,4 @@
-"""Recorta a arte da Fênix das Cinzas (pedido do Vulcão, docs/prompts/chatgpt_chefoes_vulcao.md) para o jogo.
+"""Recorta a arte da Fênix das Cinzas para o jogo.
 Como as folhas são lidas está em tools/sheet_cut.py.
 
 Uso (da raiz do projeto): python -I tools/cut_phoenix_art.py

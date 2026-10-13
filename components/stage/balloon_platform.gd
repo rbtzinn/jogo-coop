@@ -2,8 +2,8 @@ class_name BalloonPlatform
 extends AnimatableBody2D
 ## Tábua pendurada num balão grande, subindo e descendo pelo relógio da fase (RunLevel.clock, igual nos dois
 ## PCs). Serve de elevador para chegar em cima de algo alto. Dá para subir por baixo. O ponto onde o nó é
-## colocado é o meio da tábua lá embaixo. Desenho do pedido de arte D4 (docs/prompts/chatgpt_trem_desafiantes.md,
-## quatro cores), recortado por tools/cut_train_challengers.gd com a âncora no meio de baixo da tábua.
+## colocado é o meio da tábua lá embaixo. Desenho em quatro cores,
+## recortado por tools/cut_train_challengers.gd com a âncora no meio de baixo da tábua.
 
 const ART := preload("res://components/stage/art/balloon_platform.tres")
 ## Tábua do desenho (sem as pontas de latão), da largura que se pisa.

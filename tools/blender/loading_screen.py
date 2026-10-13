@@ -1,4 +1,4 @@
-"""Tela de carregamento a partir da arte de referência (docs/referencias/remap/carregamento_referencia.png).
+"""Tela de carregamento a partir da arte de referência.
 
 blender --background --factory-startup --python tools/blender/loading_screen.py
 

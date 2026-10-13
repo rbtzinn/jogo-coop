@@ -1,6 +1,6 @@
 class_name MagmaKingBoss
 extends BossBrain
-## O Rei Magma (Área 2, docs/bosses.md). A parte genérica (fases, saco de ataques, dano, rede) fica no
+## O Rei Magma (Área 2). A parte genérica (fases, saco de ataques, dano, rede) fica no
 ## BossBrain; aqui ficam as listas de ataques, os dados que o host escolhe e o palco que esquenta na
 ## fase 3. Três fases: "Audiência Real" (no trono), "O Rei Desce do Trono" (no lago) e "Coroação
 ## Derretida" (magma puro na margem).

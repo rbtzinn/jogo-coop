@@ -1,6 +1,6 @@
 class_name JugglersBoss
 extends BossBrain
-## Os Irmãos Malabaristas, Tico e Teco (docs/bosses.md). A parte genérica fica no BossBrain;
+## Os Irmãos Malabaristas, Tico e Teco. A parte genérica fica no BossBrain;
 ## aqui fica o que é deles:
 ## - Cada irmão tem a sua vida (metade do total). Nas fases 1 e 2, um irmão não passa do
 ##   limite da fase: ao chegar nele fica tonto. Se o outro não chegar ao limite em 3 s, ele

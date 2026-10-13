@@ -1,5 +1,5 @@
 class_name Catalog
-## Itens da loja (docs/shop.md), lidos de dialogues/items.json (nome, espaço, preço,
+## Itens da loja, lidos de dialogues/items.json (nome, espaço, preço,
 ## descrição, Tiro EX e o lado ruim). E as falas do lojista, de dialogues/lojista.json.
 
 const ITEMS_PATH := "res://dialogues/items.json"

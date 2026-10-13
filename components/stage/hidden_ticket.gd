@@ -1,6 +1,6 @@
 class_name HiddenTicket
 extends Area2D
-## Ingresso dourado escondido numa fase de plataforma (docs/shop.md: 3 por fase). Encostar
+## Ingresso dourado escondido numa fase de plataforma (3 por fase). Encostar
 ## pega; na primeira vez, cada jogador ganha 1 ingresso (o RunLevel avisa o save do host).
 ## Os que a dupla já achou antes aparecem transparentes (pegar de novo não dá nada).
 ## Desenho: o ingresso dourado girando como uma moeda (4 quadros) e boiando.

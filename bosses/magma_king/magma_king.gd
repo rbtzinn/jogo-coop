@@ -1,6 +1,6 @@
 class_name MagmaKing
 extends Node2D
-## O Rei Magma (docs/bosses.md, Área 2). Três jeitos de estar no palco (`mode`):
+## O Rei Magma (Área 2). Três jeitos de estar no palco (`mode`):
 ## - THRONE: sentado no trono (fase 1), pés no degrau do trono;
 ## - LAKE: no lago de lava com a lava pela cintura (fase 2), atrás da beira da margem;
 ## - MOLTEN: de magma puro, de pé na margem (fase 3).

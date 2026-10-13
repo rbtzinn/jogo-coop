@@ -18,7 +18,7 @@ const PINKS := 2
 const REACHABLE := [2, 3]
 const FALLBACK := [1, 4]
 
-## Carta que persegue (escolhidos pelo piloto comparativo; ver DESIGN.md, "Marco de gameplay do Mágico").
+## Carta que persegue (escolhidos pelo piloto comparativo).
 var homing_speed := 560.0
 var homing_delay := 0.2
 var homing_steps := 8

@@ -1,6 +1,6 @@
 extends Node
 ## Rodar: Godot --headless --path . --fixed-fps 60 res://tests/test_items.tscn
-## Efeito de cada item da loja (docs/shop.md): pistolas e Tiros EX, truques do dash,
+## Efeito de cada item da loja: pistolas e Tiros EX, truques do dash,
 ## adereços e números de dupla. Cada grupo monta a luta do Domador de novo com o equipamento.
 
 var failures := 0

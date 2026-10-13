@@ -17,3 +17,12 @@ desktop.ini
 
 # Cache do Python (ferramentas)
 __pycache__/
+
+# Anotações internas e material de trabalho com IA (ficam só na máquina local)
+PROMPT_INICIAL.md
+REFERENCIAS.md
+/docs/*
+!/docs/.gdignore
+!/docs/demo.gif
+site/assets/art/README-v2.md
+tools/ver_malabaristas.bat

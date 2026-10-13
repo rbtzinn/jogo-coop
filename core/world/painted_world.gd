@@ -4,8 +4,7 @@ extends Node3D
 ## acompanha a dupla. Os personagens (desenhos da luta, menores) andam juntos pelas trilhas entre as atrações;
 ## entra-se andando até elas (WorldDoor). As lutas continuam 2D. Cada área é uma cena com este script e as
 ## portas dela (levels/world/world_area1.tscn, world_area2.tscn).
-## O cenário é o mapa pintado em quatro partes 2 x 2 (docs/prompts/claude_integrar_mapa_4partes.md,
-## 05/10/2026), montadas numa malha só no fundo da câmera; a tela mostra uma região por vez e a câmera revela o
+## O cenário é o mapa pintado em quatro partes 2 x 2 (05/10/2026), montadas numa malha só no fundo da câmera; a tela mostra uma região por vez e a câmera revela o
 ## resto conforme a dupla anda. O chão do mundo casa com o chão pintado (cada pixel do conjunto vira um ponto no
 ## chão). Onde se anda vem de uma máscara da estrada pintada (park_walk.png, feita por
 ## tools/blender/park_walk_mask.py; volcano_walk.png, por tools/area2_walk_mask.py); quem bate na beira

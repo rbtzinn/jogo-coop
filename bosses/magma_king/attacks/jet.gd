@@ -3,7 +3,7 @@ extends MagmaAttack
 ## cara no chão = rente ao chão), as bochechas brilham e uma linha fina mostra por onde o jato vai passar
 ## (aviso); depois cospe um jato contínuo de magma até a parede (JetBeam). Jangadas: quem está nelas desce;
 ## peito: abaixar; chão: pular ou subir numa jangada. São duas rajadas seguidas em alturas diferentes, a segunda
-## com aviso mais curto (fase 3 mais difícil, 08/10/2026). Poses em docs/prompts/chatgpt_rei_magma_jato.md.
+## com aviso mais curto (fase 3 mais difícil, 08/10/2026).
 
 const WARN := 0.75
 const OPEN := 0.3

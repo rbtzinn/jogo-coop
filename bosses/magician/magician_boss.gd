@@ -1,6 +1,6 @@
 class_name MagicianBoss
 extends BossBrain
-## O Grande Mágico Zaratan (docs/bosses.md), o chefão que fecha a Área 1. A parte genérica fica
+## O Grande Mágico Zaratan, o chefão que fecha a Área 1. A parte genérica fica
 ## no BossBrain; aqui ficam as listas de ataques e o que é dele:
 ## - fase 1 "Abracadabra": cartas, coelhos da cartola e teleporte;
 ## - fase 2 "A Mulher Serrada... sem Mulher": caixas com serras, jogo das três caixas (acertar a

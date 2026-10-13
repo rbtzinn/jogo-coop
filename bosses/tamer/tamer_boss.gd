@@ -2,7 +2,7 @@ class_name TamerBoss
 extends BossBrain
 ## O Domador e Leopoldo. A parte genérica (fases, saco de ataques, dano, rede) fica no
 ## BossBrain; aqui ficam só as listas de ataques e o que é deste chefão.
-## Três fases (docs/bosses.md): "O Número Ensaiado", "Fora de Controle" e "O Leão de Fogo".
+## Três fases: "O Número Ensaiado", "Fora de Controle" e "O Leão de Fogo".
 
 var _pounce_turn := 0
 

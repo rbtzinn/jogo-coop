@@ -3,7 +3,7 @@
 # cinza marrom ficam de fora); fica só o pedaço principal (ligado), os furinhos (bases de lampião) são tapados, e
 # as entradas que a cor não pega (frente da mina, pista do avião, frente das tendas) entram à mão.
 # Mesmo jeito de tools/blender/park_walk_mask.py (Área 1), mas em Python puro (Pillow, numpy e scipy).
-# Uso: python tools/area2_walk_mask.py docs/referencias/mapas/area2_vulcao_aviao/mapa_completo.png \
+# Uso: python tools/area2_walk_mask.py <mapa_completo.png> \
 #   <pasta temporária> levels/world/art/volcano_walk.png
 import os
 import sys

@@ -8,8 +8,7 @@ extends SceneTree
 ##   há listras com S 0,93 e V 0,58; na E3, uma com S 0,97 e V 0,62);
 ## - nariz e língua: mais claros (V 0,85 a 0,91 nas duas folhas); ficam;
 ## - sapatos marrons: brilho abaixo de 0,45; ficam.
-## Conferido na folha base (03/10): o Tico recolorido bate com o Teco desenhado pelo Codex
-## (docs/referencias/pecas/malabaristas/teste_teco_por_recolor.png).
+## Conferido na folha base (03/10): o Tico recolorido bate com a folha desenhada do Teco.
 ## Uso:
 ##   Godot --headless --script res://tools/recolor_twin.gd -- <tico.png> <teco.png> [troca]
 ## "troca" (totem, E7, 04/10/2026): a folha tem os dois irmãos; além do vermelho virar azul, o azul das listras

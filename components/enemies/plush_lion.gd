@@ -4,7 +4,7 @@ extends ConfettiCannon
 ## do vagão como caixa de surpresas, cospe um novelo que rola rente ao teto (pular por cima; a cada quatro, um
 ## rosa para o parry) e volta para dentro. Antes de sair, a tampa chacoalha. Só leva tiro e só machuca quando
 ## está fora. 5 tiros derrubam. Os novelos seguem o relógio da fase, como as bolas do canhão.
-## Desenho do pedido de arte D3 (docs/prompts/chatgpt_trem_desafiantes.md), recortado por
+## Desenho recortado por
 ## tools/cut_train_challengers.gd com a âncora no meio da escotilha.
 
 const LION_ART := preload("res://components/enemies/art/plush_lion.tres")

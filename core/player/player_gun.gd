@@ -1,7 +1,7 @@
 class_name PlayerGun
 extends Node
 ## Arma do jogador: controla a cadência e cria os projéteis na direção da mira.
-## A pistola equipada (docs/shop.md) muda o tiro e o Tiro EX:
+## A pistola equipada muda o tiro e o Tiro EX:
 ## - Rolha: reto e rápido / EX Rolhão (rolha gigante que atravessa);
 ## - Leque de Confete: 3 confetes em leque, alcance médio / EX Canhão de Confete (explosão em volta);
 ## - Clave de Malabares: clave que vai e volta / EX Chuva de Claves (5 caem à frente);

@@ -4,7 +4,7 @@ extends Enemy
 ## por cima do vagão pelo relógio da fase. No ponto mais baixo ela passa na altura da cabeça de quem está em
 ## pé: abaixar (ou pular por cima dela nas pontas do balanço). 8 tiros derrubam. O ponto onde ela é colocada é
 ## onde as mãos dela passam no ponto mais baixo; o nó inteiro gira com as cordas (as áreas de dano também).
-## Desenho do pedido de arte D2 (docs/prompts/chatgpt_trem_desafiantes.md), recortado por
+## Desenho recortado por
 ## tools/cut_train_challengers.gd com a âncora na barra.
 
 const ART := preload("res://components/enemies/art/trapeze_ghost.tres")

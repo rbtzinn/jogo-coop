@@ -4,7 +4,7 @@ extends Control
 ## cartão para cada área. Entra-se aqui pelo avião estacionado no mapa de cada área (WorldDoor "plane"); ao
 ## chegar, a dupla nasce na frente do avião da área escolhida.
 ## Online, qualquer um dos dois escolhe: o cliente pede e o host leva os dois (como nas tendas).
-## A arte do voo vem do pedido E2 (docs/prompts/chatgpt_aviao.md), preparada por tools/cut_plane_art.py.
+## A arte do voo é preparada por tools/cut_plane_art.py.
 
 ## Folha do voo: 4 x 2 quadros de 768 x 512, o avião virado para a direita no meio de cada quadro, com a dupla
 ## e uma cara diferente em cada um.

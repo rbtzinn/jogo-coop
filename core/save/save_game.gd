@@ -10,7 +10,7 @@ extends Node
 signal changed
 
 const VERSION := 1
-## Ingressos (docs/shop.md), para cada jogador.
+## Ingressos, para cada jogador.
 const TICKETS_FIRST_WIN := 3
 const TICKETS_FIRST_A := 1
 const TICKETS_FIRST_S := 1
@@ -220,7 +220,7 @@ static func _new_game() -> Dictionary:
 	for key in PLAYER_KEYS:
 		players[key] = {
 			"tickets": 0,
-			# Itens iniciais (docs/shop.md): pistola Rolha e truque Cambalhota.
+			# Itens iniciais: pistola Rolha e truque Cambalhota.
 			"items": ["cork_gun", "tumble"],
 			"equipped": {"gun": "cork_gun", "trick": "tumble", "prop": "", "duo": ""},
 		}

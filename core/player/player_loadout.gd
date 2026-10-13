@@ -1,6 +1,6 @@
 class_name PlayerLoadout
 extends Node
-## Equipamento do jogador (docs/shop.md), lido do save quando ele nasce na fase:
+## Equipamento do jogador, lido do save quando ele nasce na fase:
 ## Pistola, Truque, Adereço e Número de dupla. Os dois PCs leem o mesmo save (o cliente
 ## recebe a cópia do host antes de carregar a fase), então cada um sabe o equipamento dos dois.
 ## Os efeitos ficam em quem usa: PlayerGun (pistola), Player (truque, números de dupla),

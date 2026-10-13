@@ -1,6 +1,6 @@
 extends SceneTree
-## Monta os intermediários do braço da frente do parado dos Malabaristas (E2 normalizada,
-## docs/referencias/pecas/malabaristas/tico_malabares.png) e grava a folha de 12 desenhos na ordem de
+## Monta os intermediários do braço da frente do parado dos Malabaristas (E2 normalizada)
+## e grava a folha de 12 desenhos na ordem de
 ## tocar: 1, 2, C, 3, A, 4, 5, D, 6, 7, B, 8 (4 × 3 células de 512).
 ## Uso:
 ##   Godot --headless --script res://tools/juggler_inbetweens.gd -- <tico_malabares.png> <saída.png>

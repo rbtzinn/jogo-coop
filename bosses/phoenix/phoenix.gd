@@ -1,6 +1,6 @@
 class_name Phoenix
 extends Node2D
-## A Fênix das Cinzas (docs/bosses.md, Área 2). Três jeitos de estar no palco (`mode`):
+## A Fênix das Cinzas (Área 2). Três jeitos de estar no palco (`mode`):
 ## - FLY: voando (fase 1 e os rasantes); o ponto do nó é o meio do corpo;
 ## - PERCH: pousada na beira do ninho (fase 2); o ponto do nó são os pés;
 ## - EGG: fechada no ovo gigante (fase 3); o ponto do nó é a base do ovo. No ovo só as duas rachaduras

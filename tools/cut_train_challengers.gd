@@ -1,5 +1,5 @@
 extends "res://tools/cut_train_art.gd"
-## Recorta as folhas dos desafiantes dos vagões do Trem (docs/prompts/chatgpt_trem_desafiantes.md), do mesmo
+## Recorta as folhas dos desafiantes dos vagões do Trem, do mesmo
 ## jeito das folhas do Pedido B (cada quadro justo no desenho, com a própria âncora). As folhas vieram com
 ## franjas coloridas (vermelho e amarelo) na beira semitransparente do desenho: elas viram cinza.
 ## Uso: Godot --headless --script res://tools/cut_train_challengers.gd

@@ -5,7 +5,7 @@ extends Node2D
 ## (fase 2), ele sobe no pedestal e fica tremendo de medo. Lá em cima continua levando tiro,
 ## machuca quem encosta e, de tempos em tempos, estala o chicote de medo para um dos lados do
 ## pedestal (alternando), para ninguém ficar parado ali em segurança.
-## Desenhado quadro a quadro (docs/referencias/pecas/domador/, recortado por
+## Desenhado quadro a quadro (recortado por
 ## tools/cut_animation_sheet.gd): pronto, chicote erguido, estalo, depois do estalo, o medo e a
 ## reverência.
 

@@ -1,7 +1,7 @@
 class_name DressingRoom
 extends PosterPanel
 ## Camarim: escolher o equipamento de cada personagem deste PC (Pistola, Truque, Adereço e
-## Número de dupla) entre os itens comprados. Abre pelo menu de pausa, só no mapa (docs/shop.md).
+## Número de dupla) entre os itens comprados. Abre pelo menu de pausa, só no mapa.
 ## Quem muda o save é o Shop (o host confere).
 
 signal closed

@@ -6,7 +6,7 @@
 # Saída RGBA, do tamanho do mapa: R + G * 256 = linha do pé (y em pixels do mapa), A = 255 onde é alto.
 # Alto = escuro, roxo-acinzentado (basalto) ou vermelho de cristal, e não é estrada. Chão chato (cinza marrom,
 # lava) fica de fora: a linha do pé é onde a coluna de pixels altos acaba, descendo.
-# Uso: python tools/front_layer.py docs/referencias/mapas/area2_vulcao_aviao/mapa_completo.png \
+# Uso: python tools/front_layer.py <mapa_completo.png> \
 #   levels/world/art/volcano_front.png [pasta para a conferência]
 import sys
 import numpy as np

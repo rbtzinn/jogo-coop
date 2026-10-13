@@ -3,7 +3,7 @@ extends Enemy
 ## Sombra do Lanterninha (Trem, vagão FANTASMAS): fantasma de lanterninha de teatro que anda de um lado para
 ## o outro em cima do vagão. Com a lanterna acesa ele é sólido e leva tiro; com ela apagada vira uma sombra
 ## que os tiros atravessam, mas que continua machucando quem encosta. Tudo pelo relógio da fase. 6 tiros
-## derrubam. Desenho do pedido de arte D5 (docs/prompts/chatgpt_trem_desafiantes.md), recortado por
+## derrubam. Desenho recortado por
 ## tools/cut_train_challengers.gd. Os quadros da sombra vieram quase opacos: o jogo os deixa transparentes.
 
 const ART := preload("res://components/enemies/art/lantern_ghost.tres")

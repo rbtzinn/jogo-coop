@@ -1,5 +1,5 @@
 extends SceneTree
-## Recorta as peças dos personagens das folhas ilustradas (docs/referencias/pecas/)
+## Recorta as peças dos personagens das folhas ilustradas
 ## e salva PNGs prontos para os rigs, sem distorcer: cada peça usa uma escala uniforme.
 ## As texturas saem em 2x (o Sprite2D usa escala 0.5) para ficarem nítidas em telas grandes.
 ## Uso: Godot --headless --script res://tools/cut_character_parts.gd

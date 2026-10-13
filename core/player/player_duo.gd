@@ -1,6 +1,6 @@
 class_name PlayerDuo
 extends Node
-## Números de dupla do jogador (docs/shop.md) e a isca da Fumaça do Mágico:
+## Números de dupla do jogador e a isca da Fumaça do Mágico:
 ## - Catapulta: dar dash encostando no parceiro arremessa você bem alto, invencível na subida;
 ## - Pirâmide Humana: cair na cabeça do parceiro conta como parry (no máximo 1 vez a cada 5 s);
 ## - Resgate (sem item): somar RESCUE_HOLD encostado no balão do parceiro caído revive ele (o progresso cai devagar

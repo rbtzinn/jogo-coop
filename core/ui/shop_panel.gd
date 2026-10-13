@@ -1,6 +1,6 @@
 class_name ShopPanel
 extends CanvasLayer
-## Barraca de Curiosidades: a loja, aberta só na tela de quem entrou (docs/shop.md).
+## Barraca de Curiosidades: a loja, aberta só na tela de quem entrou.
 ## Prateleira com os itens de cada espaço, detalhes do item escolhido, comprar (com
 ## confirmação), dar ingressos ao parceiro e sair. Quem decide as compras é o Shop (host).
 ## Enquanto a loja está aberta, os personagens deste PC não se mexem (grupo "blocking_ui").

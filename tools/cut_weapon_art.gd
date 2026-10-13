@@ -1,5 +1,5 @@
 extends SceneTree
-## Recorta as folhas das pistolas e dos tiros (Pedido A, docs/prompts/chatgpt_armas_trem_itens.md)
+## Recorta as folhas das pistolas e dos tiros
 ## e gera os PNGs + um FrameAnimation (.tres) por animação.
 ## Uso: Godot --headless --script res://tools/cut_weapon_art.gd
 ##

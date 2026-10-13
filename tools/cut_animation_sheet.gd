@@ -116,7 +116,7 @@ const ANIMATIONS := [
 		"ground_y": 486, "center_x": 256,
 		"cell_height": 406.0, "rig_height": 198.0,
 	},
-	# Tiro EX (08/10/2026, docs/prompts/chatgpt_tiro_ex.md): 1-4 no chão (sola em 486), 5-8 pairando no ar (meio
+	# Tiro EX (08/10/2026): 1-4 no chão (sola em 486), 5-8 pairando no ar (meio
 	# do corpo por volta de (256, 280), como no pulo). Veio um pouco maior que a corrida: 446 px no palhaço e
 	# 479 na acrobata. Nos quadros jogados para trás a regra do nariz erra: ombro medido à mão.
 	{
@@ -483,7 +483,7 @@ const ANIMATIONS := [
 		"cell_height": 460.0, "rig_height": 230.0,
 	},
 	# Totem dos Malabaristas (E7, 04/10/2026): os dois irmãos num desenho, MENORES que nas outras folhas (decisão
-	# do usuário, para caber por baixo do pedestal). Folha normalizada por docs/medidas/malabaristas/e7_normalizar.gd
+	# do usuário, para caber por baixo do pedestal). Folha normalizada
 	# (escala única 1,019, solas em 486, meio das solas em 256). O quadro 1 tem 440 px = 210 no jogo (0,477;
 	# com 0,5 o quadro mais alto entrava 9 px na tábua pendurada, que vai de 216 a 240 px do chão; assim fica 1 px
 	# abaixo dela). O "teco_base" é a mesma folha com as cores trocadas

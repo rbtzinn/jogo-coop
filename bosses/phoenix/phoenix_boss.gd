@@ -1,6 +1,6 @@
 class_name PhoenixBoss
 extends BossBrain
-## A Fênix das Cinzas (Área 2, docs/bosses.md). A parte genérica (fases, saco de ataques, dano, rede) fica no
+## A Fênix das Cinzas (Área 2). A parte genérica (fases, saco de ataques, dano, rede) fica no
 ## BossBrain; aqui ficam as listas de ataques, os dados que o host escolhe, o céu que muda a cada fase e a
 ## Casca Dupla da fase 3.
 ##

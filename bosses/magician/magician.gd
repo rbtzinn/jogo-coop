@@ -1,7 +1,7 @@
 class_name Magician
 extends Node2D
 ## O Grande Mágico Zaratan. Parado, é desenhado quadro a quadro (M2, bosses/magician/art/); nas outras
-## poses ainda é desenhado por código (provisório, trocável por arte: docs/prompts/fila_animacoes_codex.md).
+## poses ainda é desenhado por código (provisório, trocável por arte).
 ## Alto e magro, capa, cartola e bigode fino.
 ## O ponto do nó é entre os pés. Os ataques mudam `pose`, `facing`, `vanish` e a posição.
 ## Filhos esperados: Hurtbox (leva tiro) e Hitbox (encostar machuca).

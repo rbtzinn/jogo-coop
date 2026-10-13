@@ -1,8 +1,7 @@
 class_name ParryStyle
 extends RefCounted
 ## Cor e marca de tudo o que aceita parry: turquesa-fantasma (até 06/10/2026 era rosa, a marca mais conhecida
-## do Cuphead; ver docs/regras_originalidade.md). Os desenhos repintados (pedido em
-## docs/prompts/chatgpt_parry_turquesa.md) usam a mesma paleta; os objetos desenhados por código usam estas
+## do Cuphead). Os desenhos repintados usam a mesma paleta; os objetos desenhados por código usam estas
 ## cores e ganham a estrelinha de quatro pontas, para serem reconhecidos também pela forma.
 
 const MAIN := Color("2ee6d6")

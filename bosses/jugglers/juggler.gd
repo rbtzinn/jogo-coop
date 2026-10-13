@@ -3,7 +3,7 @@ extends Node2D
 ## Um dos Irmãos Malabaristas (Tico ou Teco). Parado malabarizando, é desenhado quadro a quadro
 ## (E2, bosses/jugglers/art/), com os objetos (bolas do Tico, claves do Teco) desenhados por código
 ## por cima, de mão em mão; nas outras poses ainda é desenhado por código (provisório, trocável por
-## arte: docs/prompts/fila_animacoes_codex.md).
+## arte).
 ## O ponto do nó é entre os pés. Os ataques mudam `pose`, `spin`, `facing` e a posição; o
 ## desenho cuida do resto (pernas andando, braços malabarizando, cara de cada momento).
 ## Filhos esperados: Hurtbox (leva tiro) e Hitbox (encostar machuca).

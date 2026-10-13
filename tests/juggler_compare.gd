@@ -7,7 +7,7 @@ extends Node2D
 ## 2. Tonto: o pêndulo sem a suavização (antes) x com o assentamento da E4b (atual), com as estrelas.
 ## 3. Salto mortal (E5), sem comparação (não havia desenho antes): agachado 0,6 s, giro de 1,0 s (em cima
 ##    2 voltas para a frente, embaixo 3 para trás, como na Troca de Lugar), aterrissagem e parado.
-## Para ver o movimento de verdade, abrir esta cena na Godot e rodar (F6), ou `tools/ver_malabaristas.bat`.
+## Para ver o movimento de verdade, abrir esta cena na Godot e rodar (F6).
 ## Para gravar a sequência de quadros (60 por segundo, 3 s de uma parte, dá para montar um vídeo):
 ##   Godot --fixed-fps 60 --path . res://tests/juggler_compare.tscn -- <pasta> [parado|tonto|salto]
 ## grava `comparar_###.png` e sai.

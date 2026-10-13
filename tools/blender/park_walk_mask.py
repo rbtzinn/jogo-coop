@@ -2,7 +2,7 @@
 # A terra batida é achada pela cor; fica só o pedaço principal (ligado), os furinhos (bases de lampião,
 # pedras) são tapados, e as entradas que a cor não pega (tapetes, escadas, portão, plataforma) entram à mão.
 # Uso: blender -b --python tools/blender/park_walk_mask.py -- \
-#   docs/referencias/remap_conceitos/mapa_amplo_4partes/mapa_completo.png <pasta temporária> levels/world/art/park_walk.png
+#   <mapa_completo.png> <pasta temporária> levels/world/art/park_walk.png
 import bpy, sys, numpy as np
 from collections import deque
 a = sys.argv[sys.argv.index("--")+1:]

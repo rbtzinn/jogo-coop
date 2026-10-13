@@ -1,6 +1,6 @@
 extends SceneTree
-## Recorta os ícones dos itens da loja (Pedido C, docs/prompts/chatgpt_armas_trem_itens.md):
-## docs/referencias/pecas/itens/icones.png tem 6 x 3 células de 256, na ordem de
+## Recorta os ícones dos itens da loja:
+## a folha de ícones tem 6 x 3 células de 256, na ordem de
 ## dialogues/items.json (a última célula fica vazia). Cada ícone vira core/shop/icons/<id>.png.
 ## Cada ícone é recortado justo no desenho, num quadrado.
 ## Uso: Godot --headless --script res://tools/cut_item_icons.gd

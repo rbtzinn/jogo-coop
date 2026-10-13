@@ -1,6 +1,6 @@
 class_name DuoActs
 extends Node
-## Bônus em dupla da luta (docs/combat.md). O Fight cria este nó em toda luta.
+## Bônus em dupla da luta. O Fight cria este nó em toda luta.
 ## - Número Perfeito: os dois dão parry no MESMO objeto de parry com até 0,3 s de diferença.
 ##   Cada um ganha 2 estrelas (a de sempre + 1 de bônus).
 ## - Grande Número em Dupla: os dois soltam o Grande Número com até 1 s de diferença.

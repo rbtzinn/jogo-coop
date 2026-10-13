@@ -1,6 +1,6 @@
 class_name JetBeam
 extends EnemyHitbox
-## Jato de magma da Rajada, montado em três peças (docs/prompts/chatgpt_rei_magma_jato.md): o clarão na boca
+## Jato de magma da Rajada, montado em três peças: o clarão na boca
 ## (borda direita no ponto do nó), o meio que se repete correndo para a esquerda e a ponta batendo na parede.
 ## A área que machuca vai da boca até a parede, com a grossura do miolo do jato.
 

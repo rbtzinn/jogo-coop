@@ -1,6 +1,6 @@
 class_name PlayerSpecial
 extends Node
-## Botão Especial (docs/combat.md): toque = Tiro EX (1 estrela); com as 5 estrelas cheias,
+## Botão Especial: toque = Tiro EX (1 estrela); com as 5 estrelas cheias,
 ## toque = Grande Número (gasta as 5). O aperto fica guardado um instante (ex.: apertado no
 ## meio do dash, sai quando o dash acaba).
 ## O PC do dono decide e gasta as estrelas; o outro PC recebe "EX / Grande Número começou"

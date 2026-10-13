@@ -1,4 +1,4 @@
-# Arte da viagem de avião (pedido E2, docs/prompts/chatgpt_aviao.md) para o jogo (levels/travel/art/).
+# Arte da viagem de avião para o jogo (levels/travel/art/).
 # O avião voando: cada quadro de 768 x 512 é recentrado na horizontal pelo meio do desenho (os quadros vieram com
 # até 60 px de diferença, o que dava tranco no voo); a altura fica como veio (o sobe e desce é de propósito).
 # O céu, a fumaça e as nuvens da frente vão como vieram.
