@@ -13,6 +13,8 @@ config_version=5
 config/name="Respeitável Público"
 run/main_scene="res://core/ui/boot_screen.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://core/ui/art/icon/icon.png"
+config/windows_native_icon="res://core/ui/art/icon/icon.ico"
 config/quit_on_go_back=false
 
 [autoload]
