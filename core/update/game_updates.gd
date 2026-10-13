@@ -27,7 +27,10 @@ func _ready() -> void:
 
 
 ## "android", "windows" or "" when this platform has no release file.
+## The Microsoft Store build (custom feature "store") is updated by the Store itself.
 func platform() -> String:
+	if OS.has_feature("store"):
+		return ""
 	if OS.has_feature("android"):
 		return "android"
 	if OS.has_feature("windows"):

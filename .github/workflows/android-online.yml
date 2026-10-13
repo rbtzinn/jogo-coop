@@ -85,6 +85,7 @@ jobs:
     env:
       RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
       HAS_ANDROID_KEY: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 != '' }}
+      HAS_STORE_IDENTITY: ${{ vars.MSIX_IDENTITY_NAME != '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -164,6 +165,20 @@ jobs:
           Godot_v4.7.2-stable_linux.x86_64 --headless --path . --export-release 'Windows Desktop' build/windows/RespeitavelPublico/RespeitavelPublico.exe 2>&1 | tee build/windows-export.log
           test -s build/windows/RespeitavelPublico/RespeitavelPublico.exe
           (cd build/windows && zip -qr ../publish/RespeitavelPublico-Windows.zip RespeitavelPublico)
+      - name: Exportar Windows para a Microsoft Store
+        if: env.HAS_STORE_IDENTITY == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p build/store
+          Godot_v4.7.2-stable_linux.x86_64 --headless --path . --export-release 'Windows Store' build/store/RespeitavelPublico.exe 2>&1 | tee build/store-export.log
+          test -s build/store/RespeitavelPublico.exe
+      - uses: actions/upload-artifact@v4
+        if: env.HAS_STORE_IDENTITY == 'true'
+        with:
+          name: store-build
+          path: build/store/RespeitavelPublico.exe
+          if-no-files-found: error
+          retention-days: 1
       - name: Exportar e verificar APK
         if: env.HAS_ANDROID_KEY == 'true'
         env:
@@ -188,3 +203,47 @@ jobs:
       - name: Limpar chave
         if: always()
         run: rm -f "$RUNNER_TEMP/android-release.keystore"
+  store:
+    # Pacote da Microsoft Store. Sem assinatura: a Store assina ao publicar. Só roda numa versão
+    # e quando as variáveis MSIX_* do repositório (dados do Partner Center) estão preenchidas.
+    needs: release
+    if: vars.MSIX_IDENTITY_NAME != ''
+    runs-on: windows-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /store/
+            /scripts/
+            /core/network/online_config.gd
+      - uses: actions/download-artifact@v4
+        with:
+          name: store-build
+          path: msix
+      - name: Montar o pacote MSIX
+        shell: pwsh
+        env:
+          MSIX_IDENTITY_NAME: ${{ vars.MSIX_IDENTITY_NAME }}
+          MSIX_PUBLISHER: ${{ vars.MSIX_PUBLISHER }}
+          MSIX_PUBLISHER_DISPLAY_NAME: ${{ vars.MSIX_PUBLISHER_DISPLAY_NAME }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Copy-Item -Recurse store/Assets msix/Assets
+          python scripts/make_msix_manifest.py --identity-name $env:MSIX_IDENTITY_NAME --publisher $env:MSIX_PUBLISHER --publisher-display-name $env:MSIX_PUBLISHER_DISPLAY_NAME --out msix/AppxManifest.xml
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          $makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\makeappx.exe" | Sort-Object FullName | Select-Object -Last 1
+          if (-not $makeappx) { throw 'makeappx.exe não encontrado' }
+          New-Item -ItemType Directory -Force out | Out-Null
+          & $makeappx.FullName pack /d msix /p out/RespeitavelPublico.msix /o
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RespeitavelPublico-MicrosoftStore
+          path: out/RespeitavelPublico.msix
+          if-no-files-found: error
+          retention-days: 30

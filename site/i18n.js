@@ -144,6 +144,7 @@ window.I18N = {
     "faq.4.a": "No aparelho de quem cria a sala (ou no seu, jogando sozinho). Atualizar o jogo não apaga o save.",
     "footer.made": "Um jogo independente feito no Brasil, com Godot.",
     "footer.repo": "Código no GitHub",
+    "footer.privacy": "Privacidade",
     "footer.top": "Voltar ao topo",
     "key.space": "Espaço",
     "lang.switch": "EN"
@@ -291,6 +292,7 @@ window.I18N = {
     "faq.4.a": "On the device of whoever creates the room (or yours, when playing solo). Updating the game keeps your save.",
     "footer.made": "An indie game made in Brazil, with Godot.",
     "footer.repo": "Code on GitHub",
+    "footer.privacy": "Privacy (in Portuguese)",
     "footer.top": "Back to top",
     "key.space": "Space",
     "lang.switch": "PT"
