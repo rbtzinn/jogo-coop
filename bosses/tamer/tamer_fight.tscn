@@ -29,7 +29,7 @@ size = Vector2(2000, 160)
 size = Vector2(80, 1400)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lion_pedestal"]
-size = Vector2(320, 190)
+size = Vector2(390, 190)
 
 [node name="TamerFight" type="Node2D"]
 
@@ -92,7 +92,7 @@ position = Vector2(1200, 820)
 position = Vector2(1690, 812)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LionPedestal"]
-position = Vector2(0, 95)
+position = Vector2(35, 95)
 shape = SubResource("RectangleShape2D_lion_pedestal")
 
 [node name="Sprite" type="Sprite2D" parent="LionPedestal"]

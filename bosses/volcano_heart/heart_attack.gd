@@ -12,6 +12,10 @@ const CROSS_ARC := 280.0
 const CROSS_DROP := 0.55
 ## Giro da bola de fogo (desenhada indo para a esquerda) para ela cair de cabeça para baixo.
 const BALL_DOWN := -PI / 2
+## Ferraduras: quicam a cada PI / SHOE_BOUNCE s; a velocidade faz o 4º toque no chão cair colado na parede do
+## outro lado (1640 px de casa até lá). Com 500 px/s o canto ficava sempre embaixo do alto do arco: era seguro.
+const SHOE_BOUNCE := 3.5
+const SHOE_SPEED := 1640.0 * SHOE_BOUNCE / (4.0 * PI)
 
 
 func _start() -> void:
@@ -107,7 +111,7 @@ func _tick(t: float) -> void:
 					var s := t - 0.8 - i * 0.7 - lane * 0.12
 					var key := "shoe%d:%d" % [lane, i]
 					if s >= 0 and s < 3.8:
-						var shoe := prop(key, &"echo_shoe", Vector2(actor.global_position.x + d * s * 500, levels[lane] - 40 - absf(sin(s * 3.5)) * 280))
+						var shoe := prop(key, &"echo_shoe", Vector2(actor.global_position.x + d * s * SHOE_SPEED, levels[lane] - 40 - absf(sin(s * SHOE_BOUNCE)) * 280))
 						shoe.flip = d > 0
 					elif s >= 3.8:
 						hide_prop(key)

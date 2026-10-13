@@ -112,7 +112,10 @@ func _run() -> void:
 			beside.velocity = Vector2.ZERO
 			await get_tree().physics_frame
 		check(on_top.player_health.health.current < hp_top, "standing on the pedestal at x %.0f is not safe (hp %d -> %d)" % [spot, hp_top, on_top.player_health.health.current])
-		check(beside.player_health.health.current == hp_floor, "player on the floor beside the pedestal is not hit by the lash")
+		# Do lado da parede não há chão ao lado: a base vai até a parede (vão fechado em 13/10/2026).
+		var beside_x := center + signf(spot - center) * (half + 60.0)
+		if beside_x > 20.0 and beside_x < 1900.0:
+			check(beside.player_health.health.current == hp_floor, "player on the floor beside the pedestal is not hit by the lash")
 		for player in players:
 			player.player_health._invincible_timer = 1000.0
 			player.player_health.health.current = player.player_health.health.maximum

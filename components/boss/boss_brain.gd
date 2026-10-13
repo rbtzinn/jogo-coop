@@ -23,6 +23,8 @@ const SOLO_DAMAGE := 2
 @export var pause_between_attacks := Vector2(0.35, 0.7)
 ## Tempo antes do primeiro ataque.
 @export var intro_time := 2.5
+## O que cai do teto em quem fica parado longe dos ataques (StageHazard): "sandbag" ou "rock".
+@export var stage_hazard := &"sandbag"
 
 ## Parte da vida de cada fase (soma 1).
 var phase_shares: Array = [1.0]
@@ -60,6 +62,11 @@ func _ready() -> void:
 	_brain_rng.randomize()
 	for attack: BossAttack in $Attacks.get_children():
 		attack.finished.connect(_on_attack_finished)
+	# Nenhum canto da arena fica seguro: ver StageHazard. Mesmo nome nos dois PCs (a queda vai pela rede).
+	var hazard := StageHazard.new()
+	hazard.name = "StageHazard"
+	hazard.kind = stage_hazard
+	add_child(hazard)
 
 
 func _physics_process(delta: float) -> void:

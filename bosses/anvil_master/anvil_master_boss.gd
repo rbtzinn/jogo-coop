@@ -10,6 +10,7 @@ var grip: Hurtbox
 
 
 func _init() -> void:
+	stage_hazard = &"rock"
 	max_health = 1550
 	pause_between_attacks = Vector2(0.2, 0.44)
 	phase_shares = [0.35, 0.35, 0.3]

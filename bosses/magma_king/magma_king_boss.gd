@@ -19,6 +19,7 @@ const DRIPS := 7
 
 
 func _init() -> void:
+	stage_hazard = &"rock"
 	max_health = 1350
 	pause_between_attacks = Vector2(0.22, 0.48)
 	phase_shares = [0.4, 0.35, 0.25]
