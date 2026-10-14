@@ -12,8 +12,10 @@ func _init() -> void:
 	pause_between_attacks = Vector2(0.24,0.42)
 	phase_shares = [0.34,0.33,0.33]
 	phase_titles = ["Tirando as Medidas", "Prova de Roupa", "Manequim de Guerra"]
-	phase_attacks = [[&"Needles",&"Scissors",&"Tape"],
-		[&"Needles",&"Curtains",&"Tape"],[&"Needles",&"Buttons",&"Scissors",&"Curtains"]]
+	# Dificuldade por dois perigos complementares, não por inflar vida/dano.
+	phase_attacks = [[&"NeedlesTape",&"Scissors",&"Needles"],
+		[&"NeedlesTape",&"CurtainsNeedles",&"Tape"],
+		[&"NeedlesTape",&"ButtonsScissors",&"CurtainsNeedles"]]
 	phase_intros = [&"",&"IntroCloth",&"IntroArmor"]
 
 func _ready() -> void:

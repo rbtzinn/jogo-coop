@@ -93,6 +93,25 @@ Proteções contra ficar parado em um abrigo:
 - A parede só limita o jogador; não vira escudo invisível impedindo tiros nos botões.
 - Corpo e projéteis deixam de machucar ao cancelar, aparar ou vencer.
 
+### Ajuste após o teste de 14/10/2026
+
+Tiros recebidos não trocam mais a pose por `hurt`: só um brilho de 0,07s,
+com intervalo visual de 0,24s. Todos os tiros continuam aplicando dano normalmente.
+Isso impede o autofire de interromper continuamente os avisos e animações.
+
+- Fase 1: Agulhas + Fita, Tesoura e Agulhas.
+- Fase 2: Agulhas + Fita, Cortinas + Agulhas e Fita.
+- Fase 3: Agulhas + Fita, Botões + Tesoura e Cortinas + Agulhas.
+
+Nos combos, o segundo perigo inicia o próprio aviso 0,60s depois do primeiro.
+Cada componente conserva os 0,9–1s de aviso, colisão visível e parry original;
+os perigos coexistem, em vez de esperar o ataque anterior sumir. No combo mecânico,
+o corte acaba antes da janela dos botões fechar, permitindo contra-atacar.
+Máximo de seis objetos por combo em dupla, sem novos assets/partículas/processamento
+de imagem. Vida, dano, cenário e arquivos dos jogadores permanecem iguais.
+Os testes incluem tiros contínuos, avisos inofensivos, sobreposição real dos três
+combos, cancelamento, chegada atrasada, parry em rede e as 54 posições com o combo.
+
 O dano dos efeitos acompanha contornos opacos, não o quadrado transparente dos PNGs.
 Contornos convexos estão prontos em `art/effects/carretel_collision.tres`, preparados
 por `tools/prepare_carretel_collisions.gd`; não há processamento de imagens durante a

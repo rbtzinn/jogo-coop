@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://bosses/rust_maestro/art/p01_base.png" id="1"]
+
+[node name="RustMaestroVisual" type="Node2D"]
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-133, -517)
+texture = ExtResource("1")

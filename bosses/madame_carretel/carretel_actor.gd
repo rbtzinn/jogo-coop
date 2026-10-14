@@ -14,6 +14,7 @@ var defeated := false
 var pose_animation: StringName = &"idle"
 var pose_frame := 0
 var _flash := 0.0
+var _flash_cooldown := 0.0
 var _idle := true
 var _time := 0.0
 var glow := ButtonGlow.new()
@@ -58,15 +59,14 @@ func _box(area: Area2D,label: String,at: Vector2,size: Vector2) -> void:
 func _process(delta: float) -> void:
 	_time += delta
 	_flash = maxf(0.0,_flash-delta)
+	_flash_cooldown = maxf(0.0,_flash_cooldown-delta)
 	if _idle:
 		pose_animation = &"armor" if armored else &"idle"
 		pose_frame = 3 if armored else int(_time*2.0)%4
 	sprite.pause()
 	sprite.animation = pose_animation
 	sprite.frame = pose_frame
-	if _flash>0.0 and not armored and not defeated:
-		sprite.animation = &"hurt"
-		sprite.frame = mini(3,int((0.18-_flash)/0.045))
+	# Tiro contínuo não troca a silhueta nem interrompe a pose de aviso/ataque.
 	sprite.modulate = Color(1.5,1.35,1.2) if _flash>0.0 else Color.WHITE
 	glow.open = weak_open and not defeated
 
@@ -85,7 +85,9 @@ func idle() -> void:
 	_idle = true
 
 func flash() -> void:
-	_flash = 0.18
+	if defeated or _flash_cooldown>0.0: return
+	_flash = 0.07
+	_flash_cooldown = 0.24
 
 func set_weak(open: bool) -> void:
 	weak_open = open and armored and not defeated

@@ -161,9 +161,12 @@ func _physics_process(delta: float) -> void:
 		rig.update_pose(delta, velocity, false, false, Vector2(facing, 0), run_speed, false)
 		sync.send_state(self, Vector2(facing, 0))
 		return
-	var parry_pressed := input.jump_pressed and not is_on_floor() and _coyote_timer <= 0.0 \
-			and not is_dashing() and not special.is_performing()
-	if parry.tick(delta, is_on_floor(), parry_pressed):
+	# Pulo durante qualquer trecho do dash pode aparar, inclusive deslizando no chão.
+	# Fora do dash, preserva o pulo normal/coyote e a tentativa de parry só no ar.
+	var dashing := is_dashing()
+	var parry_pressed := input.jump_pressed and not special.is_performing() \
+			and (dashing or (not is_on_floor() and _coyote_timer <= 0.0))
+	if parry.tick(delta, is_on_floor() and not dashing, parry_pressed):
 		_on_parry_success()
 	special.tick(delta, input.special_pressed and armed, not is_dashing())
 	player_health.tick(delta, _can_be_hit())
@@ -485,9 +488,17 @@ func show_hurt() -> void:
 
 
 func _on_parry_success() -> void:
+	if is_dashing():
+		# O parry corta o dash: encerra também os efeitos dos Truques equipados.
+		_dash_cooldown_timer = dash_cooldown * (2.0 if loadout.trick == "pirouette" and is_on_floor() else 1.0)
+		if loadout.trick == "magic_smoke":
+			visual.show()
+		if _dash_damage != null:
+			_dash_damage.set_deferred(&"monitoring", false)
 	velocity.y = _jump_velocity * PARRY_BOUNCE
 	_dash_timer = 0.0
 	_air_dash_available = true
+	_jump_buffer_timer = 0.0
 	# O aperto virou parry: não guarda como pulo para quando tocar o chão.
 	input.jump_pressed = false
 

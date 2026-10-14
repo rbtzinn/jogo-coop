@@ -92,6 +92,44 @@ func _run() -> void:
 			if player.is_multiplayer_authority(): player.parry._succeed(parry)
 	check(await until(func() -> bool: return parry.popped and not parry.active),"client parry removes same projectile on both peers")
 	await meet("parry")
+	for combo in [&"NeedlesTape",&"CurtainsNeedles",&"ButtonsScissors"]:
+		if role=="host": boss.sync.start_attack(combo,405,[Vector2(27,875),Vector2(1473,605)])
+		check(await until(func() -> bool: return boss._current!=null and boss._current.name==combo),String(combo)+" reaches both peers")
+		# A barreira de rede não deve consumir a vida do projétil amostrado.
+		boss._current.set_physics_process(false)
+		boss._current.elapsed = 2.4
+		boss._current._on_tick(0)
+		var expected_kind: StringName = &"cut" if combo==&"ButtonsScissors" else &"needle_parry"
+		var live := 0
+		var found := false
+		for prop: CarretelThreat in boss._current._props.values():
+			if prop.active:
+				live += 1
+				found = found or prop.kind==expected_kind
+		check(found and live>=3,String(combo)+" synchronizes overlapping live hazards")
+		if combo==&"NeedlesTape":
+			var combo_parry: CarretelThreat = boss._current._props["needle:0:1"]
+			check(combo_parry.parry_id=="Carretel:NeedlesTape:405:needle:0:1","combo parry keeps identical identity")
+			await meet("combo_parry_ready")
+			if role=="client":
+				for player: Player in get_tree().get_nodes_in_group(&"players"):
+					if player.is_multiplayer_authority():
+						player.set_physics_process(false)
+						player.position = combo_parry.global_position+Vector2(0,85)
+						player.input.scripted = true
+						player._dash_timer = player.dash_duration*0.5
+						player._coyote_timer = 0
+						player.parry._available = true
+						await get_tree().physics_frame
+						await get_tree().physics_frame
+						player.input.jump_pressed = true
+						player._physics_process(1.0/60.0)
+						player.input.jump_pressed = false
+						check(combo_parry.popped and not player.is_dashing() and player.velocity.y<0,"client jump input parries mid-dash and bounces")
+						player.input.scripted = false
+						player.set_physics_process(true)
+			check(await until(func() -> bool: return combo_parry.popped),"combo parry is shared while floor wave continues")
+		await meet(String(combo))
 	if role=="host": boss.health.damage(422)
 	check(await until(func() -> bool: return boss.phase==1),"phase 2 arrives on both peers")
 	await meet("phase2")

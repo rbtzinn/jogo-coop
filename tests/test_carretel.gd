@@ -87,6 +87,8 @@ func _run() -> void:
 	var before := boss.health.current
 	boss.actor.hurtbox.take_hit(3,String(player.name))
 	check(before-boss.health.current==6,"solo shot scaling uses common boss rules")
+	await _hit_feedback()
+	await _combos()
 	# Caminhada, pulo e dash REAIS não levam às costas do boss.
 	player.set_physics_process(true)
 	player.input.local_control = true
@@ -113,14 +115,14 @@ func _run() -> void:
 				var feet := Vector2(x,660 if stance==2 else 930)
 				stationary(feet,stance==1)
 				var hp := player.player_health.health.current
-				await run_attack(&"Needles",[feet+Vector2(0,-55)],true)
+				await run_attack(&"NeedlesTape",[feet+Vector2(0,-55)],true)
 				check(player.player_health.health.current<hp,"phase %d fixed x%d / stance%d is not a safe spot" % [phase,int(x),stance])
 				boss._wait = 99999
 		# Ciclo sorteado não pode omitir o ataque direcionado.
 		boss._bag.clear()
 		var chosen := {}
 		for i in boss.phase_attacks[phase].size(): chosen[boss._draw_from_bag()] = true
-		check(chosen.has(&"Needles"),"phase %d bag guarantees aimed attacks" % phase)
+		check(chosen.has(&"NeedlesTape"),"phase %d bag guarantees aimed + ground combo" % phase)
 	for key in [&"Scissors",&"Tape",&"Curtains",&"Buttons"]:
 		stationary(Vector2(500,930))
 		var hp := player.player_health.health.current
@@ -137,7 +139,7 @@ func _run() -> void:
 		player.player_health.tick(1.0/60.0,true)
 	check(hp==player.player_health.health.current,"moving after curtain warning safely evades locked target")
 	# Parry real: nó identificado, ativo e limpo nos dois PCs pelo sistema existente.
-	boss.sync.start_attack(&"Needles",11,[Vector2(500,875)])
+	boss.sync.start_attack(&"NeedlesTape",11,[Vector2(500,875)])
 	await frames(112)
 	var parry: CarretelThreat
 	for prop in boss._current.get_children():
@@ -150,7 +152,7 @@ func _run() -> void:
 		check(parry.popped and not parry.active and not parry.visible,"parry removes projectile and its danger")
 	boss._current.cancel()
 	await frames(2)
-	check(boss.get_node("Attacks/Needles").get_child_count()==0,"cancel clears every projectile")
+	check(boss.get_node("Attacks/NeedlesTape").get_child_count()==0,"cancel clears both combo hazards")
 	# Fase mecânica: os três botões destacados são vulneráveis, sem hitboxes invisíveis.
 	boss.sync.start_attack(&"Buttons",12,[Vector2(500,875)])
 	await frames(180)
@@ -178,6 +180,64 @@ func _run() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.path))
 	print("FAILURES: ",failures)
 	get_tree().quit(failures)
+
+func _hit_feedback() -> void:
+	# Simula mais acertos do que o autofire: dano continua, pose nunca é substituída.
+	var actor := boss.actor
+	actor.pose(&"needles",2)
+	var home := actor.position
+	var hp := boss.health.current
+	var white_frames := 0
+	var stable := true
+	for i in 60:
+		actor.hurtbox.take_hit(1,String(player.name))
+		actor._process(1.0/60.0)
+		stable = stable and actor.sprite.animation==&"needles" and actor.sprite.frame==2 and actor.position==home
+		if actor.sprite.modulate==Color.WHITE: white_frames += 1
+	check(stable,"continuous shots never replace attack pose or move boss")
+	check(hp-boss.health.current==120,"flash cooldown never suppresses real shot damage")
+	check(white_frames>=35,"brief hit flash returns to normal even under constant shooting")
+	actor.idle()
+
+func _combos() -> void:
+	for key in [&"NeedlesTape",&"CurtainsNeedles",&"ButtonsScissors"]:
+		boss.sync.start_attack(key,86,[Vector2(400,875),Vector2(950,605)])
+		var attack := boss._current
+		attack.elapsed = 0.7
+		attack._on_tick(0)
+		check(attack._warnings.size()>=3,String(key)+" warns both hazards before damage")
+		var harmless := true
+		for prop: CarretelThreat in attack._props.values(): harmless = harmless and not prop.active
+		check(harmless,String(key)+" warning is not an invisible damaging hitbox")
+		attack.elapsed = 2.4
+		attack._on_tick(0)
+		var kinds := {}
+		for prop: CarretelThreat in attack._props.values():
+			if prop.active and prop.visible: kinds[prop.kind] = true
+		var expected: Array = {&"NeedlesTape":[&"needle_parry",&"tape"],
+			&"CurtainsNeedles":[&"cloth",&"needle_parry"],
+			&"ButtonsScissors":[&"button",&"cut"]}[key]
+		check(expected.all(func(kind: StringName) -> bool: return kinds.has(kind)),String(key)+" visibly overlaps two real dangers")
+		check(attack._props.size()<=6,String(key)+" limits simultaneous props for duo/mobile")
+		# Reentrada com atraso recebe o mesmo relógio e os mesmos alvos do host.
+		var positions := {}
+		for id: String in attack._props: positions[id] = attack._props[id].position
+		attack.cancel()
+		await frames(2)
+		check(attack.get_child_count()==0,String(key)+" cancel removes every component")
+		boss.play_attack(key,86,2.4,[Vector2(400,875),Vector2(950,605)])
+		var matches := true
+		for id: String in positions:
+			matches = matches and attack._props.has(id) and attack._props[id].position.distance_to(positions[id])<0.01
+		check(matches,String(key)+" late start preserves deterministic trajectories")
+		if key==&"ButtonsScissors":
+			boss.actor.armored = true
+			attack.elapsed = 4.35
+			attack._on_tick(0)
+			check(boss.actor.weak_open and not attack._props["cut"].active,"mechanical combo keeps a clear counterattack window after cut")
+			boss.actor.armored = false
+		attack.cancel()
+		await frames(2)
 
 func _mobile() -> void:
 	SaveGame.reset()
