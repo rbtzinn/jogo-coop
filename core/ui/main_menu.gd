@@ -121,9 +121,13 @@ func _ready() -> void:
 		update_button.custom_minimum_size = Vector2(690, 76)
 		update_button.pressed.connect(GameUpdates.open_download)
 		GameUpdates.status_changed.connect(func(message: String) -> void: _status.text = message)
-		GameUpdates.update_available.connect(func(_version: String) -> void: update_button.text = "Baixar atualização")
+		GameUpdates.update_available.connect(func(_version: String) -> void: update_button.text = "Atualizar agora")
+		# Instalando de dentro do jogo: o botão mostra o andamento do download (negativo = falhou).
+		GameUpdates.progress_changed.connect(func(fraction: float) -> void:
+			update_button.disabled = fraction >= 0.0 and fraction < 1.0
+			update_button.text = "Atualizar agora" if fraction < 0.0 else "Baixando... %d%%" % roundi(fraction * 100.0))
 		if not GameUpdates.download_url.is_empty():
-			update_button.text = "Baixar atualização"
+			update_button.text = "Atualizar agora"
 		add_child(update_button)
 	host_button.grab_focus()
 

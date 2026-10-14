@@ -41,8 +41,68 @@ func _ready() -> void:
 	offered = false
 	GameUpdates._apply_manifest("null".to_utf8_buffer(), "android")
 	check(not offered and "inválida" in message, "non-object JSON rejected")
+	_test_checksums(valid)
+	_test_windows_swap()
 	print("FAILURES: %d" % failures)
 	get_tree().quit(failures)
+
+
+## O manifesto traz o SHA-256 de cada arquivo; só um hex de 64 dígitos vale.
+func _test_checksums(valid: Dictionary) -> void:
+	var good := "ab".repeat(32)
+	var with_hash := valid.duplicate(true)
+	with_hash.sha256 = {"android": good.to_upper(), "windows": "nope"}
+	apply(with_hash, "android")
+	check(offered and GameUpdates.sha256 == good, "release checksum read from the manifest")
+	apply(with_hash, "windows")
+	check(offered and GameUpdates.sha256.is_empty(), "malformed checksum ignored (falls back to the browser)")
+	var path := "user://test_update_hash.bin"
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	file.store_string("respeitavel")
+	file.close()
+	var expected := "respeitavel".sha256_text()
+	check(GameUpdates.verify_file(path, expected), "downloaded file accepted when the checksum matches")
+	check(not GameUpdates.verify_file(path, "00".repeat(32)), "downloaded file rejected when the checksum differs")
+	check(not GameUpdates.verify_file(path, ""), "no checksum, no install")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+
+## Windows: o .exe novo sai do ZIP e troca de lugar com o que está rodando (que vira .old).
+func _test_windows_swap() -> void:
+	var folder := ProjectSettings.globalize_path("user://test_swap")
+	DirAccess.make_dir_recursive_absolute(folder)
+	var exe := folder.path_join("RespeitavelPublico.exe")
+	var zip_path := "user://test_swap/update.zip"
+	_write(exe, "velho")
+	var packer := ZIPPacker.new()
+	packer.open(ProjectSettings.globalize_path(zip_path))
+	packer.start_file("RespeitavelPublico/RespeitavelPublico.exe")
+	packer.write_file("novo".to_utf8_buffer())
+	packer.close_file()
+	packer.close()
+	var error := GameUpdates.install_windows(zip_path, exe)
+	check(error == "", "windows update installed (%s)" % error)
+	check(FileAccess.get_file_as_string(exe) == "novo", "new .exe takes the place of the old one")
+	check(FileAccess.get_file_as_string(exe + GameUpdates.OLD_SUFFIX) == "velho", "running .exe kept as .old until the next start")
+	check(not FileAccess.file_exists(zip_path), "downloaded ZIP removed after installing")
+	_write(exe, "velho")
+	packer = ZIPPacker.new()
+	packer.open(ProjectSettings.globalize_path(zip_path))
+	packer.start_file("RespeitavelPublico/outro.txt")
+	packer.write_file("x".to_utf8_buffer())
+	packer.close_file()
+	packer.close()
+	error = GameUpdates.install_windows(zip_path, exe)
+	check(error != "" and FileAccess.get_file_as_string(exe) == "velho", "ZIP without the game leaves the installed .exe untouched")
+	for name in ["RespeitavelPublico.exe", "RespeitavelPublico.exe.old", "RespeitavelPublico.exe.new", "update.zip"]:
+		DirAccess.remove_absolute(folder.path_join(name))
+	DirAccess.remove_absolute(folder)
+
+
+func _write(path: String, text: String) -> void:
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	file.store_string(text)
+	file.close()
 
 func apply(data: Dictionary, target: String) -> void:
 	offered = false

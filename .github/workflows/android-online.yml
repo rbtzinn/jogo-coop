@@ -199,7 +199,7 @@ jobs:
           set -euo pipefail
           android=()
           if [ -f build/publish/RespeitavelPublico-Android.apk ]; then android=(--android RespeitavelPublico-Android.apk); fi
-          python3 scripts/make_release_manifest.py --tag "$RELEASE_TAG" --out build/publish/version.json --windows RespeitavelPublico-Windows.zip "${android[@]}"
+          python3 scripts/make_release_manifest.py --tag "$RELEASE_TAG" --out build/publish/version.json --hash-dir build/publish --windows RespeitavelPublico-Windows.zip "${android[@]}"
           (cd build/publish && sha256sum * > SHA256SUMS.txt)
           gh release create "$RELEASE_TAG" build/publish/* --repo "$GITHUB_REPOSITORY" --title "Respeitável Público $RELEASE_TAG" --target "$GITHUB_SHA" --generate-notes --latest
       - name: Limpar chave
