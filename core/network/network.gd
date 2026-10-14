@@ -220,6 +220,20 @@ func _change_level(path: String) -> void:
 	get_tree().change_scene_to_file(path)
 
 
+## Posições dos mapas passam pelo autoload: um pacote do mapa anterior pode chegar
+## depois que a cena foi removida. O destino existe sempre e descarta esses pacotes.
+@rpc("any_peer", "call_remote", "unreliable_ordered")
+func receive_world_state(scene_path: String, walker_name: String, at: Vector3,
+		facing: int, moving: bool) -> void:
+	var scene := get_tree().current_scene
+	if scene == null or scene.scene_file_path != scene_path or not Levels.is_map(scene_path):
+		return
+	var walker := scene.get_node_or_null("PlayerSpawner/" + walker_name)
+	if walker == null or walker.get_multiplayer_authority() != multiplayer.get_remote_sender_id():
+		return
+	walker._receive_state(at, facing, moving)
+
+
 ## Host: o parceiro acabou de conectar; manda ele para a fase onde o host está.
 func _on_peer_connected(peer_id: int) -> void:
 	partner_connected.emit(peer_id)

@@ -8,6 +8,7 @@ const MAP := "res://levels/world/world_area1.tscn"
 const MAPS := {
 	1: MAP,
 	2: "res://levels/world/world_area2.tscn",
+	3: "res://levels/world/world_area3.tscn",
 }
 ## A viagem de avião entre as áreas.
 const TRAVEL := "res://levels/travel/plane_travel.tscn"

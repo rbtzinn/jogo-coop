@@ -21,6 +21,7 @@ const FRONT_CLOUDS := preload("res://levels/travel/art/nuvens_frente.png")
 const AREAS := {
 	1: ["Área 1 — O Grande Picadeiro", preload("res://levels/travel/art/area1.png")],
 	2: ["Área 2 — A Ilha do Vulcão", preload("res://levels/travel/art/area2.png")],
+	3: ["Área 3 — As Oficinas\nda Meia-Noite", preload("res://levels/travel/art/area3.png")],
 }
 
 ## Quanto tempo o avião leva para atravessar a tela (segundos).
@@ -155,7 +156,7 @@ func _show_menu() -> void:
 		button.expand_icon = true
 		button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		button.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
-		button.custom_minimum_size = Vector2(520, 400)
+		button.custom_minimum_size = Vector2(500, 400)
 		button.pressed.connect(_choose.bind(area))
 		row.add_child(button)
 		# Começa no destino que não é a área de onde saíram.
@@ -187,8 +188,16 @@ func _request_area(area: int) -> void:
 
 ## Host (ou sozinho): muda a área do save e leva os dois ao mapa dela, na frente do avião.
 func fly_to(area: int) -> void:
+	if not AREAS.has(area):
+		return
 	SaveGame.data.area = area
 	if SaveGame.is_keeper():
 		SaveGame.save_game()
-	Levels.return_door = "plane"
+	_arrival.rpc(area)
 	Network.change_level(Levels.MAPS[area])
+
+
+@rpc("authority", "call_local", "reliable")
+func _arrival(area: int) -> void:
+	SaveGame.data.area = area
+	Levels.return_door = "plane"

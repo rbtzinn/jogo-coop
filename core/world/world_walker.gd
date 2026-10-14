@@ -76,7 +76,8 @@ func _physics_process(delta: float) -> void:
 		_move_local(delta)
 		if Network.is_online():
 			for peer_id in Network.ready_peers:
-				_receive_state.rpc_id(peer_id, global_position, facing, moving)
+				Network.receive_world_state.rpc_id(peer_id, get_tree().current_scene.scene_file_path,
+						String(name), global_position, facing, moving)
 	else:
 		_move_remote(delta)
 	sprite.facing = facing
@@ -122,7 +123,6 @@ func _move_remote(delta: float) -> void:
 	moving = _remote_moving
 
 
-@rpc("authority", "call_remote", "unreliable_ordered")
 func _receive_state(at: Vector3, new_facing: int, is_moving: bool) -> void:
 	Network.deliver(func() -> void:
 		if not is_inside_tree():

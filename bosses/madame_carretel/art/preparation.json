@@ -1,0 +1,56 @@
+[
+	{
+		"clip": "idle",
+		"frames": 4,
+		"scale": 1.0,
+		"source": "(1254, 1254)"
+	},
+	{
+		"clip": "scissors",
+		"frames": 4,
+		"scale": 1.0,
+		"source": "(1254, 1254)"
+	},
+	{
+		"clip": "tape",
+		"frames": 4,
+		"scale": 1.0,
+		"source": "(1254, 1254)"
+	},
+	{
+		"clip": "needles",
+		"frames": 4,
+		"scale": 1.0,
+		"source": "(1254, 1254)"
+	},
+	{
+		"clip": "cloth",
+		"frames": 4,
+		"scale": 1.0,
+		"source": "(1254, 1254)"
+	},
+	{
+		"clip": "hurt",
+		"frames": 4,
+		"scale": 1.0,
+		"source": "(1254, 1254)"
+	},
+	{
+		"clip": "armor",
+		"frames": 4,
+		"scale": 1.0,
+		"source": "(1254, 1254)"
+	},
+	{
+		"clip": "armor_attack",
+		"frames": 4,
+		"scale": 1.0,
+		"source": "(1254, 1254)"
+	},
+	{
+		"clip": "defeat",
+		"frames": 4,
+		"scale": 1.0,
+		"source": "(1254, 1254)"
+	}
+]

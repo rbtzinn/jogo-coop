@@ -1,0 +1,131 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/button_1.png" id="1_u1in2"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/button_2.png" id="2_oohhd"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/button_3.png" id="3_wicd7"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/button_4.png" id="4_qu3m6"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/cloth_1.png" id="5_f1uif"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/cloth_2.png" id="6_fbpqd"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/cloth_3.png" id="7_qskuw"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/cloth_4.png" id="8_djr6q"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/cut_1.png" id="9_kul87"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/cut_2.png" id="10_qvpiu"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/cut_3.png" id="11_qon3u"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/cut_4.png" id="12_4sjtv"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/needle_1.png" id="13_1gn52"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/needle_2.png" id="14_5sb0y"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/needle_3.png" id="15_uvum3"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/needle_4.png" id="16_mt6i7"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/needle_parry_1.png" id="17_2nb7x"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/needle_parry_2.png" id="18_cvhoc"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/needle_parry_3.png" id="19_xj67h"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/needle_parry_4.png" id="20_e6ilb"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/tape_1.png" id="21_6n6cg"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/tape_2.png" id="22_tavcw"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/tape_3.png" id="23_hx11i"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/effects/tape_4.png" id="24_asa8r"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_u1in2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_oohhd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_wicd7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_qu3m6")
+}],
+"loop": 1,
+"name": &"button",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_f1uif")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_fbpqd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_qskuw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_djr6q")
+}],
+"loop": 0,
+"name": &"cloth",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_kul87")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_qvpiu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_qon3u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_4sjtv")
+}],
+"loop": 0,
+"name": &"cut",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("13_1gn52")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_5sb0y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_uvum3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_mt6i7")
+}],
+"loop": 1,
+"name": &"needle",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("17_2nb7x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_cvhoc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_xj67h")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_e6ilb")
+}],
+"loop": 1,
+"name": &"needle_parry",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("21_6n6cg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_tavcw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_hx11i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_asa8r")
+}],
+"loop": 1,
+"name": &"tape",
+"speed": 12.0
+}]

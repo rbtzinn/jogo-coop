@@ -39,6 +39,7 @@ func _run() -> void:
 	await frames(20)
 	var map: PaintedWorld = get_tree().current_scene
 	check(map.scene_file_path == Levels.MAP, "new save starts in area 1")
+	check(map.has_node("Painting") and not map.has_node("Front"), "circus scenery stays behind characters")
 	var plane: WorldDoor = map.get_node("DoorPlane")
 	check(plane.is_open() and map.is_walkable(plane.front_point()), "area 1 plane open, in front of the road")
 	plane.try_enter()
@@ -50,13 +51,14 @@ func _run() -> void:
 	travel._end_flight()
 	await frames(2)
 	var buttons := travel.find_children("Area*", "Button", true, false)
-	check(buttons.size() == 2, "menu shows the two areas")
+	check(buttons.size() == 3, "menu shows the three areas")
 	var focused := get_viewport().gui_get_focus_owner()
 	check(focused != null and focused.name == "Area2", "focus starts on the other area")
 	(focused as Button).pressed.emit()
 	await frames(20)
 	var volcano: PaintedWorld = get_tree().current_scene
 	check(volcano.scene_file_path == Levels.MAPS[2], "volcano map loaded")
+	check(volcano.has_node("Painting") and not volcano.has_node("Front"), "volcano scenery stays behind characters")
 	check(int(SaveGame.data.area) == 2 and Levels.current_map() == Levels.MAPS[2], "save remembers area 2")
 	var back: WorldDoor = volcano.get_node("DoorPlane")
 	for walker: WorldWalker in get_tree().get_nodes_in_group(&"walkers"):
@@ -64,7 +66,7 @@ func _run() -> void:
 		check(volcano.is_walkable(walker.global_position), "%s on the road" % walker.name)
 	for door: WorldDoor in get_tree().get_nodes_in_group(&"world_doors"):
 		check(volcano.is_walkable(door.front_point()), "%s front on the road" % door.name)
-	check((volcano.get_node("DoorAnvil") as WorldDoor).status_text.is_empty() and not (volcano.get_node("DoorAnvil") as WorldDoor).is_open(), "boss without fight: coming soon")
+	check((volcano.get_node("DoorAnvil") as WorldDoor).is_open(), "Anvil Master door opens his fight")
 	check((volcano.get_node("DoorMagmaKing") as WorldDoor).is_open(), "Magma King door opens his fight")
 	# Curva da frente da mina: as pedras pintadas na frente cortavam a estrada e o boneco travava (07/10/2026).
 	var bend := [Vector2(1100, 1450), Vector2(1110, 1540), Vector2(1170, 1560), Vector2(1300, 1530)]
@@ -76,6 +78,27 @@ func _run() -> void:
 	check(cut == 0, "volcano: the road around the mine bend is continuous (%d gaps)" % cut)
 	check((volcano.get_node("DoorHeart") as WorldDoor).missing().size() == 3, "volcano heart locked until 3 wins")
 	back.try_enter()
+	await frames(10)
+	travel = get_tree().current_scene
+	travel._end_flight()
+	await frames(2)
+	travel.fly_to(3)
+	await frames(20)
+	var workshops: PaintedWorld = get_tree().current_scene
+	check(workshops.scene_file_path == Levels.MAPS[3], "workshops map loaded through flight")
+	check(workshops.has_node("Painting") and not workshops.has_node("Front"), "workshops scenery stays behind characters")
+	check(int(SaveGame.data.area) == 3 and Levels.current_map() == Levels.MAPS[3], "save remembers area 3")
+	var workshop_plane: WorldDoor = workshops.get_node("DoorPlane")
+	for walker: WorldWalker in get_tree().get_nodes_in_group(&"walkers"):
+		check(workshops.is_walkable(walker.global_position), "%s arrives on workshop ground" % walker.name)
+		check(walker.global_position.distance_to(workshop_plane.front_point()) < 3.0, "%s arrives at workshop plane" % walker.name)
+	for door: WorldDoor in get_tree().get_nodes_in_group(&"world_doors"):
+		check(workshops.is_walkable(door.front_point()), "%s front on workshop path" % door.name)
+	check((workshops.get_node("DoorShop") as WorldDoor).is_open(), "workshop shop works")
+	check((workshops.get_node("DoorDressing") as WorldDoor).is_open(), "workshop dressing room works")
+	for door_name in ["DoorCarretel", "DoorMaestro", "DoorCounterweight", "DoorTheater", "DoorScenery"]:
+		check(not (workshops.get_node(door_name) as WorldDoor).is_open(), "%s reserved for future fight" % door_name)
+	workshop_plane.try_enter()
 	await frames(10)
 	travel = get_tree().current_scene
 	travel._end_flight()

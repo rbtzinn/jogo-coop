@@ -1,0 +1,4 @@
+[gd_scene format=3]
+[ext_resource type="Script" path="res://tools/carretel_playtest.gd" id="1"]
+[node name="CarretelPlaytest" type="Node"]
+script = ExtResource("1")

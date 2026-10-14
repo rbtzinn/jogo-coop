@@ -1,0 +1,105 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://core/world/painted_world.gd" id="1_world"]
+[ext_resource type="Script" path="res://core/world/world_door.gd" id="2_door"]
+[ext_resource type="Script" path="res://core/network/player_spawner.gd" id="3_spawner"]
+[ext_resource type="PackedScene" path="res://core/player/characters/clown/clown_rig.tscn" id="4_clown"]
+[ext_resource type="PackedScene" path="res://core/player/characters/acrobat/acrobat_rig.tscn" id="5_acrobat"]
+[ext_resource type="PackedScene" path="res://core/world/world_walker.tscn" id="6_walker"]
+[ext_resource type="Texture2D" path="res://levels/world/art/workshops_01_noroeste.png" id="7_nw"]
+[ext_resource type="Texture2D" path="res://levels/world/art/workshops_02_nordeste.png" id="8_ne"]
+[ext_resource type="Texture2D" path="res://levels/world/art/workshops_03_sudoeste.png" id="9_sw"]
+[ext_resource type="Texture2D" path="res://levels/world/art/workshops_04_sudeste.png" id="10_se"]
+[ext_resource type="Texture2D" path="res://levels/world/art/workshops_walk.png" id="11_walk"]
+[ext_resource type="Script" path="res://core/debug/ticket_cheat.gd" id="98_cheat"]
+[ext_resource type="Script" path="res://core/world/painted_obstacle.gd" id="13_obstacle"]
+
+[node name="WorldArea3" type="Node3D"]
+script = ExtResource("1_world")
+area = 3
+area_title = "ÁREA 3 — AS OFICINAS DA MEIA-NOITE"
+parts = Array[Texture2D]([ExtResource("7_nw"), ExtResource("8_ne"), ExtResource("9_sw"), ExtResource("10_se")])
+walk_mask = ExtResource("11_walk")
+view_pixels = 620.0
+background_color = Color(0.035, 0.06, 0.13, 1)
+ambient_color = Color(0.43, 0.5, 0.68, 1)
+lamp_color = Color(1, 0.78, 0.52, 1)
+
+[node name="DoorShop" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(742, 732)
+title = "Curiosidades"
+opens_shop = true
+radius = 1.5
+landmark = "stall"
+
+[node name="DoorDressing" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(961, 742)
+title = "Camarim"
+opens_dressing_room = true
+radius = 1.4
+landmark = "wagon"
+
+[node name="DoorPlane" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(420, 689)
+title = "Avião"
+target_scene = "res://levels/travel/plane_travel.tscn"
+level_id = "plane"
+enter_label = "Voar"
+radius = 1.4
+landmark = "wagon"
+
+[node name="DoorCarretel" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(365, 309)
+title = "Madame Carretel"
+target_scene = "res://bosses/madame_carretel/madame_carretel_fight.tscn"
+level_id = "madame_carretel"
+
+[node name="DoorMaestro" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(1340, 269)
+title = "Maestro Ferrugem"
+level_id = "rust_maestro"
+
+[node name="DoorCounterweight" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(858, 270)
+title = "Seu Contrapeso"
+level_id = "counterweight"
+
+[node name="DoorScenery" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(819, 546)
+title = "Mudança de Cenário"
+level_id = "scenery_shift"
+landmark = "station"
+
+[node name="DoorTheater" type="Area3D" parent="."]
+script = ExtResource("2_door")
+painted_front = Vector2(1376, 710)
+title = "O Palco Insaciável"
+level_id = "hungry_stage"
+landmark = "big_top"
+
+[node name="PlayerSpawner" type="Node3D" parent="."]
+script = ExtResource("3_spawner")
+characters = Array[PackedScene]([ExtResource("4_clown"), ExtResource("5_acrobat")])
+facings = Array[int]([1, 1])
+armed = false
+player_scene = ExtResource("6_walker")
+
+[node name="SpawnClown" type="Marker3D" parent="PlayerSpawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2, 0.4, 8.2)
+
+[node name="SpawnAcrobat" type="Marker3D" parent="PlayerSpawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.2, 0.4, 8.2)
+
+[node name="TicketCheat" type="Node" parent="."]
+script = ExtResource("98_cheat")
+
+[node name="PlaneObstacle" type="StaticBody3D" parent="."]
+script = ExtResource("13_obstacle")
+painted_footprint = Rect2(240, 617, 158, 74)

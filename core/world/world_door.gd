@@ -197,6 +197,9 @@ func _update_status(near: bool) -> void:
 		text = "Plateia: %s" % FightGrade.verdict(_best_grade())
 		kind = "grade"
 		color = Color("ffd25a")
+	elif near and not is_open():
+		text = title + " · Em breve"
+		kind = "closed"
 	elif near:
 		text = "%s: %s" % [_shoot_key_name(), enter_label.to_lower()]
 		kind = "enter"

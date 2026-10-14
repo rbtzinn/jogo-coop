@@ -1,0 +1,194 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/armor_1.png" id="1_0wf0y"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/armor_2.png" id="2_l0oh3"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/armor_3.png" id="3_ssn2i"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/armor_4.png" id="4_j2eev"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/armor_attack_1.png" id="5_jtfyl"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/armor_attack_2.png" id="6_6sax4"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/armor_attack_3.png" id="7_top0s"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/armor_attack_4.png" id="8_3483a"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/cloth_1.png" id="9_0m3jo"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/cloth_2.png" id="10_mxque"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/cloth_3.png" id="11_yrv6r"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/cloth_4.png" id="12_rn270"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/defeat_1.png" id="13_c0252"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/defeat_2.png" id="14_8ist6"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/defeat_3.png" id="15_1tur0"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/defeat_4.png" id="16_bvlh2"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/hurt_1.png" id="17_2eyf4"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/hurt_2.png" id="18_4x2p6"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/hurt_3.png" id="19_5xmik"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/hurt_4.png" id="20_sahxt"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/idle_1.png" id="21_jmr60"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/idle_2.png" id="22_byqnm"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/idle_3.png" id="23_rvjde"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/idle_4.png" id="24_8bfcg"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/needles_1.png" id="25_dir6y"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/needles_2.png" id="26_5bh8y"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/needles_3.png" id="27_bwcm8"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/needles_4.png" id="28_dgie7"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/scissors_1.png" id="29_jgyp0"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/scissors_2.png" id="30_sj10j"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/scissors_3.png" id="31_5kr5k"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/scissors_4.png" id="32_4c56x"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/tape_1.png" id="33_rhv8j"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/tape_2.png" id="34_s7dnp"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/tape_3.png" id="35_2l6gd"]
+[ext_resource type="Texture2D" path="res://bosses/madame_carretel/art/tape_4.png" id="36_i0bgx"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 4.0,
+"texture": ExtResource("1_0wf0y")
+}, {
+"duration": 2.0,
+"texture": ExtResource("2_l0oh3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_ssn2i")
+}, {
+"duration": 3.0,
+"texture": ExtResource("4_j2eev")
+}],
+"loop": 0,
+"name": &"armor",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 4.0,
+"texture": ExtResource("5_jtfyl")
+}, {
+"duration": 2.0,
+"texture": ExtResource("6_6sax4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_top0s")
+}, {
+"duration": 3.0,
+"texture": ExtResource("8_3483a")
+}],
+"loop": 0,
+"name": &"armor_attack",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 4.0,
+"texture": ExtResource("9_0m3jo")
+}, {
+"duration": 2.0,
+"texture": ExtResource("10_mxque")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_yrv6r")
+}, {
+"duration": 3.0,
+"texture": ExtResource("12_rn270")
+}],
+"loop": 0,
+"name": &"cloth",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 4.0,
+"texture": ExtResource("13_c0252")
+}, {
+"duration": 2.0,
+"texture": ExtResource("14_8ist6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_1tur0")
+}, {
+"duration": 3.0,
+"texture": ExtResource("16_bvlh2")
+}],
+"loop": 0,
+"name": &"defeat",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 4.0,
+"texture": ExtResource("17_2eyf4")
+}, {
+"duration": 2.0,
+"texture": ExtResource("18_4x2p6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_5xmik")
+}, {
+"duration": 3.0,
+"texture": ExtResource("20_sahxt")
+}],
+"loop": 0,
+"name": &"hurt",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 2.0,
+"texture": ExtResource("21_jmr60")
+}, {
+"duration": 2.0,
+"texture": ExtResource("22_byqnm")
+}, {
+"duration": 0.5,
+"texture": ExtResource("23_rvjde")
+}, {
+"duration": 2.0,
+"texture": ExtResource("24_8bfcg")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 4.0,
+"texture": ExtResource("25_dir6y")
+}, {
+"duration": 2.0,
+"texture": ExtResource("26_5bh8y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_bwcm8")
+}, {
+"duration": 3.0,
+"texture": ExtResource("28_dgie7")
+}],
+"loop": 0,
+"name": &"needles",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 4.0,
+"texture": ExtResource("29_jgyp0")
+}, {
+"duration": 2.0,
+"texture": ExtResource("30_sj10j")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_5kr5k")
+}, {
+"duration": 3.0,
+"texture": ExtResource("32_4c56x")
+}],
+"loop": 0,
+"name": &"scissors",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 4.0,
+"texture": ExtResource("33_rhv8j")
+}, {
+"duration": 2.0,
+"texture": ExtResource("34_s7dnp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_2l6gd")
+}, {
+"duration": 3.0,
+"texture": ExtResource("36_i0bgx")
+}],
+"loop": 0,
+"name": &"tape",
+"speed": 8.0
+}]

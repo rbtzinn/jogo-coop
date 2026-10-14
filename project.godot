@@ -12,10 +12,10 @@ config_version=5
 
 config/name="Respeitável Público"
 run/main_scene="res://core/ui/boot_screen.tscn"
+config/quit_on_go_back=false
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://core/ui/art/icon/icon.png"
 config/windows_native_icon="res://core/ui/art/icon/icon.ico"
-config/quit_on_go_back=false
 
 [autoload]
 
@@ -36,12 +36,6 @@ window/size/viewport_height=1080
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
-window/handheld/orientation=0
-window/energy_saving/keep_screen_on=true
-
-[input_devices]
-
-pointing/emulate_mouse_from_touch=true
 
 [input]
 
@@ -135,8 +129,7 @@ common/physics_interpolation=true
 
 [rendering]
 
-textures/vram_compression/import_etc2_astc=true
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
 limits/opengl/max_lights_per_object=16
-
