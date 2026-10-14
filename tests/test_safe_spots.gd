@@ -151,7 +151,9 @@ func _hold(scene: Node, players: Array[Player], pair: Array, seconds: float) -> 
 			if not is_instance_valid(player):
 				continue
 			var spot: Dictionary = pair[index]
-			player.global_position.x = spot.x
+			# Atrás de um chefão de canto há parede invisível: o jogador fica colado nela, o canto que alcança.
+			var back_wall := scene.get_node("Fight").boss.get_node_or_null("BackWall") as BossBackWall
+			player.global_position.x = back_wall.clamp_x(spot.x) if back_wall != null else spot.x
 			player.velocity.x = 0.0
 			if spot.has("body"):
 				# Em cima de plataforma (que pode se mexer): acompanha o topo dela.

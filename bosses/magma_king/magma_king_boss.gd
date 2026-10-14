@@ -18,6 +18,11 @@ const DRIPS := 7
 @onready var heavy_crown: Node = $Attacks/HeavyCrown
 
 
+## O trono fica no canto direito: ninguém passa para trás do rei.
+func corner_bodies() -> Array[Node2D]:
+	return [king]
+
+
 func _init() -> void:
 	stage_hazard = &"rock"
 	max_health = 1350

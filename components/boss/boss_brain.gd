@@ -67,6 +67,11 @@ func _ready() -> void:
 	hazard.name = "StageHazard"
 	hazard.kind = stage_hazard
 	add_child(hazard)
+	# Chefão que fica num canto: parede invisível atrás dele (ver BossBackWall).
+	if not corner_bodies().is_empty():
+		var back_wall := BossBackWall.new()
+		back_wall.name = "BackWall"
+		add_child(back_wall)
 
 
 func _physics_process(delta: float) -> void:
@@ -82,6 +87,12 @@ func _physics_process(delta: float) -> void:
 	_wait -= delta
 	if _wait <= 0.0:
 		_choose_attack()
+
+
+## Corpos do chefão que ficam encostados num canto da arena; atrás deles nasce uma parede invisível só para
+## jogadores (BossBackWall). Vazio: nenhuma parede.
+func corner_bodies() -> Array[Node2D]:
+	return []
 
 
 ## Quem decide os ataques, a vida e a vitória: o host, ou este PC quando é jogo sozinho.

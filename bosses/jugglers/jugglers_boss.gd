@@ -62,6 +62,11 @@ var _start_dizzy := {"Tico": false, "Teco": false}
 @onready var unicycle: Unicycle = $Unicycle
 
 
+## Os irmãos param perto das paredes (HOME_LEFT/HOME_RIGHT): ninguém passa para trás deles.
+func corner_bodies() -> Array[Node2D]:
+	return [tico, teco, unicycle]
+
+
 func _init() -> void:
 	phase_shares = [0.4, 0.35, 0.25]
 	phase_titles = ["Troca-Troca", "Totem!", "Monociclo Gigante!"]

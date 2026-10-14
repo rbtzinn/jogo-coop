@@ -31,6 +31,11 @@ var _mask_anim: FrameAnimation
 @onready var actor: PaintedBossActor = $Actor
 
 
+## Ele fica num lado da arena e atravessa para o outro: a parede vai atrás dele.
+func corner_bodies() -> Array[Node2D]:
+	return [actor]
+
+
 func _init() -> void:
 	stage_hazard = &"rock"
 	max_health = 1650
