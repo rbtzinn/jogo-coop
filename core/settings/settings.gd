@@ -48,6 +48,8 @@ var show_ping := true
 ## Último IP digitado em "Entrar na partida".
 var last_join_address := "127.0.0.1"
 
+## Aplicando o modo de tela agora (as mudanças de tamanho da janela vêm daqui, não de fora).
+var _applying := false
 ## action -> Array de SLOT_COUNT eventos (ou null).
 var _bindings := {}
 var _default_bindings := {}
@@ -64,6 +66,8 @@ func _ready() -> void:
 	_load()
 	_apply_bindings()
 	apply_video()
+	if not OS.has_feature("mobile"):
+		get_window().size_changed.connect(_sync_from_window)
 
 
 # --- Controles -------------------------------------------------------------
@@ -155,18 +159,44 @@ func apply_video() -> void:
 		Engine.max_fps = FPS_LIMITS[fps_limit_index]
 		return
 	var window := get_window()
+	DisplayServer.window_set_vsync_mode(
+			DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED)
+	Engine.max_fps = FPS_LIMITS[fps_limit_index]
+	_applying = true
 	match window_mode:
 		WindowMode.WINDOWED:
+			var was_fullscreen := window.mode != Window.MODE_WINDOWED
 			window.mode = Window.MODE_WINDOWED
+			# Saindo da tela cheia, o Windows leva um ou dois quadros para trocar de modo e ignora o tamanho
+			# pedido antes disso: a janela ficava do tamanho da tela com o menu dizendo "Janela".
+			if was_fullscreen and is_inside_tree():
+				await get_tree().process_frame
+				await get_tree().process_frame
 			window.size = WINDOW_SIZES[window_size_index]
 			window.move_to_center()
 		WindowMode.BORDERLESS:
 			window.mode = Window.MODE_FULLSCREEN
 		WindowMode.FULLSCREEN:
 			window.mode = Window.MODE_EXCLUSIVE_FULLSCREEN
-	DisplayServer.window_set_vsync_mode(
-			DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED)
-	Engine.max_fps = FPS_LIMITS[fps_limit_index]
+	_applying = false
+
+
+## A janela mudou por fora (Windows, atalho do sistema): o menu passa a mostrar o modo de verdade e salva.
+func _sync_from_window() -> void:
+	if _applying:
+		return
+	var actual := window_mode
+	match get_window().mode:
+		Window.MODE_FULLSCREEN:
+			actual = WindowMode.BORDERLESS
+		Window.MODE_EXCLUSIVE_FULLSCREEN:
+			actual = WindowMode.FULLSCREEN
+		Window.MODE_WINDOWED, Window.MODE_MAXIMIZED:
+			actual = WindowMode.WINDOWED
+	if actual != window_mode:
+		window_mode = actual
+		_save()
+		changed.emit()
 
 
 # --- Arquivo ---------------------------------------------------------------

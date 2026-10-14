@@ -8,6 +8,8 @@ var _waiting_action: StringName = &""
 var _waiting_slot := -1
 var _binding_buttons := {}  # "ação:slot" -> Button
 var _hint: Label
+var _mode_option: OptionButton
+var _size_option: OptionButton
 ## Aviso de ação essencial sem tecla (só avisa; nunca troca as teclas do jogador).
 var _missing: Label
 ## Ações sem as quais não dá para jogar.
@@ -40,6 +42,7 @@ func _ready() -> void:
 	layout.add_child(back)
 
 	Settings.changed.connect(_refresh_bindings)
+	Settings.changed.connect(_refresh_video)
 
 
 func open() -> void:
@@ -218,9 +221,10 @@ func _build_video_tab() -> Control:
 
 	_add_option(grid, "Qualidade gráfica", Settings.QUALITY_NAMES, Settings.quality, &"quality")
 	if not OS.has_feature("mobile"):
-		_add_option(grid, "Modo de tela", Settings.WINDOW_MODE_NAMES, Settings.window_mode, &"window_mode")
+		_mode_option = _add_option(grid, "Modo de tela", Settings.WINDOW_MODE_NAMES, Settings.window_mode, &"window_mode")
 		var sizes: Array = Settings.WINDOW_SIZES.map(func(s: Vector2i) -> String: return "%d × %d" % [s.x, s.y])
-		_add_option(grid, "Tamanho da janela", sizes, Settings.window_size_index, &"window_size_index")
+		_size_option = _add_option(grid, "Tamanho da janela", sizes, Settings.window_size_index, &"window_size_index")
+		_refresh_video()
 	var limits: Array = Settings.FPS_LIMITS.map(func(f: int) -> String: return "Sem limite" if f == 0 else str(f))
 	_add_option(grid, "Limite de FPS", limits, Settings.fps_limit_index, &"fps_limit_index")
 	_add_toggle(grid, "VSync (evita imagem rasgada)", Settings.vsync, &"vsync")
@@ -262,7 +266,18 @@ func _build_network_tab() -> Control:
 	return grid
 
 
-func _add_option(grid: GridContainer, text: String, items: Array, selected: int, property: StringName) -> void:
+## Modo de tela e tamanho sempre iguais ao que está valendo; o tamanho só vale (e só dá para mudar) em Janela.
+func _refresh_video() -> void:
+	if _mode_option == null:
+		return
+	_mode_option.select(Settings.window_mode)
+	_size_option.select(Settings.window_size_index)
+	var windowed := Settings.window_mode == Settings.WindowMode.WINDOWED
+	_size_option.disabled = not windowed
+	_size_option.tooltip_text = "" if windowed else "Só no modo Janela"
+
+
+func _add_option(grid: GridContainer, text: String, items: Array, selected: int, property: StringName) -> OptionButton:
 	var label := Label.new()
 	label.text = text
 	grid.add_child(label)
@@ -273,6 +288,7 @@ func _add_option(grid: GridContainer, text: String, items: Array, selected: int,
 	option.select(selected)
 	option.item_selected.connect(func(index: int) -> void: Settings.set_option(property, index))
 	grid.add_child(option)
+	return option
 
 
 func _add_toggle(grid: GridContainer, text: String, value: bool, property: StringName) -> void:
