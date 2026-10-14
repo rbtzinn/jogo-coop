@@ -15,6 +15,7 @@ const FIGHTS := [
 	"res://bosses/phoenix/phoenix_fight.tscn",
 	"res://bosses/anvil_master/anvil_master_fight.tscn",
 	"res://bosses/volcano_heart/volcano_heart_fight.tscn",
+	"res://bosses/madame_carretel/madame_carretel_fight.tscn",
 ]
 ## Distâncias da parede (cada uma vale para a esquerda e para a direita) até o meio da arena.
 const FLOOR_STEPS := [20.0, 160.0, 320.0, 480.0, 640.0, 800.0, 940.0]
