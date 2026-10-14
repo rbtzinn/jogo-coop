@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/throw_1.png-50680d1fe7fdcedf59d4e8b11138e05a.
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.9
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1

@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/confetti_fly_1.png-5b4ebbfcb93b891934965a6b00
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.9
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
