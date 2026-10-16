@@ -29,6 +29,11 @@ const SLOT_COUNT := 2
 ## todas as atrações abertas, ingressos de sobra, muita vida nas lutas e o especial sempre cheio.
 const TEST_PATH := "user://test_save.json"
 const TEST_TICKETS := 999
+## Gravação segura (16/10/2026): o save novo é escrito inteiro em "<save>.tmp" e só depois troca de nome com o
+## save; o anterior fica guardado em "<save>.bak". Antes o arquivo era apagado e reescrito no lugar, e fechar o
+## jogo nesse instante (queda de luz, Android encerrando o app) deixava o save vazio, que virava jogo novo.
+const TMP_SUFFIX := ".tmp"
+const BACKUP_SUFFIX := ".bak"
 
 ## Os testes trocam o caminho para não mexer no save de verdade.
 var path := "user://save.json"
@@ -51,24 +56,16 @@ func _ready() -> void:
 func load_game() -> void:
 	_borrowed = false
 	data = _new_game()
-	if not FileAccess.file_exists(path):
-		return
-	var file := FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		return
-	var loaded: Variant = JSON.parse_string(file.get_as_text())
-	if loaded is Dictionary and loaded.get("version", 0) == VERSION:
+	var loaded := _read_save(path)
+	if not loaded.is_empty():
 		_merge(data, loaded)
 
 
 func save_game() -> void:
 	if _borrowed:
 		return
-	var file := FileAccess.open(path, FileAccess.WRITE)
-	if file == null:
+	if not _write_save(path, JSON.stringify(data, "\t")):
 		push_warning("Não consegui salvar em %s" % path)
-		return
-	file.store_string(JSON.stringify(data, "\t"))
 
 
 ## Arquivo de um save (`mode` = "coop" ou "solo", `slot` = 0 ou 1).
@@ -79,11 +76,8 @@ func slot_path(mode: String, slot: int) -> String:
 ## Resumo de um save para o menu: {"exists", "done" (atrações concluídas)}.
 func slot_info(mode: String, slot: int) -> Dictionary:
 	var info := {"exists": false, "done": 0}
-	var file := FileAccess.open(slot_path(mode, slot), FileAccess.READ)
-	if file == null:
-		return info
-	var loaded: Variant = JSON.parse_string(file.get_as_text())
-	if not loaded is Dictionary or loaded.get("version", 0) != VERSION:
+	var loaded := _read_save(slot_path(mode, slot))
+	if loaded.is_empty():
 		return info
 	info.exists = true
 	for entry: Variant in loaded.get("bosses", {}).values():
@@ -226,6 +220,49 @@ static func _new_game() -> Dictionary:
 		}
 	# solo_character: com quem se joga sozinho (0 = palhaço, 1 = acrobata; Tab no mapa troca).
 	return {"version": VERSION, "area": 1, "bosses": {}, "found_tickets": [], "players": players, "solo_character": 0}
+
+
+## Lê um save: o próprio arquivo; se ele não abrir, o .tmp de uma gravação interrompida (no Windows, a troca de
+## nome apaga o save um instante antes de pôr o novo); e, se o arquivo existe mas estragou (ex.: faltou luz logo
+## depois de gravar), a cópia anterior. Save apagado continua apagado. Vazio se nada servir.
+static func _read_save(save_path: String) -> Dictionary:
+	var loaded := _parse_save(save_path)
+	if loaded.is_empty():
+		loaded = _parse_save(save_path + TMP_SUFFIX)
+	if loaded.is_empty() and FileAccess.file_exists(save_path):
+		loaded = _parse_save(save_path + BACKUP_SUFFIX)
+	return loaded
+
+
+## Um arquivo de save inteiro e desta versão, ou vazio.
+static func _parse_save(file_path: String) -> Dictionary:
+	if not FileAccess.file_exists(file_path):
+		return {}
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(file_path)) != OK:
+		return {}
+	var loaded: Variant = json.data
+	if loaded is Dictionary and loaded.get("version", 0) == VERSION:
+		return loaded
+	return {}
+
+
+## Grava sem nunca deixar o save pela metade: escreve tudo no .tmp, guarda o save atual (se ele abre) no .bak e
+## só então troca o .tmp pelo save. Retorna se gravou.
+static func _write_save(save_path: String, text: String) -> bool:
+	var tmp_path := save_path + TMP_SUFFIX
+	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
+	if file == null:
+		return false
+	file.store_string(text)
+	file.flush()
+	var written := file.get_error() == OK
+	file.close()
+	if not written:
+		return false
+	if not _parse_save(save_path).is_empty():
+		DirAccess.copy_absolute(save_path, save_path + BACKUP_SUFFIX)
+	return DirAccess.rename_absolute(tmp_path, save_path) == OK
 
 
 ## Copia o que veio do arquivo por cima do jogo novo (campos novos ganham o valor padrão).

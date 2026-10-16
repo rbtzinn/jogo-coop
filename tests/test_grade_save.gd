@@ -56,6 +56,49 @@ func _run() -> void:
 	check(SaveGame.is_defeated("boss_x") and not SaveGame.is_defeated("tamer"), "defeated flags")
 	check(SaveGame.data.players.clown.equipped.gun == "cork_gun", "starting equipment")
 
+	# --- Gravação segura (.tmp e .bak) ---
+	# Pasta de teste com o mesmo nome do save 1 de dupla, para testar também o resumo do menu (slot_info).
+	var old_folder := SaveGame.slot_folder
+	SaveGame.slot_folder = "user://test_safe_"
+	var safe := SaveGame.slot_path("coop", 0)
+	_remove_save_files(safe)
+	SaveGame.path = safe
+	SaveGame.reset()
+	SaveGame.data.players.clown.tickets = 7
+	SaveGame.save_game()
+	SaveGame.data.players.clown.tickets = 8
+	SaveGame.save_game()
+	check(_tickets_in(safe) == 8 and not FileAccess.file_exists(safe + SaveGame.TMP_SUFFIX), "save written, no .tmp left")
+	check(_tickets_in(safe + SaveGame.BACKUP_SUFFIX) == 7, "previous save kept in .bak")
+	# Faltou luz logo depois de gravar: o save ficou vazio, ou pela metade.
+	_write(safe, "")
+	SaveGame.load_game()
+	check(int(SaveGame.data.players.clown.tickets) == 7, "empty save recovers from .bak (%s)" % SaveGame.data.players.clown.tickets)
+	_write(safe, '{"version": 1, "players": {"clown": {"tick')
+	SaveGame.load_game()
+	check(int(SaveGame.data.players.clown.tickets) == 7, "half-written save recovers from .bak (%s)" % SaveGame.data.players.clown.tickets)
+	SaveGame.data.players.clown.tickets = 9
+	SaveGame.save_game()
+	check(_tickets_in(safe) == 9 and _tickets_in(safe + SaveGame.BACKUP_SUFFIX) == 7, "a broken save never replaces the .bak")
+	# Fechou no meio da troca de nome (no Windows o save some um instante): sobra o .tmp inteiro.
+	DirAccess.rename_absolute(safe, safe + SaveGame.TMP_SUFFIX)
+	SaveGame.load_game()
+	check(int(SaveGame.data.players.clown.tickets) == 9, "interrupted rename recovers from .tmp (%s)" % SaveGame.data.players.clown.tickets)
+	check(SaveGame.slot_info("coop", 0).exists, "menu sees the .tmp save too")
+	SaveGame.save_game()
+	# Fechou escrevendo o .tmp: ele fica pela metade e o save continua valendo.
+	_write(safe + SaveGame.TMP_SUFFIX, '{"vers')
+	SaveGame.load_game()
+	check(int(SaveGame.data.players.clown.tickets) == 9, "half-written .tmp is ignored (%s)" % SaveGame.data.players.clown.tickets)
+	# Save apagado continua apagado: a cópia anterior não volta sozinha.
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(safe))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(safe + SaveGame.TMP_SUFFIX))
+	SaveGame.load_game()
+	check(int(SaveGame.data.players.clown.tickets) == 0, "deleted save stays deleted (%s)" % SaveGame.data.players.clown.tickets)
+	_remove_save_files(safe)
+	SaveGame.slot_folder = old_folder
+	SaveGame.path = "user://test_save.json"
+
 	# --- Vitória de verdade ---
 	SaveGame.reset()
 	var scene: Node = load("res://bosses/tamer/tamer_fight.tscn").instantiate()
@@ -83,7 +126,24 @@ func _run() -> void:
 		check(screen.result.get("tickets", 0) == 4, "first win with A shows 3 + 1 tickets")
 		check(screen.result.get("parries", 0) == 2 and screen.result.get("stars_used", 0) == 3, "screen counts parries and stars")
 	check(SaveGame.is_defeated("tamer"), "tamer saved as defeated")
-	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://test_save.json"))
+	_remove_save_files("user://test_save.json")
 
 	print("FAILURES: ", failures)
 	get_tree().quit(failures)
+
+
+func _write(file_path: String, text: String) -> void:
+	var file := FileAccess.open(file_path, FileAccess.WRITE)
+	file.store_string(text)
+	file.close()
+
+
+## Ingressos do palhaço gravados num arquivo (-1 se o arquivo não abrir).
+func _tickets_in(file_path: String) -> int:
+	var loaded: Variant = JSON.parse_string(FileAccess.get_file_as_string(file_path))
+	return int(loaded.players.clown.tickets) if loaded is Dictionary else -1
+
+
+func _remove_save_files(save_path: String) -> void:
+	for suffix in ["", SaveGame.TMP_SUFFIX, SaveGame.BACKUP_SUFFIX]:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path + suffix))
