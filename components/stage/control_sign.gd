@@ -38,7 +38,7 @@ func _draw() -> void:
 	for i in _lines.size():
 		var text := _fill(_lines[i], joypad)
 		draw_string(UiTheme.BODY_FONT, Vector2(26, 92 + i * 38), text, HORIZONTAL_ALIGNMENT_LEFT,
-				SIZE.x - 52, 26, UiTheme.CREAM)
+				SIZE.x - 52, UiTheme.body_size(26), UiTheme.CREAM)
 
 
 ## Troca "{ação}" pelo nome da tecla (ou do botão do controle) configurada.

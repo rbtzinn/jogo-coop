@@ -60,7 +60,7 @@ func _ready() -> void:
 	var subtitle := Label.new()
 	subtitle.text = "Um circo assombrado para dois"
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	subtitle.add_theme_font_size_override("font_size", 28)
+	subtitle.add_theme_font_size_override("font_size", UiTheme.body_size(28))
 	subtitle.add_theme_color_override("font_color", UiTheme.CREAM)
 	subtitle.add_theme_color_override("font_outline_color", UiTheme.INK)
 	subtitle.add_theme_constant_override("outline_size", 2)
@@ -94,7 +94,7 @@ func _ready() -> void:
 	_status = Label.new()
 	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_status.add_theme_font_size_override("font_size", 23)
+	_status.add_theme_font_size_override("font_size", UiTheme.body_size(23))
 	_status.add_theme_color_override("font_color", UiTheme.GOLD)
 	_status.add_theme_color_override("font_outline_color", UiTheme.INK)
 	_status.add_theme_constant_override("outline_size", 6)
@@ -150,19 +150,15 @@ func _build_background() -> void:
 	var shows_version := not GameUpdates.platform().is_empty()
 	footer.text = "Versão " + OnlineConfig.VERSION_NAME if shows_version else "PALHAÇO  &  ACROBATA                 UMA NOITE. DOIS ARTISTAS."
 	footer.position = Vector2(1070, 1054 if shows_version else 997)
-	footer.add_theme_font_size_override("font_size", 20)
+	footer.add_theme_font_size_override("font_size", UiTheme.body_size(20))
 	footer.add_theme_color_override("font_color", UiTheme.GOLD)
 	add_child(footer)
-	# Retratos mantêm o desenho e a identidade dos protagonistas, sem simular combate no menu.
-	for entry in [["clown", Vector2(1150, 570), Vector2(260, 400)], ["acrobat", Vector2(1480, 555), Vector2(240, 420)]]:
-		var portrait := TextureRect.new()
-		portrait.texture = load("res://core/player/characters/%s/idle/idle_1.png" % entry[0])
-		portrait.position = entry[1]
-		portrait.size = entry[2]
-		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(portrait)
+	# Palhaço e acrobata de corpo inteiro (folhas do GPT), os dois virados para o cartaz à esquerda
+	# (escolha do usuário em 16/10/2026).
+	for entry in [["clown", Vector2(1290, 975)], ["acrobat", Vector2(1590, 975)]]:
+		var cast := MenuCast.new(entry[0], true, 470.0)
+		add_child(cast)
+		cast.place_feet(entry[1])
 
 
 func _build_join_panel(parent: Control) -> void:

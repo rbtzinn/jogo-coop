@@ -164,7 +164,7 @@ func _show_menu() -> void:
 			target = button
 	_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_note.add_theme_color_override("font_color", UiTheme.INK_SOFT)
-	_note.add_theme_font_size_override("font_size", 24)
+	_note.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 	column.add_child(_note)
 	(target if target != null else row.get_child(0) as Button).grab_focus()
 

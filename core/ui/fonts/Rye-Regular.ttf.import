@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://uy8byfle285c"
-path="res://.godot/imported/Limelight-Regular.ttf-f96ca7d929e26e5c6e6bd5e5eab0922e.fontdata"
+uid="uid://cbj4df8efeu24"
+path="res://.godot/imported/Rye-Regular.ttf-03706ff3383f020cb387f8be23b32c34.fontdata"
 
 [deps]
 
-source_file="res://core/ui/fonts/Limelight-Regular.ttf"
-dest_files=["res://.godot/imported/Limelight-Regular.ttf-f96ca7d929e26e5c6e6bd5e5eab0922e.fontdata"]
+source_file="res://core/ui/fonts/Rye-Regular.ttf"
+dest_files=["res://.godot/imported/Rye-Regular.ttf-03706ff3383f020cb387f8be23b32c34.fontdata"]
 
 [params]
 

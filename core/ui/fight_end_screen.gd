@@ -69,7 +69,7 @@ func _ready() -> void:
 	subtitle.text = "A plateia aplaude de pé!" if victory else "A plateia ainda espera um grande número."
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	subtitle.add_theme_color_override("font_color", UiTheme.CREAM)
-	subtitle.add_theme_font_size_override("font_size", 30)
+	subtitle.add_theme_font_size_override("font_size", UiTheme.body_size(30))
 	layout.add_child(subtitle)
 	if victory and result.get("level", false):
 		layout.add_child(_build_level_summary(result))
@@ -166,7 +166,7 @@ func _build_grade(data: Dictionary) -> Control:
 		var label := Label.new()
 		label.text = text
 		label.add_theme_color_override("font_color", UiTheme.GOLD if text.begins_with("+") else UiTheme.CREAM)
-		label.add_theme_font_size_override("font_size", 28)
+		label.add_theme_font_size_override("font_size", UiTheme.body_size(28))
 		stats.add_child(label)
 	return row
 
@@ -188,7 +188,7 @@ func _build_level_summary(data: Dictionary) -> Control:
 		label.text = text
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.add_theme_color_override("font_color", UiTheme.GOLD if text.begins_with("+") else UiTheme.CREAM)
-		label.add_theme_font_size_override("font_size", 30)
+		label.add_theme_font_size_override("font_size", UiTheme.body_size(30))
 		stats.add_child(label)
 	return stats
 

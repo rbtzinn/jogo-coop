@@ -155,8 +155,8 @@ func _draw_sub_bars(panel: Rect2, bars: Array) -> void:
 		var label: String = entry[0]
 		if entry[2] and fmod(_time, 0.5) < 0.35:
 			label += "  (tonto!)"
-		draw_string_outline(font, origin + Vector2(0, 22), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, 6, UiTheme.INK)
-		draw_string(font, origin + Vector2(0, 22), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 22,
+		draw_string_outline(font, origin + Vector2(0, 22), label, HORIZONTAL_ALIGNMENT_LEFT, -1, UiTheme.body_size(22), 6, UiTheme.INK)
+		draw_string(font, origin + Vector2(0, 22), label, HORIZONTAL_ALIGNMENT_LEFT, -1, UiTheme.body_size(22),
 				UiTheme.GOLD if entry[2] else UiTheme.CREAM)
 		var bar := Rect2(origin + Vector2(0, 30), Vector2(width, 12))
 		draw_rect(bar.grow(3), UiTheme.INK)
@@ -214,7 +214,7 @@ func _draw_ticket(player: Player, origin: Vector2) -> void:
 	# Vida grande (modo de teste): um coração e o número, em vez de uma fileira sem fim.
 	if health.maximum > 6:
 		_draw_heart(hearts_origin, HEART_R, HEART_RED)
-		draw_string(UiTheme.BODY_FONT, hearts_origin + Vector2(28, 11), "x %d" % health.current, HORIZONTAL_ALIGNMENT_LEFT, -1, 32, TICKET_RED)
+		draw_string(UiTheme.BODY_FONT, hearts_origin + Vector2(28, 11), "x %d" % health.current, HORIZONTAL_ALIGNMENT_LEFT, -1, UiTheme.body_size(32), TICKET_RED)
 		return
 	for h in health.maximum:
 		var beat := 1.0 + (sin(_time * 8.0) * 0.08 if health.current == 1 and h == 0 else 0.0)
