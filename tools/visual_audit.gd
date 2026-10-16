@@ -46,6 +46,9 @@ func _run() -> void:
 			"boot_half":
 				scene._requested = false
 				scene._progress.value = 52.0
+			"boot_title":
+				scene._requested = false
+				scene._show_title(load(Levels.MENU))
 			"pause": PauseMenu.open(false)
 			"victory", "defeat":
 				var end: CanvasLayer = load("res://core/ui/fight_end_screen.gd").new()

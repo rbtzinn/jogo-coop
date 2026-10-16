@@ -1,10 +1,16 @@
 shader_type canvas_item;
 // Palco da tela de carregamento: lâmpadas da moldura e do letreiro correndo em sequência de três, varais
 // piscando soltos (mapa de tools/blender/loading_screen.py) e névoa passando devagar na rua do circo.
+// Ao terminar de carregar, o remendo (title_patch) apaga o "Carregando..." pintado e a abertura vira a tela de
+// título; a névoa continua passando por cima do remendo.
 uniform sampler2D bulbs : filter_linear;
 uniform sampler2D mist_noise : repeat_enable, filter_linear;
 uniform float chase_speed = 0.9;
 uniform vec3 glow_color : source_color = vec3(1.0, 0.78, 0.42);
+uniform sampler2D title_patch : filter_linear;
+// Retângulo do remendo em UV da tela: x, y, largura, altura.
+uniform vec4 patch_rect = vec4(0.0, 0.0, 0.0, 0.0);
+uniform float patch_amount : hint_range(0.0, 1.0) = 0.0;
 
 float light_level(float code) {
 	if (code < 0.5) {
@@ -23,6 +29,13 @@ void fragment() {
 	vec4 base = texture(TEXTURE, UV);
 	vec3 map = texture(bulbs, UV).rgb;
 	vec3 color = base.rgb;
+	if (patch_amount > 0.0) {
+		vec2 local = (UV - patch_rect.xy) / patch_rect.zw;
+		if (local.x >= 0.0 && local.y >= 0.0 && local.x <= 1.0 && local.y <= 1.0) {
+			vec4 patch_color = texture(title_patch, local);
+			color = mix(color, patch_color.rgb, patch_color.a * patch_amount);
+		}
+	}
 	if (map.g > 0.003) {
 		float level = light_level(map.b);
 		float core = map.r;

@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://uy8byfle285c"
-path="res://.godot/imported/Limelight-Regular.ttf-f96ca7d929e26e5c6e6bd5e5eab0922e.fontdata"
+uid="uid://n5dxn45lg1bf"
+path="res://.godot/imported/SpecialElite-Regular.ttf-89cf9750d87972c529d9ac31280a85ab.fontdata"
 
 [deps]
 
-source_file="res://core/ui/fonts/Limelight-Regular.ttf"
-dest_files=["res://.godot/imported/Limelight-Regular.ttf-f96ca7d929e26e5c6e6bd5e5eab0922e.fontdata"]
+source_file="res://core/ui/fonts/SpecialElite-Regular.ttf"
+dest_files=["res://.godot/imported/SpecialElite-Regular.ttf-89cf9750d87972c529d9ac31280a85ab.fontdata"]
 
 [params]
 

@@ -3,8 +3,9 @@ class_name UiTheme
 ## Os painéis (PosterPanel) são cartazes com lâmpadas de letreiro; os botões são ingressos de papel que
 ## ficam vermelhos com borda dourada quando escolhidos. Refeito em 04/10/2026 (o usuário achou os menus
 ## feios): antes eram caixas roxas escuras.
+## Títulos em Rye (letreiro de circo/faroeste) desde 16/10/2026, escolha do usuário nas maquetes do menu; antes Limelight.
 
-const TITLE_FONT := preload("res://core/ui/fonts/Limelight-Regular.ttf")
+const TITLE_FONT := preload("res://core/ui/fonts/Rye-Regular.ttf")
 const BODY_FONT := preload("res://core/ui/fonts/Oswald.ttf")
 
 const INK := Color("101923")
