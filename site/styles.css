@@ -267,7 +267,7 @@ kbd.is-down { transform: translateY(4px); box-shadow: 0 0 0 2px var(--ink), 0 1p
 .panel { min-width:0; }
 .download { padding:95px 0; background:#521e28; border-block:1px solid #d3aa6540; }
 .download .kicker { color:var(--gold); }
-.tickets { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px; margin-top:38px; }
+.tickets { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; margin-top:38px; }
 .ticket { padding:36px; background:#f3e5c6 url("assets/art/poster-v2.webp") center/100% 100%; color:var(--ink); position:relative; box-shadow:0 15px 30px #0002; }
 .ticket header { border-bottom:1px dashed #5d392950; padding:0 0 18px; margin-bottom:20px; }
 .ticket h3 { font:34px var(--display); color:var(--red-deep); }
@@ -295,6 +295,7 @@ details p { margin-top:14px; color:var(--cream-dim); font-size:16px; }
   .hero-content {grid-template-columns:1.15fr 1fr;} .ctas {gap:10px;} .ctas .btn {padding-inline:17px;font-size:13px;}
   .acts-track {grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;}
   .act {padding:30px 28px 36px;} .act-body h3 {font-size:27px;}
+  .tickets {grid-template-columns:1fr;max-width:640px;margin-inline:auto;}
 }
 @media (max-width:900px) {
   .nav {width:calc(100% - 24px);top:8px;padding:8px 10px;gap:8px;}
@@ -339,6 +340,11 @@ details p { margin-top:14px; color:var(--cream-dim); font-size:16px; }
   .no-android .ctas [data-download="windows"] {order:-1;background:var(--cream);color:var(--ink);border:1px solid var(--brass);min-height:52px;padding:14px 16px;font-size:13px;max-width:360px;box-shadow:inset 0 0 0 3px #25141a, inset 0 0 0 4px #c8a36a80,0 6px 16px #0003;}
   .no-android .ctas [data-download="android"] {order:0;background:none;color:var(--cream-dim);border:0;box-shadow:none;min-height:38px;padding:4px;font-size:11px;}
   .ctas .btn-ghost {display:none;}
+  .ctas [data-play] {width:100%;background:none;color:var(--cream-dim);border:0;box-shadow:none;min-height:38px;padding:4px;font-size:11px;}
+  .ctas [data-play] svg {width:14px;height:14px;}
+  .is-ios .ctas [data-play] {order:-2;background:var(--cream);color:var(--ink);border:1px solid var(--brass);min-height:52px;padding:14px 16px;font-size:13px;max-width:360px;box-shadow:inset 0 0 0 3px #25141a, inset 0 0 0 4px #c8a36a80,0 6px 16px #0003;}
+  .is-ios .ctas [data-play] svg {width:20px;height:20px;}
+  .is-ios .ctas [data-download="android"] {order:0;background:none;color:var(--cream-dim);border:0;box-shadow:none;min-height:38px;padding:4px;font-size:11px;}
   .free {font-size:9px;margin-top:10px;}
   .curtain {width:50%;} .valance {height:20px;}
   .playbill-strip {padding:15px 14px;gap:12px;font-size:9px;letter-spacing:.09em;}

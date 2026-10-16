@@ -2,6 +2,7 @@ name: Testes e versões
 # Testa sempre. Uma tag v<VERSION_NAME> publica a versão nos Releases do GitHub
 # (ZIP do Windows e, com a chave de assinatura configurada, APK do Android). Também dá para publicar
 # sem enviar tag: "Run workflow" com o campo da versão (ex.: v0.4); o Release cria a tag no commit testado.
+# A versão de navegador (iPhone e qualquer celular/PC) sai junto no GitHub Pages, separada do site da Vercel.
 on:
   push:
     branches: [main]
@@ -136,7 +137,7 @@ jobs:
           unzip -q engine.zip
           chmod +x Godot_v4.7.2-stable_linux.x86_64
           echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
-          unzip -q templates.tpz 'templates/android_release.apk' 'templates/windows_release_x86_64.exe' 'templates/version.txt'
+          unzip -q templates.tpz 'templates/android_release.apk' 'templates/windows_release_x86_64.exe' 'templates/web_nothreads_release.zip' 'templates/version.txt'
           mkdir -p "$HOME/.local/share/godot/export_templates/4.7.2.stable"
           cp templates/* "$HOME/.local/share/godot/export_templates/4.7.2.stable/"
           if [ "$HAS_ANDROID_KEY" = true ]; then sdkmanager --install 'platform-tools' 'build-tools;35.0.1' 'platforms;android-35'; fi
@@ -192,6 +193,15 @@ jobs:
           Godot_v4.7.2-stable_linux.x86_64 --headless --path . --export-release 'Android Preview' build/publish/RespeitavelPublico-Android.apk 2>&1 | tee build/android-export.log
           "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify --verbose build/publish/RespeitavelPublico-Android.apk
           "$ANDROID_HOME/build-tools/35.0.1/aapt" dump badging build/publish/RespeitavelPublico-Android.apk | tee build/apk-info.txt
+      - name: Exportar navegador
+        run: |
+          set -euo pipefail
+          mkdir -p build/web
+          Godot_v4.7.2-stable_linux.x86_64 --headless --path . --export-release 'Web' build/web/index.html 2>&1 | tee build/web-export.log
+          test -s build/web/index.pck && test -s build/web/index.wasm
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
       - name: Publicar no GitHub Releases
         env:
           GH_TOKEN: ${{ github.token }}
@@ -205,6 +215,20 @@ jobs:
       - name: Limpar chave
         if: always()
         run: rm -f "$RUNNER_TEMP/android-release.keystore"
+  web:
+    # Versão de navegador no GitHub Pages (Settings > Pages > Source: GitHub Actions).
+    needs: release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
   store:
     # Pacote da Microsoft Store. Sem assinatura: a Store assina ao publicar. Só roda numa versão
     # e quando as variáveis MSIX_* do repositório (dados do Partner Center) estão preenchidas.

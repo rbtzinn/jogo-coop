@@ -59,14 +59,14 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_default_bindings = _read_bindings_from_input_map()
 	_bindings = _duplicate_bindings(_default_bindings)
-	if OS.has_feature("mobile"):
+	if Device.is_touch():
 		quality = Quality.MEDIUM
 		fps_limit_index = 1
 		vsync = true
 	_load()
 	_apply_bindings()
 	apply_video()
-	if not OS.has_feature("mobile"):
+	if Device.has_window():
 		get_window().size_changed.connect(_sync_from_window)
 
 
@@ -155,7 +155,7 @@ func set_option(property: StringName, value: Variant) -> void:
 
 
 func apply_video() -> void:
-	if OS.has_feature("mobile"):
+	if not Device.has_window():
 		Engine.max_fps = FPS_LIMITS[fps_limit_index]
 		return
 	var window := get_window()

@@ -11,6 +11,13 @@ Página estática (HTML, CSS e JS puros, sem build) em português e inglês. Fic
 4. Endereço atual: https://respeitavelpublico.vercel.app/ (está no `og:image`, `og:url` e `canonical` do
    `index.html`; se mudar de domínio, trocar nos três, senão a prévia do link sai sem imagem).
 
+## Versão de navegador (16/10/2026)
+
+O jogo também roda no navegador (iPhone, iPad e qualquer celular ou PC) em https://rbtzinn.github.io/jogo-coop/.
+Fica no GitHub Pages, separado deste site, para não pesar a Vercel (o jogo exportado tem uns 100 MB).
+O CI publica a cada versão (job `web` de `.github/workflows/android-online.yml`). No iPhone (`.is-ios`, em
+`main.js`) o botão principal do topo vira "Jogar no navegador".
+
 ## Downloads
 
 Os botões usam a API de Releases para localizar os arquivos reais da versão mais recente.

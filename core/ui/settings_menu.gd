@@ -30,7 +30,7 @@ func _ready() -> void:
 	var tabs := TabContainer.new()
 	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(tabs)
-	tabs.add_child(_build_touch_tab() if OS.has_feature("mobile") else _build_controls_tab())
+	tabs.add_child(_build_touch_tab() if Device.is_touch() else _build_controls_tab())
 	tabs.add_child(_build_video_tab())
 	tabs.add_child(_build_network_tab())
 
@@ -220,7 +220,7 @@ func _build_video_tab() -> Control:
 	grid.add_theme_constant_override("v_separation", 18)
 
 	_add_option(grid, "Qualidade gráfica", Settings.QUALITY_NAMES, Settings.quality, &"quality")
-	if not OS.has_feature("mobile"):
+	if Device.has_window():
 		_mode_option = _add_option(grid, "Modo de tela", Settings.WINDOW_MODE_NAMES, Settings.window_mode, &"window_mode")
 		var sizes: Array = Settings.WINDOW_SIZES.map(func(s: Vector2i) -> String: return "%d × %d" % [s.x, s.y])
 		_size_option = _add_option(grid, "Tamanho da janela", sizes, Settings.window_size_index, &"window_size_index")

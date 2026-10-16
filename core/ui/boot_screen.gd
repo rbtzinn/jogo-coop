@@ -67,7 +67,7 @@ func _ready() -> void:
 	_status.position = Vector2(0, track[1] + track[3] + 26)
 	_status.size = Vector2(1920, 40)
 	add_child(_status)
-	_press.text = "Toque na tela" if OS.has_feature("mobile") else "Aperte qualquer botão"
+	_press.text = "Toque na tela" if Device.is_touch() else "Aperte qualquer botão"
 	_press.add_theme_font_override("font", UiTheme.TITLE_FONT)
 	_press.add_theme_font_size_override("font_size", 30)
 	_press.add_theme_color_override("font_color", UiTheme.CREAM)

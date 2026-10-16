@@ -33,7 +33,7 @@ var _viewport_size := Vector2.ZERO
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 15
-	if not OS.has_feature("mobile"):
+	if not Device.is_touch():
 		set_process(false)
 		set_process_input(false)
 		return

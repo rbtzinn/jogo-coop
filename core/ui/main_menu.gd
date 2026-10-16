@@ -44,12 +44,12 @@ func _ready() -> void:
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
 	margin.add_theme_constant_override("margin_left", 130)
 	margin.add_theme_constant_override("margin_right", 1080)
-	margin.add_theme_constant_override("margin_top", 40 if OS.has_feature("mobile") else 60)
+	margin.add_theme_constant_override("margin_top", 40 if Device.is_touch() else 60)
 	margin.add_theme_constant_override("margin_bottom", 40)
 	add_child(margin)
 
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 16 if OS.has_feature("mobile") else 22)
+	layout.add_theme_constant_override("separation", 16 if Device.is_touch() else 22)
 	margin.add_child(layout)
 
 	# Cartaz de papel velho, um pouco torto, com o nome do espetáculo e os itens só em texto; a luva aponta o
@@ -63,12 +63,12 @@ func _ready() -> void:
 	poster.resized.connect(func() -> void: poster.pivot_offset = poster.size * 0.5)
 	layout.add_child(poster)
 	var poster_layout := VBoxContainer.new()
-	poster_layout.add_theme_constant_override("separation", 4 if OS.has_feature("mobile") else 8)
+	poster_layout.add_theme_constant_override("separation", 4 if Device.is_touch() else 8)
 	poster.add_child(poster_layout)
 	var eyebrow := UiTheme.section_label("O GRANDE PICADEIRO APRESENTA", 20)
 	eyebrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	poster_layout.add_child(eyebrow)
-	var title := UiTheme.title_label("Respeitável\nPúblico", 62 if OS.has_feature("mobile") else 76)
+	var title := UiTheme.title_label("Respeitável\nPúblico", 62 if Device.is_touch() else 76)
 	title.add_theme_constant_override("line_spacing", -12)
 	poster_layout.add_child(title)
 	# Três estrelinhas vermelhas entre o nome e o resto (as fontes não têm o caractere de estrela).
@@ -91,12 +91,13 @@ func _ready() -> void:
 	var host_button := _add_button(_main_buttons, "Criar sala online" if _uses_rooms else "Hospedar partida", _show_slot_panel.bind("coop"))
 	_add_button(_main_buttons, "Entrar com código" if _uses_rooms else "Entrar na partida", _show_join_panel)
 	_add_button(_main_buttons, "Jogar sozinho", _show_slot_panel.bind("solo"))
-	if _uses_rooms and not OS.has_feature("mobile"):
+	if _uses_rooms and not Device.is_touch() and not Device.is_web():
 		_add_button(_main_buttons, "Online por IP (avançado)", _show_ip_buttons)
 	if SHOW_TEST_MODE:
 		_add_button(_main_buttons, "Testar sozinho", _on_test_pressed)
 	_add_button(_main_buttons, "Configurações", func() -> void: _settings_menu.open())
-	_add_button(_main_buttons, "Sair", func() -> void: get_tree().quit())
+	if Device.can_quit():
+		_add_button(_main_buttons, "Sair", func() -> void: get_tree().quit())
 
 	_build_join_panel(poster_layout)
 	_build_ip_buttons(poster_layout)
@@ -305,7 +306,7 @@ func _start_slot(slot: int, fresh: bool) -> void:
 func _add_button(parent: Control, text: String, callback: Callable) -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(500, 68 if OS.has_feature("mobile") else 52)
+	button.custom_minimum_size = Vector2(500, 68 if Device.is_touch() else 52)
 	# Só o texto no papel, como item de cartaz: o escolhido fica vermelho e a luva do PosterPanel aponta.
 	var flat := StyleBoxEmpty.new()
 	for state in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:

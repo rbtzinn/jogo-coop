@@ -53,7 +53,8 @@ func _ready() -> void:
 	_map_button = _add_button(layout, "Voltar ao mapa", _back_to_map)
 	_add_button(layout, "Configurações", _open_settings)
 	_add_button(layout, "Voltar ao menu", _back_to_menu)
-	_add_button(layout, "Sair do jogo", func() -> void: get_tree().quit())
+	if Device.can_quit():
+		_add_button(layout, "Sair do jogo", func() -> void: get_tree().quit())
 
 	_settings_menu = SettingsMenu.new()
 	_settings_menu.hide()

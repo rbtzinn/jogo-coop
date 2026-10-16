@@ -2,6 +2,9 @@
 (() => {
   const root = document.documentElement;
   root.classList.add("has-js");
+  // iPhone e iPad (que se diz Mac) não instalam o APK nem o ZIP: o botão principal vira "Jogar no navegador".
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  root.classList.toggle("is-ios", ios);
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const releasePage = "https://github.com/rbtzinn/jogo-coop/releases";
