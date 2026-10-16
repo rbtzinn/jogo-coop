@@ -1,32 +1,34 @@
 class_name PosterPanel
 extends PanelContainer
-## Cartaz de circo para os menus (pausa, configurações, Camarim, loja, menu inicial): papel creme com
-## moldura vermelha (UiTheme.poster_box), um filete de tinta e estrelas douradas nos cantos por dentro
-## da moldura, lâmpadas de letreiro correndo em volta (opcional) e duas estrelinhas ao lado do botão
-## escolhido (só nos botões largos das listas de menu).
+## Cartaz de circo para os menus (pausa, configurações, Camarim, loja, menu inicial): papel velho pintado
+## com moldura vermelha (UiTheme.poster_box, em pé ou deitado conforme o formato do painel), lâmpadas de
+## letreiro correndo em volta (opcional) e a luva apontando o botão escolhido (só nos botões largos das
+## listas de menu).
 
 ## Lâmpadas de letreiro em volta do cartaz.
 @export var marquee := false
-## Botões a partir desta largura ganham as estrelas de "escolhido".
+## Botões a partir desta largura ganham a luva de "escolhido".
 @export var star_min_width := 280.0
 
 var _overlay := _Overlay.new()
 
 
+var _tall := false
+
+
 func _ready() -> void:
-	add_theme_stylebox_override("panel", UiTheme.poster_box())
+	_set_poster(false)
+	resized.connect(func() -> void: _set_poster(size.y > size.x))
 	_overlay.panel = self
 	_overlay.lights = marquee
 	add_child(_overlay)
 
 
-func _draw() -> void:
-	# Filete de tinta por dentro da moldura e uma estrela em cada canto.
-	var inner := Rect2(Vector2.ZERO, size).grow(-22.0)
-	draw_rect(inner, Color(UiTheme.GOLD, 0.30), false, 1.0)
-	for corner in [inner.position, Vector2(inner.end.x, inner.position.y), inner.end, Vector2(inner.position.x, inner.end.y)]:
-		draw_star(self, corner, 7.0, UiTheme.GOLD)
-		draw_arc(corner, 14.0, 0, TAU, 16, Color(UiTheme.GOLD, 0.35), 1.0, true)
+func _set_poster(tall: bool) -> void:
+	if tall == _tall and has_theme_stylebox_override("panel"):
+		return
+	_tall = tall
+	add_theme_stylebox_override("panel", UiTheme.poster_box(tall))
 
 
 ## Estrela de 5 pontas com contorno de tinta.
@@ -72,12 +74,22 @@ class _Overlay extends Control:
 		var focused := get_viewport().gui_get_focus_owner() as BaseButton
 		if focused == null or not panel.is_ancestor_of(focused) or focused.size.x < panel.star_min_width:
 			return
+		# Luva à esquerda do botão, apontando para ele e cutucando de leve.
 		var box := focused.get_global_rect()
-		var middle := box.get_center() - global_position
-		var pulse := 1.0 + sin(_time * 6.0) * 0.12
-		for side in [-1.0, 1.0]:
-			var at := middle + Vector2(side * (box.size.x / 2.0 + 26.0), 0)
-			PosterPanel.draw_star(self, at, 14.0 * pulse, UiTheme.GOLD)
+		# Botão de texto centralizado e sem caixa (itens do menu inicial): a luva encosta na palavra.
+		var button := focused as Button
+		if button != null and button.get_theme_stylebox("normal") is StyleBoxEmpty and button.icon == null:
+			var font := button.get_theme_font("font")
+			var text_width := font.get_string_size(button.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+					button.get_theme_font_size("font_size")).x
+			var start := box.get_center().x - text_width * 0.5 - 24.0
+			box.position.x = maxf(box.position.x, start)
+		var hand := UiTheme.POINTING_HAND
+		var hand_size := hand.get_size() * (58.0 / hand.get_height())
+		var poke := (1.0 - absf(sin(_time * 4.0))) * 8.0
+		var at := Vector2(box.position.x - global_position.x - hand_size.x - 10.0 + poke,
+				box.get_center().y - global_position.y - hand_size.y * 0.5)
+		draw_texture_rect(hand, Rect2(at, hand_size), false)
 
 	func _draw_lights() -> void:
 		var rect := Rect2(Vector2.ZERO, size).grow(-6.0)

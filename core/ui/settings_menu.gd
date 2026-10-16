@@ -105,7 +105,7 @@ func _build_controls_tab() -> Control:
 		label.text = header
 		label.add_theme_font_override("font", UiTheme.TITLE_FONT)
 		label.add_theme_font_size_override("font_size", UiTheme.body_size(24))
-		label.add_theme_color_override("font_color", UiTheme.GOLD)
+		label.add_theme_color_override("font_color", UiTheme.PAPER_RED)
 		grid.add_child(label)
 
 	for action in Settings.REBINDABLE_ACTIONS:
@@ -135,7 +135,7 @@ func _build_controls_tab() -> Control:
 
 	_missing = Label.new()
 	_missing.add_theme_font_size_override("font_size", UiTheme.body_size(24))
-	_missing.add_theme_color_override("font_color", UiTheme.RED)
+	_missing.add_theme_color_override("font_color", UiTheme.PAPER_RED)
 	_missing.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tab.add_child(_missing)
 
@@ -233,7 +233,7 @@ func _build_video_tab() -> Control:
 	var note := Label.new()
 	note.text = "Qualidade: Baixa desliga o filtro de filme e partículas;\nMédia usa filtro leve; Alta liga tudo."
 	note.add_theme_font_size_override("font_size", UiTheme.body_size(24))
-	note.add_theme_color_override("font_color", UiTheme.INK_SOFT)
+	note.add_theme_color_override("font_color", UiTheme.PAPER_INK_SOFT)
 	grid.add_child(note)
 	return grid
 
@@ -261,7 +261,7 @@ func _build_network_tab() -> Control:
 	var note := Label.new()
 	note.text = "O simulador atrasa o que chega NESTE jogo, para ver no seu PC\ncomo fica jogando pela internet. Volta para \"Desligado\" ao fechar o jogo."
 	note.add_theme_font_size_override("font_size", UiTheme.body_size(24))
-	note.add_theme_color_override("font_color", UiTheme.INK_SOFT)
+	note.add_theme_color_override("font_color", UiTheme.PAPER_INK_SOFT)
 	grid.add_child(note)
 	return grid
 

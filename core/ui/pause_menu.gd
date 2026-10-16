@@ -46,7 +46,7 @@ func _ready() -> void:
 	_both_note = Label.new()
 	_both_note.text = "Pausado para os dois."
 	_both_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_both_note.add_theme_color_override("font_color", UiTheme.GOLD)
+	_both_note.add_theme_color_override("font_color", UiTheme.PAPER_RED)
 	layout.add_child(_both_note)
 	_continue_button = _add_button(layout, "Continuar", close)
 	_dressing_button = _add_button(layout, "Camarim", _open_dressing_room)

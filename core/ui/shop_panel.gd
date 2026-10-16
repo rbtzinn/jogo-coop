@@ -59,7 +59,7 @@ func _ready() -> void:
 	_line = Label.new()
 	_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_line.add_theme_color_override("font_color", UiTheme.INK_SOFT)
+	_line.add_theme_color_override("font_color", UiTheme.PAPER_INK_SOFT)
 	_line.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 	top.add_child(_line)
 	_tickets = UiTheme.title_label("", 30)
@@ -214,14 +214,14 @@ func _refresh() -> void:
 		var price: Label = button.get_node("Price")
 		price.text = "já é seu" if owned else ("%d ingresso" % item.price if item.price == 1 else "%d ingressos" % item.price)
 		var stub := StyleBoxFlat.new()
-		stub.bg_color = UiTheme.PAPER_SHADE if owned else UiTheme.GOLD
+		stub.bg_color = Color(UiTheme.PAPER_INK, 0.1) if owned else UiTheme.GOLD
 		stub.border_color = UiTheme.INK
 		stub.set_border_width_all(2)
 		stub.set_corner_radius_all(6)
 		stub.content_margin_left = 12
 		stub.content_margin_right = 12
 		price.add_theme_stylebox_override("normal", stub)
-		price.add_theme_color_override("font_color", UiTheme.INK_SOFT if owned else UiTheme.INK)
+		price.add_theme_color_override("font_color", UiTheme.PAPER_INK_SOFT if owned else UiTheme.INK)
 	var item := Catalog.item(_selected)
 	if item.is_empty():
 		return
@@ -229,9 +229,9 @@ func _refresh() -> void:
 	_icon.texture = Catalog.icon(_selected)
 	var text: String = item.description
 	if item.has("ex"):
-		text += "\n\n[b][color=#dfbc7d]Tiro EX:[/color][/b] " + item.ex
+		text += "\n\n[b][color=#9a1d23]Tiro EX:[/color][/b] " + item.ex
 	if item.has("downside"):
-		text += "\n\n[b][color=#dfbc7d]Troca:[/color][/b] " + item.downside
+		text += "\n\n[b][color=#9a1d23]Troca:[/color][/b] " + item.downside
 	_details.text = text
 	if Shop.owns(key, _selected):
 		_buy.text = "Já é seu"

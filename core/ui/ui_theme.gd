@@ -4,6 +4,9 @@ class_name UiTheme
 ## ficam vermelhos com borda dourada quando escolhidos. Refeito em 04/10/2026 (o usuário achou os menus
 ## feios): antes eram caixas roxas escuras.
 ## Títulos em Rye (letreiro de circo/faroeste) desde 16/10/2026, escolha do usuário nas maquetes do menu; antes Limelight.
+## Desde 16/10/2026 (versão B das maquetes) os painéis são um cartaz de papel velho pintado (arte do GPT em
+## core/ui/art/poster/, esticado em 9 partes): texto em tinta escura, títulos em vermelho e o item escolhido
+## em vermelho com a luva apontando (PosterPanel).
 
 const TITLE_FONT := preload("res://core/ui/fonts/Rye-Regular.ttf")
 const BODY_FONT := preload("res://core/ui/fonts/SpecialElite-Regular.ttf")
@@ -21,6 +24,16 @@ const RED := Color("792f40")
 const RED_DARK := Color("542738")
 const NIGHT := Color("101d28")
 const NIGHT_LIGHT := Color("20333d")
+## Cores para usar EM CIMA do papel do cartaz.
+const PAPER_INK := Color("2b1b12")
+const PAPER_INK_SOFT := Color("6e5843")
+const PAPER_RED := Color("9a1d23")
+const POSTER_TALL := preload("res://core/ui/art/poster/poster_portrait.png")
+const POSTER_WIDE := preload("res://core/ui/art/poster/poster_landscape.png")
+const POINTING_HAND := preload("res://core/ui/art/poster/pointing_hand.png")
+## Cantos do cartaz que não esticam (enfeites e moldura) e a margem do conteúdo, em pixels da tela.
+const POSTER_CORNER := 116.0
+const POSTER_PADDING := Vector2(100, 82)
 static var _cached_theme: Theme
 
 
@@ -33,27 +46,28 @@ static func build() -> Theme:
 
 	theme.set_stylebox("panel", "PanelContainer", poster_box())
 	theme.set_stylebox("panel", "Panel", poster_box())
-	theme.set_color("font_color", "Label", CREAM)
+	theme.set_color("font_color", "Label", PAPER_INK)
 
-	# Botões: ingresso de papel; escolhido (foco ou mouse) fica vermelho com borda dourada.
+	# Botões: moldura de tinta fina no papel; escolhido (foco ou mouse) fica vermelho, apertado vira
+	# vermelho cheio.
 	for type in ["Button", "OptionButton", "CheckButton", "MenuButton"]:
-		theme.set_stylebox("normal", type, _ticket(PAPER_SHADE, Color("58717a"), 1))
-		theme.set_stylebox("hover", type, _ticket(RED, GOLD, 4))
-		theme.set_stylebox("focus", type, _box(Color(0, 0, 0, 0), GOLD, 2, 3, false))
-		theme.set_stylebox("hover_pressed", type, _ticket(RED_DARK, GOLD, 4, true))
-		theme.set_stylebox("pressed", type, _ticket(RED_DARK, GOLD, 4, true))
-		var disabled := _ticket(Color(PAPER_SHADE, 0.55), Color(INK_SOFT, 0.5), 3)
+		theme.set_stylebox("normal", type, _ticket(Color(PAPER_INK, 0.05), Color(PAPER_INK, 0.38), 2))
+		theme.set_stylebox("hover", type, _ticket(Color(PAPER_RED, 0.12), PAPER_RED, 3))
+		theme.set_stylebox("focus", type, _box(Color(PAPER_RED, 0.12), PAPER_RED, 3, 3))
+		theme.set_stylebox("hover_pressed", type, _ticket(PAPER_RED, RED_DARK, 3, true))
+		theme.set_stylebox("pressed", type, _ticket(PAPER_RED, RED_DARK, 3, true))
+		var disabled := _ticket(Color(0, 0, 0, 0), Color(PAPER_INK, 0.15), 2)
 		disabled.shadow_color = Color(0, 0, 0, 0)
 		theme.set_stylebox("disabled", type, disabled)
-		theme.set_color("font_color", type, CREAM)
-		theme.set_color("font_hover_color", type, CREAM)
-		theme.set_color("font_focus_color", type, CREAM)
-		theme.set_color("font_pressed_color", type, GOLD)
-		theme.set_color("font_hover_pressed_color", type, GOLD)
-		theme.set_color("font_disabled_color", type, Color(INK_SOFT, 0.6))
-		theme.set_color("icon_normal_color", type, CREAM)
-		theme.set_color("icon_focus_color", type, CREAM)
-		theme.set_color("icon_hover_color", type, CREAM)
+		theme.set_color("font_color", type, PAPER_INK)
+		theme.set_color("font_hover_color", type, PAPER_RED)
+		theme.set_color("font_focus_color", type, PAPER_RED)
+		theme.set_color("font_pressed_color", type, CREAM)
+		theme.set_color("font_hover_pressed_color", type, CREAM)
+		theme.set_color("font_disabled_color", type, Color(PAPER_INK, 0.35))
+		theme.set_color("icon_normal_color", type, PAPER_INK)
+		theme.set_color("icon_focus_color", type, PAPER_RED)
+		theme.set_color("icon_hover_color", type, PAPER_RED)
 	# A chave do CheckButton fica num ingresso só quando escolhida (normal: sem caixa).
 	var plain := StyleBoxEmpty.new()
 	plain.content_margin_left = 12
@@ -62,24 +76,25 @@ static func build() -> Theme:
 	plain.content_margin_bottom = 6
 	theme.set_stylebox("normal", "CheckButton", plain)
 	theme.set_stylebox("pressed", "CheckButton", plain)
-	theme.set_stylebox("hover_pressed", "CheckButton", _ticket(RED, GOLD, 4))
-	theme.set_color("font_pressed_color", "CheckButton", CREAM)
+	theme.set_stylebox("hover_pressed", "CheckButton", _ticket(Color(PAPER_RED, 0.12), PAPER_RED, 3))
+	theme.set_color("font_pressed_color", "CheckButton", PAPER_INK)
+	theme.set_color("font_hover_pressed_color", "CheckButton", PAPER_RED)
 	theme.set_icon("checked", "CheckButton", _switch(true))
 	theme.set_icon("unchecked", "CheckButton", _switch(false))
 
-	var field := _box(NIGHT, Color("58717a"), 1, 3)
+	var field := _box(Color(PAPER_INK, 0.07), Color(PAPER_INK, 0.45), 2, 3)
 	field.content_margin_top = 8
 	field.content_margin_bottom = 8
 	theme.set_stylebox("normal", "LineEdit", field)
-	theme.set_stylebox("focus", "LineEdit", _box(Color(0, 0, 0, 0), GOLD, 4, 8, false))
-	theme.set_color("font_color", "LineEdit", CREAM)
-	theme.set_color("font_placeholder_color", "LineEdit", Color(INK_SOFT, 0.75))
-	theme.set_color("caret_color", "LineEdit", RED)
-	theme.set_color("selection_color", "LineEdit", Color(GOLD, 0.5))
+	theme.set_stylebox("focus", "LineEdit", _box(Color(0, 0, 0, 0), PAPER_RED, 3, 3, false))
+	theme.set_color("font_color", "LineEdit", PAPER_INK)
+	theme.set_color("font_placeholder_color", "LineEdit", Color(PAPER_INK_SOFT, 0.8))
+	theme.set_color("caret_color", "LineEdit", PAPER_RED)
+	theme.set_color("selection_color", "LineEdit", Color(PAPER_RED, 0.3))
 
-	var tab_selected := _box(RED, GOLD, 1, 3)
-	var tab_unselected := _box(NIGHT, Color("58717a"), 1, 3)
-	var tab_hovered := _box(PAPER_SHADE, GOLD, 1, 3)
+	var tab_selected := _box(PAPER_RED, RED_DARK, 1, 3)
+	var tab_unselected := _box(Color(PAPER_INK, 0.07), Color(PAPER_INK, 0.3), 1, 3)
+	var tab_hovered := _box(Color(PAPER_RED, 0.12), PAPER_RED, 1, 3)
 	for box: StyleBoxFlat in [tab_selected, tab_unselected, tab_hovered]:
 		box.corner_radius_bottom_left = 0
 		box.corner_radius_bottom_right = 0
@@ -90,27 +105,27 @@ static func build() -> Theme:
 	theme.set_stylebox("tab_selected", "TabContainer", tab_selected)
 	theme.set_stylebox("tab_unselected", "TabContainer", tab_unselected)
 	theme.set_stylebox("tab_hovered", "TabContainer", tab_hovered)
-	theme.set_stylebox("tab_focus", "TabContainer", _box(Color(0, 0, 0, 0), GOLD, 4, 10, false))
+	theme.set_stylebox("tab_focus", "TabContainer", _box(Color(0, 0, 0, 0), PAPER_RED, 3, 4, false))
 	theme.set_stylebox("panel", "TabContainer", card_box())
 	theme.set_font("font", "TabContainer", TITLE_FONT)
 	theme.set_font_size("font_size", "TabContainer", 26)
 	theme.set_color("font_selected_color", "TabContainer", CREAM)
-	theme.set_color("font_unselected_color", "TabContainer", INK_SOFT)
-	theme.set_color("font_hovered_color", "TabContainer", CREAM)
+	theme.set_color("font_unselected_color", "TabContainer", PAPER_INK_SOFT)
+	theme.set_color("font_hovered_color", "TabContainer", PAPER_RED)
 
-	var popup := _box(NIGHT, GOLD, 1, 3)
+	var popup := _box(Color("efe1bf"), PAPER_RED, 2, 3)
 	popup.content_margin_top = 8
 	popup.content_margin_bottom = 8
 	popup.content_margin_left = 8
 	popup.content_margin_right = 8
 	theme.set_stylebox("panel", "PopupMenu", popup)
-	theme.set_stylebox("hover", "PopupMenu", _box(RED, GOLD, 2, 6))
-	theme.set_color("font_color", "PopupMenu", CREAM)
+	theme.set_stylebox("hover", "PopupMenu", _box(PAPER_RED, RED_DARK, 1, 3))
+	theme.set_color("font_color", "PopupMenu", PAPER_INK)
 	theme.set_color("font_hover_color", "PopupMenu", CREAM)
-	theme.set_color("font_disabled_color", "PopupMenu", INK_SOFT)
+	theme.set_color("font_disabled_color", "PopupMenu", Color(PAPER_INK, 0.4))
 
 	for bar in ["VScrollBar", "HScrollBar"]:
-		var track := _box(Color(INK, 0.12), Color(0, 0, 0, 0), 0, 6)
+		var track := _box(Color(PAPER_INK, 0.1), Color(0, 0, 0, 0), 0, 6)
 		track.set_content_margin_all(4)
 		theme.set_stylebox("scroll", bar, track)
 		theme.set_stylebox("grabber", bar, _box(RED_DARK, INK, 2, 6))
@@ -118,11 +133,11 @@ static func build() -> Theme:
 		theme.set_stylebox("grabber_pressed", bar, _box(RED, GOLD, 2, 6))
 
 	var line := StyleBoxLine.new()
-	line.color = Color(INK_SOFT, 0.6)
+	line.color = Color(PAPER_INK, 0.3)
 	line.thickness = 2
 	theme.set_stylebox("separator", "HSeparator", line)
 
-	theme.set_color("default_color", "RichTextLabel", CREAM)
+	theme.set_color("default_color", "RichTextLabel", PAPER_INK)
 	theme.set_font("normal_font", "RichTextLabel", BODY_FONT)
 	var bold := FontVariation.new()
 	bold.base_font = BODY_FONT
@@ -139,22 +154,22 @@ static func body_size(oswald_size: float) -> int:
 	return maxi(roundi(oswald_size * BODY_SCALE), 1)
 
 
-## O cartaz: papel creme, moldura vermelha grossa, cantos arredondados e sombra.
-static func poster_box() -> StyleBoxFlat:
-	var box := _box(Color(NIGHT, 0.98), Color("8f7045"), 2, 4)
-	box.shadow_color = Color(0, 0, 0, 0.55)
-	box.shadow_size = 16
-	box.shadow_offset = Vector2(0, 10)
-	box.content_margin_left = 38
-	box.content_margin_right = 38
-	box.content_margin_top = 30
-	box.content_margin_bottom = 30
+## O cartaz de papel velho (arte do GPT), esticado em 9 partes: os cantos com os enfeites não esticam.
+## `tall`: o cartaz em pé (painéis mais altos que largos); senão, o deitado.
+static func poster_box(tall := false) -> StyleBoxTexture:
+	var box := StyleBoxTexture.new()
+	box.texture = POSTER_TALL if tall else POSTER_WIDE
+	box.set_texture_margin_all(POSTER_CORNER)
+	box.content_margin_left = POSTER_PADDING.x
+	box.content_margin_right = POSTER_PADDING.x
+	box.content_margin_top = POSTER_PADDING.y
+	box.content_margin_bottom = POSTER_PADDING.y
 	return box
 
 
-## Cartão dentro do cartaz (papel mais escuro, contorno de tinta): detalhes, colunas, abas.
+## Cartão dentro do cartaz (papel um pouco mais escuro, contorno de tinta fina): detalhes, colunas, abas.
 static func card_box() -> StyleBoxFlat:
-	var box := _box(NIGHT_LIGHT, Color("4b6269"), 1, 3)
+	var box := _box(Color(PAPER_INK, 0.06), Color(PAPER_INK, 0.28), 1, 3)
 	box.content_margin_left = 22
 	box.content_margin_right = 22
 	box.content_margin_top = 16
@@ -163,16 +178,16 @@ static func card_box() -> StyleBoxFlat:
 
 
 ## Título de cartaz (letra de letreiro). `on_dark`: em cima do jogo (dourado com contorno de tinta);
-## senão, no papel (vermelho com contorno dourado, como o "Vitória!").
+## senão, no papel do cartaz (vermelho, sem contorno).
 static func title_label(text: String, size: int, on_dark := false) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_override("font", TITLE_FONT)
 	label.add_theme_font_size_override("font_size", size)
-	label.add_theme_color_override("font_color", GOLD)
+	label.add_theme_color_override("font_color", GOLD if on_dark else PAPER_RED)
 	label.add_theme_color_override("font_outline_color", INK)
-	label.add_theme_constant_override("outline_size", 3 if on_dark else 2)
+	label.add_theme_constant_override("outline_size", 3 if on_dark else 0)
 	return label
 
 
@@ -187,13 +202,13 @@ static func banner(text: String, size: int) -> CircusBanner:
 	return ribbon
 
 
-## Rótulo pequeno de seção (tinta, letra de letreiro).
-static func section_label(text: String, size := 28) -> Label:
+## Rótulo pequeno de seção (letra de letreiro): tinta no papel do cartaz, dourado em cima do jogo.
+static func section_label(text: String, size := 28, on_dark := false) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.add_theme_font_override("font", TITLE_FONT)
 	label.add_theme_font_size_override("font_size", size)
-	label.add_theme_color_override("font_color", GOLD)
+	label.add_theme_color_override("font_color", GOLD if on_dark else PAPER_INK)
 	return label
 
 
@@ -201,13 +216,13 @@ static func section_label(text: String, size := 28) -> Label:
 static func page_header(text: String, subtitle: String) -> VBoxContainer:
 	var header := VBoxContainer.new()
 	header.add_theme_constant_override("separation", 6)
-	var title := title_label(text, 48, true)
+	var title := title_label(text, 48)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	header.add_child(title)
 	var hint := Label.new()
 	hint.text = subtitle
 	hint.add_theme_font_size_override("font_size", body_size(23))
-	hint.add_theme_color_override("font_color", INK_SOFT)
+	hint.add_theme_color_override("font_color", PAPER_INK_SOFT)
 	header.add_child(hint)
 	header.add_child(HSeparator.new())
 	return header
@@ -252,7 +267,7 @@ static func _switch(on: bool) -> ImageTexture:
 	var w := 76
 	var h := 40
 	var image := Image.create(w, h, false, Image.FORMAT_RGBA8)
-	var body := RED if on else PAPER_SHADE
+	var body := PAPER_RED if on else Color("d9c59c")
 	var knob_x := w - h / 2.0 if on else h / 2.0
 	for y in h:
 		for x in w:
@@ -268,7 +283,7 @@ static func _switch(on: bool) -> ImageTexture:
 			if k <= h / 2.0 - 5.0:
 				color = INK
 			if k <= h / 2.0 - 8.0:
-				color = GOLD if on else CREAM
+				color = GOLD if on else Color("f6ead0")
 			image.set_pixel(x, y, color)
 	return ImageTexture.create_from_image(image)
 
@@ -277,9 +292,9 @@ static func _switch(on: bool) -> ImageTexture:
 ## some quando apertado (o botão "afunda").
 static func _ticket(background: Color, border: Color, border_width: int, sunk := false) -> StyleBoxFlat:
 	var box := _box(background, border, border_width, 3)
-	box.shadow_color = Color(INK, 0.85)
+	box.shadow_color = Color(PAPER_INK, 0.25)
 	box.shadow_size = 1
-	box.shadow_offset = Vector2(0, 1 if sunk else 4)
+	box.shadow_offset = Vector2(0, 1 if sunk else 3)
 	box.content_margin_left = 22
 	box.content_margin_right = 22
 	box.content_margin_top = 12 + (2 if sunk else 0)

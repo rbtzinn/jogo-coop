@@ -31,18 +31,7 @@ func _ready() -> void:
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.add_child(center)
 	var panel := PanelContainer.new()
-	var poster := StyleBoxFlat.new()
-	poster.bg_color = UiTheme.NIGHT
-	poster.border_color = UiTheme.GOLD
-	poster.set_border_width_all(2)
-	poster.set_corner_radius_all(4)
-	poster.shadow_color = Color(0, 0, 0, 0.5)
-	poster.shadow_size = 18
-	poster.content_margin_left = 60
-	poster.content_margin_right = 60
-	poster.content_margin_top = 44
-	poster.content_margin_bottom = 40
-	panel.add_theme_stylebox_override("panel", poster)
+	panel.add_theme_stylebox_override("panel", UiTheme.poster_box())
 	center.add_child(panel)
 	# As lâmpadas ficam fora do CenterContainer (ele encolheria o Control) e seguem o cartaz.
 	_panel = panel
@@ -58,17 +47,15 @@ func _ready() -> void:
 	ribbon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ribbon.add_theme_font_override("font", UiTheme.TITLE_FONT)
 	ribbon.add_theme_font_size_override("font_size", 30)
-	ribbon.add_theme_color_override("font_color", UiTheme.INK_SOFT)
+	ribbon.add_theme_color_override("font_color", UiTheme.PAPER_INK_SOFT)
 	layout.add_child(ribbon)
 	var title := UiTheme.title_label("Vitória!" if victory else "Não foi dessa vez...", 84)
-	title.add_theme_color_override("font_color", UiTheme.GOLD if victory else UiTheme.CREAM)
-	title.add_theme_color_override("font_outline_color", UiTheme.INK)
-	title.add_theme_constant_override("outline_size", 2)
+	title.add_theme_color_override("font_color", UiTheme.PAPER_RED if victory else UiTheme.PAPER_INK)
 	layout.add_child(title)
 	var subtitle := Label.new()
 	subtitle.text = "A plateia aplaude de pé!" if victory else "A plateia ainda espera um grande número."
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	subtitle.add_theme_color_override("font_color", UiTheme.CREAM)
+	subtitle.add_theme_color_override("font_color", UiTheme.PAPER_INK)
 	subtitle.add_theme_font_size_override("font_size", UiTheme.body_size(30))
 	layout.add_child(subtitle)
 	if victory and result.get("level", false):
@@ -84,7 +71,7 @@ func _ready() -> void:
 		var waiting := Label.new()
 		waiting.text = "Esperando o host recomeçar..."
 		waiting.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		waiting.add_theme_color_override("font_color", UiTheme.GOLD)
+		waiting.add_theme_color_override("font_color", UiTheme.PAPER_RED)
 		layout.add_child(waiting)
 	var menu_button := _add_button(layout, "Voltar ao menu", _back_to_menu)
 	panel.pivot_offset = Vector2(400, 300)
@@ -130,9 +117,10 @@ func _build_grade(data: Dictionary) -> Control:
 	grade.text = FightGrade.verdict(String(data.get("grade", "C")))
 	grade.add_theme_font_override("font", UiTheme.TITLE_FONT)
 	grade.add_theme_font_size_override("font_size", 96)
-	grade.add_theme_color_override("font_color", UiTheme.GOLD)
-	grade.add_theme_color_override("font_outline_color", UiTheme.INK)
-	grade.add_theme_constant_override("outline_size", 14)
+	# Carimbo vermelho no papel.
+	grade.add_theme_color_override("font_color", UiTheme.PAPER_RED)
+	grade.add_theme_color_override("font_outline_color", Color("f3e4c2"))
+	grade.add_theme_constant_override("outline_size", 6)
 	grade.pivot_offset = Vector2(160, 60)
 	grade.rotation = -0.12
 	row.add_child(grade)
@@ -165,7 +153,7 @@ func _build_grade(data: Dictionary) -> Control:
 	for text in lines:
 		var label := Label.new()
 		label.text = text
-		label.add_theme_color_override("font_color", UiTheme.GOLD if text.begins_with("+") else UiTheme.CREAM)
+		label.add_theme_color_override("font_color", UiTheme.PAPER_RED if text.begins_with("+") else UiTheme.PAPER_INK)
 		label.add_theme_font_size_override("font_size", UiTheme.body_size(28))
 		stats.add_child(label)
 	return row
@@ -187,7 +175,7 @@ func _build_level_summary(data: Dictionary) -> Control:
 		var label := Label.new()
 		label.text = text
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.add_theme_color_override("font_color", UiTheme.GOLD if text.begins_with("+") else UiTheme.CREAM)
+		label.add_theme_color_override("font_color", UiTheme.PAPER_RED if text.begins_with("+") else UiTheme.PAPER_INK)
 		label.add_theme_font_size_override("font_size", UiTheme.body_size(30))
 		stats.add_child(label)
 	return stats
