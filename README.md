@@ -101,4 +101,4 @@ No Windows (PowerShell): `tests\run_all.ps1 -GodotPath C:\caminho\para\Godot_con
 
 ## Sobre o desenvolvimento
 
-O código, a arte e a documentação foram produzidos com assistência de ferramentas de IA (Claude, ChatGPT e Codex). A direção do projeto, as decisões de design e os testes de jogo são meus.
+O código, a arte e a documentação foram produzidos com assistência de ferramentas de IA (ChatGPT e Codex). A direção do projeto, as decisões de design e os testes de jogo são meus.

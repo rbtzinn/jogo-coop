@@ -96,7 +96,8 @@ func _run() -> void:
 		check(workshops.is_walkable(door.front_point()), "%s front on workshop path" % door.name)
 	check((workshops.get_node("DoorShop") as WorldDoor).is_open(), "workshop shop works")
 	check((workshops.get_node("DoorDressing") as WorldDoor).is_open(), "workshop dressing room works")
-	for door_name in ["DoorCarretel", "DoorMaestro", "DoorCounterweight", "DoorTheater", "DoorScenery"]:
+	check((workshops.get_node("DoorCarretel") as WorldDoor).is_open(), "workshop Madame Carretel fight works")
+	for door_name in ["DoorMaestro", "DoorCounterweight", "DoorTheater", "DoorScenery"]:
 		check(not (workshops.get_node(door_name) as WorldDoor).is_open(), "%s reserved for future fight" % door_name)
 	workshop_plane.try_enter()
 	await frames(10)
