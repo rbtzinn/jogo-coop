@@ -13,7 +13,6 @@ extends Node3D
 
 const FRONT_SHADER := preload("res://shaders/painted_front.gdshader")
 const CONNECTION_STATUS := preload("res://core/network/connection_status.gd")
-const STATUS_FONT := preload("res://core/ui/fonts/Oswald.ttf")
 
 ## Número da área (fica no save: é para onde "Voltar ao mapa" e o menu levam).
 @export var area := 1
@@ -522,8 +521,8 @@ func _build_hud() -> void:
 	status.offset_bottom = 230.0
 	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	status.add_theme_font_override("font", STATUS_FONT)
-	status.add_theme_font_size_override("font_size", 32)
+	status.add_theme_font_override("font", UiTheme.BODY_FONT)
+	status.add_theme_font_size_override("font_size", UiTheme.body_size(32))
 	status.add_theme_color_override("font_color", Color(0.98, 0.92, 0.75))
 	status.add_theme_color_override("font_outline_color", Color(0.1, 0.08, 0.06))
 	status.add_theme_constant_override("outline_size", 10)
@@ -554,7 +553,7 @@ func _plaque_label(text: String, size: int) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.add_theme_font_override("font", UiTheme.BODY_FONT)
-	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_font_size_override("font_size", UiTheme.body_size(size))
 	label.add_theme_color_override("font_color", Color("f3e3c0"))
 	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
 	label.add_theme_constant_override("outline_size", 3)

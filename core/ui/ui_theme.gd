@@ -6,7 +6,10 @@ class_name UiTheme
 ## Títulos em Rye (letreiro de circo/faroeste) desde 16/10/2026, escolha do usuário nas maquetes do menu; antes Limelight.
 
 const TITLE_FONT := preload("res://core/ui/fonts/Rye-Regular.ttf")
-const BODY_FONT := preload("res://core/ui/fonts/Oswald.ttf")
+const BODY_FONT := preload("res://core/ui/fonts/SpecialElite-Regular.ttf")
+## A Special Elite (máquina de escrever, escolha do usuário em 16/10/2026) é ~45% mais larga que a Oswald
+## que ela substituiu; todo tamanho de texto do corpo passa por body_size() para ocupar a mesma largura.
+const BODY_SCALE := 0.72
 
 const INK := Color("101923")
 const INK_SOFT := Color("95a7aa")
@@ -26,7 +29,7 @@ static func build() -> Theme:
 		return _cached_theme
 	var theme := Theme.new()
 	theme.default_font = BODY_FONT
-	theme.default_font_size = 30
+	theme.default_font_size = body_size(30)
 
 	theme.set_stylebox("panel", "PanelContainer", poster_box())
 	theme.set_stylebox("panel", "Panel", poster_box())
@@ -125,10 +128,15 @@ static func build() -> Theme:
 	bold.base_font = BODY_FONT
 	bold.variation_embolden = 0.9
 	theme.set_font("bold_font", "RichTextLabel", bold)
-	theme.set_font_size("normal_font_size", "RichTextLabel", 27)
-	theme.set_font_size("bold_font_size", "RichTextLabel", 27)
+	theme.set_font_size("normal_font_size", "RichTextLabel", body_size(27))
+	theme.set_font_size("bold_font_size", "RichTextLabel", body_size(27))
 	_cached_theme = theme
 	return theme
+
+
+## Tamanho de um texto na fonte do corpo, a partir do tamanho que ele tinha com a Oswald.
+static func body_size(oswald_size: float) -> int:
+	return maxi(roundi(oswald_size * BODY_SCALE), 1)
 
 
 ## O cartaz: papel creme, moldura vermelha grossa, cantos arredondados e sombra.
@@ -198,7 +206,7 @@ static func page_header(text: String, subtitle: String) -> VBoxContainer:
 	header.add_child(title)
 	var hint := Label.new()
 	hint.text = subtitle
-	hint.add_theme_font_size_override("font_size", 23)
+	hint.add_theme_font_size_override("font_size", body_size(23))
 	hint.add_theme_color_override("font_color", INK_SOFT)
 	header.add_child(hint)
 	header.add_child(HSeparator.new())

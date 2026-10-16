@@ -77,7 +77,7 @@ func _build_touch_tab() -> Control:
 	tab.add_theme_constant_override("separation", 28)
 	var note := Label.new()
 	note.text = "Direcional à esquerda: andar e mirar.\nO personagem atira automaticamente durante as fases.\nÀ direita: PULAR, DASH, EX e MIRA.\n\nSegure EX para o especial.\nNo mapa, toque em ENTRAR para acessar os lugares\ne em TROCAR para mudar de personagem.\nToque em PAUSA para abrir o intervalo.\n\nVocê também pode conectar um controle Bluetooth."
-	note.add_theme_font_size_override("font_size", 34)
+	note.add_theme_font_size_override("font_size", UiTheme.body_size(34))
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tab.add_child(note)
 	return tab
@@ -104,7 +104,7 @@ func _build_controls_tab() -> Control:
 		var label := Label.new()
 		label.text = header
 		label.add_theme_font_override("font", UiTheme.TITLE_FONT)
-		label.add_theme_font_size_override("font_size", 24)
+		label.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 		label.add_theme_color_override("font_color", UiTheme.GOLD)
 		grid.add_child(label)
 
@@ -112,12 +112,12 @@ func _build_controls_tab() -> Control:
 		var name_label := Label.new()
 		name_label.text = Settings.ACTION_NAMES[action]
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		name_label.add_theme_font_size_override("font_size", 22)
+		name_label.add_theme_font_size_override("font_size", UiTheme.body_size(22))
 		grid.add_child(name_label)
 		for slot in Settings.SLOT_COUNT:
 			var button := Button.new()
 			button.custom_minimum_size = Vector2(230, 0)
-			button.add_theme_font_size_override("font_size", 20)
+			button.add_theme_font_size_override("font_size", UiTheme.body_size(20))
 			button.clip_text = true
 			button.pressed.connect(_start_waiting.bind(action, slot))
 			button.gui_input.connect(_on_binding_gui_input.bind(action, slot))
@@ -126,7 +126,7 @@ func _build_controls_tab() -> Control:
 
 	var up_jumps := CheckButton.new()
 	up_jumps.text = "Tecla \"Cima\" também pula (segure Travar mira para mirar para cima)"
-	up_jumps.add_theme_font_size_override("font_size", 23)
+	up_jumps.add_theme_font_size_override("font_size", UiTheme.body_size(23))
 	up_jumps.button_pressed = Settings.up_jumps
 	up_jumps.toggled.connect(func(on: bool) -> void:
 		Settings.set_option(&"up_jumps", on)
@@ -134,13 +134,13 @@ func _build_controls_tab() -> Control:
 	tab.add_child(up_jumps)
 
 	_missing = Label.new()
-	_missing.add_theme_font_size_override("font_size", 24)
+	_missing.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 	_missing.add_theme_color_override("font_color", UiTheme.RED)
 	_missing.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tab.add_child(_missing)
 
 	_hint = Label.new()
-	_hint.add_theme_font_size_override("font_size", 24)
+	_hint.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 	tab.add_child(_hint)
 
 	var reset := Button.new()
@@ -232,7 +232,7 @@ func _build_video_tab() -> Control:
 
 	var note := Label.new()
 	note.text = "Qualidade: Baixa desliga o filtro de filme e partículas;\nMédia usa filtro leve; Alta liga tudo."
-	note.add_theme_font_size_override("font_size", 24)
+	note.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 	note.add_theme_color_override("font_color", UiTheme.INK_SOFT)
 	grid.add_child(note)
 	return grid
@@ -260,7 +260,7 @@ func _build_network_tab() -> Control:
 
 	var note := Label.new()
 	note.text = "O simulador atrasa o que chega NESTE jogo, para ver no seu PC\ncomo fica jogando pela internet. Volta para \"Desligado\" ao fechar o jogo."
-	note.add_theme_font_size_override("font_size", 24)
+	note.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 	note.add_theme_color_override("font_color", UiTheme.INK_SOFT)
 	grid.add_child(note)
 	return grid

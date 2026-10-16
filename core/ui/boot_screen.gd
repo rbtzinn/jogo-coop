@@ -64,7 +64,7 @@ func _ready() -> void:
 		_puppets[kind] = _puppet(kind, data[kind])
 		_blinks[kind] = [randf_range(0.8, 2.5), -1.0]
 	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_status.add_theme_font_size_override("font_size", 26)
+	_status.add_theme_font_size_override("font_size", UiTheme.body_size(26))
 	_status.add_theme_color_override("font_color", UiTheme.CREAM)
 	_status.add_theme_color_override("font_outline_color", UiTheme.INK)
 	_status.add_theme_constant_override("outline_size", 6)

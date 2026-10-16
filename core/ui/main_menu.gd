@@ -60,7 +60,7 @@ func _ready() -> void:
 	var subtitle := Label.new()
 	subtitle.text = "Um circo assombrado para dois"
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	subtitle.add_theme_font_size_override("font_size", 28)
+	subtitle.add_theme_font_size_override("font_size", UiTheme.body_size(28))
 	subtitle.add_theme_color_override("font_color", UiTheme.CREAM)
 	subtitle.add_theme_color_override("font_outline_color", UiTheme.INK)
 	subtitle.add_theme_constant_override("outline_size", 2)
@@ -94,7 +94,7 @@ func _ready() -> void:
 	_status = Label.new()
 	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_status.add_theme_font_size_override("font_size", 23)
+	_status.add_theme_font_size_override("font_size", UiTheme.body_size(23))
 	_status.add_theme_color_override("font_color", UiTheme.GOLD)
 	_status.add_theme_color_override("font_outline_color", UiTheme.INK)
 	_status.add_theme_constant_override("outline_size", 6)
@@ -150,7 +150,7 @@ func _build_background() -> void:
 	var shows_version := not GameUpdates.platform().is_empty()
 	footer.text = "Versão " + OnlineConfig.VERSION_NAME if shows_version else "PALHAÇO  &  ACROBATA                 UMA NOITE. DOIS ARTISTAS."
 	footer.position = Vector2(1070, 1054 if shows_version else 997)
-	footer.add_theme_font_size_override("font_size", 20)
+	footer.add_theme_font_size_override("font_size", UiTheme.body_size(20))
 	footer.add_theme_color_override("font_color", UiTheme.GOLD)
 	add_child(footer)
 	# Retratos mantêm o desenho e a identidade dos protagonistas, sem simular combate no menu.

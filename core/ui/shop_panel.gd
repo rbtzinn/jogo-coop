@@ -60,7 +60,7 @@ func _ready() -> void:
 	_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_line.add_theme_color_override("font_color", UiTheme.INK_SOFT)
-	_line.add_theme_font_size_override("font_size", 24)
+	_line.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 	top.add_child(_line)
 	_tickets = UiTheme.title_label("", 30)
 	_tickets.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -93,7 +93,7 @@ func _ready() -> void:
 	artist_text.add_child(UiTheme.section_label("PALHAÇO" if key == "clown" else "ACROBATA", 23))
 	var artist_hint := Label.new()
 	artist_hint.text = "Seu repertório começa aqui.\nEquipe os itens no Camarim."
-	artist_hint.add_theme_font_size_override("font_size", 24)
+	artist_hint.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 	artist_text.add_child(artist_hint)
 	artist.add_child(artist_text)
 	info.add_child(artist)
@@ -170,7 +170,7 @@ func _build_shelf() -> void:
 			var button := Button.new()
 			button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 			button.custom_minimum_size = Vector2(0, 54)
-			button.add_theme_font_size_override("font_size", 24)
+			button.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 			button.icon = Catalog.icon(item_id)
 			button.expand_icon = true
 			button.add_theme_constant_override("icon_max_width", 46)
@@ -180,7 +180,7 @@ func _build_shelf() -> void:
 			# Preço num canhoto de ingresso dourado, à direita (lê bem no papel e no vermelho).
 			var price := Label.new()
 			price.name = "Price"
-			price.add_theme_font_size_override("font_size", 24)
+			price.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 			price.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			price.set_anchors_preset(Control.PRESET_CENTER_RIGHT)
 			price.grow_horizontal = Control.GROW_DIRECTION_BEGIN
