@@ -1,6 +1,7 @@
 extends Control
 ## Abertura: o palco com cortinas, letreiro e a rua do circo ao fundo (pintura separada em camadas por
-## tools/blender/loading_screen.py), o palhaço e a acrobata apresentando, lâmpadas correndo e a barra
+## tools/blender/loading_screen.py), o palhaço e a acrobata (MenuCast, as folhas novas do menu, no lugar
+## dos bonecos recortados da pintura desde 16/10/2026), lâmpadas correndo e a barra
 ## mostrando o progresso real do carregamento do menu, sem nenhum atraso artificial.
 ## Quando o menu termina de carregar, a abertura vira a tela de título (16/10/2026, pedido do usuário, como no
 ## Cuphead): o "Carregando..." pintado some, a barra esvazia e "Aperte qualquer botão" pisca dentro da
@@ -8,13 +9,9 @@ extends Control
 const ART := "res://core/ui/art/loading/"
 const LAYOUT := preload("res://core/ui/art/loading/loading_layout.gd")
 const STAGE_SHADER := preload("res://shaders/loading_stage.gdshader")
-const PUPPET_SHADER := preload("res://shaders/loading_puppet.gdshader")
-## Ritmo de cada personagem: [tempo, fase, respiração, balanço, braço da frente, outro braço].
-const MOTION := {
-	"clown": [1.15, 0.0, 0.011, 0.010, 0.07, 0.05],
-	"acrobat": [0.9, 1.7, 0.008, 0.007, 0.05, 0.045],
-}
-const BLINK_TIME := 0.16
+## Palhaço à esquerda olhando para a direita e acrobata à direita olhando para ele: pés e altura na tela.
+const CAST := [["clown", Vector2(450, 1003), false], ["acrobat", Vector2(1490, 1008), true]]
+const CAST_HEIGHT := 700.0
 ## Remendo que apaga o "Carregando..." pintado no palco (pixels da tela: x, y, largura, altura).
 const TITLE_PATCH_RECT := Rect2(780, 782, 360, 84)
 ## Pisca do "Aperte qualquer botão": segundos aceso e apagado.
@@ -24,9 +21,6 @@ const PRESS_OFF := 0.45
 var _progress := TextureProgressBar.new()
 var _status := Label.new()
 var _requested := false
-var _puppets := {}
-## Por personagem: segundos até a próxima piscada e quanto da piscada já passou (-1 = olhos abertos).
-var _blinks := {}
 var _stage_material: ShaderMaterial
 ## Menu já carregado, esperando o jogador apertar algo (tela de título).
 var _menu_scene: PackedScene
@@ -38,6 +32,7 @@ var _press_armed := false
 
 func _ready() -> void:
 	theme = UiTheme.build()
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var data: Dictionary = LAYOUT.DATA
 	var stage := TextureRect.new()
 	stage.texture = load(ART + "stage.png")
@@ -60,9 +55,10 @@ func _ready() -> void:
 	_progress.size = Vector2(track[2], track[3])
 	_progress.max_value = 100.0
 	add_child(_progress)
-	for kind in ["clown", "acrobat"]:
-		_puppets[kind] = _puppet(kind, data[kind])
-		_blinks[kind] = [randf_range(0.8, 2.5), -1.0]
+	for entry in CAST:
+		var cast := MenuCast.new(entry[0], entry[2], CAST_HEIGHT)
+		add_child(cast)
+		cast.place_feet(entry[1])
 	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_status.add_theme_font_size_override("font_size", UiTheme.body_size(26))
 	_status.add_theme_color_override("font_color", UiTheme.CREAM)
@@ -92,7 +88,6 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	_animate_blinks(delta)
 	if _menu_scene != null:
 		_press_time = fmod(_press_time + delta, PRESS_ON + PRESS_OFF)
 		_press.modulate.a = 1.0 if _press_time < PRESS_ON else 0.15
@@ -113,7 +108,9 @@ func _process(delta: float) -> void:
 		_status.text = "Não foi possível abrir o menu. Pressione Enter para tentar novamente."
 
 
-func _unhandled_input(event: InputEvent) -> void:
+## _input, e não _unhandled_input: a tela inteira é um Control, que segura cliques e toques antes de eles
+## chegarem como "não tratados" (o toque no celular não abria o menu).
+func _input(event: InputEvent) -> void:
 	if _menu_scene != null:
 		if not _is_press_event(event):
 			return
@@ -144,55 +141,6 @@ func _is_press_event(event: InputEvent) -> bool:
 	if event is InputEventKey:
 		return not event.is_echo()
 	return event is InputEventJoypadButton or event is InputEventMouseButton or event is InputEventScreenTouch
-
-
-func _puppet(kind: String, info: Dictionary) -> TextureRect:
-	var sprite := TextureRect.new()
-	sprite.texture = load(ART + kind + ".png")
-	sprite.position = Vector2(info["position"][0], info["position"][1])
-	sprite.size = Vector2(info["size"][0], info["size"][1])
-	sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var motion: Array = MOTION[kind]
-	var material := ShaderMaterial.new()
-	material.shader = PUPPET_SHADER
-	material.set_shader_parameter("sprite_size", sprite.size)
-	material.set_shader_parameter("feet", info["feet"])
-	material.set_shader_parameter("tempo", motion[0])
-	material.set_shader_parameter("phase", motion[1])
-	material.set_shader_parameter("breath", motion[2])
-	material.set_shader_parameter("sway", motion[3])
-	for i in 2:
-		var arm: Array = info["arms"][i]
-		material.set_shader_parameter("arm%d" % i, Vector4(arm[0], arm[1], arm[2], arm[3]))
-		material.set_shader_parameter("arm%d_radius" % i, arm[4])
-		material.set_shader_parameter("arm%d_swing" % i, motion[4 + i])
-		var eye: Array = info["eyes"][i]
-		material.set_shader_parameter("eye%d" % i, Vector4(eye[0], eye[1], eye[2], eye[3]))
-	var skin: Array = info["skin"]
-	material.set_shader_parameter("skin", Color(skin[0], skin[1], skin[2]))
-	sprite.material = material
-	add_child(sprite)
-	return sprite
-
-
-## Piscadas em intervalos soltos; de vez em quando, duas seguidas.
-func _animate_blinks(delta: float) -> void:
-	for kind: String in _blinks:
-		var state: Array = _blinks[kind]
-		var amount := 0.0
-		if state[1] < 0.0:
-			state[0] -= delta
-			if state[0] <= 0.0:
-				state[1] = 0.0
-		else:
-			state[1] += delta
-			var t: float = state[1] / BLINK_TIME
-			amount = 1.0 - absf(t * 2.0 - 1.0)
-			if t >= 1.0:
-				state[1] = -1.0
-				state[0] = 0.18 if randf() < 0.2 else randf_range(2.0, 4.5)
-				amount = 0.0
-		(_puppets[kind].material as ShaderMaterial).set_shader_parameter("blink", clampf(amount * 1.4, 0.0, 1.0))
 
 
 func _mist_noise() -> NoiseTexture2D:
