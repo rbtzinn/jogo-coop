@@ -153,16 +153,12 @@ func _build_background() -> void:
 	footer.add_theme_font_size_override("font_size", UiTheme.body_size(20))
 	footer.add_theme_color_override("font_color", UiTheme.GOLD)
 	add_child(footer)
-	# Retratos mantêm o desenho e a identidade dos protagonistas, sem simular combate no menu.
-	for entry in [["clown", Vector2(1150, 570), Vector2(260, 400)], ["acrobat", Vector2(1480, 555), Vector2(240, 420)]]:
-		var portrait := TextureRect.new()
-		portrait.texture = load("res://core/player/characters/%s/idle/idle_1.png" % entry[0])
-		portrait.position = entry[1]
-		portrait.size = entry[2]
-		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(portrait)
+	# Palhaço e acrobata de corpo inteiro (folhas do GPT), os dois virados para o cartaz à esquerda
+	# (escolha do usuário em 16/10/2026).
+	for entry in [["clown", Vector2(1290, 975)], ["acrobat", Vector2(1590, 975)]]:
+		var cast := MenuCast.new(entry[0], true, 470.0)
+		add_child(cast)
+		cast.place_feet(entry[1])
 
 
 func _build_join_panel(parent: Control) -> void:
