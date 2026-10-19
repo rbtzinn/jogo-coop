@@ -244,6 +244,7 @@ func _build_video_tab() -> Control:
 	grid.add_theme_constant_override("v_separation", 18)
 
 	_add_option(grid, "Qualidade gráfica", Settings.QUALITY_NAMES, Settings.quality, &"quality")
+	_add_option(grid, "Tamanho da interface", Settings.UI_SCALE_NAMES, Settings.ui_scale_index, &"ui_scale_index")
 	if Device.has_window():
 		_mode_option = _add_option(grid, "Modo de tela", Settings.WINDOW_MODE_NAMES, Settings.window_mode, &"window_mode")
 		var sizes: Array = Settings.WINDOW_SIZES.map(func(s: Vector2i) -> String: return "%d × %d" % [s.x, s.y])
@@ -255,7 +256,7 @@ func _build_video_tab() -> Control:
 	_add_toggle(grid, "Mostrar FPS", Settings.show_fps, &"show_fps")
 
 	var note := Label.new()
-	note.text = "Qualidade: Baixa desliga o filtro de filme e partículas;\nMédia usa filtro leve; Alta liga tudo."
+	note.text = "Qualidade: Baixa desliga o filtro de filme e partículas;\nMédia usa filtro leve; Alta liga tudo.\nTamanho da interface: vale por completo ao abrir o jogo de novo."
 	note.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 	note.add_theme_color_override("font_color", UiTheme.PAPER_INK_SOFT)
 	grid.add_child(note)

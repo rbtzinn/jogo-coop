@@ -35,10 +35,23 @@ const POINTING_HAND := preload("res://core/ui/art/poster/pointing_hand.png")
 const POSTER_CORNER := 116.0
 const POSTER_PADDING := Vector2(100, 82)
 static var _cached_theme: Theme
+## Tamanho da interface com que o tema guardado foi montado (muda nas Configurações).
+static var _cached_scale := 0.0
+
+
+## "Tamanho da interface" das Configurações (pedido do usuário em 19/10/2026: no celular tudo ficava pequeno
+## para o dedo). Multiplica os textos e as alturas dos botões dos menus; o jogo em si não muda de tamanho.
+static func ui_scale() -> float:
+	return Settings.UI_SCALES[Settings.ui_scale_index]
+
+
+## Medida (pixels) já no tamanho da interface escolhido.
+static func scaled(value: float) -> float:
+	return value * ui_scale()
 
 
 static func build() -> Theme:
-	if _cached_theme != null:
+	if _cached_theme != null and is_equal_approx(_cached_scale, ui_scale()):
 		return _cached_theme
 	var theme := Theme.new()
 	theme.default_font = BODY_FONT
@@ -108,7 +121,7 @@ static func build() -> Theme:
 	theme.set_stylebox("tab_focus", "TabContainer", _box(Color(0, 0, 0, 0), PAPER_RED, 3, 4, false))
 	theme.set_stylebox("panel", "TabContainer", card_box())
 	theme.set_font("font", "TabContainer", TITLE_FONT)
-	theme.set_font_size("font_size", "TabContainer", 26)
+	theme.set_font_size("font_size", "TabContainer", roundi(scaled(26)))
 	theme.set_color("font_selected_color", "TabContainer", CREAM)
 	theme.set_color("font_unselected_color", "TabContainer", PAPER_INK_SOFT)
 	theme.set_color("font_hovered_color", "TabContainer", PAPER_RED)
@@ -146,12 +159,13 @@ static func build() -> Theme:
 	theme.set_font_size("normal_font_size", "RichTextLabel", body_size(27))
 	theme.set_font_size("bold_font_size", "RichTextLabel", body_size(27))
 	_cached_theme = theme
+	_cached_scale = ui_scale()
 	return theme
 
 
 ## Tamanho de um texto na fonte do corpo, a partir do tamanho que ele tinha com a Oswald.
 static func body_size(oswald_size: float) -> int:
-	return maxi(roundi(oswald_size * BODY_SCALE), 1)
+	return maxi(roundi(oswald_size * BODY_SCALE * ui_scale()), 1)
 
 
 ## O cartaz de papel velho (arte do GPT), esticado em 9 partes: os cantos com os enfeites não esticam.
@@ -184,7 +198,7 @@ static func title_label(text: String, size: int, on_dark := false) -> Label:
 	label.text = text
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_override("font", TITLE_FONT)
-	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_font_size_override("font_size", roundi(scaled(size)))
 	label.add_theme_color_override("font_color", GOLD if on_dark else PAPER_RED)
 	label.add_theme_color_override("font_outline_color", INK)
 	label.add_theme_constant_override("outline_size", 3 if on_dark else 0)
@@ -207,7 +221,7 @@ static func section_label(text: String, size := 28, on_dark := false) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.add_theme_font_override("font", TITLE_FONT)
-	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_font_size_override("font_size", roundi(scaled(size)))
 	label.add_theme_color_override("font_color", GOLD if on_dark else PAPER_INK)
 	return label
 
