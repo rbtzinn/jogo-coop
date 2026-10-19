@@ -62,6 +62,7 @@ level_id = "madame_carretel"
 script = ExtResource("2_door")
 painted_front = Vector2(1340, 269)
 title = "Maestro Ferrugem"
+target_scene = "res://bosses/rust_maestro/rust_maestro_fight.tscn"
 level_id = "rust_maestro"
 
 [node name="DoorCounterweight" type="Area3D" parent="."]

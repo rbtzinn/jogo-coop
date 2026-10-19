@@ -45,6 +45,8 @@ var show_fps := false
 var up_jumps := true
 ## Mostrar o ping até o parceiro durante a partida online.
 var show_ping := true
+## Já mostrou o aviso de "Adicionar à Tela de Início" no Safari do iPhone (só na primeira vez, pedido de 19/10/2026).
+var home_screen_tip_seen := false
 ## Último IP digitado em "Entrar na partida".
 var last_join_address := "127.0.0.1"
 
@@ -199,6 +201,12 @@ func _sync_from_window() -> void:
 		changed.emit()
 
 
+## O aviso de "Adicionar à Tela de Início" foi visto: não aparece de novo.
+func mark_home_screen_tip_seen() -> void:
+	home_screen_tip_seen = true
+	_save()
+
+
 # --- Arquivo ---------------------------------------------------------------
 
 func _save() -> void:
@@ -212,6 +220,7 @@ func _save() -> void:
 	file.set_value("controls", "up_jumps", up_jumps)
 	file.set_value("network", "last_join_address", last_join_address)
 	file.set_value("network", "show_ping", show_ping)
+	file.set_value("web", "home_screen_tip_seen", home_screen_tip_seen)
 	for action in REBINDABLE_ACTIONS:
 		var saved: Array = []
 		for event in _bindings[action]:
@@ -233,6 +242,7 @@ func _load() -> void:
 	up_jumps = file.get_value("controls", "up_jumps", up_jumps)
 	last_join_address = file.get_value("network", "last_join_address", last_join_address)
 	show_ping = file.get_value("network", "show_ping", show_ping)
+	home_screen_tip_seen = file.get_value("web", "home_screen_tip_seen", home_screen_tip_seen)
 	for action in REBINDABLE_ACTIONS:
 		var saved: Array = file.get_value("controls", action, [])
 		if saved.size() != SLOT_COUNT:

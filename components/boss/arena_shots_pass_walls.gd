@@ -1,5 +1,6 @@
 extends Node2D
-## A parede é limite do JOGADOR, não um escudo invisível para os botões da Madame.
+## Raiz de luta em que a parede da direita é só limite do JOGADOR, não um escudo invisível para o chefão
+## que fica atrás dela (Madame Carretel, Maestro Ferrugem): os tiros atravessam as paredes da arena.
 func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
 

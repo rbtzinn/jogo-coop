@@ -13,6 +13,7 @@ const FIGHTS := [
 	"res://bosses/anvil_master/anvil_master_fight.tscn",
 	"res://bosses/volcano_heart/volcano_heart_fight.tscn",
 	"res://bosses/madame_carretel/madame_carretel_fight.tscn",
+	"res://bosses/rust_maestro/rust_maestro_fight.tscn",
 ]
 ## Tempo de jogo em cada fase (segundos).
 const SECONDS_PER_PHASE := 45.0
@@ -27,7 +28,7 @@ func check(ok: bool, label: String) -> void:
 
 
 func _ready() -> void:
-	get_tree().create_timer(1200.0, true, false, true).timeout.connect(func() -> void:
+	get_tree().create_timer(1800.0, true, false, true).timeout.connect(func() -> void:
 		print("FAIL timeout")
 		get_tree().quit(99))
 	_run()

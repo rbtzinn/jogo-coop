@@ -100,12 +100,14 @@ func _layout() -> void:
 	release_all()
 	_viewport_size = get_viewport().get_visible_rect().size
 	_scale = minf(_viewport_size.x / 1920.0, _viewport_size.y / 1080.0)
-	var w := _viewport_size.x
-	var h := _viewport_size.y
+	# Fora do entalhe da câmera, dos cantos arredondados e da barrinha de Início (iPhone pelo navegador).
+	var safe := Device.safe_insets(_viewport_size)
+	var w := _viewport_size.x - safe.z
+	var h := _viewport_size.y - safe.w
 	_joystick_radius = 125.0 * _scale
-	_joystick_center = Vector2(220.0 * _scale, h - 210.0 * _scale)
+	_joystick_center = Vector2(safe.x + 220.0 * _scale, h - 210.0 * _scale)
 	_buttons.clear()
-	_buttons[&"pause"] = {"at": Vector2(w - 110.0 * _scale, 90.0 * _scale), "r": 65.0 * _scale, "text": "PAUSA"}
+	_buttons[&"pause"] = {"at": Vector2(w - 110.0 * _scale, safe.y + 90.0 * _scale), "r": 65.0 * _scale, "text": "PAUSA"}
 	if _map_mode:
 		_buttons[&"shoot"] = {"at": Vector2(w - 150.0 * _scale, h - 280.0 * _scale), "r": 76.0 * _scale, "text": "ENTRAR"}
 		if not Network.is_online():
