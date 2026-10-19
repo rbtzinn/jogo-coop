@@ -9,7 +9,7 @@
 [ext_resource type="Script" path="res://core/ui/fight_hud.gd" id="7"]
 [ext_resource type="Script" path="res://core/debug/solo_character_switch.gd" id="8"]
 [ext_resource type="Script" path="res://core/debug/applause_cheat.gd" id="9"]
-[ext_resource type="Script" path="res://bosses/madame_carretel/carretel_fight.gd" id="10"]
+[ext_resource type="Script" path="res://components/boss/arena_shots_pass_walls.gd" id="10"]
 
 [sub_resource type="RectangleShape2D" id="floor"]
 size = Vector2(2200,160)

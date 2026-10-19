@@ -13,6 +13,7 @@ const FIGHTS := [
 	"res://bosses/anvil_master/anvil_master_fight.tscn",
 	"res://bosses/volcano_heart/volcano_heart_fight.tscn",
 	"res://bosses/madame_carretel/madame_carretel_fight.tscn",
+	"res://bosses/rust_maestro/rust_maestro_fight.tscn",
 ]
 ## Tempo de jogo em cada fase (segundos).
 const SECONDS_PER_PHASE := 45.0
