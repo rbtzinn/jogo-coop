@@ -9,6 +9,9 @@ signal status_changed(message: String)
 signal update_available(version: String)
 ## Download progress, 0..1 (only while installing from inside the game).
 signal progress_changed(fraction: float)
+## Android: the install screen was asked for; if it did not show up, the menu button now downloads in the browser
+## (user's request on 19/10/2026: on a Samsung the screen never appeared and the menu stayed on "100%").
+signal browser_offered
 
 const PLATFORM_FILES := {"android": ".apk", "windows": ".zip"}
 ## Where the release file is downloaded before it is checked and installed.
@@ -21,6 +24,8 @@ var version_name := ""
 ## Expected SHA-256 (hex) of the release file; empty for releases made before 0.8.
 var sha256 := ""
 var installing := false
+## The next press of the menu button opens the release in the browser (Android install screen did not show up).
+var browser_fallback := false
 var _request: HTTPRequest
 var _download: HTTPRequest
 var _checking := false
@@ -128,7 +133,7 @@ func open_download() -> void:
 		return
 	if installing:
 		return
-	if sha256.is_empty() or not OS.has_feature("template"):
+	if browser_fallback or sha256.is_empty() or not OS.has_feature("template"):
 		_open_in_browser()
 		return
 	installing = true
@@ -158,10 +163,11 @@ func _downloaded(result: int, response_code: int, _headers: PackedStringArray, _
 		return
 	progress_changed.emit(1.0)
 	if platform() == "android":
-		status_changed.emit("Confirme a instalação na tela do Android.")
 		installing = false
 		if OS.shell_open(ProjectSettings.globalize_path(path)) != OK:
 			_open_in_browser()
+			return
+		offer_browser()
 		return
 	var error := install_windows(path, OS.get_executable_path())
 	if error != "":
@@ -223,6 +229,13 @@ func _clean_leftovers() -> void:
 		DirAccess.remove_absolute(OS.get_executable_path() + OLD_SUFFIX)
 	for path: String in DOWNLOAD_PATHS.values():
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+
+## Depois de pedir a tela de instalação do Android: se ela não abriu, o botão do menu baixa pelo navegador.
+func offer_browser() -> void:
+	browser_fallback = true
+	status_changed.emit("Confirme a instalação na tela do Android. Se ela não abriu, toque em Baixar pelo navegador.")
+	browser_offered.emit()
 
 
 func _fail(message: String) -> void:

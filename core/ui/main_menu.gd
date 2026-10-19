@@ -138,7 +138,10 @@ func _ready() -> void:
 		GameUpdates.progress_changed.connect(func(fraction: float) -> void:
 			update_button.disabled = fraction >= 0.0 and fraction < 1.0
 			update_button.text = "Atualizar agora" if fraction < 0.0 else "Baixando... %d%%" % roundi(fraction * 100.0))
-		if not GameUpdates.download_url.is_empty():
+		GameUpdates.browser_offered.connect(func() -> void: update_button.text = "Baixar pelo navegador")
+		if GameUpdates.browser_fallback:
+			update_button.text = "Baixar pelo navegador"
+		elif not GameUpdates.download_url.is_empty():
 			update_button.text = "Atualizar agora"
 		add_child(update_button)
 	host_button.grab_focus()
