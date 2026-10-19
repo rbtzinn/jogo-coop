@@ -288,6 +288,23 @@ static func _switch(on: bool) -> ImageTexture:
 	return ImageTexture.create_from_image(image)
 
 
+## Botão que fica em cima do cenário escuro, fora do cartaz (ex.: "Verificar atualização" no menu): os botões
+## do tema são tinta sobre papel e somem no escuro (relato do usuário em 19/10/2026).
+static func dark_button(button: Button) -> void:
+	var normal := _ticket(Color(NIGHT, 0.88), GOLD, 2)
+	var lit := _ticket(Color(RED_DARK, 0.95), GOLD, 3)
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", lit)
+	button.add_theme_stylebox_override("focus", _box(Color(RED_DARK, 0.6), GOLD, 3, 3))
+	button.add_theme_stylebox_override("pressed", _ticket(PAPER_RED, GOLD, 3, true))
+	button.add_theme_stylebox_override("hover_pressed", _ticket(PAPER_RED, GOLD, 3, true))
+	button.add_theme_stylebox_override("disabled", _ticket(Color(NIGHT, 0.7), Color(GOLD, 0.45), 2))
+	for state in ["font_color", "font_focus_color", "font_pressed_color", "font_hover_pressed_color"]:
+		button.add_theme_color_override(state, CREAM)
+	button.add_theme_color_override("font_hover_color", GOLD)
+	button.add_theme_color_override("font_disabled_color", Color(CREAM, 0.6))
+
+
 ## Ingresso de papel (botões): contorno, cantos arredondados e uma sombra de tinta embaixo, que
 ## some quando apertado (o botão "afunda").
 static func _ticket(background: Color, border: Color, border_width: int, sunk := false) -> StyleBoxFlat:

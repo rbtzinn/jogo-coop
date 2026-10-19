@@ -199,6 +199,8 @@ jobs:
           Godot_v4.7.2-stable_linux.x86_64 --headless --path . --export-release 'Android Preview' build/publish/RespeitavelPublico-Android.apk 2>&1 | tee build/android-export.log
           "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify --verbose build/publish/RespeitavelPublico-Android.apk
           "$ANDROID_HOME/build-tools/35.0.1/aapt" dump badging build/publish/RespeitavelPublico-Android.apk | tee build/apk-info.txt
+          # Sem esta permissão o Android ignora em silêncio a tela de instalar a atualização (bug da 0.9.4).
+          grep -q "uses-permission: name='android.permission.REQUEST_INSTALL_PACKAGES'" build/apk-info.txt
       - name: Exportar navegador
         run: |
           set -euo pipefail

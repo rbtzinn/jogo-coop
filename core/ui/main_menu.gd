@@ -131,6 +131,7 @@ func _ready() -> void:
 		update_button.text = "Verificar atualização"
 		update_button.position = Vector2(1070, 975)
 		update_button.custom_minimum_size = Vector2(690, 76)
+		UiTheme.dark_button(update_button)
 		update_button.pressed.connect(GameUpdates.open_download)
 		GameUpdates.status_changed.connect(func(message: String) -> void: _status.text = message)
 		GameUpdates.update_available.connect(func(_version: String) -> void: update_button.text = "Atualizar agora")
