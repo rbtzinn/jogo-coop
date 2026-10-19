@@ -37,6 +37,11 @@ const POSTER_PADDING := Vector2(100, 82)
 static var _cached_theme: Theme
 ## Tamanho da interface com que o tema guardado foi montado (muda nas Configurações).
 static var _cached_scale := 0.0
+## Tamanho da interface com que os menus já abertos estão desenhados (-1: nenhum ainda), ver apply_live.
+static var _live_scale := -1.0
+## Marca (meta) dos controles cuja altura mínima segue o tamanho da interface (UiTheme.scaled).
+const SCALED_HEIGHT_META := &"ui_scaled_height"
+const BASE_SIZES_META := &"ui_base_font_sizes"
 
 
 ## "Tamanho da interface" das Configurações (pedido do usuário em 19/10/2026: no celular tudo ficava pequeno
@@ -51,6 +56,8 @@ static func scaled(value: float) -> float:
 
 
 static func build() -> Theme:
+	if _live_scale < 0.0:
+		_live_scale = ui_scale()
 	if _cached_theme != null and is_equal_approx(_cached_scale, ui_scale()):
 		return _cached_theme
 	var theme := Theme.new()
@@ -166,6 +173,47 @@ static func build() -> Theme:
 ## Tamanho de um texto na fonte do corpo, a partir do tamanho que ele tinha com a Oswald.
 static func body_size(oswald_size: float) -> int:
 	return maxi(roundi(oswald_size * BODY_SCALE * ui_scale()), 1)
+
+
+## Aplica na hora o tamanho da interface escolhido a tudo que já está na tela (pedido do usuário em 19/10/2026:
+## antes só valia ao abrir o jogo de novo). Troca o tema e refaz os tamanhos de texto e as alturas marcadas
+## com SCALED_HEIGHT_META, a partir do tamanho original de cada um (trocar várias vezes não acumula erro).
+static func apply_live(root: Node) -> void:
+	var old := _live_scale
+	if old < 0.0 or is_equal_approx(old, ui_scale()):
+		_live_scale = ui_scale()
+		return
+	var old_theme := _cached_theme
+	var new_theme := build()
+	_live_scale = ui_scale()
+	_rescale(root, old, old_theme, new_theme)
+
+
+static func _rescale(node: Node, old: float, old_theme: Theme, new_theme: Theme) -> void:
+	var control := node as Control
+	if control != null:
+		if old_theme != null and control.theme == old_theme:
+			control.theme = new_theme
+		# Tamanho original de cada texto e o valor que demos da última vez: se o código trocou o tamanho
+		# depois disso, o original é recalculado a partir do novo.
+		var base: Dictionary = control.get_meta(BASE_SIZES_META, {})
+		for property in control.get_property_list():
+			var key: String = property.name
+			# A lista traz todas as sobreposições possíveis; só contam as que têm valor.
+			if not key.begins_with("theme_override_font_sizes/") or control.get(key) == null:
+				continue
+			var current: int = control.get(key)
+			if not base.has(key) or base[key][1] != current:
+				base[key] = [current / old, current]
+			var size := maxi(roundi(base[key][0] * ui_scale()), 1)
+			control.set(key, size)
+			base[key][1] = size
+		if not base.is_empty():
+			control.set_meta(BASE_SIZES_META, base)
+		if control.has_meta(SCALED_HEIGHT_META):
+			control.custom_minimum_size.y = scaled(control.get_meta(SCALED_HEIGHT_META))
+	for child in node.get_children(true):
+		_rescale(child, old, old_theme, new_theme)
 
 
 ## O cartaz de papel velho (arte do GPT), esticado em 9 partes: os cantos com os enfeites não esticam.
