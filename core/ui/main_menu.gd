@@ -142,6 +142,10 @@ func _ready() -> void:
 			update_button.text = "Atualizar agora"
 		add_child(update_button)
 	host_button.grab_focus()
+	if HomeScreenTip.wanted():
+		var tip := HomeScreenTip.new()
+		tip.closed.connect(host_button.grab_focus)
+		add_child(tip)
 
 
 func _build_background() -> void:
