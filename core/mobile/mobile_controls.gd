@@ -1,5 +1,7 @@
 extends CanvasLayer
 ## Multitoque para o mesmo InputMap usado no PC. Não altera os comandos da rede.
+## Ajustes nas Configurações (19/10/2026): analógico fixo ou flutuante, tamanho, transparência, tiro automático,
+## vibração ao levar dano e a posição de cada controle (editor em TouchLayoutEditor, salvo em Settings).
 
 const MOVE_ACTIONS: Array[StringName] = [&"move_left", &"move_right", &"move_up", &"move_down"]
 const ACTIONS: Array[StringName] = [&"jump", &"shoot", &"dash", &"lock_aim", &"special"]
@@ -21,6 +23,8 @@ var _map_mode := false
 var _scene: Node
 var _joystick_finger := -1
 var _joystick_center := Vector2.ZERO
+## Onde o analógico fica parado (o flutuante volta para cá ao soltar).
+var _joystick_home := Vector2.ZERO
 var _joystick_radius := 125.0
 var _joystick_offset := Vector2.ZERO
 var _button_fingers: Dictionary = {}
@@ -52,6 +56,7 @@ func enable() -> void:
 	add_child(_surface)
 	_surface.hide()
 	get_viewport().size_changed.connect(_layout)
+	Settings.changed.connect(_layout)
 	_layout()
 	# Android envia o botão Voltar como notificação, não como uma tecla Escape.
 	get_tree().auto_accept_quit = false
@@ -75,6 +80,7 @@ func _process(_delta: float) -> void:
 		_surface.visible = active
 	if _active:
 		_surface.queue_redraw()
+	_watch_hurt()
 
 
 func _can_control() -> bool:
@@ -89,7 +95,7 @@ func _can_control() -> bool:
 func wants_auto_shoot() -> bool:
 	# Só o PlayerInput local usa este sinal; nenhuma ação global de tiro fica presa.
 	var scene := get_tree().current_scene
-	return _surface != null and _can_control() \
+	return _surface != null and Settings.touch_auto_shoot and _can_control() \
 			and scene != null and not Levels.is_map(scene.scene_file_path) \
 			and get_tree().get_first_node_in_group(&"players") != null
 
@@ -99,24 +105,51 @@ func _layout() -> void:
 		return
 	release_all()
 	_viewport_size = get_viewport().get_visible_rect().size
-	_scale = minf(_viewport_size.x / 1920.0, _viewport_size.y / 1080.0)
-	# Fora do entalhe da câmera, dos cantos arredondados e da barrinha de Início (iPhone pelo navegador).
-	var safe := Device.safe_insets(_viewport_size)
-	var w := _viewport_size.x - safe.z
-	var h := _viewport_size.y - safe.w
-	_joystick_radius = 125.0 * _scale
-	_joystick_center = Vector2(safe.x + 220.0 * _scale, h - 210.0 * _scale)
-	_buttons.clear()
-	_buttons[&"pause"] = {"at": Vector2(w - 110.0 * _scale, safe.y + 90.0 * _scale), "r": 65.0 * _scale, "text": "PAUSA"}
-	if _map_mode:
-		_buttons[&"shoot"] = {"at": Vector2(w - 150.0 * _scale, h - 280.0 * _scale), "r": 76.0 * _scale, "text": "ENTRAR"}
+	_buttons = layout_for(_viewport_size, _map_mode)
+	var stick: Dictionary = _buttons[&"joystick"]
+	_buttons.erase(&"joystick")
+	_joystick_home = stick.at
+	_joystick_center = stick.at
+	_joystick_radius = stick.r
+
+
+## Onde fica cada controle numa tela de tamanho `view`: { nome: {at, r, text} }, com o analógico em "joystick".
+## Posições padrão perto das bordas (fora do entalhe e da barrinha de Início), trocadas pelas que o jogador
+## escolheu no editor (menos ENTRAR e TROCAR do mapa, que ficam sempre no padrão).
+func layout_for(view: Vector2, map_mode: bool) -> Dictionary:
+	_scale = minf(view.x / 1920.0, view.y / 1080.0)
+	var unit := _scale * Settings.TOUCH_SIZES[Settings.touch_size_index]
+	var safe := Device.safe_insets(view)
+	var w := view.x - safe.z
+	var h := view.y - safe.w
+	var result := {}
+	result[&"joystick"] = {"at": Vector2(safe.x + 220.0 * unit, h - 210.0 * unit), "r": 125.0 * unit, "text": "ANDAR"}
+	result[&"pause"] = {"at": Vector2(w - 110.0 * unit, safe.y + 90.0 * unit), "r": 65.0 * unit, "text": "PAUSA"}
+	if map_mode:
+		result[&"shoot"] = {"at": Vector2(w - 150.0 * unit, h - 280.0 * unit), "r": 76.0 * unit, "text": "ENTRAR"}
 		if not Network.is_online():
-			_buttons[&"swap"] = {"at": Vector2(w - 310.0 * _scale, h - 130.0 * _scale), "r": 76.0 * _scale, "text": "TROCAR"}
+			result[&"swap"] = {"at": Vector2(w - 310.0 * unit, h - 130.0 * unit), "r": 76.0 * unit, "text": "TROCAR"}
 	else:
-		_buttons[&"jump"] = {"at": Vector2(w - 320.0 * _scale, h - 125.0 * _scale), "r": 76.0 * _scale, "text": "PULAR"}
-		_buttons[&"dash"] = {"at": Vector2(w - 150.0 * _scale, h - 110.0 * _scale), "r": 65.0 * _scale, "text": "DASH"}
-		_buttons[&"special"] = {"at": Vector2(w - 490.0 * _scale, h - 125.0 * _scale), "r": 65.0 * _scale, "text": "EX"}
-		_buttons[&"lock_aim"] = {"at": Vector2(w - 330.0 * _scale, h - 310.0 * _scale), "r": 65.0 * _scale, "text": "MIRA"}
+		result[&"jump"] = {"at": Vector2(w - 320.0 * unit, h - 125.0 * unit), "r": 76.0 * unit, "text": "PULAR"}
+		result[&"dash"] = {"at": Vector2(w - 150.0 * unit, h - 110.0 * unit), "r": 65.0 * unit, "text": "DASH"}
+		result[&"special"] = {"at": Vector2(w - 490.0 * unit, h - 125.0 * unit), "r": 65.0 * unit, "text": "EX"}
+		result[&"lock_aim"] = {"at": Vector2(w - 330.0 * unit, h - 310.0 * unit), "r": 65.0 * unit, "text": "MIRA"}
+		if not Settings.touch_auto_shoot:
+			result[&"shoot"] = {"at": Vector2(w - 150.0 * unit, h - 290.0 * unit), "r": 76.0 * unit, "text": "TIRO"}
+	var area := Rect2(safe.x, safe.y, w - safe.x, h - safe.y)
+	for key: StringName in result:
+		if map_mode and key in [&"shoot", &"swap"]:
+			continue
+		if Settings.touch_layout.has(String(key)):
+			var fraction: Vector2 = Settings.touch_layout[String(key)]
+			result[key].at = clamp_into(fraction * view, result[key].r, area)
+	return result
+
+
+## Ponto mais perto de `at` em que um círculo de raio `radius` cabe inteiro dentro de `area`.
+static func clamp_into(at: Vector2, radius: float, area: Rect2) -> Vector2:
+	return Vector2(clampf(at.x, area.position.x + radius, maxf(area.end.x - radius, area.position.x + radius)),
+		clampf(at.y, area.position.y + radius, maxf(area.end.y - radius, area.position.y + radius)))
 
 
 func _input(event: InputEvent) -> void:
@@ -142,7 +175,8 @@ func _input(event: InputEvent) -> void:
 func _touch_down(finger: int, at: Vector2) -> void:
 	if _button_fingers.has(finger) or finger == _joystick_finger:
 		return
-	if _joystick_finger < 0 and at.distance_to(_joystick_center) <= _joystick_radius * 1.45:
+	var floating := Settings.touch_floating_stick
+	if not floating and _joystick_finger < 0 and at.distance_to(_joystick_center) <= _joystick_radius * 1.45:
 		_joystick_finger = finger
 		_update_joystick(at)
 		get_viewport().set_input_as_handled()
@@ -168,12 +202,19 @@ func _touch_down(finger: int, at: Vector2) -> void:
 			_button_fingers[finger] = action
 			_set_action(action, 1.0)
 		return
+	# Flutuante: qualquer toque na metade esquerda que não caiu num botão vira o centro do analógico.
+	if floating and _joystick_finger < 0 and at.x < _viewport_size.x * 0.5:
+		_joystick_finger = finger
+		_joystick_center = at
+		_update_joystick(at)
+		get_viewport().set_input_as_handled()
 
 
 func _touch_up(finger: int) -> void:
 	if finger == _joystick_finger:
 		_joystick_finger = -1
 		_joystick_offset = Vector2.ZERO
+		_joystick_center = _joystick_home
 		for action in MOVE_ACTIONS:
 			_set_action(action, 0.0)
 		get_viewport().set_input_as_handled()
@@ -212,6 +253,20 @@ func release_all() -> void:
 	_button_fingers.clear()
 	_joystick_finger = -1
 	_joystick_offset = Vector2.ZERO
+	_joystick_center = _joystick_home
+
+
+## Vibra quando um jogador deste aparelho leva dano (se ligado nas Configurações). O iPhone pelo navegador
+## não vibra: o Safari não deixa.
+func _watch_hurt() -> void:
+	for node in get_tree().get_nodes_in_group(&"players"):
+		var player := node as Player
+		if player == null or player.has_meta(&"touch_vibration") or not player.is_multiplayer_authority():
+			continue
+		player.set_meta(&"touch_vibration", true)
+		player.player_health.hurt.connect(func(_from: Vector2) -> void:
+			if Settings.touch_vibration:
+				Input.vibrate_handheld(120))
 
 
 func _notification(what: int) -> void:
@@ -238,24 +293,41 @@ func _exit_tree() -> void:
 
 
 func draw_surface(surface: Control) -> void:
-	var font := ThemeDB.fallback_font
-	var ring := Color(INK, 0.56)
-	var rim := Color(CREAM, 0.65)
-	surface.draw_circle(_joystick_center, _joystick_radius, ring)
-	surface.draw_arc(_joystick_center, _joystick_radius, 0, TAU, 64, rim, 4.0 * _scale, true)
-	for direction: Vector2 in [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]:
-		var at := _joystick_center + direction * _joystick_radius * 0.72
-		var side := direction.orthogonal() * 12.0 * _scale
-		surface.draw_colored_polygon(PackedVector2Array([at + direction * 13.0 * _scale, at - direction * 10.0 * _scale + side, at - direction * 10.0 * _scale - side]), rim)
-	surface.draw_circle(_joystick_center + _joystick_offset * 0.6, 52.0 * _scale, Color(GOLD, 0.85))
+	var idle_float := Settings.touch_floating_stick and _joystick_finger < 0
+	draw_stick(surface, _joystick_center, _joystick_radius, _joystick_offset, 0.45 if idle_float else 1.0)
 	for action: StringName in _buttons:
 		var button: Dictionary = _buttons[action]
-		var pressed := _pressed.has(action)
-		var fill := Color("862f24") if action == &"shoot" else INK
-		fill.a = 0.8 if pressed else 0.58
-		surface.draw_circle(button.at, button.r, fill)
-		surface.draw_arc(button.at, button.r, 0, TAU, 48, GOLD if pressed else rim, (5.0 if pressed else 3.0) * _scale, true)
-		var font_size := int(27.0 * _scale)
-		var text: String = button.text
-		var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
-		surface.draw_string(font, button.at + Vector2(-width * 0.5, 10.0 * _scale), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, CREAM)
+		draw_button(surface, button.at, button.r, button.text, _pressed.has(action), action == &"shoot")
+
+
+## Analógico em `at` (também usado pelo editor de posição). `fade` apaga mais (flutuante parado).
+func draw_stick(surface: Control, at: Vector2, radius: float, offset: Vector2, fade := 1.0) -> void:
+	var unit := radius / 125.0
+	var ring := _faded(Color(INK, 0.56), fade)
+	var rim := _faded(Color(CREAM, 0.65), fade)
+	surface.draw_circle(at, radius, ring)
+	surface.draw_arc(at, radius, 0, TAU, 64, rim, 4.0 * unit, true)
+	for direction: Vector2 in [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]:
+		var tip := at + direction * radius * 0.72
+		var side := direction.orthogonal() * 12.0 * unit
+		surface.draw_colored_polygon(PackedVector2Array([tip + direction * 13.0 * unit, tip - direction * 10.0 * unit + side, tip - direction * 10.0 * unit - side]), rim)
+	surface.draw_circle(at + offset * 0.6, 52.0 * unit, _faded(Color(GOLD, 0.85), fade))
+
+
+## Botão redondo com o nome (também usado pelo editor de posição).
+func draw_button(surface: Control, at: Vector2, radius: float, text: String, pressed: bool, red := false) -> void:
+	var unit := radius / 76.0
+	var fill := Color("862f24") if red else INK
+	fill.a = 0.8 if pressed else 0.58
+	var rim := Color(CREAM, 0.65)
+	surface.draw_circle(at, radius, _faded(fill))
+	surface.draw_arc(at, radius, 0, TAU, 48, _faded(GOLD if pressed else rim), (5.0 if pressed else 3.0) * unit, true)
+	var font := ThemeDB.fallback_font
+	var font_size := int(27.0 * _scale * Settings.TOUCH_SIZES[Settings.touch_size_index])
+	var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	surface.draw_string(font, at + Vector2(-width * 0.5, 10.0 * unit), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, _faded(CREAM))
+
+
+## Cor com a transparência escolhida nas Configurações.
+func _faded(color: Color, fade := 1.0) -> Color:
+	return Color(color, clampf(color.a * Settings.TOUCH_OPACITIES[Settings.touch_opacity_index] * fade, 0.0, 1.0))

@@ -34,6 +34,11 @@ const QUALITY_NAMES := ["Baixa", "Média", "Alta"]
 const WINDOW_MODE_NAMES := ["Janela", "Tela cheia (sem borda)", "Tela cheia (exclusiva)"]
 const WINDOW_SIZES: Array[Vector2i] = [Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1920, 1080)]
 const FPS_LIMITS: Array[int] = [30, 60, 120, 144, 0]
+## Celular: tamanho dos controles de toque (multiplica o raio) e quanto eles aparecem (multiplica o alfa).
+const TOUCH_SIZE_NAMES := ["Pequeno", "Normal", "Grande", "Enorme"]
+const TOUCH_SIZES: Array[float] = [0.8, 1.0, 1.2, 1.4]
+const TOUCH_OPACITY_NAMES := ["Leve", "Normal", "Forte"]
+const TOUCH_OPACITIES: Array[float] = [0.55, 1.0, 1.4]
 
 var quality := Quality.HIGH
 var window_mode := WindowMode.WINDOWED
@@ -45,6 +50,15 @@ var show_fps := false
 var up_jumps := true
 ## Mostrar o ping até o parceiro durante a partida online.
 var show_ping := true
+## Celular (pedidos do usuário em 19/10/2026): analógico flutuante (nasce onde o dedo encosta na metade esquerda)
+## em vez de fixo, tamanho, transparência, tiro automático, vibração ao levar dano e posição de cada controle.
+var touch_floating_stick := false
+var touch_size_index := 1
+var touch_opacity_index := 1
+var touch_auto_shoot := true
+var touch_vibration := true
+## Controle -> posição escolhida no editor, em fração da tela (0 a 1). Vazio: posições padrão.
+var touch_layout := {}
 ## Já mostrou o aviso de "Adicionar à Tela de Início" no Safari do iPhone (só na primeira vez, pedido de 19/10/2026).
 var home_screen_tip_seen := false
 ## Último IP digitado em "Entrar na partida".
@@ -150,6 +164,9 @@ static func _same_input(a: InputEvent, b: InputEvent) -> bool:
 # --- Vídeo -----------------------------------------------------------------
 
 func set_option(property: StringName, value: Variant) -> void:
+	# Lista de duas escolhas para uma opção liga/desliga (ex.: analógico Fixo/Flutuante) chega como 0 ou 1.
+	if get(property) is bool:
+		value = bool(value)
 	set(property, value)
 	apply_video()
 	_save()
@@ -201,6 +218,13 @@ func _sync_from_window() -> void:
 		changed.emit()
 
 
+## Posições escolhidas no editor de controles (vazio volta ao padrão).
+func set_touch_layout(layout: Dictionary) -> void:
+	touch_layout = layout.duplicate()
+	_save()
+	changed.emit()
+
+
 ## O aviso de "Adicionar à Tela de Início" foi visto: não aparece de novo.
 func mark_home_screen_tip_seen() -> void:
 	home_screen_tip_seen = true
@@ -221,6 +245,12 @@ func _save() -> void:
 	file.set_value("network", "last_join_address", last_join_address)
 	file.set_value("network", "show_ping", show_ping)
 	file.set_value("web", "home_screen_tip_seen", home_screen_tip_seen)
+	file.set_value("touch", "floating_stick", touch_floating_stick)
+	file.set_value("touch", "size_index", touch_size_index)
+	file.set_value("touch", "opacity_index", touch_opacity_index)
+	file.set_value("touch", "auto_shoot", touch_auto_shoot)
+	file.set_value("touch", "vibration", touch_vibration)
+	file.set_value("touch", "layout", touch_layout)
 	for action in REBINDABLE_ACTIONS:
 		var saved: Array = []
 		for event in _bindings[action]:
@@ -243,6 +273,13 @@ func _load() -> void:
 	last_join_address = file.get_value("network", "last_join_address", last_join_address)
 	show_ping = file.get_value("network", "show_ping", show_ping)
 	home_screen_tip_seen = file.get_value("web", "home_screen_tip_seen", home_screen_tip_seen)
+	touch_floating_stick = file.get_value("touch", "floating_stick", touch_floating_stick)
+	touch_size_index = clampi(file.get_value("touch", "size_index", touch_size_index), 0, TOUCH_SIZES.size() - 1)
+	touch_opacity_index = clampi(file.get_value("touch", "opacity_index", touch_opacity_index), 0, TOUCH_OPACITIES.size() - 1)
+	touch_auto_shoot = file.get_value("touch", "auto_shoot", touch_auto_shoot)
+	touch_vibration = file.get_value("touch", "vibration", touch_vibration)
+	var layout = file.get_value("touch", "layout", {})
+	touch_layout = layout if layout is Dictionary else {}
 	for action in REBINDABLE_ACTIONS:
 		var saved: Array = file.get_value("controls", action, [])
 		if saved.size() != SLOT_COUNT:
