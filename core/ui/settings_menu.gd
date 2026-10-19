@@ -74,10 +74,34 @@ func _input(event: InputEvent) -> void:
 func _build_touch_tab() -> Control:
 	var tab := VBoxContainer.new()
 	tab.name = "Controles"
-	tab.add_theme_constant_override("separation", 28)
+	tab.add_theme_constant_override("separation", 22)
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 40)
+	grid.add_theme_constant_override("v_separation", 14)
+	tab.add_child(grid)
+	_add_option(grid, "Analógico", ["Fixo", "Flutuante (nasce onde o dedo encosta)"], int(Settings.touch_floating_stick), &"touch_floating_stick")
+	_add_option(grid, "Tamanho dos controles", Settings.TOUCH_SIZE_NAMES, Settings.touch_size_index, &"touch_size_index")
+	_add_option(grid, "Transparência", Settings.TOUCH_OPACITY_NAMES, Settings.touch_opacity_index, &"touch_opacity_index")
+	_add_toggle(grid, "Tiro automático nas lutas", Settings.touch_auto_shoot, &"touch_auto_shoot")
+	_add_toggle(grid, "Vibrar ao levar dano", Settings.touch_vibration, &"touch_vibration")
+	var move := Button.new()
+	move.text = "Mudar posição dos controles"
+	move.custom_minimum_size = Vector2(620, 0)
+	move.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	move.pressed.connect(func() -> void:
+		hide()
+		var editor := TouchLayoutEditor.open(self)
+		editor.closed.connect(func() -> void:
+			show()
+			move.grab_focus()))
+	tab.add_child(move)
 	var note := Label.new()
-	note.text = "Direcional à esquerda: andar e mirar.\nO personagem atira automaticamente durante as fases.\nÀ direita: PULAR, DASH, EX e MIRA.\n\nSegure EX para o especial.\nNo mapa, toque em ENTRAR para acessar os lugares\ne em TROCAR para mudar de personagem.\nToque em PAUSA para abrir o intervalo.\n\nVocê também pode conectar um controle Bluetooth."
-	note.add_theme_font_size_override("font_size", UiTheme.body_size(34))
+	note.text = "Analógico à esquerda: andar e mirar. À direita: PULAR, DASH, EX e MIRA (e TIRO, com o tiro automático\n" \
+		+ "desligado). Segure EX para o especial. No mapa: ENTRAR e TROCAR. Dá para usar controle Bluetooth.\n" \
+		+ "No iPhone pelo navegador o Safari não deixa vibrar."
+	note.add_theme_font_size_override("font_size", UiTheme.body_size(24))
+	note.add_theme_color_override("font_color", UiTheme.PAPER_INK_SOFT)
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tab.add_child(note)
 	return tab
