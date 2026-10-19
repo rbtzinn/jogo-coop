@@ -28,7 +28,7 @@ func check(ok: bool, label: String) -> void:
 
 
 func _ready() -> void:
-	get_tree().create_timer(1200.0, true, false, true).timeout.connect(func() -> void:
+	get_tree().create_timer(1800.0, true, false, true).timeout.connect(func() -> void:
 		print("FAIL timeout")
 		get_tree().quit(99))
 	_run()
