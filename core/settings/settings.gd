@@ -37,6 +37,9 @@ const FPS_LIMITS: Array[int] = [30, 60, 120, 144, 0]
 ## Celular: tamanho dos controles de toque (multiplica o raio) e quanto eles aparecem (multiplica o alfa).
 const TOUCH_SIZE_NAMES := ["Pequeno", "Normal", "Grande", "Enorme"]
 const TOUCH_SIZES: Array[float] = [0.8, 1.0, 1.2, 1.4]
+## Tamanho da interface (menus e textos), ver UiTheme.ui_scale.
+const UI_SCALE_NAMES := ["Normal", "Grande", "Enorme"]
+const UI_SCALES: Array[float] = [1.0, 1.2, 1.4]
 const TOUCH_OPACITY_NAMES := ["Leve", "Normal", "Forte"]
 const TOUCH_OPACITIES: Array[float] = [0.55, 1.0, 1.4]
 
@@ -52,6 +55,7 @@ var up_jumps := true
 var show_ping := true
 ## Celular (pedidos do usuário em 19/10/2026): analógico flutuante (nasce onde o dedo encosta na metade esquerda)
 ## em vez de fixo, tamanho, transparência, tiro automático, vibração ao levar dano e posição de cada controle.
+var ui_scale_index := 0
 var touch_floating_stick := false
 var touch_size_index := 1
 var touch_opacity_index := 1
@@ -245,6 +249,7 @@ func _save() -> void:
 	file.set_value("network", "last_join_address", last_join_address)
 	file.set_value("network", "show_ping", show_ping)
 	file.set_value("web", "home_screen_tip_seen", home_screen_tip_seen)
+	file.set_value("video", "ui_scale_index", ui_scale_index)
 	file.set_value("touch", "floating_stick", touch_floating_stick)
 	file.set_value("touch", "size_index", touch_size_index)
 	file.set_value("touch", "opacity_index", touch_opacity_index)
@@ -273,6 +278,7 @@ func _load() -> void:
 	last_join_address = file.get_value("network", "last_join_address", last_join_address)
 	show_ping = file.get_value("network", "show_ping", show_ping)
 	home_screen_tip_seen = file.get_value("web", "home_screen_tip_seen", home_screen_tip_seen)
+	ui_scale_index = clampi(file.get_value("video", "ui_scale_index", ui_scale_index), 0, UI_SCALES.size() - 1)
 	touch_floating_stick = file.get_value("touch", "floating_stick", touch_floating_stick)
 	touch_size_index = clampi(file.get_value("touch", "size_index", touch_size_index), 0, TOUCH_SIZES.size() - 1)
 	touch_opacity_index = clampi(file.get_value("touch", "opacity_index", touch_opacity_index), 0, TOUCH_OPACITIES.size() - 1)

@@ -43,6 +43,12 @@ func _ready() -> void:
 	check(not offered and "inválida" in message, "non-object JSON rejected")
 	_test_checksums(valid)
 	_test_windows_swap()
+	# Android: pedida a tela de instalação, o botão do menu passa a baixar pelo navegador (se ela não abriu).
+	var shown := [false]
+	GameUpdates.browser_offered.connect(func() -> void: shown[0] = true)
+	GameUpdates.offer_browser()
+	check(shown[0] and GameUpdates.browser_fallback and "Baixar pelo navegador" in message, "android install offers the browser when the screen does not open")
+	GameUpdates.browser_fallback = false
 	print("FAILURES: %d" % failures)
 	get_tree().quit(failures)
 
