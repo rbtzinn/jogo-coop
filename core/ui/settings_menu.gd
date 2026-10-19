@@ -43,6 +43,9 @@ func _ready() -> void:
 
 	Settings.changed.connect(_refresh_bindings)
 	Settings.changed.connect(_refresh_video)
+	Settings.changed.connect(func() -> void:
+		if is_inside_tree():
+			UiTheme.apply_live(get_tree().root))
 
 
 func open() -> void:
@@ -256,7 +259,7 @@ func _build_video_tab() -> Control:
 	_add_toggle(grid, "Mostrar FPS", Settings.show_fps, &"show_fps")
 
 	var note := Label.new()
-	note.text = "Qualidade: Baixa desliga o filtro de filme e partículas;\nMédia usa filtro leve; Alta liga tudo.\nTamanho da interface: vale por completo ao abrir o jogo de novo."
+	note.text = "Qualidade: Baixa desliga o filtro de filme e partículas;\nMédia usa filtro leve; Alta liga tudo."
 	note.add_theme_font_size_override("font_size", UiTheme.body_size(24))
 	note.add_theme_color_override("font_color", UiTheme.PAPER_INK_SOFT)
 	grid.add_child(note)

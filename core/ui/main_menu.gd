@@ -314,7 +314,9 @@ func _start_slot(slot: int, fresh: bool) -> void:
 func _add_button(parent: Control, text: String, callback: Callable) -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(500, UiTheme.scaled(68 if Device.is_touch() else 52))
+	var height := 68.0 if Device.is_touch() else 52.0
+	button.custom_minimum_size = Vector2(500, UiTheme.scaled(height))
+	button.set_meta(UiTheme.SCALED_HEIGHT_META, height)
 	# Só o texto no papel, como item de cartaz: o escolhido fica vermelho e a luva do PosterPanel aponta.
 	var flat := StyleBoxEmpty.new()
 	for state in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
